@@ -1,0 +1,8 @@
+{
+  "schema_version": "cap-l2-driver-config.v1",
+  "listen": "127.0.0.1:19104",
+  "service": "worker",
+  "profile": "WORKER_LEGAL_FIXTURE_REVIEW_PENDING",
+  "maximum_inflight": 1800,
+  "adapter": "design_blocker"
+}

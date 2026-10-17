@@ -1,0 +1,23 @@
+=== after 04:15:52 ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-577f645cd8-tzwpb          140m         194Mi           
+farm-grafana-64f7f46898-z58tr       2m           49Mi            
+farm-prometheus-5966b58fdf-6xrnv    6m           75Mi            
+farm-redis-0                        153m         96Mi            
+farm-redis-1                        132m         96Mi            
+farm-redis-2                        126m         72Mi            
+farm-redis-3                        35m          64Mi            
+farm-redis-4                        24m          86Mi            
+farm-redis-5                        30m          86Mi            
+farm-svr-0                          494m         1771Mi          
+farm-worker-a-8c9dcbf44-7d57s       40m          17Mi            
+farm-worker-b-5fdcbff857-2tm4n      58m          14Mi            
+player-svr-0                        268m         1261Mi          
+route-controller-8489d44597-r8btl   7m           13Mi            
+=== farm ===
+farm_downlink_queue_full_total 0
+=== gate ===
+farmgate_ws_conn_active 0
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 10001
+farmgate_ws_slow_client_kick_total 0

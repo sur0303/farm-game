@@ -1,0 +1,203 @@
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestLeaseSchedulerEntryPanicLeavesNoActiveEntry
+--- PASS: TestLeaseSchedulerEntryPanicLeavesNoActiveEntry (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+PASS
+ok  	farmgame/internal/authoritycomposition	1.397s
+?   	farmgame/internal/authoritycomposition/testkit	[no test files]

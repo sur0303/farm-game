@@ -1,0 +1,8 @@
+.git
+.gitignore
+bin
+deploy
+docs
+coverage
+dist
+*.log

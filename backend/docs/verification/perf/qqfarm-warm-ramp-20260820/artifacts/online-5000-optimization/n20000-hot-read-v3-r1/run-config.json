@@ -1,0 +1,15 @@
+{
+  "action_warmup": "20s",
+  "aggregate_arrival_rate": 1000.0,
+  "business_warmup": "2m",
+  "driver_image": "mirrors.tencent.com/uc-backend/farm-live-bot@sha256:15c3c7f473c5b0cea9ac666bed91277fcffd8dc8e96e32a96bad55f797e717a5",
+  "driver_shards": 20,
+  "player_start": 3531000000,
+  "run_duration": "30m",
+  "session_duration": "3m",
+  "think_time": "5s",
+  "total_bots": 20000,
+  "unlock_concurrency": 16,
+  "unlock_plot_limit": 4,
+  "unlock_plots": true
+}

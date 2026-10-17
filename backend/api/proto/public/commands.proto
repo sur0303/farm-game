@@ -1,0 +1,803 @@
+syntax = "proto3";
+
+package public;
+
+option go_package = "farmgame/api/gen/public;publicpb";
+
+import "common/enums.proto";
+import "common/envelope.proto";
+import "economy/economy.proto";
+import "player/player.proto";
+
+// ============================================================================
+// 公开命令 Typed Payload / Result(28 §5/§6.1,P1B 唯一 field number 闸门)
+//
+// 本文件是 33 类公开命令业务 Payload 与 Result 的唯一登记处。Payload 只包含
+// 目标与业务参数:操作者 player_id、Session Fence、Subscription、Permit、
+// Actor Route、WriterEpoch、Redis Key、VirtualShard 与 writer claim 一律不
+// 进入公网 Payload(28 §0.5/§0.6,L2-PROTO-05/06)。
+//
+// 标注 "TODO(32~37)" 的 Result 是合同占位:对应业务字段由第 32~37 号场景
+// 合同唯一拥有,在业务 Handler 接线前不允许伪造字段;占位消息只保留
+// reserved 段。已按 28 冻结形状的消息(§3.7/§3.8/§5)不允许再改语义,
+// 演进只能追加字段或 reserved。
+// ============================================================================
+
+// ── 1. JOIN_FARM(28 §5.1)──
+// join_attempt_id 不进入客户端 Payload,由 Gate 在 ADMITTED 前生成。
+message JoinFarmRequest {
+  uint64 target_farm_id = 1;
+}
+// JOIN_FARM 无 Result Payload:元信息只经 common.JoinResultContext 携带
+// (28 §6.1,L2-PROTO-27)。
+
+// ── 2. GET_PLAYER_BOOTSTRAP(28 §3.7,L2-PROTO-62)──
+message GetPlayerBootstrapRequest {
+}
+
+message PlayerPrivateProfileView {
+  uint64 player_id = 1;
+  string display_name = 2;
+}
+
+message PlayerProgressionView {
+  int32 level = 1;
+  int64 exp = 2;
+}
+
+message WalletView {
+  int64 coin = 1;
+}
+
+message InventoryView {
+  repeated economy.ItemStack items = 1;
+}
+
+// PlayerFeatureSummaryView 是支持系统摘要(任务/邮件/图鉴红点等)的占位;
+// 具体摘要字段由第 34/35/37 号合同冻结。
+message PlayerFeatureSummaryView {
+  reserved 1 to 30;
+  PlayerTaskSummaryView tasks = 31;
+  MailboxSummaryView mail = 32;
+  CompendiumSummaryView compendium = 33;
+  PetSummaryView pet = 34;
+}
+
+message MailboxSummaryView {
+  uint64 mailbox_revision = 1;
+  int64 unread_count = 2;
+  int64 claimable_attachment_count = 3;
+  bool has_red_point = 4;
+}
+
+message CompendiumSummaryView {
+  uint64 compendium_revision = 1;
+  uint64 compendium_seen_revision = 2;
+  bool has_new_unlock = 3;
+  uint32 unlocked_count = 4;
+}
+
+message PetSummaryView {
+  uint64 pet_state_version = 1;
+  optional uint32 active_guard_pet_id = 2;
+  int64 guard_until_ms = 3;
+  bool guard_effective = 4;
+}
+
+enum PlayerTaskProgressState {
+  PLAYER_TASK_PROGRESS_STATE_UNSPECIFIED = 0;
+  PLAYER_TASK_PROGRESS_ACTIVE = 1;
+  PLAYER_TASK_PROGRESS_CLAIMABLE = 2;
+  PLAYER_TASK_PROGRESS_CLAIMED = 3;
+}
+
+message PlayerTaskProgressView {
+  string instance_id = 1;
+  string task_id = 2;
+  int64 progress = 3;
+  int64 target = 4;
+  PlayerTaskProgressState state = 5;
+}
+
+message PlayerTaskSummaryView {
+  uint64 task_state_version = 1;
+  int32 claimable_count = 2;
+  string daily_period_id = 3;
+  repeated PlayerTaskProgressView daily_tasks = 4;
+  optional PlayerTaskProgressView current_growth = 5;
+}
+
+// Bootstrap 只包含玩家私有资料、经济、库存、成长与支持系统摘要;不得携带
+// FarmSnapshot/Plot/Crop/FarmVersion(28 §3.7 约束 3)。
+message GetPlayerBootstrapResult {
+  uint64 player_state_revision = 1;
+  PlayerPrivateProfileView profile = 2;
+  PlayerProgressionView progression = 3;
+  WalletView wallet = 4;
+  InventoryView inventory = 5;
+  PlayerFeatureSummaryView feature_summary = 6;
+  int64 trusted_server_now_ms = 7;
+}
+
+// ── 3. GET_FRIEND_LIST(28 §6.1;33 §6;SCB-HERO-SOCIAL-READ)──
+message GetFriendListRequest {
+  // Opaque server cursor bound to viewer and roster revision. Empty starts a
+  // new page scan; H5 never parses or constructs it.
+  string cursor = 1;
+  uint32 page_size = 2;
+}
+
+message PublicProfileView {
+  uint64 player_id = 1;
+  string display_name = 2;
+  uint32 avatar_id = 3;
+  uint32 level = 4;
+}
+
+// Values 1/2/4 match Farm Authority Facts evaluation. CAN_VISIT is the
+// canonical Pair validation result; no bit is an execution permit.
+enum FriendActionMaskBit {
+  FRIEND_ACTION_MASK_BIT_UNSPECIFIED = 0;
+  FRIEND_ACTION_MASK_CAN_THEFT = 1;
+  FRIEND_ACTION_MASK_CAN_WATER = 2;
+  FRIEND_ACTION_MASK_CAN_PEST = 4;
+  FRIEND_ACTION_MASK_CAN_VISIT = 8;
+}
+
+enum FriendOpportunityReadStatus {
+  FRIEND_OPPORTUNITY_READ_STATUS_UNSPECIFIED = 0;
+  FRIEND_OPPORTUNITY_READY = 1;
+  FRIEND_OPPORTUNITY_UNKNOWN = 2;
+}
+
+message FriendEntryView {
+  PublicProfileView public_profile = 1;
+  reserved 2 to 20; // frozen historical ownership; append only after 20
+  string relation_id = 21;
+  uint64 relation_epoch = 22;
+  uint32 action_mask = 23;
+  uint64 opportunity_revision = 24;
+  FriendOpportunityReadStatus opportunity_status = 25;
+  int64 validated_at_ms = 26;
+}
+
+message GetFriendListResult {
+  reserved 1 to 50; // frozen historical ownership; append only after 50
+  repeated FriendEntryView friends = 51;
+  string next_cursor = 52;
+  uint64 roster_revision = 53;
+  int64 validated_at_ms = 54;
+}
+
+// ── 4. GET_NEXT_FRIEND_OPPORTUNITY(28 §3.7,L2-PROTO-63)──
+message FriendOpportunityHintedTarget {
+  uint64 owner_id = 1;
+  uint64 opportunity_revision = 2;
+}
+
+message GetNextFriendOpportunityRequest {
+  repeated FriendOpportunityHintedTarget hinted_targets = 1;
+}
+
+enum FriendOpportunityLookupStatus {
+  FRIEND_OPPORTUNITY_LOOKUP_STATUS_UNSPECIFIED = 0;
+  FRIEND_OPPORTUNITY_FOUND = 1;
+  FRIEND_OPPORTUNITY_NONE = 2;
+}
+
+message FriendOpportunityCandidateView {
+  uint64 target_farm_id = 1;
+  PublicProfileView public_profile = 2;
+  uint32 action_mask = 3;
+  uint64 opportunity_revision = 4;
+  int64 validated_at_ms = 5;
+  string relation_id = 6;
+  uint64 relation_epoch = 7;
+  FriendOpportunityReadStatus opportunity_status = 8;
+}
+
+// FOUND 必须携带 candidate;NONE 必须是明确无机会;依赖失败固定返回
+// REJECTED + FRIEND_OPPORTUNITY_TEMPORARILY_UNAVAILABLE,不得伪装成 NONE。
+message GetNextFriendOpportunityResult {
+  FriendOpportunityLookupStatus lookup_status = 1;
+  optional FriendOpportunityCandidateView candidate = 2;
+  string navigation_generation = 3;
+}
+
+// ── 5. GET_OPERATION_RESULT(28 §3.8,L2-PROTO-17/18/25/46/54)──
+message OperationTargetLocator {
+  oneof target {
+    uint64 target_farm_id = 1;
+    uint64 peer_player_id = 2;
+    string mail_id = 3;
+  }
+}
+
+message GetOperationResultRequest {
+  common.CommandType original_command_type = 1;
+  string original_operation_id = 2;
+  OperationTargetLocator original_target = 3;
+  optional string server_operation_locator = 4;
+}
+
+enum OperationLookupStatus {
+  OPERATION_LOOKUP_STATUS_UNSPECIFIED = 0;
+  OPERATION_LOOKUP_NOT_FOUND = 1;
+  OPERATION_LOOKUP_PROCESSING = 2;
+  OPERATION_LOOKUP_COMPLETED = 3;
+  OPERATION_LOOKUP_EXPIRED = 4;
+}
+
+// StoredFarmOutcomeContext 只保存业务目标 target_farm_id;request_id、
+// subscription_id、join_attempt_id、Session Fence 与临时 RetryDirective
+// 不进入长期 OperationResult(L2-PROTO-25)。
+message StoredFarmOutcomeContext {
+  uint64 target_farm_id = 1;
+}
+
+// StoredOperationOutcome 是不含网络请求身份和临时重试指令的原业务结果;
+// status 只能是终态 SUCCEEDED / REJECTED / NO_CHANGE。
+message StoredOperationOutcome {
+  common.CommandType original_command_type = 1;
+  string original_operation_id = 2;
+  common.CommandStatus status = 3;
+  common.ErrorDetail error = 4;
+  optional StoredFarmOutcomeContext farm_context = 5;
+  bytes result_payload = 6;
+}
+
+// completed_retry_directive 由服务端按 original_command_type + 终态
+// ErrorCode + ErrorRecoveryPolicy 在查询时重建(L2-PROTO-46)。
+message GetOperationResultResult {
+  common.CommandType original_command_type = 1;
+  string original_operation_id = 2;
+  OperationLookupStatus lookup_status = 3;
+  optional StoredOperationOutcome completed_outcome = 4;
+  uint32 retry_after_ms = 5;
+  common.RetryDirective completed_retry_directive = 6;
+}
+
+// ── 6~8. 任务(28 §5.6;Result 字段 TODO(34))──
+message GetTaskListRequest {
+}
+
+message PlayerTaskItemRewardView {
+  int32 item_id = 1;
+  int64 count = 2;
+}
+
+message PlayerTaskPetUnlockRewardView {
+  int32 pet_id = 1;
+  uint64 pet_config_version = 2;
+  uint64 grant_definition_version = 3;
+}
+
+// Reward is display-only server authority. ClaimTaskRequest never echoes it.
+message PlayerTaskRewardView {
+  int64 coin = 1;
+  int64 exp = 2;
+  repeated PlayerTaskItemRewardView items = 3;
+  optional PlayerTaskPetUnlockRewardView pet_unlock = 4;
+}
+
+message PlayerTaskDetailView {
+  PlayerTaskProgressView progress = 1;
+  int32 category = 2;
+  int32 kind = 3;
+  uint64 definition_version = 4;
+  string period_id = 5;
+  uint64 config_version = 6;
+  PlayerTaskRewardView reward = 7;
+}
+
+message GetTaskListResult {
+  reserved 1 to 50; // historical ownership; Task contract appends after 50
+  PlayerTaskSummaryView summary = 51;
+  int64 next_reset_at_ms = 52;
+  uint64 daily_config_version = 53;
+  repeated PlayerTaskDetailView daily_tasks = 54;
+  optional PlayerTaskDetailView current_growth = 55;
+}
+
+// operation_id 只存在于公共 Envelope,Typed Payload 不得重复携带(L2-PROTO-52)。
+message ClaimTaskRequest {
+  string task_instance_id = 1;
+}
+
+message ClaimTaskResult {
+  reserved 1 to 50; // historical ownership; Task contract appends after 50
+  player.PrivateState private_state = 51;
+  PlayerTaskSummaryView summary = 52;
+  PlayerTaskRewardView granted_reward = 53;
+  optional PlayerTaskProgressView next_growth_task = 54;
+  string claimed_task_instance_id = 55;
+  int64 trusted_server_now_ms = 56;
+}
+
+message ConfirmFriendVisitRequest {
+  uint64 target_farm_id = 1;
+}
+
+message ConfirmFriendVisitResult {
+  reserved 1 to 50; // historical ownership; Task contract appends after 50
+  PlayerTaskSummaryView summary = 51;
+  string confirmed_task_instance_id = 52;
+  int64 trusted_server_now_ms = 53;
+}
+
+// ── 9~13. 邮件(28 §6.1 最小字段;Result 字段 TODO(35))──
+message GetMailListRequest {
+  optional string opaque_cursor = 1; // page_size 由服务端固定为 6
+}
+
+message GetMailListResult {
+  reserved 1 to 50;
+  repeated MailListItemView mails = 51;
+  optional string next_cursor = 52;
+  MailboxSummaryView summary = 53;
+  int64 trusted_server_now_ms = 54;
+}
+
+enum MailAttachmentState {
+  MAIL_ATTACHMENT_STATE_UNSPECIFIED = 0;
+  MAIL_NO_ATTACHMENT = 1;
+  MAIL_ATTACHMENT_CLAIMABLE = 2;
+  MAIL_ATTACHMENT_CLAIMED = 3;
+  MAIL_ATTACHMENT_UNKNOWN = 4;
+}
+
+message MailRewardItemView {
+  int32 item_id = 1;
+  int64 count = 2;
+}
+
+message MailRewardView {
+  int64 coin = 1;
+  int64 exp = 2;
+  repeated MailRewardItemView items = 3;
+}
+
+message MailListItemView {
+  string mail_id = 1;
+  string title = 2;
+  int64 created_at_ms = 3;
+  int64 expire_at_ms = 4;
+  bool read = 5;
+  bool has_attachment = 6;
+  MailAttachmentState attachment_state = 7;
+}
+
+message MailDetailView {
+  string mail_id = 1;
+  string title = 2;
+  string body = 3;
+  int64 created_at_ms = 4;
+  int64 expire_at_ms = 5;
+  int64 claim_end_at_ms = 6;
+  bool read = 7;
+  MailRewardView attachment = 8;
+  MailAttachmentState attachment_state = 9;
+}
+
+message GetMailDetailRequest {
+  string mail_id = 1;
+}
+
+message GetMailDetailResult {
+  reserved 1 to 50;
+  MailDetailView mail = 51;
+  MailboxSummaryView summary = 52;
+  int64 trusted_server_now_ms = 53;
+}
+
+message MarkMailReadRequest {
+  string mail_id = 1;
+}
+
+message MarkMailReadResult {
+  reserved 1 to 50;
+  string mail_id = 51;
+  MailboxSummaryView summary = 52;
+}
+
+message DeleteMailRequest {
+  string mail_id = 1;
+}
+
+message DeleteMailResult {
+  reserved 1 to 50;
+  string mail_id = 51;
+  MailboxSummaryView summary = 52;
+}
+
+// Claim Payload 只含 mail_id:不得携带 operation_id、RewardBundle、
+// attachment_hash、claim_material_hash 或 Redis/Actor 地址(L2-PROTO-55)。
+message ClaimMailAttachmentRequest {
+  string mail_id = 1;
+}
+
+message ClaimMailAttachmentResult {
+  reserved 1 to 50;
+  string mail_id = 51;
+  player.PrivateState private_state = 52;
+  MailRewardView granted_reward = 53;
+  MailboxSummaryView summary = 54;
+  int64 claimed_at_ms = 55;
+}
+
+// ── 14~17. 宠物(28 §5.8;Result 字段 TODO(36))──
+message GetPetStateRequest {
+}
+
+message GetPetStateResult {
+  reserved 1 to 60;
+  PetPageView page = 61;
+}
+
+enum PetDisplayState {
+  PET_DISPLAY_STATE_UNSPECIFIED = 0;
+  PET_LOCKED = 1;
+  PET_UNLOCKED_NOT_SELECTED = 2;
+  PET_SELECTED_INACTIVE = 3;
+  PET_GUARDING = 4;
+}
+
+enum GuardSyncStatus {
+  GUARD_SYNC_STATUS_UNSPECIFIED = 0;
+  GUARD_SYNC_NOT_REQUIRED = 1;
+  GUARD_SYNC_APPLIED = 2;
+  GUARD_SYNC_PENDING = 3;
+  GUARD_SYNC_FAULT = 4;
+}
+
+message PetCatalogItemView {
+  uint32 pet_id = 1;
+  uint64 pet_config_version = 2;
+  int32 display_definition_id = 3;
+  PetDisplayState state = 4;
+  bool coin_unlock_enabled = 5;
+  optional int64 coin_price = 6;
+  optional uint64 price_version = 7;
+  uint64 guard_rule_version = 8;
+  bool task_unlock_hint = 9;
+}
+
+message PetStateView {
+  uint64 pet_state_version = 1;
+  repeated uint32 owned_pet_ids = 2;
+  optional uint32 active_guard_pet_id = 3;
+  int64 guard_until_ms = 4;
+  bool guard_effective = 5;
+  uint64 guard_version = 6;
+}
+
+message PetPageView {
+  int64 trusted_server_now_ms = 1;
+  uint64 pet_catalog_version = 2;
+  PetStateView state = 3;
+  GuardSyncStatus guard_sync_status = 4;
+  uint64 feed_rule_version = 5;
+  int32 dog_food_item_id = 6;
+  int64 duration_per_food_ms = 7;
+  int64 max_guard_horizon_ms = 8;
+  int64 max_quantity_per_command = 9;
+  repeated PetCatalogItemView pets = 10;
+}
+
+message PetMutationView {
+  PetStateView resulting_state = 1;
+  bool guard_sync_required = 2;
+  optional string guard_sync_order_id = 3;
+  uint64 guard_version_at_decision = 4;
+  int64 coin_delta = 5;
+  int32 item_id = 6;
+  int64 item_delta = 7;
+  int64 trusted_server_now_ms = 8;
+}
+
+message PetUnlockByCoinRequest {
+  uint32 pet_id = 1;
+  uint64 expected_pet_config_version = 2;
+  uint64 expected_price_version = 3;
+}
+
+message PetUnlockByCoinResult {
+  reserved 1 to 50;
+  PetMutationView mutation = 51;
+}
+
+message PetFeedRequest {
+  uint32 quantity = 1;
+  uint64 expected_feed_rule_version = 2;
+  uint64 expected_active_pet_config_version = 3;
+  uint64 expected_guard_rule_version = 4;
+}
+
+message PetFeedResult {
+  reserved 1 to 50;
+  PetMutationView mutation = 51;
+}
+
+message PetSwitchRequest {
+  uint32 target_pet_id = 1;
+  uint64 expected_pet_config_version = 2;
+  uint64 expected_guard_rule_version = 3;
+}
+
+message PetSwitchResult {
+  reserved 1 to 50;
+  PetMutationView mutation = 51;
+}
+
+// ── 18~19. 图鉴(28 §5.9;GetCompendiumResult 字段 TODO(37))──
+message GetCompendiumRequest {
+  optional string archive_cursor = 1;
+}
+
+message GetCompendiumResult {
+  reserved 1 to 60;
+  CompendiumPageView page = 61;
+}
+
+enum CompendiumDisplayState {
+  COMPENDIUM_DISPLAY_STATE_UNSPECIFIED = 0;
+  COMPENDIUM_UNLOCKED_FULL = 1;
+  COMPENDIUM_LOCKED_SILHOUETTE = 2;
+}
+
+enum CompendiumCategoryKind {
+  COMPENDIUM_CATEGORY_KIND_UNSPECIFIED = 0;
+  COMPENDIUM_NORMAL = 1;
+  COMPENDIUM_ACTIVITY_ACTIVE = 2;
+  COMPENDIUM_ACTIVITY_ARCHIVE = 3;
+  COMPENDIUM_CATALOG_MISSING = 4;
+}
+
+message CompendiumEntryView {
+  uint32 crop_definition_id = 1;
+  CompendiumDisplayState display_state = 2;
+  optional string display_definition_id = 3;
+  string silhouette_asset_id = 4;
+  optional string activity_id = 5;
+  bool legacy_seed_plantable = 6;
+}
+
+message CompendiumCategoryView {
+  CompendiumCategoryKind kind = 1;
+  string category_id = 2;
+  string title = 3;
+  repeated CompendiumEntryView entries = 4;
+}
+
+message CompendiumPageView {
+  uint64 catalog_version = 1;
+  uint64 compendium_revision = 2;
+  uint64 compendium_seen_revision = 3;
+  bool has_new_unlock = 4;
+  repeated CompendiumCategoryView categories = 5;
+  optional string next_archive_cursor = 6;
+}
+
+// Ack 只携带客户端已应用的 observed_revision,按
+// max(current_seen, min(observed, current_revision)) 单调推进(L2-PROTO-60)。
+message AckCompendiumSeenRequest {
+  uint64 observed_revision = 1;
+}
+
+message AckCompendiumSeenResult {
+  uint64 compendium_seen_revision_after = 1;
+  uint64 current_compendium_revision = 2;
+}
+
+// ── 20~23. 分享与加好友(28 §5.7/§6.1;Result 字段 TODO(33))──
+// inviter 只能来自当前 Session,Payload 不携带 inviter_player_id。
+message GenerateShareTokenRequest {
+}
+
+// 普通轮换不携带 peer;删除/拉黑后重新加好友必须显式携带
+// reactivation_peer_player_id(L2-PROTO-56)。pair_id、barrier_revision、
+// generation floor 与 RotateReceipt 均为服务端受信字段,不进入 Payload。
+message RotateShareTokenRequest {
+  optional uint64 reactivation_peer_player_id = 1;
+}
+
+message RevokeShareTokenRequest {
+}
+
+message ShareTokenResult {
+  reserved 1 to 50; // TODO(33)
+}
+
+// 原始 ShareToken 是 Bearer 凭证:H5 在收到携带 Locator 的 ACCEPTED/PROCESSING
+// 后保存 Locator 并立即清除原始 Token(28 §3.8 约束 11)。
+message RedeemShareRequest {
+  string opaque_share_token = 1;
+}
+
+message RedeemShareResult {
+  reserved 1 to 50; // TODO(33)
+}
+
+// ── 24~26. 好友关系写(28 §5.7;Result 字段 TODO(33))──
+message DeleteFriendRequest {
+  uint64 peer_player_id = 1;
+}
+
+message DeleteFriendResult {
+  reserved 1 to 50; // TODO(33)
+}
+
+message BlockPlayerRequest {
+  uint64 peer_player_id = 1;
+}
+
+message BlockPlayerResult {
+  reserved 1 to 50; // TODO(33)
+}
+
+message UnblockPlayerRequest {
+  uint64 peer_player_id = 1;
+}
+
+message UnblockPlayerResult {
+  reserved 1 to 50; // TODO(33)
+}
+
+// ── 27~28. 经济(28 §6.1;RouteKey 只来自 TrustedCommandContext.session.player_id,
+// Payload 不重复携带操作者 ID,L2-PROTO-39)──
+// 32 §2.2:Payload 只携带 ID、数量和期望版本,单价与总价一律由服务端
+// ShopOffer(offer_id, offer_version) 决定。expected_offer_version 与权威不一致
+// 时成交被拒(32 §2.3),旧价格页面必须先刷新。
+message BuyRequest {
+  int32 offer_id = 1;
+  int32 count = 2;
+  uint64 expected_offer_version = 3;
+}
+
+// BuyResult/SellResult 沿用现行已接线的最小经济结果形状(私有状态 + 变动
+// 摘要);字段细化与最小化由第 32 号合同后续冻结,演进只能追加。
+// 服务端实际编码的是 player.EconomyCommandResult,客户端按 BuyResult 解码:
+// 两者字段号必须逐个对齐,新增字段要同时加到两边(见 TestBuyResultStaysWireCompatibleWithEconomyCommandResult)。
+message BuyResult {
+  player.PrivateState private_state = 1;
+  int64 coin_delta = 2;
+  int32 item_id = 3;
+  int64 item_delta = 4;
+  // 32 §2.2:成交按哪个版本的报价结算,客户端据此判断本地价目表是否过期。
+  uint64 offer_version = 5;
+  int64 unit_price = 6;
+}
+
+message SellRequest {
+  int32 item_id = 1;
+  int64 count = 2;
+}
+
+message SellResult {
+  player.PrivateState private_state = 1;
+  int64 coin_delta = 2;
+  int32 item_id = 3;
+  int64 item_delta = 4;
+}
+
+// ── 29. UNLOCK_PLOT(28 §5.2A)──
+// 等级、价格、货币类型与前置 Plot 由服务端版本化 PlotUnlockRule 冻结,
+// 客户端只提交 plot_id 与页面看到的规则版本。
+message UnlockPlotRequest {
+  uint64 target_farm_id = 1;
+  uint32 plot_id = 2;
+  uint64 expected_plot_version = 3;
+  uint64 expected_unlock_rule_version = 4;
+}
+
+message UnlockPlotResult {
+  uint64 farm_id = 1;
+  uint32 plot_id = 2;
+  uint64 applied_unlock_rule_version = 3;
+  uint64 paid_normal_coin = 4;
+  uint64 normal_coin_balance = 5;
+  uint64 committed_plot_version = 6;
+  uint64 committed_farm_version = 7;
+}
+
+// ── 30. PLANT(28 §5.2)──
+// seed_item_id、成熟时间、产量与护理/偷菜数值是服务器字段,不进入客户端
+// Payload,也不进入 Canonical Payload Hash。
+//
+// 字段号纪律(P1B 冻结):plot_id/crop_definition_id 沿用旧内部
+// PlantCropRequest 的 1/2 号布局,新增字段只追加;这使尚未重接线的
+// FirstHop 按旧消息解码时读到相同语义值(兼容窗口,见 handoff ICR)。
+message PlantRequest {
+  uint32 plot_id = 1;
+  uint32 crop_definition_id = 2;
+  uint64 target_farm_id = 3;
+  uint64 expected_plot_version = 4;
+  uint64 expected_crop_rule_version = 5;
+}
+
+// 普通农场 CommandResult 只返回最小业务结果与 committed version
+// (28 §2.2 约束 7,L2-PROTO-31)。
+message PlantResult {
+  uint64 target_farm_id = 1;
+  uint32 plot_id = 2;
+  string crop_cycle_id = 3;
+  uint64 committed_farm_version = 4;
+}
+
+// ── 31. HARVEST(28 §5.3)──
+// plot_id 沿用旧 HarvestCropRequest 的 1 号布局(兼容窗口,同 PlantRequest)。
+message HarvestRequest {
+  uint32 plot_id = 1;
+  uint64 target_farm_id = 2;
+  string crop_cycle_id = 3;
+  uint64 expected_plot_version = 4;
+}
+
+// compendium_newly_unlocked 仅表示本次 Harvest 的 PlayerActor 提交首次解锁
+// 该植物;同一 operation 重试必须返回同一解锁结果(L2-PROTO-61)。
+message HarvestResult {
+  uint64 target_farm_id = 1;
+  uint32 plot_id = 2;
+  string crop_cycle_id = 3;
+  uint64 committed_farm_version = 4;
+  uint32 harvested_quantity = 5;
+  bool compendium_newly_unlocked = 6;
+  optional uint32 unlocked_crop_definition_id = 7;
+  uint64 compendium_revision = 8;
+}
+
+// ── 32. CARE(28 §5.4)──
+enum CareType {
+  CARE_TYPE_UNSPECIFIED = 0;
+  CARE_TYPE_WATER = 1;
+  CARE_TYPE_PEST = 2; // 虫害 Incident 由第 32 号合同冻结
+}
+
+// CareOutcome 是公网稳定护理结果类(32 §5.4)。
+enum CareOutcome {
+  CARE_OUTCOME_UNSPECIFIED = 0;
+  CARE_OUTCOME_RESOLVED = 1;
+  CARE_OUTCOME_ALREADY_RESOLVED = 2;
+}
+
+// plot_id 沿用旧 WaterCropRequest 的 1 号布局(兼容窗口,同 PlantRequest);
+// WATER 与 REMOVE_PEST(公网兼容拼写 CARE_TYPE_PEST)均已进入 Authority Care 路径。
+message CareRequest {
+  uint32 plot_id = 1;
+  uint64 target_farm_id = 2;
+  string crop_cycle_id = 3;
+  string incident_id = 4;
+  CareType care_type = 5;
+}
+
+// CareResult 是 catalog 声明的公网结果类型(28/32 §5.4)。字段 1~4 保持兼容;
+// 5 起补齐冻结稳定结果,不含可变投递状态。
+message CareResult {
+  uint64 target_farm_id = 1;
+  uint32 plot_id = 2;
+  string crop_cycle_id = 3;
+  uint64 committed_farm_version = 4;
+  string incident_id = 5;
+  CareType care_type = 6;
+  CareOutcome outcome = 7;
+  uint64 resolved_by_player_id = 8;
+  uint64 committed_plot_version = 9;
+  string care_reward_order_id = 10;
+  bool reward_obligation_created = 11;
+}
+
+// ── 33. THEFT(28 §5.5)──
+// plot_id 沿用旧 BeginTheftRequest 的 1 号布局(兼容窗口,同 PlantRequest)。
+message TheftRequest {
+  uint32 plot_id = 1;
+  uint64 target_farm_id = 2;
+  string crop_cycle_id = 3;
+}
+
+message TheftResult {
+  uint64 target_farm_id = 1;
+  uint32 plot_id = 2;
+  string crop_cycle_id = 3;
+  uint64 committed_farm_version = 4;
+  string settlement_id = 5;
+}

@@ -1,0 +1,105 @@
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.01s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+    lease_scheduler_test.go:1114: fatal flag must be set after an entry panic
+--- FAIL: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+=== RUN   TestOnFatalPanicIsContained
+--- PASS: TestOnFatalPanicIsContained (0.00s)
+FAIL
+FAIL	farmgame/internal/authoritycomposition	0.254s
+?   	farmgame/internal/authoritycomposition/testkit	[no test files]
+FAIL

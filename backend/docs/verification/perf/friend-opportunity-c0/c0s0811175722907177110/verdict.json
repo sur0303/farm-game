@@ -1,0 +1,37 @@
+{
+  "run_id": "c0s0811175722907177110",
+  "cell_run_id": "c0s0811175722907177110f20",
+  "namespace": "foperf-c0s0811175722907177110",
+  "hint_transport_effective": "direct",
+  "redis_measurement_gate": "pass",
+  "friend_list_status": "pass",
+  "scenario_gate": "pass",
+  "workloads": {
+    "friend-list": {
+      "scenario_attempted": 1,
+      "scenario_succeeded": 1,
+      "scenario_errors": 0,
+      "run_id": "c0s0811175722907177110f20"
+    },
+    "next-opportunity": {
+      "scenario_attempted": 1,
+      "scenario_succeeded": 0,
+      "scenario_errors": 1,
+      "run_id": "c0s0811175722907177110f20"
+    },
+    "hint": {
+      "scenario_attempted": 1,
+      "scenario_succeeded": 0,
+      "scenario_errors": 1,
+      "run_id": "c0s0811175722907177110f20"
+    }
+  },
+  "verdict": "pass",
+  "notes": [
+    "C0 smoke does not claim 30M DAU equivalence.",
+    "Redis deltas are workload-scoped aggregates across gate/player/farm/worker.",
+    "Server-side phases not instrumented in production appear as measurement_unavailable.",
+    "next-opportunity/hint may record explicit unavailable when the production read returns UNKNOWN; that is honest evidence, not a gate failure.",
+    "friend-list must succeed; any friend-list scenario error fails the verdict."
+  ]
+}

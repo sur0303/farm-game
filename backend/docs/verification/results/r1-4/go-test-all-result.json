@@ -1,0 +1,9 @@
+{
+  "schema_version": "farm-gate-r1-4-command-result/v1",
+  "status": "INCONCLUSIVE",
+  "command": "go test -buildvcs=false ./...",
+  "exit_code": 1,
+  "reason": "sandbox denied loopback listen; cmd/player-svr diagnostics and miniredis-backed tests failed with socket: operation not permitted",
+  "code_failure_observed_in_r1_4_focused_packages": false,
+  "log": "go-test-all.log"
+}

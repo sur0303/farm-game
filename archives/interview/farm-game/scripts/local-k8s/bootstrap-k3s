@@ -1,0 +1,204 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+K3S_VERSION="v1.36.2+k3s1"
+K3S_SHA256="65a55ec56c24eab44383086166ec620a491952b7e23941a49ddca6e8a4c4b4de"
+K3S_RELEASE_URL="https://github.com/k3s-io/k3s/releases/download/v1.36.2%2Bk3s1/k3s"
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+CONTEXT="farm-l2-r2"
+NODE_NAME="farm-l2-r2"
+RESERVED_CPUS="0-3,8-15,28-31"
+MODE="${1:---dry-run}"
+
+case "$MODE" in
+  --dry-run|--install) ;;
+  *) echo "usage: $0 [--dry-run|--install]" >&2; exit 2 ;;
+esac
+
+fail() { echo "bootstrap-k3s: $*" >&2; exit 1; }
+need() { command -v "$1" >/dev/null 2>&1 || fail "required command missing: $1"; }
+for command in curl sha256sum sudo systemctl python3 lscpu findmnt df; do need "$command"; done
+
+[[ "$(uname -m)" == "x86_64" ]] || fail "only the reviewed linux/amd64 profile is supported"
+[[ "$(findmnt -no TARGET /data 2>/dev/null || true)" == "/data" ]] || fail "/data is not a dedicated mount"
+free_kib=$(df -Pk /data | awk 'NR==2 {print $4}')
+(( free_kib >= 50 * 1024 * 1024 )) || fail "/data free space is below 50 GiB"
+
+cpu_count=$(getconf _NPROCESSORS_ONLN)
+(( cpu_count == 32 )) || fail "reviewed CPU profile requires 32 online logical CPUs, got $cpu_count"
+python3 - <<'PY' || fail "SMT topology is not the reviewed adjacent-pair layout"
+import subprocess
+rows=[]
+for line in subprocess.check_output(["lscpu", "-p=CPU,CORE,SOCKET,NODE"], text=True).splitlines():
+    if line.startswith("#"):
+        continue
+    cpu, core, socket, node = map(int, line.split(","))
+    rows.append((cpu, core, socket, node))
+assert len(rows) == 32
+assert {r[2] for r in rows} == {0}
+assert {r[3] for r in rows} == {0}
+by_core={}
+for cpu, core, _, _ in rows:
+    by_core.setdefault(core, []).append(cpu)
+assert len(by_core) == 16
+for core, cpus in by_core.items():
+    assert sorted(cpus) == [core * 2, core * 2 + 1], (core, cpus)
+PY
+
+config=$(cat <<EOF
+node-name: ${NODE_NAME}
+data-dir: ${LAB_ROOT}/k3s
+write-kubeconfig-mode: "0600"
+tls-san:
+  - "127.0.0.1"
+node-label:
+  - "farm.io/environment-class=local-k8s-capacity-lab"
+  - "farm.io/lab-id=farm-l2-r2"
+kubelet-arg:
+  - "cpu-manager-policy=static"
+  - "cpu-manager-policy-options=full-pcpus-only=true"
+  - "reserved-cpus=${RESERVED_CPUS}"
+  - "system-reserved=cpu=2000m,memory=4Gi"
+  - "kube-reserved=cpu=2000m,memory=4Gi"
+EOF
+)
+registries=$(cat <<'EOF'
+mirrors:
+  "127.0.0.1:5001":
+    endpoint:
+      - "http://127.0.0.1:5001"
+EOF
+)
+unit=$(cat <<'EOF'
+[Unit]
+Description=Farm R2 local k3s capacity lab
+Documentation=https://docs.k3s.io/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=notify
+Environment=K3S_CONFIG_FILE=/etc/rancher/k3s/config.yaml
+ExecStart=/usr/local/bin/k3s server
+KillMode=process
+Delegate=yes
+LimitNOFILE=1048576
+LimitNPROC=infinity
+LimitCORE=infinity
+TasksMax=infinity
+TimeoutStartSec=0
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+)
+
+config_sha=$(printf '%s\n' "$config" | sha256sum | awk '{print $1}')
+registries_sha=$(printf '%s\n' "$registries" | sha256sum | awk '{print $1}')
+unit_sha=$(printf '%s\n' "$unit" | sha256sum | awk '{print $1}')
+
+if [[ "$MODE" == "--dry-run" ]]; then
+  python3 - "$K3S_VERSION" "$K3S_SHA256" "$K3S_RELEASE_URL" "$LAB_ROOT" "$CONTEXT" "$RESERVED_CPUS" "$config_sha" "$registries_sha" "$unit_sha" <<'PY'
+import json, sys
+(version, binary_sha, url, root, context, reserved, config_sha, registries_sha, unit_sha) = sys.argv[1:]
+print(json.dumps({
+  "schema_version": "farm-local-k3s-bootstrap-plan.v1",
+  "status": "DRY_RUN_NOT_INSTALLED",
+  "k3s_version": version,
+  "k3s_binary_sha256": binary_sha,
+  "source_url": url,
+  "lab_root": root,
+  "context": context,
+  "reserved_cpus": reserved,
+  "config_sha256": config_sha,
+  "registries_sha256": registries_sha,
+  "systemd_unit_sha256": unit_sha,
+  "company_redis_contacted": False,
+}, sort_keys=True, indent=2))
+PY
+  exit 0
+fi
+
+sudo -n true >/dev/null 2>&1 || fail "passwordless sudo is required for the authorized install"
+if command -v k3s >/dev/null 2>&1; then
+  installed_version=$(k3s --version | awk 'NR==1 {print $3}')
+  [[ "$installed_version" == "$K3S_VERSION" ]] || fail "unknown k3s already installed: $installed_version"
+fi
+if sudo test -e /etc/rancher/k3s/config.yaml; then
+  existing_sha=$(sudo sha256sum /etc/rancher/k3s/config.yaml | awk '{print $1}')
+  [[ "$existing_sha" == "$config_sha" ]] || fail "existing k3s config is not owned by this exact profile"
+fi
+
+sudo install -d -m 0750 "$LAB_ROOT"
+sudo chown "$(id -u):$(id -g)" "$LAB_ROOT"
+install -d -m 0750 "$LAB_ROOT/runtime" "$LAB_ROOT/runtime/downloads" "$LAB_ROOT/receipts" "$LAB_ROOT/evidence" "$LAB_ROOT/registry" "$LAB_ROOT/prometheus"
+download="$LAB_ROOT/runtime/downloads/k3s-${K3S_VERSION//+/_}-amd64"
+if [[ ! -f "$download" ]] || [[ "$(sha256sum "$download" | awk '{print $1}')" != "$K3S_SHA256" ]]; then
+  tmp="${download}.tmp.$$"
+  rm -f "$tmp"
+  curl --fail --location --proto '=https' --tlsv1.2 --output "$tmp" "$K3S_RELEASE_URL"
+  printf '%s  %s\n' "$K3S_SHA256" "$tmp" | sha256sum --check --status || { rm -f "$tmp"; fail "k3s checksum mismatch"; }
+  chmod 0555 "$tmp"
+  mv "$tmp" "$download"
+fi
+
+sudo install -m 0755 "$download" /usr/local/bin/k3s
+sudo install -d -m 0755 /etc/rancher/k3s
+printf '%s\n' "$config" | sudo tee /etc/rancher/k3s/config.yaml >/dev/null
+printf '%s\n' "$registries" | sudo tee /etc/rancher/k3s/registries.yaml >/dev/null
+printf '%s\n' "$unit" | sudo tee /etc/systemd/system/k3s.service >/dev/null
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now k3s
+for _ in $(seq 1 120); do
+  if sudo k3s kubectl get node "$NODE_NAME" >/dev/null 2>&1; then break; fi
+  sleep 2
+done
+sudo k3s kubectl get node "$NODE_NAME" >/dev/null 2>&1 || { sudo journalctl -u k3s -n 200 --no-pager >&2; fail "k3s did not become ready"; }
+
+kubeconfig="$LAB_ROOT/runtime/kubeconfig"
+sudo cat /etc/rancher/k3s/k3s.yaml >"$kubeconfig"
+chmod 0600 "$kubeconfig"
+if KUBECONFIG="$kubeconfig" kubectl config get-contexts default >/dev/null 2>&1; then
+  KUBECONFIG="$kubeconfig" kubectl config rename-context default "$CONTEXT" >/dev/null
+fi
+KUBECONFIG="$kubeconfig" kubectl config use-context "$CONTEXT" >/dev/null
+
+node_json="$LAB_ROOT/runtime/node.json"
+KUBECONFIG="$kubeconfig" kubectl get node "$NODE_NAME" -o json >"$node_json"
+node_sha=$(sha256sum "$node_json" | awk '{print $1}')
+kubeconfig_sha=$(sha256sum "$kubeconfig" | awk '{print $1}')
+installed_version=$(k3s --version | awk 'NR==1 {print $3}')
+receipt="$LAB_ROOT/receipts/k3s-bootstrap.json"
+python3 - "$receipt" "$installed_version" "$K3S_SHA256" "$config_sha" "$registries_sha" "$unit_sha" "$node_sha" "$kubeconfig_sha" "$RESERVED_CPUS" <<'PY'
+import json, os, sys, tempfile
+(path, version, binary_sha, config_sha, registries_sha, unit_sha, node_sha, kubeconfig_sha, reserved) = sys.argv[1:]
+value = {
+  "schema_version": "farm-local-k3s-bootstrap-receipt.v1",
+  "status": "INSTALLED_NOT_QUALIFIED",
+  "context": "farm-l2-r2",
+  "node": "farm-l2-r2",
+  "k3s_version": version,
+  "k3s_binary_sha256": binary_sha,
+  "config_sha256": config_sha,
+  "registries_sha256": registries_sha,
+  "systemd_unit_sha256": unit_sha,
+  "node_json_sha256": node_sha,
+  "kubeconfig_sha256": kubeconfig_sha,
+  "reserved_cpus": reserved,
+  "data_dir": "/data/farm-l2-r2/k3s",
+  "company_redis_contacted": False,
+  "formal_l2_authorized": False,
+}
+os.makedirs(os.path.dirname(path), exist_ok=True)
+fd, tmp = tempfile.mkstemp(prefix=".k3s-receipt-", dir=os.path.dirname(path), text=True)
+with os.fdopen(fd, "w") as out:
+    json.dump(value, out, sort_keys=True, indent=2)
+    out.write("\n")
+os.replace(tmp, path)
+PY
+chmod 0640 "$receipt"
+rm -f "$node_json"
+printf 'k3s installed: version=%s context=%s receipt=%s\n' "$installed_version" "$CONTEXT" "$receipt"

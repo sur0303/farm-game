@@ -1,0 +1,4 @@
+=== RUN   TestLiveRedisWorkflowStore
+--- PASS: TestLiveRedisWorkflowStore (0.01s)
+PASS
+ok  	farmgame/internal/workflow	0.013s

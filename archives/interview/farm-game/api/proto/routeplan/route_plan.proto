@@ -1,0 +1,249 @@
+syntax = "proto3";
+
+package farmgame.routeplan;
+
+option go_package = "farmgame/api/gen/routeplan;routeplanpb";
+
+// RoutePlan is an internal control-plane audit/recovery record. It is not a
+// public API and it never carries caller roles, WriterClaims, or secrets.
+enum PlanPhase {
+  PLAN_PHASE_UNSPECIFIED = 0;
+  PLAN_PHASE_PENDING = 1;
+  PLAN_PHASE_DRAINING = 2;
+  PLAN_PHASE_ASSIGNING = 3;
+  PLAN_PHASE_PREPARING = 4;
+  PLAN_PHASE_ACTIVE = 5;
+  PLAN_PHASE_SUCCEEDED = 6;
+  PLAN_PHASE_FAILED = 7;
+  PLAN_PHASE_PAUSED = 8;
+}
+
+enum OperationKind {
+  OPERATION_KIND_UNSPECIFIED = 0;
+  OPERATION_KIND_PLANNED_DRAIN = 1;
+  OPERATION_KIND_CRASH_TAKEOVER = 2;
+}
+
+message AuthorityFence {
+  string holder_id = 1;
+  string holder_boot_id = 2;
+  uint64 assignment_revision = 3;
+  uint64 writer_epoch = 4;
+  uint64 lease_epoch = 5;
+}
+
+message AuthorityView {
+  AuthorityFence fence = 1;
+  string domain = 2;
+  uint32 shard = 3;
+  string state = 4;
+  int64 lease_until_ms = 5;
+  string last_transition_id = 6;
+  int64 last_transition_at_ms = 7;
+}
+
+message HolderView {
+  string domain = 1;
+  string holder_id = 2;
+  string boot_id = 3;
+  string logic_endpoint = 4;
+  string tls_dns_identity = 5;
+  string state = 6;
+  bool process_ready = 7;
+  bool draining = 8;
+  uint32 serving_shard_count = 9;
+  uint64 snapshot_revision = 10;
+  int64 heartbeat_at_ms = 11;
+  int64 lease_until_ms = 12;
+  uint64 sequence = 13;
+  uint32 capacity_weight = 14;
+  string pod_uid = 15;
+  string workload_uid = 16;
+  int32 ordinal = 17;
+  bool deployment_identity_present = 18;
+  string holder_control_endpoint = 19;
+}
+
+message HolderGeneration {
+  string holder_id = 1;
+  string boot_id = 2;
+  string pod_uid = 3;
+  string workload_uid = 4;
+  int32 ordinal = 5;
+  bool deployment_identity_present = 6;
+}
+
+message Plan {
+  string plan_id = 1;
+  string transition_id = 2;
+  string domain = 3;
+  uint32 shard = 4;
+  string source_holder_id = 5;
+  string source_boot_id = 6;
+  string source_endpoint = 7;
+  string target_holder_id = 8;
+  string target_boot_id = 9;
+  string target_endpoint = 10;
+  AuthorityFence expected_source_fence = 11;
+  OperationKind operation = 12;
+  PlanPhase phase = 13;
+  uint64 attempt = 14;
+  uint64 revision = 15;
+  int64 created_at_ms = 16;
+  int64 updated_at_ms = 17;
+  int64 started_at_ms = 18;
+  int64 completed_at_ms = 19;
+  int64 expires_at_ms = 20;
+  string error_code = 21;
+  string checksum_sha256 = 22;
+  int64 requested_ttl_ms = 23;
+  bool takeover_holder_unavailable = 24;
+  bool takeover_lease_expired = 25;
+  HolderGeneration source_generation = 26;
+  HolderGeneration target_generation = 27;
+  string owner_scale_plan_id = 28;
+  int64 owner_retain_until_ms = 29;
+}
+
+message GetPlanRequest {
+  string plan_id = 1;
+}
+
+message GetPlanResponse {
+  Plan plan = 1;
+}
+
+message GetStatusRequest {}
+
+message GetStatusResponse {
+  string controller_id = 1;
+  string boot = 2;
+  string realm = 3;
+  uint64 snapshot_revision = 4;
+  bool ready = 5;
+  repeated Plan incomplete_plans = 6;
+}
+
+message GetSnapshotRequest {}
+
+message GetSnapshotResponse {
+  string schema = 1;
+  string realm = 2;
+  uint64 revision = 3;
+  bytes canonical_json = 4;
+  string checksum_sha256 = 5;
+  string topology_fingerprint = 6;
+  int64 committed_at_ms = 7;
+}
+
+message GetHoldersRequest {
+  string domain = 1;
+}
+
+message GetHoldersResponse {
+  repeated HolderView holders = 1;
+}
+
+message GetShardRequest {
+  string domain = 1;
+  uint32 shard = 2;
+}
+
+message GetShardResponse {
+  string domain = 1;
+  uint32 shard = 2;
+  string snapshot_state = 3;
+  uint64 snapshot_revision = 4;
+  AuthorityView authority = 5;
+  repeated Plan related_plans = 6;
+}
+
+message MoveShardRequest {
+  string plan_id = 1;
+  string transition_id = 2;
+  string domain = 3;
+  uint32 shard = 4;
+  string source_holder_id = 5;
+  string source_boot_id = 6;
+  string source_endpoint = 7;
+  string target_holder_id = 8;
+  string target_boot_id = 9;
+  string target_endpoint = 10;
+  AuthorityFence expected_source_fence = 11;
+  int64 requested_ttl_ms = 12;
+  HolderGeneration source_generation = 13;
+  HolderGeneration target_generation = 14;
+  string owner_scale_plan_id = 15;
+  int64 owner_retain_until_ms = 16;
+}
+
+message MoveShardResponse {
+  Plan plan = 1;
+}
+
+message DrainHolderRequest {
+  string plan_id_prefix = 1;
+  string transition_id_prefix = 2;
+  string domain = 3;
+  string source_holder_id = 4;
+  string source_boot_id = 5;
+  string target_holder_id = 6;
+  string target_boot_id = 7;
+  string target_endpoint = 8;
+  int64 requested_ttl_ms = 9;
+}
+
+message DrainHolderResponse {
+  repeated Plan plans = 1;
+}
+
+message TakeoverAfterExpiryRequest {
+  string plan_id = 1;
+  string transition_id = 2;
+  string domain = 3;
+  uint32 shard = 4;
+  string old_holder_id = 5;
+  string old_boot_id = 6;
+  string target_holder_id = 7;
+  string target_boot_id = 8;
+  string target_endpoint = 9;
+  AuthorityFence expected_source_fence = 10;
+  bool holder_unavailable = 11;
+  bool lease_expired = 12;
+  string evidence = 13;
+  int64 requested_ttl_ms = 14;
+}
+
+message TakeoverAfterExpiryResponse {
+  Plan plan = 1;
+}
+
+message VerifyRequest {
+  string plan_id = 1;
+  string domain = 2;
+  uint32 shard = 3;
+}
+
+message VerifyCheck {
+  string name = 1;
+  bool ok = 2;
+  string error_code = 3;
+}
+
+message VerifyResponse {
+  bool consistent = 1;
+  repeated VerifyCheck checks = 2;
+  Plan plan = 3;
+}
+
+service RoutePlanService {
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+  rpc GetSnapshot(GetSnapshotRequest) returns (GetSnapshotResponse);
+  rpc GetHolders(GetHoldersRequest) returns (GetHoldersResponse);
+  rpc GetShard(GetShardRequest) returns (GetShardResponse);
+  rpc GetPlan(GetPlanRequest) returns (GetPlanResponse);
+  rpc MoveShard(MoveShardRequest) returns (MoveShardResponse);
+  rpc DrainHolder(DrainHolderRequest) returns (DrainHolderResponse);
+  rpc TakeoverAfterExpiry(TakeoverAfterExpiryRequest) returns (TakeoverAfterExpiryResponse);
+  rpc Verify(VerifyRequest) returns (VerifyResponse);
+}

@@ -1,0 +1,23 @@
+{
+  "business_head": "5ce43715363eea4f18e0925b6992429785053261",
+  "checks": {
+    "business_head_is_ancestor": true,
+    "legacy_relationship_files_absent": true,
+    "legacy_relationship_symbols_absent_from_runtime": true,
+    "product_diff_from_comparison_zero": true,
+    "remote_player_mode_structurally_present": true,
+    "verification_diff_is_test_only": true
+  },
+  "comparison_head": "0187051be5a65bed470765f46c81c3d7e122d923",
+  "deleted_contract_count": 19,
+  "evidence_sha256": "4f16992a6560cb2ab727a6c61e4380b1d673a72cd0b047352e592e16ed95c0dc",
+  "legacy_relationship_read_total": 0,
+  "legacy_relationship_write_total": 0,
+  "product_diff_names": [],
+  "schema_version": "cap-redis-l1-r2.static-qualification.v1",
+  "unexpected_present_paths": [],
+  "unexpected_runtime_matches": [],
+  "verdict": "PASS",
+  "verification_head": "bcdea2d766bf381915a7a73ea8c16d601f726f51",
+  "verification_out_of_scope": []
+}

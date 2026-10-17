@@ -1,0 +1,44 @@
+File: farm-svr
+Build ID: ffca9b336f4ed02ff98b4a0969503ed0381e1583
+Type: cpu
+Time: 2026-08-18 13:51:05 CST
+Duration: 30s, Total samples = 12.07s (40.23%)
+Showing nodes accounting for 6.87s, 56.92% of 12.07s total
+Dropped 792 nodes (cum <= 0.06s)
+Showing top 35 nodes out of 344
+      flat  flat%   sum%        cum   cum%
+     2.79s 23.12% 23.12%      2.79s 23.12%  internal/runtime/syscall/linux.Syscall6
+     0.77s  6.38% 29.49%      0.77s  6.38%  runtime.futex
+     0.38s  3.15% 32.64%      0.38s  3.15%  runtime.memmove
+     0.25s  2.07% 34.71%      0.25s  2.07%  runtime.nextFreeFast (inline)
+     0.23s  1.91% 36.62%      0.23s  1.91%  runtime.memclrNoHeapPointers
+     0.23s  1.91% 38.53%      0.41s  3.40%  runtime.scanObject
+     0.14s  1.16% 39.69%      0.14s  1.16%  runtime.spanClass.sizeclass (inline)
+     0.13s  1.08% 40.76%      0.13s  1.08%  runtime.nanotime (inline)
+     0.12s  0.99% 41.76%      0.12s  0.99%  runtime.extractHeapBitsSmall
+     0.12s  0.99% 42.75%      0.14s  1.16%  runtime.step
+     0.11s  0.91% 43.66%      0.11s  0.91%  internal/runtime/maps.ctrlGroup.matchH2
+     0.11s  0.91% 44.57%      1.28s 10.60%  runtime.mallocgc
+     0.10s  0.83% 45.40%      0.45s  3.73%  runtime.newobject
+     0.10s  0.83% 46.23%      0.27s  2.24%  runtime.pcvalue
+     0.09s  0.75% 46.98%      0.09s  0.75%  aeshashbody
+     0.09s  0.75% 47.72%      0.22s  1.82%  runtime.selectgo
+     0.09s  0.75% 48.47%      0.09s  0.75%  runtime.typePointers.nextFast (inline)
+     0.08s  0.66% 49.13%      0.20s  1.66%  runtime.(*stkframe).getStackMap
+     0.07s  0.58% 49.71%      0.07s  0.58%  runtime.findObject
+     0.07s  0.58% 50.29%      1.14s  9.44%  runtime.findRunnable
+     0.07s  0.58% 50.87%      0.15s  1.24%  runtime.scanObjectSmall
+     0.07s  0.58% 51.45%      0.36s  2.98%  runtime.scanObjectsSmall
+     0.07s  0.58% 52.03%      0.07s  0.58%  time.runtimeNow
+     0.06s   0.5% 52.53%      0.11s  0.91%  google.golang.org/protobuf/internal/impl.(*MessageInfo).sizePointerSlow
+     0.06s   0.5% 53.02%      0.23s  1.91%  google.golang.org/protobuf/internal/impl.(*MessageInfo).unmarshalPointerEager
+     0.06s   0.5% 53.52%      0.07s  0.58%  runtime.(*mspan).writeHeapBitsSmall
+     0.06s   0.5% 54.02%      0.21s  1.74%  runtime.(*unwinder).resolveInternal
+     0.06s   0.5% 54.52%      0.07s  0.58%  runtime.lock2
+     0.06s   0.5% 55.01%      0.08s  0.66%  runtime.unlock2
+     0.05s  0.41% 55.43%      0.31s  2.57%  google.golang.org/protobuf/internal/impl.(*messageState).Range
+     0.05s  0.41% 55.84%      0.63s  5.22%  runtime.mallocgcSmallScanNoHeader
+     0.04s  0.33% 56.17%      0.29s  2.40%  runtime.adjustframe
+     0.03s  0.25% 56.42%      0.82s  6.79%  google.golang.org/grpc/internal/transport.(*http2Server).HandleStreams
+     0.03s  0.25% 56.67%      0.09s  0.75%  google.golang.org/protobuf/internal/impl.fieldInfoForScalar.func1
+     0.03s  0.25% 56.92%      0.10s  0.83%  google.golang.org/protobuf/proto.mergeOptions.mergeMessage

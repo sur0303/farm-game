@@ -1,0 +1,7 @@
+2026/08/05 20:21:07 permit secret policy=authority insecure_development=false development_switch=false
+2026/08/05 20:21:07 farm-svr using persistent Redis legacy friend store plus real Friendship Pair/Quota/Share repositories
+2026/08/05 20:21:07 farm-svr authority mode enabled holder=theft-hot-baseline-farm boot=theft-hot-baseline-farm-20260805T122000Z snapshot=/tmp/theft-hot-baseline.DcWQRu/route.json
+2026/08/05 20:21:07 GateBootReaper mode=disabled; subscription lifecycle owned by BatchRenew leases (contract 26 section 11.5)
+2026/08/05 20:21:07 using routed player participants across 1 endpoints
+2026/08/05 20:21:07 using single farm-gate downlink at 127.0.0.1:32932
+2026/08/05 20:21:07 farm-svr listening on 127.0.0.1:37924, version=0.0.0-dev

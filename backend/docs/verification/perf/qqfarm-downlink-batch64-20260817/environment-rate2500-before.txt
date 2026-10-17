@@ -1,0 +1,22 @@
+=== pods rate2500-before ===
+farm-gate-577f645cd8-n8gkf          1/1     Running     0          92s     198.18.0.139     198.18.0.140    <none>           <none>
+farm-svr-0                          1/1     Running     0          5m25s   198.18.0.141   198.18.0.77   <none>           <none>
+farm-worker-a-8c9dcbf44-4kncl       1/1     Running     0          119s    198.18.0.142    198.18.0.24    <none>           <none>
+farm-worker-b-5fdcbff857-b8njs      1/1     Running     0          119s    198.18.0.143     198.18.0.144    <none>           <none>
+player-svr-0                        1/1     Running     0          5m25s   198.18.0.145    198.18.0.63    <none>           <none>
+route-controller-7555ccf646-fz5bg   1/1     Running     0          103s    198.18.0.146    198.18.0.63    <none>           <none>
+=== restarts ===
+farm-gate-577f645cd8-n8gkf r=0 ready=True
+farm-svr-0 r=0 ready=True
+farm-worker-a-8c9dcbf44-4kncl r=0 ready=True
+farm-worker-b-5fdcbff857-b8njs r=0 ready=True
+player-svr-0 r=0 ready=True
+route-controller-7555ccf646-fz5bg r=0 ready=True
+=== top ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-577f645cd8-n8gkf          20m          14Mi            
+farm-svr-0                          3m           21Mi            
+farm-worker-a-8c9dcbf44-4kncl       43m          16Mi            
+farm-worker-b-5fdcbff857-b8njs      29m          16Mi            
+player-svr-0                        3m           18Mi            
+route-controller-7555ccf646-fz5bg   7m           15Mi            

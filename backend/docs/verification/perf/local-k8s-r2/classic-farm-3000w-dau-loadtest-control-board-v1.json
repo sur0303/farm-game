@@ -1,0 +1,155 @@
+{
+  "schema": "classic-farm-3000w.control-board.v1",
+  "board_id": "classic-farm-3000w-local-kind-20260811",
+  "plan": {
+    "path": "docs/verification/perf/local-k8s-r2/classic-farm-3000w-dau-loadtest-plan-v1.1.md",
+    "version": "v1.1",
+    "sha256": "5936653b68872a8cebfb1ad3c667328bb1e60982583be006081972e5dde492c5"
+  },
+  "execution_state": {
+    "path": "docs/verification/perf/local-k8s-r2/classic-farm-3000w-dau-loadtest-execution-state-20260811.md",
+    "source_head_when_created": "0fe5fba8eb9668e384a9d3e25ce740fa88635394"
+  },
+  "policy": {
+    "formal_runs_serial": true,
+    "run_id_reuse": false,
+    "failed_attempts_immutable": true,
+    "missing_evidence": "NOT_MEASURED_NOT_PASS",
+    "network_policy_enforcement": "NOT_CLAIMED",
+    "secret_values_stored": false,
+    "subagent": "cursor-grok-4.5-high-fast-only"
+  },
+  "active_run_lock": null,
+  "current_action": {
+    "phase": "P-1",
+    "checkpoint": "CP-FRIEND-OPPORTUNITY-DYNAMIC-CONVERGENCE",
+    "attempt_name": "backend-862fef10-capacity-1c055cdc-h5-787dc00-from-r7",
+    "candidate": {
+      "backend_merge_head": "862fef100de0dfc3b00c91613fd6dcc007ddc81a",
+      "backend_tree": "6572b235da13e201d72c4728d0deaf960e4d781d",
+      "dynamic_r7_parent": "03efc75d6b77e4dc328ea103573af8a29468d152",
+      "capacity_parent": "1c055cdcbfb5cfaa788b47003bea728d277f321f",
+      "h5_source_head": "787dc00d100cddafa622bcec3d0fffbd3babf2e3",
+      "h5_image_binding": "NOT_BOUND"
+    },
+    "backend_merge_verification": {
+      "status": "PASS",
+      "go_test_all": "PASS",
+      "go_vet_all": "PASS",
+      "focused_race": "PASS",
+      "local_k8s_tool_tests": "PASS",
+      "compose_fallback_render": "PASS",
+      "independent_review_findings": {
+        "p0": 0,
+        "p1": 0,
+        "p2": 0
+      }
+    },
+    "status": "IN_PROGRESS",
+    "formal_run_started": false
+  },
+  "prior_failures": [
+    {
+      "run_id": "dyn-g123-r1-20260811",
+      "status": "FAIL",
+      "receipt": "/data/farm-l2-r2/receipts/dynamic-route-apply-dyn-g123-r1-20260811.json",
+      "receipt_sha256": "b436ea26ba8ca49276050b93719f2fd9a9c94caee17d34959dcbc0077ab6f5d1",
+      "reusable": false
+    },
+    {
+      "run_id": "dyn-g123-r2-20260811",
+      "status": "FAIL",
+      "receipt": "/data/farm-l2-r2/receipts/dynamic-route-apply-dyn-g123-r2-20260811.json",
+      "receipt_sha256": "21277db008eaf17c02244f9721d4c5d4fe56997ce8da3da575697380edec6fc4",
+      "failure_stage": "zero_shard_runtime_startup",
+      "reusable": false
+    },
+    {
+      "run_id": "dyn-g123-r3-20260811",
+      "status": "FAIL",
+      "receipt": "/data/farm-l2-r2/receipts/dynamic-route-apply-dyn-g123-r3-20260811.json",
+      "receipt_sha256": "832575c99c4d3e0c2d7e2505f8d201e29d40f9f6d326e897260ab686b4a2bf68",
+      "diagnostic_receipt_sha256": "1cf309fcc0f31b31a303186eb4e30c5a7574a14a9a4019ddb9449b2f9d8ee2b5",
+      "failure_stage": "final_route_verification",
+      "reusable": false
+    },
+    {
+      "run_id": "dyn-g123-r4-20260811",
+      "status": "FAIL",
+      "receipt": "/data/farm-l2-r2/receipts/dynamic-route-apply-dyn-g123-r4-20260811.json",
+      "receipt_sha256": "50df8404d86f5e60791ed45d3e60922777426527496e7fd7116cfe25c4624409",
+      "diagnostic_receipt_sha256": "8935635fdd96c1239c51d64fc1242eb42fcd599c7d883b27318aaea59cfec0fc",
+      "failure_stage": "business_startup",
+      "reusable": false
+    },
+    {
+      "run_id": "dyn-g123-r5-20260811",
+      "status": "FAIL",
+      "receipt": "/data/farm-l2-r2/receipts/dynamic-route-apply-dyn-g123-r5-20260811.json",
+      "receipt_sha256": "f3f2f334d9accfa693190fb66b0b8540fca51f0f237abb0ef0c9dc0f9eddc8c7",
+      "diagnostic_receipt_sha256": "0acd0924a96379a1f6bdac00f2bc7f16de4b130d0256e1ba42c2478d17b3b54f",
+      "failure_stage": "final_controller_startup",
+      "reusable": false
+    },
+    {
+      "run_id": "dyn-g123-r6-20260811",
+      "status": "FAIL",
+      "receipt": "/data/farm-l2-r2/receipts/dynamic-route-apply-dyn-g123-r6-20260811.json",
+      "receipt_sha256": "1140a2df06b5c922dbfa20ab5f423469259dca3ca51dafda9001b684516ccd22",
+      "diagnostic_receipt_sha256": "867bb44789109147c6dade4a503276f332953e48834c8aec98fd21b2d3d64ff1",
+      "failure_stage": "final_controller_startup",
+      "reusable": false
+    }
+  ],
+  "successful_baselines": [
+    {
+      "run_id": "dyn-g123-r7-20260811",
+      "source_head": "13e5b690c5c9eae0e07b8e853557e4309d9c2704",
+      "status": "P2_PASS_BASIC_INFRASTRUCTURE_G1_PASS_NOT_FINAL_PRODUCT_G1",
+      "apply_receipt_sha256": "27b3d6d7b9d527b6f26625563ca5103575be679977764281cf42e4757e54e1ac",
+      "basic_g1_receipt_sha256": "3c8a0695b28a830ef16be8d40c6049e1661c81722244cee9ec866bc9002098e7",
+      "redis_namespace_environment": "dyng123r720260811",
+      "reusable": false
+    }
+  ],
+  "items": {
+    "P-2": {"checkpoint": "CP-DYNAMIC-R2-BOOTSTRAP", "status": "PASS", "requires": []},
+    "P-1": {"checkpoint": "CP-FRIEND-OPPORTUNITY-DYNAMIC-CONVERGENCE", "status": "IN_PROGRESS", "requires": ["P-2"]},
+    "P0-G1": {"checkpoint": "CP-G1-REMOTE-WATCH", "status": "BLOCKED", "requires": ["P-1"]},
+    "P0-G2": {"checkpoint": "CP-G2-PLANNED-MIGRATION", "status": "BLOCKED", "requires": ["P0-G1"]},
+    "P0-G3": {"checkpoint": "CP-G3-CRASH-TAKEOVER", "status": "BLOCKED", "requires": ["P0-G2"]},
+    "P0": {"checkpoint": "CP-ROUTE-CONTROL-MVP", "status": "BLOCKED", "requires": ["P0-G1", "P0-G2", "P0-G3"]},
+    "P1": {"checkpoint": "CP-LOAD-TOOLS-QUALIFIED", "status": "NOT_RUN", "requires": ["P0"]},
+    "P2": {"checkpoint": "CP-FULL-PRODUCT-FUNCTIONAL", "status": "BLOCKED", "requires": ["P0", "P1"]},
+    "P3": {"checkpoint": "SINGLE-LINK-BASELINES", "status": "BLOCKED", "requires": ["P2"]},
+    "P4": {"checkpoint": "CP-SINGLE-POD-CAPACITY", "status": "BLOCKED", "requires": ["P3"]},
+    "P5": {"checkpoint": "SCALE-EFFICIENCY", "status": "BLOCKED", "requires": ["P4"]},
+    "P6": {"checkpoint": "CP-HOT-FARM-200", "status": "BLOCKED", "requires": ["P5"]},
+    "P7": {"checkpoint": "CP-DYNAMIC-FAULT-UNDER-LOAD", "status": "BLOCKED", "requires": ["P6"]},
+    "P8": {"checkpoint": "CP-LOCAL-SOAK", "status": "BLOCKED", "requires": ["P7"]},
+    "P9": {"checkpoint": "CP-30M-DAU-CAPACITY-MODEL", "status": "BLOCKED", "requires": ["P8"]},
+    "T0": {"status": "NOT_RUN"},
+    "T1": {"status": "NOT_RUN"},
+    "T2": {"status": "NOT_RUN"},
+    "T3": {"status": "NOT_RUN"},
+    "T4": {"status": "NOT_RUN"},
+    "T5": {"status": "NOT_RUN"},
+    "T6": {"status": "NOT_RUN"},
+    "T7": {"status": "NOT_RUN"},
+    "T8": {"status": "NOT_RUN"},
+    "T9": {"status": "NOT_RUN"},
+    "T10": {"status": "NOT_RUN"},
+    "T11": {"status": "NOT_RUN"},
+    "T12": {"status": "NOT_RUN"},
+    "T13": {"status": "NOT_RUN"},
+    "T14": {"status": "NOT_RUN"},
+    "T15": {"status": "NOT_RUN"},
+    "T16": {"status": "NOT_RUN"},
+    "T17": {"status": "NOT_RUN"}
+  },
+  "claims": {
+    "capacity_qualification": "NOT_CLAIMED",
+    "public_web_tls": "NOT_CLAIMED",
+    "supports_30m_dau": "NOT_CLAIMED"
+  }
+}

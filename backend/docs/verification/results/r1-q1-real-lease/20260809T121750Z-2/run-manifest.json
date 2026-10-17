@@ -1,0 +1,33 @@
+{
+  "assembly_manifest_generated_before_start": true,
+  "assembly_reason": "loopback socket unavailable during dynamic port allocation",
+  "assembly_status": "INCONCLUSIVE",
+  "branch": "codex/r1-q1-real-lease-evidence-20260809",
+  "lease_config": {},
+  "r1_4_commit": "1ec3dcd166a7449b40aa934ee7324154474b3c05",
+  "r1_4_production_tree_exact": true,
+  "redis_endpoint_digest": {
+    "algorithm": "sha256",
+    "canonical_fields": [
+      "scheme",
+      "host",
+      "port",
+      "db"
+    ],
+    "digest": "0928c3437dc85326e60d5fc3df860289899f552ab747ff0805adc71168f0fbd1"
+  },
+  "redis_password_recorded": false,
+  "redis_url_recorded": false,
+  "rounds": {
+    "a": {
+      "minimum_cycles": 20,
+      "subscriptions": 200
+    },
+    "b": {
+      "subscriptions": 20
+    }
+  },
+  "run_id": "20260809T121750Z-2",
+  "schema_version": "r1-q1-real-lease-run-manifest/v1",
+  "source_head": "1ec3dcd166a7449b40aa934ee7324154474b3c05"
+}

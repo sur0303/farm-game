@@ -1,0 +1,8 @@
+{
+  "schema_version": "cap-l2-driver-config.v1",
+  "listen": "127.0.0.1:19101",
+  "service": "gate",
+  "profile": "GATE_LEGAL_ADAPTER_PENDING",
+  "maximum_inflight": 15000,
+  "adapter": "design_blocker"
+}

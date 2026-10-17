@@ -1,0 +1,264 @@
+#!/usr/bin/env bash
+# HC-ACCESS-19 real-process E2E: two farm-gate processes share the company
+# persistent Redis SessionAuthority. Player activates on gate A, re-activates
+# through gate B (顶号), gate B issues a cross-gate KickSession over
+# GateControlService, the stale connection on A rejects further commands, and
+# A's delayed disconnect must not delete B's SessionRoute / FarmPresence.
+#
+# Topology (all loopback, per-run Redis prefixes):
+#   player-svr 127.0.0.1:19600 (health 19601)
+#   farm-svr  127.0.0.1:19500 (health 19501)
+#     GATEWAY_DOWNLINK_ROUTES=gate-a=127.0.0.1:19592,gate-b=127.0.0.1:19594
+#   gate-a    http 127.0.0.1:18500, downlink 19592, GateControl 19593
+#   gate-b    http 127.0.0.1:18501, downlink 19594, GateControl 19595
+#     GATE_CONTROL_TARGETS=gate-a=127.0.0.1:19593,gate-b=127.0.0.1:19595
+set -euo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+REDIS_CONFIG="${FARM_REDIS_CONFIG:-$ROOT_DIR/deploy/secrets/redis.conf.local}"
+BUILD_CACHE="${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache}"
+run_id="$(date +%s%N)-$$"
+run_prefix="farm:test:dualgate:${run_id}"
+if [[ -n "${DUALGATE_DEMO_PLAYER_ID:-}" ]]; then
+  demo_player_id="$DUALGATE_DEMO_PLAYER_ID"
+  cleanup_session=false
+  echo "warning: custom demo player requested; canonical session keys will be left for TTL expiry" >&2
+else
+  now_ns="$(date +%s%N)"
+  demo_player_id="$((700000000000000 + now_ns % 100000000000000))"
+  cleanup_session=true
+fi
+
+if [[ ! -f "$REDIS_CONFIG" ]]; then
+  echo "missing Redis config: $REDIS_CONFIG" >&2
+  exit 2
+fi
+if [[ ! "$demo_player_id" =~ ^[1-9][0-9]*$ ]]; then
+  echo "DUALGATE_DEMO_PLAYER_ID must be a positive decimal integer" >&2
+  exit 2
+fi
+
+read_config_value() {
+  local key="$1"
+  sed -n -E "s/^[[:space:]]*${key}:[[:space:]]*(.*[^[:space:]])[[:space:]]*$/\\1/p" "$REDIS_CONFIG" | head -n 1
+}
+
+uri_encode() {
+  local input="$1"
+  local output=""
+  local char encoded index
+  LC_ALL=C
+  for ((index = 0; index < ${#input}; index++)); do
+    char="${input:index:1}"
+    case "$char" in
+      [a-zA-Z0-9.~_-]) output+="$char" ;;
+      *) printf -v encoded '%%%02X' "'$char"; output+="$encoded" ;;
+    esac
+  done
+  printf '%s' "$output"
+}
+
+redis_host=$(read_config_value host)
+redis_port=$(read_config_value port)
+redis_password=$(read_config_value password)
+redis_db=$(read_config_value db)
+redis_db="${redis_db:-0}"
+if [[ -z "$redis_host" || -z "$redis_port" || -z "$redis_password" ]]; then
+  echo "Redis config must contain host, port and password" >&2
+  exit 2
+fi
+redis_url="redis://:$(uri_encode "$redis_password")@${redis_host}:${redis_port}/${redis_db}"
+
+tmp_dir=$(mktemp -d)
+keep_tmp="${DUALGATE_KEEP_TMP:-0}"
+player_pid=""
+farm_pid=""
+gate_a_pid=""
+gate_b_pid=""
+cleanup() {
+  for pid in "$gate_b_pid" "$gate_a_pid" "$farm_pid" "$player_pid"; do
+    if [[ -n "$pid" ]]; then kill "$pid" 2>/dev/null || true; fi
+  done
+  for pid in "$gate_b_pid" "$gate_a_pid" "$farm_pid" "$player_pid"; do
+    if [[ -n "$pid" ]]; then wait "$pid" 2>/dev/null || true; fi
+  done
+  if [[ "$keep_tmp" == "1" ]]; then
+    echo "kept tmp dir for inspection: $tmp_dir" >&2
+  else
+    rm -rf "$tmp_dir"
+  fi
+}
+trap cleanup EXIT INT TERM
+
+wait_ready() {
+  local endpoint="$1"
+  local service="$2"
+  local log_file="$3"
+  for _ in $(seq 1 80); do
+    if curl -fsS "$endpoint" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 0.25
+  done
+  echo "$service did not become ready at $endpoint" >&2
+  tail -n 25 "$log_file" >&2 || true
+  return 1
+}
+
+# wait_tcp 等待 gRPC 端口真正接受 TCP 连接。HTTP /readyz 先于 downlink
+# 监听器绑定完成,抢先跑驱动会让首个 FARM_SNAPSHOT DeliverBatch 打到未就绪
+# 端口,delivery fail-closed 直接把 PendingJoin 判成 REJOIN_REQUIRED。
+wait_tcp() {
+  local port="$1"
+  local name="$2"
+  for _ in $(seq 1 80); do
+    if (echo >/dev/tcp/127.0.0.1/"$port") 2>/dev/null; then
+      return 0
+    fi
+    sleep 0.25
+  done
+  echo "$name port $port did not accept TCP" >&2
+  return 1
+}
+
+mkdir -p "$BUILD_CACHE"
+for service in player-svr farm-svr farm-gate dualgate-e2e; do
+  GOCACHE="$BUILD_CACHE" CGO_ENABLED=0 go build -trimpath -o "$tmp_dir/$service" "./cmd/$service"
+done
+
+# All isolated processes sign and verify permits with this test-only value.
+PERMIT_SECRET_VALUE="${PERMIT_SECRET:-$(openssl rand -hex 32)}"
+
+PLAYER_LISTEN=127.0.0.1:19600 \
+PLAYER_HEALTH_LISTEN=127.0.0.1:19601 \
+FARM_REDIS_URL="$redis_url" \
+PLAYER_STORE_PREFIX="${run_prefix}:player" \
+PERMIT_SECRET="$PERMIT_SECRET_VALUE" \
+"$tmp_dir/player-svr" >"$tmp_dir/player.log" 2>&1 &
+player_pid=$!
+
+wait_ready http://127.0.0.1:19601/readyz player-svr "$tmp_dir/player.log"
+
+# W5B 租约:缩短 TTL,使 farm-svr 重启(Hub 内存态重建)在秒级内触发
+# NOT_FOUND -> REJOIN_REQUIRED -> Fresh Join 完整链路。
+# DUALGATE_REAPER_MODE=disabled 时验证 GateBoot 退役:订阅生命周期完全由
+# 逐订阅续租 + 精确断开清理承担(决策 1)。
+start_farm() {
+  FARM_LISTEN=127.0.0.1:19500 \
+  FARM_HEALTH_LISTEN=127.0.0.1:19501 \
+  PLAYER_ADDR=127.0.0.1:19600 \
+  GATEWAY_DOWNLINK_ROUTES=gate-a=127.0.0.1:19592,gate-b=127.0.0.1:19594 \
+  FARM_REDIS_URL="$redis_url" \
+  FARM_STORE_PREFIX="${run_prefix}:farm" \
+  WORKFLOW_STORE_PREFIX="${run_prefix}:workflow" \
+  FARM_CROP_MATURE_AFTER=10s \
+  FARM_SUBSCRIPTION_LEASE_INITIAL_TTL=5s \
+  FARM_SUBSCRIPTION_LEASE_MAX_EXTENSION=5s \
+  GATE_BOOT_REAPER_MODE="${DUALGATE_REAPER_MODE:-enabled}" \
+  PERMIT_SECRET="$PERMIT_SECRET_VALUE" \
+  "$tmp_dir/farm-svr" >>"$tmp_dir/farm.log" 2>&1 &
+  echo "$!"
+}
+farm_pid="$(start_farm)"
+
+wait_ready http://127.0.0.1:19501/readyz farm-svr "$tmp_dir/farm.log"
+
+start_gate() {
+  local gateway_id="$1"
+  local http_port="$2"
+  local downlink_port="$3"
+  local control_port="$4"
+  local log_file="$5"
+  GATEWAY_LISTEN="127.0.0.1:${http_port}" \
+  GATEWAY_DOWNLINK_LISTEN="127.0.0.1:${downlink_port}" \
+  GATE_CONTROL_LISTEN="127.0.0.1:${control_port}" \
+  GATE_CONTROL_TARGETS="gate-a=127.0.0.1:19593,gate-b=127.0.0.1:19595" \
+  GATEWAY_ID="$gateway_id" \
+  GATE_TRANSPORT=websocket \
+  GATE_WS_PATH=/ws \
+  PLAYER_ADDR=127.0.0.1:19600 \
+  FARM_ADDR=127.0.0.1:19500 \
+  LOGIC_HEALTH_ADDR=http://127.0.0.1:19501 \
+  FARM_REDIS_URL="$redis_url" \
+  SHARE_STORE_PREFIX="${run_prefix}:share" \
+  WEB_ACCOUNT_STORE_PREFIX="${run_prefix}:web-account" \
+  DEMO_PLATFORM_TOKEN=dualgate-platform-token \
+  DEMO_PLAYER_ID="$demo_player_id" \
+  PERMIT_SECRET="$PERMIT_SECRET_VALUE" \
+  HTTP_SESSION_TTL=2h \
+  GATEWAY_TICKET_TTL=60s \
+  GATE_ROUTE_LEASE_TTL=30s \
+  GATE_SUBSCRIPTION_LEASE_TTL=5s \
+  GATE_SUBSCRIPTION_LEASE_RENEW_INTERVAL=1s \
+  GATE_SUBSCRIPTION_LEASE_RENEW_TIMEOUT=2s \
+  GATE_WS_METRICS=0 \
+  WSS_ENDPOINT="ws://127.0.0.1:${http_port}/ws" \
+  "$tmp_dir/farm-gate" >"$log_file" 2>&1 &
+  echo "$!"
+}
+
+gate_a_pid=$(start_gate gate-a 18500 19592 19593 "$tmp_dir/gate-a.log")
+gate_b_pid=$(start_gate gate-b 18501 19594 19595 "$tmp_dir/gate-b.log")
+
+wait_ready http://127.0.0.1:18500/readyz gate-a "$tmp_dir/gate-a.log"
+wait_ready http://127.0.0.1:18501/readyz gate-b "$tmp_dir/gate-b.log"
+
+# downlink gRPC 端口必须先于驱动就绪(见 wait_tcp 注释)。
+wait_tcp 19592 gate-a-downlink
+wait_tcp 19594 gate-b-downlink
+
+echo "dual-gate topology up: player-svr=19600 farm-svr=19500 gate-a=18500(dl=19592,ctl=19593) gate-b=18501(dl=19594,ctl=19595) player=${demo_player_id}"
+
+set +e
+FARM_REDIS_URL="$redis_url" "$tmp_dir/dualgate-e2e" \
+  -gate-a-http http://127.0.0.1:18500 -gate-a-ws ws://127.0.0.1:18500/ws \
+  -gate-b-http http://127.0.0.1:18501 -gate-b-ws ws://127.0.0.1:18501/ws \
+  -platform-token dualgate-platform-token \
+  -expected-player-id "$demo_player_id" \
+  -redis-cleanup-prefix "$run_prefix" \
+  -cleanup-session="$cleanup_session" \
+  >"$tmp_dir/e2e.log" 2>&1 &
+e2e_pid=$!
+
+# W5B Fresh Join 编排:驱动完成步骤 1~7 后打印 REJOIN_SCENARIO_ARMED,
+# 此时重启 farm-svr,Hub 内存态重建使续租返回 NOT_FOUND,
+# Gate 投递 REJOIN_REQUIRED,驱动完成 Fresh Join 并退出。
+armed=0
+for _ in $(seq 1 240); do
+  if grep -q "REJOIN_SCENARIO_ARMED" "$tmp_dir/e2e.log" 2>/dev/null; then
+    armed=1
+    break
+  fi
+  if ! kill -0 "$e2e_pid" 2>/dev/null; then
+    break
+  fi
+  sleep 0.25
+done
+if [[ "$armed" == "1" ]]; then
+  echo "rejoin scenario armed; restarting farm-svr to rebuild the Holder-side Hub"
+  kill "$farm_pid" 2>/dev/null || true
+  wait "$farm_pid" 2>/dev/null || true
+  farm_pid="$(start_farm)"
+  wait_ready http://127.0.0.1:19501/readyz farm-svr-restart "$tmp_dir/farm.log"
+fi
+
+wait "$e2e_pid"
+e2e_status=$?
+set -e
+cat "$tmp_dir/e2e.log"
+
+echo "----- gate-a evidence (kick/stale) -----"
+grep -E 'handle:|KICK|kick|stale|unauthenticated' "$tmp_dir/gate-a.log" | tail -n 10 || true
+echo "----- gate-b evidence -----"
+grep -E 'GateControl|kick|KickOld' "$tmp_dir/gate-b.log" | tail -n 10 || true
+
+if [[ "$e2e_status" -ne 0 ]]; then
+  echo "dual-gate KICK E2E FAILED; last log lines:" >&2
+  tail -n 25 "$tmp_dir/gate-a.log" >&2 || true
+  tail -n 25 "$tmp_dir/gate-b.log" >&2 || true
+  tail -n 25 "$tmp_dir/farm.log" >&2 || true
+  tail -n 25 "$tmp_dir/player.log" >&2 || true
+  exit "$e2e_status"
+fi
+
+echo "HC-ACCESS-19 dual-gate E2E passed (v3 wire): A activate -> v3 join -> B takeover -> cross-gate KICK -> stale reject -> old-disconnect safe -> W5B lease REJOIN_REQUIRED -> Fresh Join"

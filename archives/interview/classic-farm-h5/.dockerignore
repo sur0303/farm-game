@@ -1,0 +1,13 @@
+node_modules
+dist
+playwright-report
+test-results
+.git
+# Deny all environment files by default. Only reviewed, non-secret mode
+# contracts are explicitly allowed into the build context below.
+.env*
+!.env.example
+!.env.mock
+!.env.staging
+!.env.wechat
+!.env.web

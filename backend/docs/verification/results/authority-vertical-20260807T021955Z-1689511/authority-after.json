@@ -1,0 +1,66 @@
+{
+  "audited_at": "2026-08-07T02:20:22Z",
+  "authority": {
+    "farm": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-farm-20260807T021955Z-1689511",
+        "holder_instance_id": "smoke-farm",
+        "last_transition_at_ms": "1786069202228",
+        "last_transition_digest": "0f200de86dd190c45acad8a951b17dc68a355fb95a9f35ee9b39cb627c90816b",
+        "last_transition_id": "claim-FARM-20260807T021955Z-1689511",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786069272266",
+        "lease_state": "ACTIVE",
+        "route_domain": "FARM",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260807t021955z-1689511:local:auth:farm:v1:s:0}:shard-authority"
+    },
+    "player": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-player-20260807T021955Z-1689511",
+        "holder_instance_id": "smoke-player",
+        "last_transition_at_ms": "1786069202228",
+        "last_transition_digest": "0cee404cf3f191e3b781095b477414010dcb4fdbb016d1d1659c754711f2c263",
+        "last_transition_id": "claim-PLAYER-20260807T021955Z-1689511",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786069272256",
+        "lease_state": "ACTIVE",
+        "route_domain": "PLAYER",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260807t021955z-1689511:local:auth:player:v1:s:0}:shard-authority"
+    }
+  },
+  "protocol_verdict": {
+    "finished_at": "2026-08-07T02:20:22Z",
+    "frames": 3,
+    "steps": {
+      "hello": {
+        "status": "ok"
+      },
+      "join": {
+        "detail": "join read: websocket: close 1006 (abnormal closure): unexpected EOF",
+        "status": "fail"
+      },
+      "login": {
+        "status": "ok"
+      },
+      "register": {
+        "status": "ok"
+      }
+    },
+    "verdict": "FAIL"
+  },
+  "route_snapshot_sha256": "41a"
+}

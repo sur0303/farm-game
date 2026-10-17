@@ -1,0 +1,569 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import fcntl
+import importlib.machinery
+import importlib.util
+import json
+import os
+import re
+import subprocess
+import sys
+import tempfile
+import time
+from pathlib import Path
+
+sys.dont_write_bytecode = True
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+LOADER = importlib.machinery.SourceFileLoader(
+    "verify_dynamic_final_g1_for_g2",
+    str(SCRIPT_DIR / "verify-dynamic-final-g1"),
+)
+SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
+G1 = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = G1
+LOADER.exec_module(G1)
+
+DOMAINS = ("PLAYER", "FARM", "FARM_WORKER")
+SHARD = 0
+STEPS = 3
+H5_EVIDENCE_LABEL = "final-g2-post-migration"
+
+
+def diagnostic_mode(arguments: list[str]) -> bool:
+    if not arguments:
+        return False
+    if arguments == ["--diagnostic"]:
+        return True
+    raise SystemExit(
+        "usage: verify-dynamic-g2-planned-migration [--diagnostic]"
+    )
+
+
+def route_coherent(snapshot: dict, consumers: dict) -> bool:
+    revision = int(snapshot.get("revision", 0))
+    if revision <= 0:
+        return False
+    worker_count = 0
+    worker_owned_shards = 0
+    for value in consumers.values():
+        if value["revision"] != revision:
+            return False
+        if value["app"].startswith("farm-worker-") and (
+            value["worker_assignment_revision"] != revision
+            or value["worker_owned_shards"] < 0
+            or value["worker_assignment_ready"] != 1
+            or value["readyz"].get("ready") is not True
+            or value["readyz"].get("route_projection_fresh") is not True
+        ):
+            return False
+        if value["app"].startswith("farm-worker-"):
+            worker_count += 1
+            worker_owned_shards += int(value["worker_owned_shards"])
+        route_runtime = value["readyz"].get("route_runtime")
+        if route_runtime is not None and (
+            route_runtime.get("snapshot_revision") != revision
+            or route_runtime.get("assignment_state") != "WATCHING"
+            or route_runtime.get("assignment_healthy") is not True
+            or route_runtime.get("process_ready") is not True
+        ):
+            return False
+    farm_worker = snapshot.get("canonical_json", {}).get(
+        "farm_worker",
+        {},
+    )
+    expected_worker_shards = int(farm_worker.get("shard_count", 0))
+    return (
+        worker_count == 2
+        and expected_worker_shards > 0
+        and worker_owned_shards == expected_worker_shards
+    )
+
+
+def route_identity(snapshot: dict, domain: str, shard: int) -> dict:
+    key = domain.lower()
+    table = snapshot["canonical_json"][key]
+    route = table["routes"][shard]
+    holder = snapshot["canonical_json"]["holders"][route["holder_index"]]
+    return {
+        "holder_id": holder["instance_id"],
+        "holder_boot_id": holder["boot_id"],
+        "endpoint": holder["endpoint"],
+        "state": route["state"],
+        "assignment_revision": int(route["shard_revision"]),
+        "writer_epoch": int(route["expected_writer_epoch"]),
+        "lease_epoch": int(route["expected_lease_epoch"]),
+        "lease_until_ms": int(route["lease_expire_at_ms"]),
+    }
+
+
+def eligible_target(
+    holders_output: dict,
+    source_holder_id: str,
+    snapshot_revision: int,
+    now_ms: int,
+) -> dict:
+    candidates = [
+        holder
+        for holder in holders_output.get("holders", [])
+        if holder.get("holder_id") != source_holder_id
+        and holder.get("state") in ("READY_ZERO_SHARD", "SERVING")
+        and holder.get("process_ready") is True
+        and holder.get("draining") is False
+        and int(holder.get("capacity_weight", 0)) > 0
+        and int(holder.get("snapshot_revision", 0)) >= snapshot_revision
+        and int(holder.get("lease_until_ms", 0)) > now_ms
+    ]
+    if len(candidates) != 1:
+        raise ValueError(f"expected one monotonic migration target, got {candidates}")
+    return candidates[0]
+
+
+def wait_eligible_target(
+    routectl: Path,
+    environment: dict,
+    domain: str,
+    source_holder_id: str,
+    snapshot_revision: int,
+    timeout: float = 20.0,
+) -> dict:
+    deadline = time.monotonic() + timeout
+    last_error: ValueError | None = None
+    while time.monotonic() < deadline:
+        holders = G1.run_ctl(
+            routectl,
+            environment,
+            "holders",
+            "--domain",
+            domain,
+        )
+        try:
+            return eligible_target(
+                holders,
+                source_holder_id,
+                snapshot_revision,
+                int(time.time() * 1000),
+            )
+        except ValueError as error:
+            last_error = error
+            time.sleep(0.1)
+    raise TimeoutError(
+        f"{domain} target did not converge: {last_error}"
+    )
+
+
+def move_arguments(
+    run_id: str,
+    domain: str,
+    shard: int,
+    step: int,
+    source: dict,
+    target: dict,
+) -> list[str]:
+    identity = f"g2-{run_id}-{domain.lower().replace('_', '-')}-{shard}-{step}"
+    return [
+        "move-shard",
+        "--plan-id", identity,
+        "--transition-id", identity + "-tx",
+        "--domain", domain,
+        "--shard", str(shard),
+        "--source-holder-id", source["holder_id"],
+        "--source-boot-id", source["holder_boot_id"],
+        "--source-endpoint", source["endpoint"],
+        "--target-holder-id", target["holder_id"],
+        "--target-boot-id", target["boot_id"],
+        "--target-endpoint", target["logic_endpoint"],
+        "--requested-ttl-ms", "60000",
+        "--expected-holder-id", source["holder_id"],
+        "--expected-holder-boot-id", source["holder_boot_id"],
+        "--expected-assignment-revision",
+        str(source["assignment_revision"]),
+        "--expected-writer-epoch", str(source["writer_epoch"]),
+        "--expected-lease-epoch", str(source["lease_epoch"]),
+    ]
+
+
+def strictly_advanced(before: dict, after_fence: dict) -> bool:
+    return (
+        int(after_fence.get("assignment_revision", 0))
+        > before["assignment_revision"]
+        and int(after_fence.get("writer_epoch", 0)) > before["writer_epoch"]
+        and int(after_fence.get("lease_epoch", 0)) > before["lease_epoch"]
+    )
+
+
+def wait_plan_moved(
+    routectl: Path,
+    environment: dict,
+    arguments: list[str],
+    timeout: float = 20.0,
+) -> dict:
+    deadline = time.monotonic() + timeout
+    last_error: BaseException | None = None
+    while time.monotonic() < deadline:
+        try:
+            move = G1.run_ctl(routectl, environment, *arguments)
+            plan = move.get("plan", {})
+            if plan.get("phase") == "SUCCEEDED":
+                return move
+            last_error = ValueError(
+                f"plan phase is {plan.get('phase', 'UNKNOWN')}"
+            )
+        except (json.JSONDecodeError, subprocess.CalledProcessError) as error:
+            last_error = error
+        time.sleep(0.1)
+    raise TimeoutError("planned migration did not complete") from last_error
+
+
+def wait_plan_verified(
+    routectl: Path,
+    environment: dict,
+    plan_id: str,
+    domain: str,
+    shard: int,
+    timeout: float = 20.0,
+) -> dict:
+    deadline = time.monotonic() + timeout
+    last_error: BaseException | None = None
+    while time.monotonic() < deadline:
+        try:
+            verify = G1.run_ctl(
+                routectl,
+                environment,
+                "verify",
+                "--plan-id",
+                plan_id,
+                "--domain",
+                domain,
+                "--shard",
+                str(shard),
+            )
+            checks = verify.get("checks", [])
+            if (
+                verify.get("consistent") is True
+                and checks
+                and all(check.get("ok") is True for check in checks)
+            ):
+                return verify
+            last_error = ValueError("plan verification is not yet consistent")
+        except (json.JSONDecodeError, subprocess.CalledProcessError) as error:
+            last_error = error
+        time.sleep(0.1)
+    raise TimeoutError(
+        f"{domain} shard {shard} plan {plan_id} did not verify"
+    ) from last_error
+
+
+def main(arguments: list[str] | None = None) -> int:
+    diagnostic = diagnostic_mode(
+        sys.argv[1:] if arguments is None else arguments
+    )
+    repository = Path(__file__).resolve().parents[2]
+    lab = Path(os.environ.get("FARM_L2_LAB_ROOT", "/data/farm-l2-r2"))
+    run_id = os.environ.get("ROUTE_RUN_ID", "")
+    if re.fullmatch(r"[a-z0-9][a-z0-9-]{0,62}", run_id) is None:
+        raise SystemExit(
+            "verify-dynamic-g2-planned-migration: ROUTE_RUN_ID required"
+        )
+    if not diagnostic and not os.environ.get("H5_ROOT", ""):
+        raise SystemExit(
+            "verify-dynamic-g2-planned-migration: H5_ROOT required"
+        )
+    if G1.git_output(repository, "status", "--porcelain"):
+        raise SystemExit(
+            "verify-dynamic-g2-planned-migration: source worktree must be clean"
+        )
+    source_head = G1.git_output(repository, "rev-parse", "HEAD")
+    g1_path = lab / "receipts" / f"dynamic-route-final-g1-{run_id}.json"
+    if not diagnostic:
+        g1 = G1.load_json(g1_path)
+        if (
+            g1.get("status") != "FINAL_PRODUCT_G1_REMOTE_WATCH_PASS"
+            or g1.get("source_head") != source_head
+            or g1.get("eligible_for_g2") is not True
+        ):
+            raise SystemExit(
+                "verify-dynamic-g2-planned-migration: G1 receipt mismatch"
+            )
+    artifact_kind = "diagnostic" if diagnostic else "planned-migration"
+    receipt_path = (
+        lab
+        / "receipts"
+        / f"dynamic-route-g2-{artifact_kind}-{run_id}.json"
+    )
+    evidence = (
+        lab / "evidence" / f"dynamic-route-g2-{artifact_kind}-{run_id}"
+    )
+    if receipt_path.exists() or evidence.exists():
+        raise SystemExit(
+            "verify-dynamic-g2-planned-migration: immutable output exists"
+        )
+    kubeconfig = Path(os.environ.get(
+        "KUBECONFIG",
+        str(lab / "runtime" / "kubeconfig"),
+    ))
+    command = G1.kubectl_command(kubeconfig)
+    lock_path = lab / "runtime" / "dynamic-route-formal-run.lock"
+    with lock_path.open("a+") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise SystemExit(
+                "verify-dynamic-g2-planned-migration: formal lock busy"
+            ) from error
+        G1.verify_cluster(command)
+        initial_pods = G1.pod_observations(G1.command_json(
+            command,
+            "-n",
+            G1.NAMESPACE,
+            "get",
+            "pods",
+            "-o",
+            "json",
+        ))
+        G1.require_healthy_pods(initial_pods)
+        evidence.mkdir(parents=True)
+        tls = lab / "runtime" / "tls" / "dynamic-route" / run_id
+        transitions = []
+        with tempfile.TemporaryDirectory(prefix=f"g2-{run_id}-") as temporary:
+            routectl = Path(temporary) / "routectl"
+            subprocess.run(
+                [
+                    "go",
+                    "build",
+                    "-buildvcs=false",
+                    "-trimpath",
+                    "-o",
+                    str(routectl),
+                    "./cmd/routectl",
+                ],
+                cwd=repository,
+                check=True,
+            )
+            forward = None
+            try:
+                forward, port = G1.start_controller_forward(
+                    command,
+                    evidence,
+                    "g2",
+                )
+                environment = G1.routectl_environment(tls, port)
+                for domain in DOMAINS:
+                    domain_root = evidence / domain.lower()
+                    domain_root.mkdir()
+                    for step in range(1, STEPS + 1):
+                        snapshot = G1.run_ctl(
+                            routectl,
+                            environment,
+                            "snapshot",
+                        )
+                        source = route_identity(snapshot, domain, SHARD)
+                        if source["state"] != "ACTIVE":
+                            raise ValueError(
+                                f"{domain} shard is not ACTIVE before step {step}"
+                            )
+                        target = wait_eligible_target(
+                            routectl,
+                            environment,
+                            domain,
+                            source["holder_id"],
+                            int(snapshot["revision"]),
+                        )
+                        arguments = move_arguments(
+                            run_id,
+                            domain,
+                            SHARD,
+                            step,
+                            source,
+                            target,
+                        )
+                        move = wait_plan_moved(
+                            routectl,
+                            environment,
+                            arguments,
+                        )
+                        plan = move.get("plan", {})
+                        if (
+                            plan.get("phase") != "SUCCEEDED"
+                            or plan.get("operation") != "planned-drain"
+                            or plan.get("target_holder_id")
+                            != target["holder_id"]
+                        ):
+                            raise ValueError(
+                                f"{domain} step {step} plan did not succeed"
+                            )
+                        verify = wait_plan_verified(
+                            routectl,
+                            environment,
+                            plan["plan_id"],
+                            domain,
+                            SHARD,
+                        )
+                        after = G1.run_ctl(
+                            routectl,
+                            environment,
+                            "shard",
+                            "--domain",
+                            domain,
+                            "--shard",
+                            str(SHARD),
+                        )
+                        authority = after.get("authority", {})
+                        fence = authority.get("fence", {})
+                        if (
+                            after.get("snapshot_state") != "ACTIVE"
+                            or fence.get("holder_id") != target["holder_id"]
+                            or fence.get("holder_boot_id") != target["boot_id"]
+                            or not strictly_advanced(source, fence)
+                        ):
+                            raise ValueError(
+                                f"{domain} step {step} fence did not advance"
+                            )
+                        coherent_snapshot, consumers, pods = (
+                            G1.collect_coherent(
+                                command,
+                                routectl,
+                                environment,
+                                coherence=(
+                                    route_coherent
+                                    if diagnostic
+                                    else G1.coherent
+                                ),
+                            )
+                        )
+                        step_root = domain_root / f"step-{step}"
+                        G1.save_observation(
+                            step_root,
+                            coherent_snapshot,
+                            consumers,
+                            pods,
+                        )
+                        (step_root / "move.json").write_text(
+                            json.dumps(move, sort_keys=True, indent=2) + "\n"
+                        )
+                        (step_root / "verify.json").write_text(
+                            json.dumps(verify, sort_keys=True, indent=2) + "\n"
+                        )
+                        transitions.append({
+                            "domain": domain,
+                            "shard": SHARD,
+                            "step": step,
+                            "plan_id": plan["plan_id"],
+                            "source_holder_id": source["holder_id"],
+                            "source_boot_id": source["holder_boot_id"],
+                            "target_holder_id": target["holder_id"],
+                            "target_boot_id": target["boot_id"],
+                            "before_fence": {
+                                "assignment_revision":
+                                    source["assignment_revision"],
+                                "writer_epoch": source["writer_epoch"],
+                                "lease_epoch": source["lease_epoch"],
+                            },
+                            "after_fence": fence,
+                            "verify_checks": len(verify["checks"]),
+                        })
+            finally:
+                G1.stop(forward)
+
+        h5_path = None
+        if not diagnostic:
+            h5_environment = os.environ.copy()
+            h5_environment["DYNAMIC_ROUTE_PARENT_LOCK_FD"] = str(lock.fileno())
+            subprocess.run(
+                [
+                    str(SCRIPT_DIR / "verify-dynamic-h5-product-e2e"),
+                    "--stage",
+                    "final",
+                    "--evidence-label",
+                    H5_EVIDENCE_LABEL,
+                ],
+                cwd=repository,
+                env=h5_environment,
+                pass_fds=(lock.fileno(),),
+                check=True,
+            )
+            h5_path = (
+                lab
+                / "receipts"
+                / (
+                    "dynamic-h5-product-e2e-final-"
+                    f"{H5_EVIDENCE_LABEL}-{run_id}.json"
+                )
+            )
+            h5 = G1.load_json(h5_path)
+            if (
+                h5.get("status") != "DYNAMIC_H5_PRODUCT_E2E_VERIFIED"
+                or h5.get("account_auth_verified") is not True
+            ):
+                raise ValueError("post-G2 H5 account E2E failed")
+        final_pods = G1.pod_observations(G1.command_json(
+            command,
+            "-n",
+            G1.NAMESPACE,
+            "get",
+            "pods",
+            "-o",
+            "json",
+        ))
+        G1.require_healthy_pods(final_pods)
+        if {
+            value["name"]: value["uid"] for value in initial_pods
+        } != {
+            value["name"]: value["uid"] for value in final_pods
+        }:
+            raise ValueError("pod identity drift during G2")
+        value = {
+            "run_id": run_id,
+            "namespace": G1.NAMESPACE,
+            "source_head": source_head,
+            "domains": list(DOMAINS),
+            "shard": SHARD,
+            "moves_per_domain": STEPS,
+            "transition_count": len(transitions),
+            "transitions": transitions,
+            "farm_worker_handoff_contract":
+                "draining-watch-source-ack-then-fenced-transfer",
+            "all_verify_checks_passed": True,
+            "all_seven_consumers_coherent_after_each_move": True,
+            "capacity_qualified": False,
+            "company_redis_contacted": False,
+            "global_scan_performed": False,
+            "redis_flush_performed": False,
+            "artifacts": {
+                str(path.relative_to(evidence)): G1.sha256(path)
+                for path in sorted(evidence.rglob("*"))
+                if path.is_file()
+            },
+        }
+        if diagnostic:
+            value.update({
+                "schema_version":
+                    "farm-dynamic-route-g2-diagnostic-receipt.v1",
+                "status":
+                    "G2_THREE_DOMAIN_PLANNED_MIGRATION_DIAGNOSTIC_PASS",
+                "formal_acceptance": False,
+                "g1_receipt_required": False,
+                "h5_business_after_migration": "NOT_RUN",
+                "eligible_for_g3": False,
+            })
+        else:
+            if h5_path is None:
+                raise AssertionError("formal G2 H5 receipt path missing")
+            value.update({
+                "schema_version":
+                    "farm-dynamic-route-g2-planned-migration-receipt.v1",
+                "status": "G2_THREE_DOMAIN_PLANNED_MIGRATION_PASS",
+                "formal_acceptance": True,
+                "g1_receipt_sha256": G1.sha256(g1_path),
+                "h5_business_after_migration": "PASS",
+                "post_migration_h5_receipt_sha256": G1.sha256(h5_path),
+                "eligible_for_g3": True,
+            })
+        G1.write_exclusive(receipt_path, value)
+        print(json.dumps(value, sort_keys=True, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

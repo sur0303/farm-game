@@ -1,0 +1,19 @@
+{
+  "schema": "farm.r2-q.fixture/friendship-canonical-only/v1",
+  "fixture_id": "friendship-canonical-only-v1",
+  "contract_status": "SKIPPED_NOT_COMPOSED",
+  "deterministic": true,
+  "production_semantics_changed": false,
+  "canonical_authority": ["FriendPair", "Block", "relation_epoch"],
+  "formal_list_projection": "FriendIndex",
+  "legacy_role": "no_formal_write_or_result",
+  "cases": [
+    {"case_id": "pair-success-projection-failure", "pair_result": "SUCCESS", "projection_result": "FAILURE", "api_result": "canonical_success", "permission_immediate": true, "list_behavior": "temporarily_omitted_allowed", "repair": "required"},
+    {"case_id": "pair-delete-stale-index", "pair_result": "DELETED", "index_entry": "STALE", "friend_list": "hidden_or_rejected_after_canonical_recheck", "visit_permit": "rejected", "action_admission": "rejected", "reconciler": "cleans_index"},
+    {"case_id": "legacy-unavailable", "legacy_redis": "UNAVAILABLE", "canonical_business": "HEALTHY", "shadow_metric": "may_degrade", "formal_result": "canonical_only"},
+    {"case_id": "shadow-zero", "shadow_difference_total": 0, "unexplained_difference_total": 0, "legacy_writes": 0},
+    {"case_id": "canonical-outcome-fields", "outcome_source": "FriendPair_or_Block", "fields": ["relation_id", "relation_epoch", "changed", "status"], "legacy_receipt_result": false}
+  ],
+  "required_metrics": ["friend_legacy_missing_total", "friend_legacy_extra_total", "friend_pair_index_mismatch_total", "friend_projection_repair_age_ms"],
+  "cases_index": ["projection_failure_success", "stale_index_delete", "legacy_outage", "shadow_zero", "canonical_result_source"]
+}

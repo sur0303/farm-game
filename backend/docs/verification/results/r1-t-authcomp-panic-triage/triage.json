@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "task_id": "R1-T-AUTHCOMP-PANIC-TRIAGE",
+  "generated_at_utc": "2026-08-09T12:09:08Z",
+  "classification": "TEST_TIMING_CONFIRMED",
+  "classification_context": {
+    "baseline_existing": true,
+    "candidate_only_regression": false,
+    "production_race_confirmed": false,
+    "exact_target_reproduced_on_baseline": true,
+    "reason": "The test waited for entries==0, but handleEntryPanic deletes the entry and unlocks before fencing and notifyFatal stores fatal. Baseline C1 and C2 reproduced the exact assertion, including under -race, without a race-detector report."
+  },
+  "worktrees": {
+    "primary": {
+      "path": "/data/home/developer_026/CodeBuddy/20260519141303/farm-game-r1-t-authcomp-panic-triage-20260809",
+      "branch": "codex/r1-t-authcomp-panic-triage-20260809",
+      "required_head": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "verified_head_before_runs": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "initially_clean": true
+    },
+    "candidate": {
+      "path": "/data/home/developer_026/CodeBuddy/20260519141303/farm-game-r1-4-merge-queue-20260809",
+      "branch": "codex/r1-4-merge-queue-20260809",
+      "required_head": "1ec3dcd166a7449b40aa934ee7324154474b3c05",
+      "verified_head_before_runs": "1ec3dcd166a7449b40aa934ee7324154474b3c05",
+      "initially_clean": true,
+      "kept_read_only": true,
+      "clean_after_runs": true
+    }
+  },
+  "source_comparison": {
+    "commits": [
+      "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "1ec3dcd166a7449b40aa934ee7324154474b3c05"
+    ],
+    "paths": [
+      "internal/authoritycomposition/lease_scheduler.go",
+      "internal/authoritycomposition/lease_scheduler_test.go"
+    ],
+    "diff_empty": true
+  },
+  "isolation": {
+    "independent_go_test_process_per_run": true,
+    "unique_gocache_per_run": true,
+    "unique_gotmpdir_per_run": true,
+    "scratch_removed_after_each_run": true,
+    "runner": "run-isolated.sh"
+  },
+  "runs": [
+    {
+      "id": "candidate-A1-target-count100",
+      "required_group": "A",
+      "worktree_role": "candidate",
+      "commit": "1ec3dcd166a7449b40aa934ee7324154474b3c05",
+      "command": "go test -buildvcs=false ./internal/authoritycomposition/... -run '^TestOnFatalPanicIsContained$' -count=100 -v",
+      "started_utc": "2026-08-09T11:53:24Z",
+      "completed_utc": "2026-08-09T11:53:39Z",
+      "duration_seconds": 15,
+      "exit_code": 0,
+      "status": "PASS",
+      "shuffle_seed": null,
+      "target_passes": 100,
+      "target_failures": 0,
+      "race_detector_reported": false,
+      "raw_output": "raw/candidate-A1-target-count100.stdout-stderr.log",
+      "metadata": "raw/candidate-A1-target-count100.meta.txt"
+    },
+    {
+      "id": "candidate-A2-target-race-count50",
+      "required_group": "A",
+      "worktree_role": "candidate",
+      "commit": "1ec3dcd166a7449b40aa934ee7324154474b3c05",
+      "command": "go test -buildvcs=false -race ./internal/authoritycomposition/... -run '^TestOnFatalPanicIsContained$' -count=50 -v",
+      "started_utc": "2026-08-09T11:53:59Z",
+      "completed_utc": "2026-08-09T11:54:33Z",
+      "duration_seconds": 34,
+      "exit_code": 0,
+      "status": "PASS",
+      "shuffle_seed": null,
+      "target_passes": 50,
+      "target_failures": 0,
+      "race_detector_reported": false,
+      "raw_output": "raw/candidate-A2-target-race-count50.stdout-stderr.log",
+      "metadata": "raw/candidate-A2-target-race-count50.meta.txt"
+    },
+    {
+      "id": "candidate-B1-package-shuffle-count20",
+      "required_group": "B",
+      "worktree_role": "candidate",
+      "commit": "1ec3dcd166a7449b40aa934ee7324154474b3c05",
+      "command": "go test -buildvcs=false ./internal/authoritycomposition/... -shuffle=on -count=20",
+      "started_utc": "2026-08-09T11:54:50Z",
+      "completed_utc": "2026-08-09T11:55:37Z",
+      "duration_seconds": 47,
+      "exit_code": 1,
+      "status": "FAIL",
+      "shuffle_seed": "1786276506503064082",
+      "target_assertion_reproduced": false,
+      "same_happens_before_bug_reproduced_in": "TestLeaseSchedulerEntryPanicLeavesNoActiveEntry",
+      "socket_operation_not_permitted_occurrences": 840,
+      "race_detector_reported": false,
+      "raw_output": "raw/candidate-B1-package-shuffle-count20.stdout-stderr.log",
+      "metadata": "raw/candidate-B1-package-shuffle-count20.meta.txt"
+    },
+    {
+      "id": "candidate-B2-package-race-shuffle-count10",
+      "required_group": "B",
+      "worktree_role": "candidate",
+      "commit": "1ec3dcd166a7449b40aa934ee7324154474b3c05",
+      "command": "go test -buildvcs=false -race ./internal/authoritycomposition/... -shuffle=on -count=10",
+      "started_utc": "2026-08-09T11:56:08Z",
+      "completed_utc": "2026-08-09T11:56:57Z",
+      "duration_seconds": 49,
+      "exit_code": 1,
+      "status": "FAIL",
+      "shuffle_seed": "1786276601662227301",
+      "target_assertion_reproduced": false,
+      "socket_operation_not_permitted_occurrences": 420,
+      "race_detector_reported": false,
+      "raw_output": "raw/candidate-B2-package-race-shuffle-count10.stdout-stderr.log",
+      "metadata": "raw/candidate-B2-package-race-shuffle-count10.meta.txt"
+    },
+    {
+      "id": "baseline-C1-target-count100",
+      "required_group": "C",
+      "worktree_role": "baseline",
+      "commit": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "command": "go test -buildvcs=false ./internal/authoritycomposition/... -run '^TestOnFatalPanicIsContained$' -count=100 -v",
+      "started_utc": "2026-08-09T11:57:19Z",
+      "completed_utc": "2026-08-09T11:57:35Z",
+      "duration_seconds": 16,
+      "exit_code": 1,
+      "status": "FAIL",
+      "shuffle_seed": null,
+      "target_passes": 99,
+      "target_failures": 1,
+      "exact_assertion": "fatal flag must be set after an entry panic",
+      "race_detector_reported": false,
+      "raw_output": "raw/baseline-C1-target-count100.stdout-stderr.log",
+      "metadata": "raw/baseline-C1-target-count100.meta.txt"
+    },
+    {
+      "id": "baseline-C2-target-race-count50",
+      "required_group": "C",
+      "worktree_role": "baseline",
+      "commit": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "command": "go test -buildvcs=false -race ./internal/authoritycomposition/... -run '^TestOnFatalPanicIsContained$' -count=50 -v",
+      "started_utc": "2026-08-09T11:57:46Z",
+      "completed_utc": "2026-08-09T11:58:20Z",
+      "duration_seconds": 34,
+      "exit_code": 1,
+      "status": "FAIL",
+      "shuffle_seed": null,
+      "target_passes": 49,
+      "target_failures": 1,
+      "exact_assertion": "fatal flag must be set after an entry panic",
+      "race_detector_reported": false,
+      "raw_output": "raw/baseline-C2-target-race-count50.stdout-stderr.log",
+      "metadata": "raw/baseline-C2-target-race-count50.meta.txt"
+    },
+    {
+      "id": "baseline-C3-package-shuffle-count20",
+      "required_group": "C",
+      "worktree_role": "baseline",
+      "commit": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "command": "go test -buildvcs=false ./internal/authoritycomposition/... -shuffle=on -count=20",
+      "started_utc": "2026-08-09T11:58:43Z",
+      "completed_utc": "2026-08-09T11:59:29Z",
+      "duration_seconds": 46,
+      "exit_code": 1,
+      "status": "FAIL",
+      "shuffle_seed": "1786276738734200727",
+      "target_assertion_reproduced": false,
+      "socket_operation_not_permitted_occurrences": 840,
+      "race_detector_reported": false,
+      "raw_output": "raw/baseline-C3-package-shuffle-count20.stdout-stderr.log",
+      "metadata": "raw/baseline-C3-package-shuffle-count20.meta.txt"
+    },
+    {
+      "id": "baseline-C4-package-race-shuffle-count10",
+      "required_group": "C",
+      "worktree_role": "baseline",
+      "commit": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "command": "go test -buildvcs=false -race ./internal/authoritycomposition/... -shuffle=on -count=10",
+      "started_utc": "2026-08-09T11:59:39Z",
+      "completed_utc": "2026-08-09T12:00:27Z",
+      "duration_seconds": 48,
+      "exit_code": 1,
+      "status": "FAIL",
+      "shuffle_seed": "1786276811536054645",
+      "target_assertion_reproduced": false,
+      "socket_operation_not_permitted_occurrences": 420,
+      "race_detector_reported": false,
+      "raw_output": "raw/baseline-C4-package-race-shuffle-count10.stdout-stderr.log",
+      "metadata": "raw/baseline-C4-package-race-shuffle-count10.meta.txt"
+    },
+    {
+      "id": "fixed-V1-panic-tests-count100",
+      "required_group": "post_fix_validation",
+      "worktree_role": "primary_with_test_only_fix",
+      "base_commit": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "command": "go test -buildvcs=false ./internal/authoritycomposition/... -run '^(TestLeaseSchedulerEntryPanicLeavesNoActiveEntry|TestOnFatalPanicIsContained)$' -count=100 -v",
+      "started_utc": "2026-08-09T12:03:28Z",
+      "completed_utc": "2026-08-09T12:03:45Z",
+      "duration_seconds": 17,
+      "exit_code": 0,
+      "status": "PASS",
+      "shuffle_seed": null,
+      "target_passes": 100,
+      "sibling_passes": 100,
+      "race_detector_reported": false,
+      "raw_output": "raw/fixed-V1-panic-tests-count100.stdout-stderr.log",
+      "metadata": "raw/fixed-V1-panic-tests-count100.meta.txt"
+    },
+    {
+      "id": "fixed-V2-panic-tests-race-count50",
+      "required_group": "post_fix_validation",
+      "worktree_role": "primary_with_test_only_fix",
+      "base_commit": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "command": "go test -buildvcs=false -race ./internal/authoritycomposition/... -run '^(TestLeaseSchedulerEntryPanicLeavesNoActiveEntry|TestOnFatalPanicIsContained)$' -count=50 -v",
+      "started_utc": "2026-08-09T12:03:52Z",
+      "completed_utc": "2026-08-09T12:04:28Z",
+      "duration_seconds": 36,
+      "exit_code": 0,
+      "status": "PASS",
+      "shuffle_seed": null,
+      "target_passes": 50,
+      "sibling_passes": 50,
+      "race_detector_reported": false,
+      "raw_output": "raw/fixed-V2-panic-tests-race-count50.stdout-stderr.log",
+      "metadata": "raw/fixed-V2-panic-tests-race-count50.meta.txt"
+    },
+    {
+      "id": "controller-fixed-V3-panic-tests-count100",
+      "required_group": "post_fix_controller_review",
+      "worktree_role": "primary_with_completion_barrier",
+      "base_commit": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "command": "go test -buildvcs=false ./internal/authoritycomposition/... -run '^(TestLeaseSchedulerEntryPanicLeavesNoActiveEntry|TestOnFatalPanicIsContained|TestOnFatalPanicPreservesPrimaryFatalCause)$' -count=100 -v",
+      "exit_code": 0,
+      "status": "PASS",
+      "passes_per_test": 100,
+      "raw_output": "raw/controller-fixed-V3-panic-tests-count100.stdout-stderr.log",
+      "metadata": "raw/controller-fixed-V3-panic-tests-count100.meta.txt"
+    },
+    {
+      "id": "controller-fixed-V4-panic-tests-race-count50",
+      "required_group": "post_fix_controller_review",
+      "worktree_role": "primary_with_completion_barrier",
+      "base_commit": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "command": "go test -buildvcs=false -race ./internal/authoritycomposition/... -run '^(TestLeaseSchedulerEntryPanicLeavesNoActiveEntry|TestOnFatalPanicIsContained|TestOnFatalPanicPreservesPrimaryFatalCause)$' -count=50 -v",
+      "exit_code": 0,
+      "status": "PASS",
+      "passes_per_test": 50,
+      "race_detector_reported": false,
+      "raw_output": "raw/controller-fixed-V4-panic-tests-race-count50.stdout-stderr.log",
+      "metadata": "raw/controller-fixed-V4-panic-tests-race-count50.meta.txt"
+    }
+  ],
+  "environment_constraints": [
+    {
+      "scope": "package/shuffle runs B1, B2, C3, C4",
+      "effect": "FAIL",
+      "message": "miniredis could not listen on 127.0.0.1:0: socket: operation not permitted",
+      "interpretation": "The raw FAIL results are retained. They are not reported as green and are separate from the panic-timing diagnosis."
+    }
+  ],
+  "audit": {
+    "original_test_wait": "onFatalPanicScheduler waited only until EntryCount()==0",
+    "production_order": [
+      "entry.run recovers renewal panic",
+      "handleEntryPanic locks scheduler, stops and deletes the entry, then unlocks",
+      "handleEntryPanic fences the matching guard",
+      "notifyFatal atomically stores fatal=true and fatalErr",
+      "safeNotifyFatal synchronously calls OnFatal and recovers a callback panic"
+    ],
+    "missing_happens_before": "EntryCount acquiring the scheduler mutex can observe the deletion, but the later fence and fatal stores occur after the handler unlock and are not ordered before the test assertion.",
+    "package_mutable_globals_in_path": false,
+    "hooks_modified_by_target_test": false,
+    "callback_async": false,
+    "fixed_sleep_used_as_barrier": false,
+    "cleanup": "timeoutSchedulerFixture registers scheduler.Close; Close cancels context, stops entries, and waits for its worker WaitGroup. The injected callback panic is bounded and recovered."
+  },
+  "fix": {
+    "applied": true,
+    "test_only": true,
+    "files": [
+      "internal/authoritycomposition/lease_scheduler_test.go"
+    ],
+    "production_files_changed": false,
+    "mechanism": "OnFatal sends on a per-test channel after entry removal, guard fencing and fatal storage. Callback-panic tests additionally wait until FatalErr contains 'OnFatal callback panicked', proving safeNotifyFatal recovery and diagnostic publication completed before assertions.",
+    "also_fixed_same_pattern_in": "TestLeaseSchedulerEntryPanicLeavesNoActiveEntry",
+    "sleep_added": false,
+    "timeout_increased": false,
+    "candidate_modified_directly": false,
+    "candidate_action": "Controller must cherry-pick the single triage commit separately.",
+    "controller_completion_barrier_review": true,
+    "validated_tests": [
+      "TestLeaseSchedulerEntryPanicLeavesNoActiveEntry",
+      "TestOnFatalPanicIsContained",
+      "TestOnFatalPanicPreservesPrimaryFatalCause"
+    ]
+  },
+  "full_suite_D": {
+    "executed": false,
+    "reason": "Deferred until Controller cherry-picks this test-only fix onto the exact R1-4 merge-queue candidate, then runs three consecutive full suites as required."
+  },
+  "evidence_manifest": "SHA256SUMS"
+}

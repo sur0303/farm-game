@@ -1,0 +1,20 @@
+{
+  "attempted": 20,
+  "ready": 20,
+  "active_at_end": 0,
+  "peak_active": 20,
+  "login_errors": 0,
+  "connect_errors": 0,
+  "hello_errors": 0,
+  "join_errors": 0,
+  "scenario_attempted": 20,
+  "scenario_succeeded": 20,
+  "scenario_errors": 0,
+  "unexpected_disconnects": 0,
+  "ready_rate": 1,
+  "ready_p50_ms": 1145.368289,
+  "ready_p95_ms": 2945.476954,
+  "ready_p99_ms": 2945.476954,
+  "ready_max_ms": 3145.092505,
+  "scenario_p95_ms": 12.881445
+}

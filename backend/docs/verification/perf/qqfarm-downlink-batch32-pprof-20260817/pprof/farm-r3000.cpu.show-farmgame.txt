@@ -1,0 +1,51 @@
+File: farm-svr
+Build ID: f974745a158477609fd90e93f0ea42b2c8e8031b
+Type: cpu
+Time: 2026-08-17 12:06:59 CST
+Duration: 12s, Total samples = 13.14s (109.49%)
+Active filters:
+   show=^farmgame
+Showing nodes accounting for 5.87s, 44.67% of 13.14s total
+Dropped 147 nodes (cum <= 0.07s)
+Showing top 40 nodes out of 121
+      flat  flat%   sum%        cum   cum%
+     1.16s  8.83%  8.83%      1.17s  8.90%  farmgame/internal/observability/actorlayout.(*Metrics).ProcessHook.func1
+     0.43s  3.27% 12.10%      0.59s  4.49%  farmgame/internal/actormodel/fieldv2.validateNoUnknownMessage
+     0.35s  2.66% 14.76%      0.35s  2.66%  farmgame/internal/storage/authoritystore.businessStateDigest
+     0.31s  2.36% 17.12%      0.31s  2.36%  farmgame/api/gen/logicrpc.(*gatewayDownlinkServiceClient).ActivateSubscription
+     0.31s  2.36% 19.48%      0.37s  2.82%  farmgame/internal/authoritycomposition.(*PooledClientConn).Invoke
+     0.24s  1.83% 21.31%      0.24s  1.83%  farmgame/internal/logic/actor/runtime.(*Executor).mailboxFor
+     0.17s  1.29% 22.60%      0.17s  1.29%  farmgame/internal/farm/actor.marshalRecord (inline)
+     0.15s  1.14% 23.74%      0.15s  1.14%  farmgame/internal/actormodel/fieldv2.SchemaFor (inline)
+     0.15s  1.14% 24.89%      1.43s 10.88%  farmgame/internal/storage/redis/authority.(*Store).Commit
+     0.14s  1.07% 25.95%      0.58s  4.41%  farmgame/internal/actormodel/fieldv2.validateNoUnknownMessage.func1
+     0.14s  1.07% 27.02%      0.15s  1.14%  farmgame/internal/farm/actormodelv2.validateSubset
+     0.14s  1.07% 28.08%      0.15s  1.14%  farmgame/internal/farm/ingress.pushFrame
+     0.13s  0.99% 29.07%      0.35s  2.66%  farmgame/internal/farm/actormodelv2.unmarshalCanonical
+     0.12s  0.91% 29.98%      0.12s  0.91%  farmgame/api/gen/logicrpc.(*gatewayDownlinkServiceClient).DeliverBatch
+     0.11s  0.84% 30.82%      0.92s  7.00%  farmgame/api/gen/logicrpc._LogicService_ArmSnapshot_Handler
+     0.11s  0.84% 31.66%      0.93s  7.08%  farmgame/internal/farm/actor.decodeFarmAuthoritySnapshot
+     0.10s  0.76% 32.42%      0.42s  3.20%  farmgame/api/gen/logicrpc._LogicService_ExecuteCommand_Handler
+     0.10s  0.76% 33.18%      0.10s  0.76%  farmgame/internal/farm/subscription.(*FarmEventLane).execute
+     0.10s  0.76% 33.94%      0.10s  0.76%  farmgame/internal/logic/actor/authority.cloneAuthorityModelState (inline)
+     0.10s  0.76% 34.70%      0.13s  0.99%  farmgame/internal/logic/actor/runtime.(*ShardDrainGate).Admit
+     0.09s  0.68% 35.39%      0.09s  0.68%  farmgame/internal/logic/actor/activation.(*Controller).Stats
+     0.09s  0.68% 36.07%      0.13s  0.99%  farmgame/internal/observability/actorlayout.(*Metrics).ProcessPipelineHook.func1
+     0.09s  0.68% 36.76%      0.72s  5.48%  farmgame/internal/storage/redis/authority.(*Store).LoadAndClaim
+     0.08s  0.61% 37.37%      0.14s  1.07%  farmgame/internal/farm/subscription.(*SubscriptionHub).reindexFarm
+     0.08s  0.61% 37.98%      0.08s  0.61%  farmgame/internal/farm/subscription.newFarmEventLane
+     0.08s  0.61% 38.58%      0.86s  6.54%  farmgame/internal/storage/redis/authority.(*ScriptRegistry).run
+     0.07s  0.53% 39.12%      0.08s  0.61%  farmgame/internal/storage/authoritystore.(*HolderLeaseGuard).Snapshot
+     0.07s  0.53% 39.65%      0.07s  0.53%  farmgame/internal/storage/redis/rediskey.redisCRC16 (inline)
+     0.07s  0.53% 40.18%      1.22s  9.28%  main.run.(*Metrics).UnaryServerInterceptor.func78
+     0.06s  0.46% 40.64%      0.08s  0.61%  farmgame/internal/farm/actor.(*Registry).acquireAuthorityCoordMode
+     0.06s  0.46% 41.10%      0.08s  0.61%  farmgame/internal/farm/actor.plotView
+     0.06s  0.46% 41.55%      0.55s  4.19%  farmgame/internal/farm/subscription.(*FarmEventLane).applyRequest
+     0.06s  0.46% 42.01%      0.06s  0.46%  farmgame/internal/storage/redis/authority.businessStateDigest
+     0.05s  0.38% 42.39%      0.35s  2.66%  farmgame/internal/farm/actormodelv2.Encode
+     0.05s  0.38% 42.77%      0.46s  3.50%  farmgame/internal/farm/ingress.(*Service).activateJoinAsync.func1
+     0.05s  0.38% 43.15%      0.49s  3.73%  farmgame/internal/farm/ingress.(*Service).readOwnerProfile
+     0.05s  0.38% 43.53%      0.64s  4.87%  farmgame/internal/farm/subscription.(*FarmEventLane).run
+     0.05s  0.38% 43.91%      0.05s  0.38%  farmgame/internal/farm/subscription.(*SubscriptionHub).dropFarmBootRefsLocked (inline)
+     0.05s  0.38% 44.29%      1.77s 13.47%  farmgame/internal/logic/actor/authority.(*Binding).MigrateV1ToV2
+     0.05s  0.38% 44.67%      0.05s  0.38%  farmgame/internal/logic/actor/idle.(*Sweeper).touchAt

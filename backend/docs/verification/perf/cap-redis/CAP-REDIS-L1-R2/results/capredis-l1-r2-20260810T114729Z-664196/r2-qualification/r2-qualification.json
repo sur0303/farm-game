@@ -1,0 +1,29 @@
+{
+  "attachments": {
+    "cleanup.txt": "03fb7ce8232ee808cd15551ec544201396b1dc4aefcf51458066d88bb2afae84",
+    "model-v2-live.txt": "45e0567d0ff0316eb688ea323df7e8086db1b230c845ec9be8bbacdbd0df209f",
+    "remote-player-rpc.txt": "b5b409adf6814689fff0fc34cd8014221d7977974eedd4d183ef987c03636de2",
+    "static-retirement.json": "926debc8a0a82d1d49d106bdaf4affb6b0673b3b84c5ce58d4f484b7743d4d28",
+    "static-retirement.txt": "b2c829d9e05315d2e45b5804069648318f6cfcaf4b685d23b5db19259318792b"
+  },
+  "business_head": "5ce43715363eea4f18e0925b6992429785053261",
+  "checks": {
+    "legacy_relationship_reads_zero": true,
+    "legacy_relationship_writes_zero": true,
+    "model_v2_migration_observed": true,
+    "model_v2_sparse_commit_observed": true,
+    "namespace_residual_zero": true,
+    "remote_player_rpc_observed": true,
+    "static_retirement": true,
+    "v1_fallback_zero": true
+  },
+  "legacy_relationship_read_total": 0,
+  "legacy_relationship_write_total": 0,
+  "model_v2_migrations_observed": 2,
+  "model_v2_sparse_commits_observed": 2,
+  "remote_player_rpc_observed": true,
+  "schema_version": "cap-redis-l1-r2.qualification.v1",
+  "v1_fallback_total": 0,
+  "verdict": "PASS",
+  "verification_head": "bcdea2d766bf381915a7a73ea8c16d601f726f51"
+}

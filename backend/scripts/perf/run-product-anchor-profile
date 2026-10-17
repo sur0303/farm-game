@@ -1,0 +1,639 @@
+#!/usr/bin/env bash
+# Authority + Static Assignment Vertical Smoke for A1~A4 premerge.
+#
+# Exit codes: 0=PASS, 1=FAIL, 2=INCONCLUSIVE
+set -Eeuo pipefail
+
+ROOT_DIR="$(realpath "${PERF_BACKEND_ROOT:?PERF_BACKEND_ROOT is required}")"
+LOAD_ROOT="$(realpath "${PERF_LOAD_ROOT:-$(cd "$(dirname "$0")/../.." && pwd)}")"
+Q1PERF_TOOL="$LOAD_ROOT/tools/perf/q1perf.py"
+# Q1 owns orchestration only. Production binaries come from PERF_BACKEND_ROOT;
+# the exact H5 witness checkout must be supplied explicitly by the coordinator.
+H5_ROOT="$(realpath "${H5_ROOT:?H5_ROOT is required}")"
+PLAYWRIGHT_CONFIG="${SMOKE_PLAYWRIGHT_CONFIG:-playwright.authority-smoke.config.ts}"
+PLAYWRIGHT_TEST="${SMOKE_PLAYWRIGHT_TEST:-}"
+CONTROL_DIR="${SMOKE_CONTROL_DIR:-}"
+CROP_MATURE_AFTER="${SMOKE_CROP_MATURE_AFTER:-5s}"
+H5_ALLOWED_ORIGINS="${SMOKE_H5_ALLOWED_ORIGINS:-127.0.0.1:5194,localhost:5194}"
+STAMP="${SMOKE_RUN_ID:-$(date -u +%Y%m%dT%H%M%SZ)-$$}"
+# Smoke account suffix: epoch seconds, alphanumeric only (gate register requires
+# username of 3-24 letters/digits/underscores; timestamps with '-' are invalid).
+ACCOUNT_SUFFIX="$(date +%s)"
+OUT="${SMOKE_OUT:-$ROOT_DIR/docs/verification/results/authority-vertical-$STAMP}"
+BIN="$OUT/bin"
+TMP="$OUT/tmp"
+mkdir -p "$OUT" "$BIN" "$TMP"
+
+PIDS=()
+FAULT_WATCH_STOP=""
+Q1_TEST_OVERLAY=""
+cleanup() {
+  local p
+  [[ -n "$FAULT_WATCH_STOP" ]] && touch "$FAULT_WATCH_STOP" 2>/dev/null || true
+  [[ -n "$Q1_TEST_OVERLAY" ]] && rm -rf "$Q1_TEST_OVERLAY"
+  for p in "${PIDS[@]:-}"; do kill "$p" 2>/dev/null || true; done
+  for p in "${PIDS[@]:-}"; do wait "$p" 2>/dev/null || true; done
+  # Q1 hardening: pkill 兜底清理子进程/遗留(如旧 worktree 的 vite dev server 占用
+  # H5 端口),避免轮次间污染。仅匹配本 smoke 启动的服务与 H5 vite,不碰部署进程。
+  pkill -f "$BIN/farm-svr" 2>/dev/null || true
+  pkill -f "$BIN/farm-worker" 2>/dev/null || true
+  pkill -f "$BIN/player-svr" 2>/dev/null || true
+  pkill -f "$BIN/farm-gate" 2>/dev/null || true
+  pkill -f "$BIN/authority-smoke-fixture" 2>/dev/null || true
+  pkill -f "$BIN/gate-vertical-e2e" 2>/dev/null || true
+  pkill -f "$BIN/perf-baseline-q1 ws-tap" 2>/dev/null || true
+  if [[ -d "$H5_ROOT" ]]; then
+    pkill -f "$H5_ROOT/node_modules/.bin/vite" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT INT TERM
+
+pick_port() {
+  python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1]); s.close()'
+}
+
+wait_http() {
+  local url="$1" deadline=$((SECONDS + ${2:-30}))
+  until curl -fsS "$url" >/dev/null 2>&1; do
+    (( SECONDS >= deadline )) && { echo "TIMEOUT: $url" >&2; return 1; }
+    sleep 0.1
+  done
+}
+
+wait_tcp() {
+  local port="$1" deadline=$((SECONDS + ${2:-30}))
+  until (echo >/dev/tcp/127.0.0.1/"$port") 2>/dev/null; do
+    (( SECONDS >= deadline )) && { echo "TIMEOUT: tcp:$port" >&2; return 1; }
+    sleep 0.1
+  done
+}
+
+start() {
+  local log="$1"; shift
+  echo "  starting: $* (log: $log)"
+  "$@" >"$log" 2>&1 &
+  PIDS+=("$!")
+}
+
+BACKEND_COMMIT=""
+H5_COMMIT=""
+BACKEND_DIRTY="false"
+H5_DIRTY="false"
+
+verdict() {
+  local v="$1" reason="$2"
+  python3 -c "
+import json,pathlib,time
+out=pathlib.Path('$OUT')
+manifest={'run_id':out.name,'backend_commit':'${BACKEND_COMMIT:-unknown}','backend_dirty':'${BACKEND_DIRTY}','h5_commit':'${H5_COMMIT:-unknown}','h5_dirty':'${H5_DIRTY}','mode':'authority','worker_mode':'real_authority','assignment_source':'static','legacy_fallback':False,'witness':{'downlink_events':'protocol-events.ndjson','h5_wire_frames':'ws-frame-tap.ndjson','fault_plan_readback':'fault-plan-observations.ndjson','theft_redis_dump':'theft-redis-dump.json','f3_triage':'f3-fault-chain-triage.json','invalid_order_triage':'theft-invalid-order-triage.json','h5_test_overlay':'h5-test-overlay.json','h5_bot_frames':'bot-frames.ndjson','playwright':'playwright.log','authority_after':'authority-after.json'},'finished_at':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
+(out/'run-manifest.json').write_text(json.dumps(manifest,indent=2))
+(out/'verdict.json').write_text(json.dumps({'verdict':'$v','reason':'$reason'},indent=2))
+"
+  echo "$v: $reason"
+  echo "evidence: $OUT"
+  if [[ "$v" == "PASS" ]]; then exit 0; elif [[ "$v" == "FAIL" ]]; then exit 1; else exit 2; fi
+}
+
+cd "$ROOT_DIR"
+
+# --- 1. Freeze candidates ----------------------------------------------------
+echo "=== 1. freeze candidates ==="
+BACKEND_COMMIT="$(git rev-parse HEAD)"
+H5_COMMIT="$(git -C "$H5_ROOT" rev-parse HEAD 2>/dev/null || echo 'unknown')"
+# REVIEW P2-5:manifest 必须反映实际运行的代码(HEAD + 未提交脏改动)。
+# evidence 目录(docs/verification/results)与 H5 的 test-results/dist 是每轮累积
+# 的测试产物,不是代码真值;不应让上一轮遗留证据把 repo 标 dirty(否则连续验收
+# 永远 dirty,掩盖真实代码状态)。代码改动(git status 中非 evidence 路径)仍标 dirty。
+BACKEND_DIRTY="false"
+if [[ -n "$(git status --porcelain | grep -vE '^.. docs/verification/results/' || true)" ]]; then BACKEND_DIRTY="true"; fi
+H5_DIRTY="false"
+if [[ -n "$(git -C "$H5_ROOT" status --porcelain 2>/dev/null | grep -vE '^.. test-results/|^.. dist/' || true)" ]]; then H5_DIRTY="true"; fi
+echo "  backend: $BACKEND_COMMIT (dirty=$BACKEND_DIRTY)"
+echo "  h5:      $H5_COMMIT (dirty=$H5_DIRTY)"
+
+# --- 2. Build ----------------------------------------------------------------
+echo "=== 2. build ==="
+GOCACHE="${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache}"
+for svc in player-svr farm-svr farm-worker farm-gate authority-smoke-fixture gate-vertical-e2e authority-smoke-bot; do
+  echo "  building $svc"
+  (cd "$ROOT_DIR" && GOCACHE="$GOCACHE" CGO_ENABLED=0 go build -buildvcs=false -trimpath -o "$BIN/$svc" "./cmd/$svc")
+done
+echo "  building Q1 test-only ws frame tap"
+(cd "$LOAD_ROOT" && GOCACHE="$GOCACHE" CGO_ENABLED=0 go build -buildvcs=false -trimpath -o "$BIN/perf-baseline-q1" ./cmd/perf-baseline)
+
+# --- 3. Redis config ----------------------------------------------------------
+echo "=== 3. redis ==="
+REDIS_CONFIG="${FARM_REDIS_CONFIG:-$ROOT_DIR/deploy/secrets/redis.conf.local}"
+if [[ ! -f "$REDIS_CONFIG" ]]; then
+  verdict INCONCLUSIVE "missing Redis config: $REDIS_CONFIG"
+fi
+
+read_config_value() {
+  sed -n -E "s/^[[:space:]]*$1:[[:space:]]*(.*[^[:space:]])[[:space:]]*$/\1/p" "$REDIS_CONFIG" | head -n 1
+}
+uri_encode() {
+  local input="$1" output="" char encoded index
+  LC_ALL=C
+  for ((index = 0; index < ${#input}; index++)); do
+    char="${input:index:1}"
+    case "$char" in [a-zA-Z0-9.~_-]) output+="$char" ;; *) printf -v encoded '%%%02X' "'$char"; output+="$encoded" ;; esac
+  done
+  printf '%s' "$output"
+}
+redis_host=$(read_config_value host)
+redis_port=$(read_config_value port)
+redis_password=$(read_config_value password)
+redis_db=$(read_config_value db); redis_db="${redis_db:-0}"
+REDIS_URL="redis://:$(uri_encode "$redis_password")@${redis_host}:${redis_port}/${redis_db}"
+echo "  redis: ${redis_host}:${redis_port}/${redis_db}"
+
+# --- 4. Ports and namespace ----------------------------------------------------
+PLAYER_PORT="$(pick_port)"; PLAYER_HEALTH="$(pick_port)"
+FARM_PORT="$(pick_port)"; FARM_HEALTH="$(pick_port)"
+WORKER_HEALTH="$(pick_port)"
+GATE_HTTP="$(pick_port)"; GATE_DOWNLINK_REAL="$(pick_port)"
+GATE_CONTROL="$(pick_port)"
+DOWNLINK_PROXY="$(pick_port)"; PROXY_ADMIN="$(pick_port)"
+WS_TAP_PORT="$(pick_port)"
+
+NAMESPACE="smoke-${STAMP,,}"
+PROFILE="redis-physical-v1"
+REALM="smoke-authority"
+PLAYER_HOLDER="smoke-player"; FARM_HOLDER="smoke-farm"
+PLAYER_BOOT="smoke-player-${STAMP}"; FARM_BOOT="smoke-farm-${STAMP}"
+ROUTE="$OUT/route-snapshot.json"
+PERMIT_SECRET="smoke-permit-${STAMP}-at-least-32-bytes!!"
+WORKFLOW_PREFIX="smoke:${STAMP}:workflow"
+
+# --- 5. Fixture init: Claim ShardWriteAuthority --------------------------------
+echo "=== 5. fixture init ==="
+"$BIN/authority-smoke-fixture" init \
+  --redis-url "$REDIS_URL" \
+  --namespace "$NAMESPACE" --zone local \
+  --profile "$PROFILE" --realm "$REALM" \
+  --run-id "$STAMP" \
+  --player-holder "$PLAYER_HOLDER" --player-boot "$PLAYER_BOOT" \
+  --player-endpoint "127.0.0.1:$PLAYER_PORT" \
+  --farm-holder "$FARM_HOLDER" --farm-boot "$FARM_BOOT" \
+  --farm-endpoint "127.0.0.1:$FARM_PORT" \
+  --route-out "$ROUTE" \
+  --json-out "$OUT/fixture.json" 2>&1
+
+COMMON_AUTH=(
+  "ACTOR_AUTHORITY_MODE=authority"
+  "ACTOR_ROUTE_SNAPSHOT=$ROUTE"
+  "ACTOR_AUTHORITY_LEASE_TTL=55s"
+  "ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN=3s"
+  "ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL=5s"
+  "REDIS_PHYSICAL_PROFILE_VERSION=$PROFILE"
+  "REDIS_NAMESPACE_ENVIRONMENT=$NAMESPACE"
+  "REDIS_NAMESPACE_ZONE=local"
+  "REDIS_AUTHORITY_LAYOUT_VERSION=v1"
+  "REDIS_WORKFLOW_LAYOUT_VERSION=v1"
+  "REDIS_WORKFLOW_HASH_VERSION=1"
+  "REDIS_WORKFLOW_BUCKET_COUNT=256"
+  "FARM_REDIS_URL=$REDIS_URL"
+  "WORKFLOW_STORE_PREFIX=$WORKFLOW_PREFIX"
+)
+
+# --- 6. Start services ----------------------------------------------------------
+echo "=== 6. start services ==="
+
+# Gate first (proxy connects to it). Keep the exact argv in an array so the
+# optional CP-B restart hook can only restart this fixed service command; no
+# marker content is ever evaluated as shell input.
+GATE_CMD=(env
+  "GATEWAY_LISTEN=127.0.0.1:$GATE_HTTP"
+  "GATEWAY_ID=authority-smoke-gate"
+  "GATEWAY_DOWNLINK_LISTEN=127.0.0.1:$GATE_DOWNLINK_REAL"
+  "GATE_CONTROL_LISTEN=127.0.0.1:$GATE_CONTROL"
+  "GATE_TRANSPORT=websocket" "GATE_WS_PATH=/ws"
+  "GATE_WS_ALLOWED_ORIGINS=$H5_ALLOWED_ORIGINS"
+  "PLAYER_ADDR=127.0.0.1:$PLAYER_PORT"
+  "FARM_ADDR=127.0.0.1:$FARM_PORT"
+  "LOGIC_HEALTH_ADDR=http://127.0.0.1:$FARM_HEALTH"
+  "FARM_REDIS_URL=$REDIS_URL"
+  "REDIS_NAMESPACE_ENVIRONMENT=smoke-${STAMP}"
+  "REDIS_NAMESPACE_ZONE=local"
+  "WEB_ACCOUNT_STORE_PREFIX=smoke:${STAMP}:web-account"
+  "WEB_ACCOUNT_PLAYER_ID_BASE=1000000"
+  "DEMO_PLATFORM_TOKEN=demo-platform-token"
+  "DEMO_PLAYER_ID=10001"
+  "DEMO_SECONDARY_PLATFORM_TOKEN=demo-platform-token-b"
+  "DEMO_SECONDARY_PLAYER_ID=10002"
+  "HTTP_SESSION_TTL=2h"
+  "HTTP_SESSION_COOKIE_SECURE=0"
+  "PERMIT_SECRET=$PERMIT_SECRET"
+  "GATEWAY_TICKET_TTL=60s"
+  "GATE_ROUTE_LEASE_TTL=30s"
+  "GATE_BOOT_LEASE_PREFIX=smoke:${STAMP}:gate-boot-lease"
+  "GATE_BOOT_LEASE_TTL=15s"
+  "GATE_BOOT_LEASE_RENEW_TIMEOUT=3s"
+  "INITIAL_RULE_VERSION=1"
+  "GATE_WS_METRICS=1"
+  "GATE_WS_RATE_PER_SEC=100"
+  "GATE_WS_RATE_BURST=200"
+  "GATE_E2E_COMMAND_RESULT_FAULTS=${SMOKE_E2E_COMMAND_RESULT_FAULTS:-0}"
+  "WSS_ENDPOINT=ws://127.0.0.1:$GATE_HTTP/ws"
+  "$BIN/farm-gate")
+start "$OUT/gate.log" "${GATE_CMD[@]}"
+GATE_PID="${PIDS[${#PIDS[@]}-1]}"
+
+# Downlink proxy between farm-svr and Gate.
+start "$OUT/proxy.log" "$BIN/gate-vertical-e2e" proxy \
+  --listen "127.0.0.1:$DOWNLINK_PROXY" \
+  --upstream "127.0.0.1:$GATE_DOWNLINK_REAL" \
+  --admin-listen "127.0.0.1:$PROXY_ADMIN" \
+  --events-out "$OUT/protocol-events.ndjson"
+# Farm constructs its long-lived Downlink client at startup. Prove both hops
+# are accepting TCP before Farm starts so the first bot Snapshot is evidence,
+# not a gRPC reconnect-backoff race.
+wait_tcp "$GATE_DOWNLINK_REAL" 30 || verdict INCONCLUSIVE "gate downlink listener not ready"
+wait_tcp "$DOWNLINK_PROXY" 30 || verdict INCONCLUSIVE "fault proxy downlink listener not ready"
+wait_tcp "$PROXY_ADMIN" 30 || verdict INCONCLUSIVE "fault proxy admin listener not ready"
+
+# player-svr (authority).
+start "$OUT/player.log" env "${COMMON_AUTH[@]}" \
+  "ACTOR_HOLDER_POD=$PLAYER_HOLDER" "ACTOR_HOLDER_BOOT_ID=$PLAYER_BOOT" \
+  "PLAYER_LISTEN=127.0.0.1:$PLAYER_PORT" \
+  "PLAYER_HEALTH_LISTEN=127.0.0.1:$PLAYER_HEALTH" \
+  "PERMIT_SECRET=$PERMIT_SECRET" \
+  "$BIN/player-svr"
+# The original combined smoke could start Farm/Worker while the preceding gRPC
+# listener was not yet bound. Deterministically establish each process boundary
+# before constructing the next real client; this changes no production code.
+wait_tcp "$PLAYER_PORT" 30 || verdict INCONCLUSIVE "player-svr gRPC listener not ready"
+
+# farm-svr (authority, downlink via proxy).
+start "$OUT/farm.log" env "${COMMON_AUTH[@]}" \
+  "ACTOR_HOLDER_POD=$FARM_HOLDER" "ACTOR_HOLDER_BOOT_ID=$FARM_BOOT" \
+  "FARM_LISTEN=127.0.0.1:$FARM_PORT" \
+  "FARM_HEALTH_LISTEN=127.0.0.1:$FARM_HEALTH" \
+  "PLAYER_ADDR=127.0.0.1:$PLAYER_PORT" \
+  "GATEWAY_DOWNLINK_ADDR=127.0.0.1:$DOWNLINK_PROXY" \
+  "PERMIT_SECRET=$PERMIT_SECRET" \
+  "THEFT_PRF_MODE=test" \
+  "THEFT_PRF_HMAC_SECRET=smoke-theft-prf-${STAMP}-at-least-32-bytes" \
+  "FARM_CROP_MATURE_AFTER=$CROP_MATURE_AFTER" \
+  "FARM_SUBSCRIPTION_LEASE_INITIAL_TTL=30s" \
+  "FARM_SUBSCRIPTION_LEASE_MAX_EXTENSION=30s" \
+  "GATE_BOOT_REAPER_MODE=disabled" \
+  "$BIN/farm-svr"
+wait_tcp "$FARM_PORT" 30 || verdict INCONCLUSIVE "farm-svr gRPC listener not ready"
+
+# farm-worker (real participant executor, authority mode; Q1: the worker
+# consumes ACTOR_AUTHORITY_MODE via permitsecret, so it must be 'authority' —
+# 'legacy' would fail the S0 "no legacy fallback" gate).
+start "$OUT/worker.log" env \
+  "ACTOR_AUTHORITY_MODE=authority" \
+  "ACTOR_ROUTE_SNAPSHOT=$ROUTE" \
+  "FARM_REDIS_URL=$REDIS_URL" \
+  "WORKFLOW_STORE_PREFIX=$WORKFLOW_PREFIX" \
+  "REDIS_PHYSICAL_PROFILE_VERSION=$PROFILE" \
+  "REDIS_NAMESPACE_ENVIRONMENT=$NAMESPACE" \
+  "REDIS_NAMESPACE_ZONE=local" \
+  "REDIS_AUTHORITY_LAYOUT_VERSION=v1" \
+  "REDIS_WORKFLOW_LAYOUT_VERSION=v1" \
+  "REDIS_WORKFLOW_HASH_VERSION=1" \
+  "REDIS_WORKFLOW_BUCKET_COUNT=256" \
+  "PLAYER_ADDR=127.0.0.1:$PLAYER_PORT" \
+  "FARM_ADDR=127.0.0.1:$FARM_PORT" \
+  "WORKER_ID=smoke-worker" \
+  "WORKER_BOOT_ID=smoke-worker-$STAMP" \
+  "WORKER_LEASE_TOKEN=smoke-lease-$STAMP" \
+  "WORKER_POLL_INTERVAL=100ms" \
+  "WORKER_CLAIM_LIMIT=8" \
+  "WORKER_CLAIM_LEASE=5s" \
+  "WORKER_OPERATION_TIMEOUT=3s" \
+  "WORKER_PARTICIPANT_BUDGET_MS=5000" \
+  "WORKER_HEALTH_LISTEN=127.0.0.1:$WORKER_HEALTH" \
+  "$BIN/farm-worker"
+
+# --- 7. Wait ready ---------------------------------------------------------------
+echo "=== 7. wait ready ==="
+wait_http "http://127.0.0.1:$PLAYER_HEALTH/readyz" 30 || verdict INCONCLUSIVE "player-svr not ready"
+echo "  player-svr ready"
+wait_http "http://127.0.0.1:$FARM_HEALTH/readyz" 30 || verdict INCONCLUSIVE "farm-svr not ready"
+echo "  farm-svr ready"
+wait_http "http://127.0.0.1:$WORKER_HEALTH/readyz" 30 || verdict INCONCLUSIVE "farm-worker not ready"
+echo "  farm-worker ready"
+wait_tcp "$GATE_HTTP" 30 || verdict INCONCLUSIVE "farm-gate listener not ready"
+wait_http "http://127.0.0.1:$GATE_HTTP/readyz" 30 || verdict INCONCLUSIVE "farm-gate dependency readiness not green"
+echo "  farm-gate ready"
+
+# Optional fixed-function test control. Only two filenames are recognized;
+# request content is ignored and never evaluated. This lets headed Playwright
+# prove cookie/WSS recovery across one real farm-gate process restart.
+restart_gate_watcher() {
+  local restart_seq=0 request ack next_pid deadline old_pid
+  mkdir -p "$CONTROL_DIR"
+  request="$CONTROL_DIR/restart-gate.request"
+  ack="$CONTROL_DIR/restart-gate.ack.json"
+  rm -f "$request" "$ack"
+  # This watcher is a background subshell and cannot wait(2) for the Gate
+  # process owned by the parent shell. It nevertheless owns every replacement
+  # Gate, so ensure the currently tracked process cannot leak on runner exit.
+  trap 'kill "$GATE_PID" 2>/dev/null || true' EXIT
+  trap 'exit 0' TERM INT
+  while true; do
+    if [[ -f "$request" ]]; then
+      rm -f "$request" "$ack"
+      restart_seq=$((restart_seq + 1))
+      echo "  control: restarting farm-gate (sequence=$restart_seq)"
+      old_pid="$GATE_PID"
+      kill "$old_pid" 2>/dev/null || true
+      # Graceful shutdown intentionally drains for five seconds. Waiting on
+      # kill -0 is invalid here because the parent-owned process can remain a
+      # zombie; instead prove that every listener needed by the replacement is
+      # closed before starting it.
+      deadline=$((SECONDS + 15))
+      while (echo >/dev/tcp/127.0.0.1/"$GATE_HTTP") 2>/dev/null ||
+            (echo >/dev/tcp/127.0.0.1/"$GATE_CONTROL") 2>/dev/null ||
+            (echo >/dev/tcp/127.0.0.1/"$GATE_DOWNLINK_REAL") 2>/dev/null; do
+        if (( SECONDS >= deadline )); then
+          kill -KILL "$old_pid" 2>/dev/null || true
+          sleep 0.2
+          break
+        fi
+        sleep 0.1
+      done
+      "${GATE_CMD[@]}" >>"$OUT/gate-restart-$restart_seq.log" 2>&1 &
+      next_pid=$!
+      GATE_PID="$next_pid"
+      deadline=$((SECONDS + 30))
+      until kill -0 "$GATE_PID" 2>/dev/null && curl -fsS "http://127.0.0.1:$GATE_HTTP/readyz" >/dev/null 2>&1; do
+        if (( SECONDS >= deadline )); then
+          printf '{"status":"FAILED","sequence":%d}\n' "$restart_seq" >"$ack.tmp"
+          mv "$ack.tmp" "$ack"
+          break
+        fi
+        sleep 0.1
+      done
+      if [[ ! -f "$ack" ]]; then
+        printf '{"status":"READY","sequence":%d,"pid":%d}\n' "$restart_seq" "$GATE_PID" >"$ack.tmp"
+        mv "$ack.tmp" "$ack"
+      fi
+    fi
+    sleep 0.1
+  done
+}
+if [[ -n "$CONTROL_DIR" ]]; then
+  restart_gate_watcher >"$OUT/control.log" 2>&1 &
+  PIDS+=("$!")
+  echo "  fixed restart control: $CONTROL_DIR"
+fi
+
+# --- 8. Verify authority mode ----------------------------------------------------
+echo "=== 8. verify authority mode ==="
+if ! grep -q 'authority mode enabled' "$OUT/player.log"; then
+  verdict FAIL "player-svr: authority mode not confirmed in logs"
+fi
+if ! grep -q 'authority mode enabled' "$OUT/farm.log"; then
+  verdict FAIL "farm-svr: authority mode not confirmed in logs"
+fi
+if grep -Eqi 'mode=legacy|legacy fallback|using legacy' "$OUT/player.log" "$OUT/farm.log"; then
+  verdict FAIL "legacy fallback observed in logs"
+fi
+echo "  authority mode confirmed for player-svr and farm-svr"
+echo "  no legacy fallback detected"
+
+# --- 9. Independent observers ---------------------------------------------------
+# Q1 deterministic F3 evidence: only the two H5 pages traverse this transparent
+# test-only tap. It records decoded operation/subscription/cycle identity but no
+# ticket, cookie, credential, or raw payload. The Go protocol bot remains a
+# direct, independent Gate client.
+start "$OUT/ws-frame-tap.log" "$BIN/perf-baseline-q1" ws-tap \
+  --listen "127.0.0.1:$WS_TAP_PORT" \
+  --upstream "ws://127.0.0.1:$GATE_HTTP/ws" \
+  --events-out "$OUT/ws-frame-tap.ndjson"
+wait_tcp "$WS_TAP_PORT" 30 || verdict INCONCLUSIVE "Q1 ws frame tap not ready"
+
+# Polling GET /admin/plan gives T0 a UTC read-back witness. The production
+# fault proxy remains unchanged and still emits the authoritative Downlink
+# protocol-events.ndjson stream.
+FAULT_WATCH_STOP="$TMP/fault-plan-watcher.stop"
+rm -f "$FAULT_WATCH_STOP"
+start "$OUT/fault-plan-watcher.log" python3 "$Q1PERF_TOOL" watch-fault \
+  --admin-url "http://127.0.0.1:$PROXY_ADMIN" \
+  --out "$OUT/fault-plan-observations.ndjson" --stop-file "$FAULT_WATCH_STOP"
+FAULT_WATCH_PID="${PIDS[${#PIDS[@]}-1]}"
+
+# Start S1B before S1A and collect it below. Both are independent real clients;
+# running them concurrently keeps the finite static Route lease from becoming
+# an accidental function of Playwright video/trace finalization time.
+BOT_FAIL=2
+BOT_PID=""
+if [[ -x "$BIN/authority-smoke-bot" ]]; then
+  "$BIN/authority-smoke-bot" \
+    --http-url "http://127.0.0.1:$GATE_HTTP" \
+    --ws-url "ws://127.0.0.1:$GATE_HTTP/ws" \
+    --user "smoke_bot${ACCOUNT_SUFFIX}" \
+    --password "smoke123" \
+    --json-out "$OUT/protocol-verdict.json" \
+    --frames-out "$OUT/bot-frames.ndjson" \
+    >"$OUT/bot.log" 2>&1 &
+  BOT_PID=$!
+  PIDS+=("$BOT_PID")
+fi
+
+# S1A: H5 Playwright smoke (real browser; VITE_WS_URL=/ws through vite proxy).
+# A failure in either observer must never prevent the other from producing
+# evidence (Q1 CONTRACT_ALIGNMENT).
+#
+# The frozen H5 business checkout requires an explicit two-click Theft
+# confirmation, while its committed CP-B test still assumes one click. Build a
+# transparent test-only overlay under ignored test-results/: it changes exactly
+# that orchestration step, records both source/generated hashes, and never edits
+# tracked H5 or production code.
+EFFECTIVE_PLAYWRIGHT_CONFIG="$PLAYWRIGHT_CONFIG"
+EFFECTIVE_PLAYWRIGHT_TEST="$PLAYWRIGHT_TEST"
+if [[ "$PLAYWRIGHT_CONFIG" == "playwright.cp-vertical-b.config.ts" && "$PLAYWRIGHT_TEST" == "cp-vertical-b.spec.ts" ]]; then
+  if grep -Fq 'wireA.count(ProtoCommandType.THEFT)' "$H5_ROOT/src/test/e2e/cp-vertical-b.spec.ts" &&
+     grep -Fq '本次尚未提交请求' "$H5_ROOT/src/test/e2e/cp-vertical-b.spec.ts"; then
+    # Newer fixed H5 witnesses carry the permanent two-click + decoded Wire
+    # contract. Record that tracked test truth and do not generate an overlay.
+    python3 - "$H5_ROOT" "$OUT/h5-test-overlay.json" <<'PY'
+import hashlib,json,pathlib,sys
+root=pathlib.Path(sys.argv[1]); manifest=pathlib.Path(sys.argv[2])
+spec=(root/'src/test/e2e/cp-vertical-b.spec.ts').read_text()
+sha=lambda data:'sha256:'+hashlib.sha256(data.encode()).hexdigest()
+manifest.write_text(json.dumps({
+  'mode':'TRACKED_TEST_CONTRACT','tracked_h5_modified':False,
+  'reason':'committed CP-B test permanently witnesses two-click Theft confirmation and decoded Wire THEFT',
+  'source_spec':'src/test/e2e/cp-vertical-b.spec.ts','source_spec_hash':sha(spec),
+  'generated_spec_hash':sha(spec),'exact_change':'none; tracked test contract used directly'
+},indent=2,ensure_ascii=False)+'\n')
+PY
+  else
+    Q1_TEST_OVERLAY="$H5_ROOT/test-results/q1-overlay-$STAMP"
+  mkdir -p "$Q1_TEST_OVERLAY"
+  python3 - "$H5_ROOT" "$Q1_TEST_OVERLAY" "$OUT/h5-test-overlay.json" <<'PY'
+import hashlib,json,pathlib,sys
+root=pathlib.Path(sys.argv[1]); out=pathlib.Path(sys.argv[2]); manifest=pathlib.Path(sys.argv[3])
+spec_source=root/'src/test/e2e/cp-vertical-b.spec.ts'
+config_source=root/'playwright.cp-vertical-b.config.ts'
+spec=spec_source.read_text()
+old="""    await pageA.locator('[data-theft]').click();
+    await expect.poll(async () => (await downlinkFaultEvents()).some((event) => event.type === 'FAIL_FARM_CHANGE'), { timeout: 30_000 }).toBe(true);
+"""
+new="""    await pageA.locator('[data-theft]').click();
+    await expect(pageA.locator('[data-theft]')).toContainText('确认偷菜');
+    await pageA.locator('[data-theft]').click();
+    await expect.poll(async () => (await downlinkFaultEvents()).some((event) => event.type === 'FAIL_FARM_CHANGE'), { timeout: 30_000 }).toBe(true);
+"""
+if spec.count(old) != 1:
+    raise SystemExit('frozen CP-B Theft confirmation seam did not match exactly once')
+generated_spec=spec.replace(old,new)
+config=config_source.read_text()
+old_dir="  testDir: './src/test/e2e',"
+old_match="  testMatch: ['cp-vertical-b.spec.ts', 'cp-unlock-sequential.spec.ts', 'cp-social-navigation.spec.ts', 'cp-sell-authoritative.spec.ts'],"
+if config.count(old_dir) != 1 or config.count(old_match) != 1:
+    raise SystemExit('frozen CP-B Playwright config seam did not match exactly once')
+generated_config=config.replace(old_dir,"  testDir: '.',").replace(old_match,"  testMatch: ['cp-vertical-b.q1.spec.ts'],")
+spec_out=out/'cp-vertical-b.q1.spec.ts'; config_out=out/'playwright.q1.config.ts'
+spec_out.write_text(generated_spec); config_out.write_text(generated_config)
+sha=lambda data:'sha256:'+hashlib.sha256(data.encode()).hexdigest()
+manifest.write_text(json.dumps({
+  'mode':'TEST_ONLY_OVERLAY','tracked_h5_modified':False,
+  'reason':'align committed CP-B test with frozen H5 two-click Theft confirmation contract',
+  'source_spec':'src/test/e2e/cp-vertical-b.spec.ts','source_spec_hash':sha(spec),
+  'generated_spec_hash':sha(generated_spec),'source_config_hash':sha(config),
+  'generated_config_hash':sha(generated_config),
+  'exact_change':'after first Theft click assert 确认偷菜, then click again to submit the wire command'
+},indent=2,ensure_ascii=False)+'\n')
+PY
+    EFFECTIVE_PLAYWRIGHT_CONFIG="$Q1_TEST_OVERLAY/playwright.q1.config.ts"
+    EFFECTIVE_PLAYWRIGHT_TEST=""
+  fi
+fi
+
+echo "=== 9. S1A: H5 Playwright smoke ==="
+PLAYWRIGHT_FAIL=2
+if [[ -d "$H5_ROOT" ]]; then
+  set +e
+  (
+    cd "$H5_ROOT"
+    # Q1: the client talks to the same-origin /ws, so the Vite dev server /ws
+    # proxy is genuinely exercised (VITE_WS_PROXY_TARGET points at farm-gate).
+    playwright_args=(test --config "$EFFECTIVE_PLAYWRIGHT_CONFIG" --reporter=line)
+    if [[ -n "$EFFECTIVE_PLAYWRIGHT_TEST" ]]; then playwright_args+=("$EFFECTIVE_PLAYWRIGHT_TEST"); fi
+    FARM_E2E_API_BASE_URL="http://127.0.0.1:$GATE_HTTP" \
+    FARM_E2E_WS_PROXY_TARGET="ws://127.0.0.1:$WS_TAP_PORT" \
+    FARM_E2E_WSS_URL="/ws" \
+    FARM_E2E_USER_A="smoke_a${ACCOUNT_SUFFIX}" \
+    FARM_E2E_USER_B="smoke_b${ACCOUNT_SUFFIX}" \
+    FARM_E2E_USER_C="smoke_c${ACCOUNT_SUFFIX}" \
+    FARM_E2E_PASSWORD="smoke123" \
+    FARM_E2E_CONTROL_DIR="$CONTROL_DIR" \
+    FARM_E2E_FAULT_ADMIN_URL="http://127.0.0.1:$PROXY_ADMIN" \
+    FARM_E2E_EVIDENCE_ROOT="$OUT" \
+    npx playwright "${playwright_args[@]}" \
+      >"$OUT/playwright.log" 2>&1
+  )
+  PLAYWRIGHT_FAIL=$?
+  set -e
+  echo "  playwright exit: $PLAYWRIGHT_FAIL"
+  echo "  playwright log: $OUT/playwright.log"
+  tail -25 "$OUT/playwright.log" || true
+else
+  echo "  H5 root not found: $H5_ROOT (skipping)"
+fi
+
+# Freeze the fault watcher before diagnosis so the plan's arm/clear transitions
+# and all browser wire frames are stable evidence.
+touch "$FAULT_WATCH_STOP"
+wait "$FAULT_WATCH_PID" || true
+
+# Read-only, whitelisted Redis evidence is captured before the coordinator
+# destroys this exact ephemeral container. Q1 never emits Redis credentials or
+# runs a mutating Redis command.
+DIAG_FAIL=0
+set +e
+Q1PERF_REDIS_PASSWORD="REPLACE_WITH_LOCAL_SECRET" python3 "$Q1PERF_TOOL" dump-redis-theft \
+  --host "$redis_host" --port "$redis_port" --db "$redis_db" \
+  --namespace "$NAMESPACE" --workflow-prefix "$WORKFLOW_PREFIX" \
+  --out "$OUT/theft-redis-dump.json" >"$OUT/theft-redis-dump.log" 2>&1
+DUMP_RC=$?
+set -e
+if ((DUMP_RC != 0)); then DIAG_FAIL=1; fi
+
+# The classifier has a closed result set. Harness/contract outcomes block the
+# baseline as inconclusive; product classifications remain hard correctness
+# failures. InvalidOrders are separately correlated and never used as an F3
+# root-cause shortcut.
+if [[ -f "$OUT/browser-verdict.json" ]]; then
+  python3 "$Q1PERF_TOOL" triage-f3 --evidence-dir "$OUT" \
+    --out "$OUT/f3-fault-chain-triage.json" >"$OUT/f3-fault-chain-triage.log" 2>&1 || DIAG_FAIL=1
+fi
+python3 "$Q1PERF_TOOL" triage-invalid-orders --evidence-dir "$OUT" \
+  --out "$OUT/theft-invalid-order-triage.json" >"$OUT/theft-invalid-order-triage.log" 2>&1 || DIAG_FAIL=1
+
+# --- 9b. S1B: real Go WSS protocol bot (independent observer) ---------------------
+echo "=== 9b. S1B: Go WSS protocol bot ==="
+if [[ -n "$BOT_PID" ]]; then
+  set +e
+  wait "$BOT_PID"
+  BOT_FAIL=$?
+  set -e
+  echo "  bot exit: $BOT_FAIL"
+  echo "  bot verdict: $OUT/protocol-verdict.json"
+  grep -E '"(verdict|steps)"|    "(ok|fail|inconclusive)"' "$OUT/protocol-verdict.json" 2>/dev/null | head -20 || tail -20 "$OUT/bot.log"
+else
+  echo "  authority-smoke-bot not built (skipping)"
+fi
+
+# --- 10. Audit -------------------------------------------------------------------
+echo "=== 10. authority audit ==="
+AUDIT_FAIL=0
+set +e
+"$BIN/authority-smoke-fixture" audit \
+  --redis-url "$REDIS_URL" \
+  --namespace "$NAMESPACE" --zone local \
+  --route "$ROUTE" \
+  --protocol-verdict "$OUT/protocol-verdict.json" \
+  --browser-verdict "$OUT/browser-verdict.json" \
+  --json-out "$OUT/authority-after.json" 2>&1
+AUDIT_FAIL=$?
+set -e
+if [[ "$AUDIT_FAIL" -ne 0 ]]; then
+  verdict INCONCLUSIVE "authority audit failed rc=$AUDIT_FAIL"
+fi
+
+# --- 11. Verdict -------------------------------------------------------------------
+# Q1 CONTRACT_ALIGNMENT: combined verdict distinguishes
+#   PASS                   S0 + S1A(real H5) + S1B(protocol bot) all green
+#   H5_FAIL_SERVER_PASS    real H5 failed while the protocol bot passed (H5/UI issue)
+#   SERVER_FAIL            protocol bot failed (server/protocol issue)
+#   INCONCLUSIVE           tooling missing / S0 or audit not qualified
+echo "=== 11. verdict ==="
+S0_OK=1
+grep -q 'authority mode enabled' "$OUT/player.log" || S0_OK=0
+grep -q 'authority mode enabled' "$OUT/farm.log" || S0_OK=0
+# authority-after.json 顶层无 verdict(protocol_verdict 是嵌套的 S1B 结果);
+# S0 判定依据 ShardWriteAuthority 读取成功(authority 字段存在)。
+python3 -c "
+import json,sys
+try:
+    d=json.load(open('$OUT/authority-after.json'))
+    ok = 'authority' in d and 'player' in d['authority'] and 'farm' in d['authority']
+    if '${SMOKE_REQUIRE_SOCIAL_ORACLE:-0}' == '1':
+        ok = ok and d.get('business_oracle',{}).get('verdict') == 'PASS'
+    sys.exit(0 if ok else 1)
+except Exception:
+    sys.exit(1)
+" || S0_OK=0
+S1_A=${PLAYWRIGHT_FAIL:-2}
+S1_B=${BOT_FAIL:-2}
+if [[ ${DIAG_FAIL:-0} -ne 0 ]]; then
+  verdict INCONCLUSIVE "Q1 deterministic F3/InvalidOrder diagnostic evidence incomplete"
+elif [[ $S0_OK -eq 1 && "$S1_A" -eq 0 && "$S1_B" -eq 0 ]]; then
+  verdict PASS "S0 + S1A(real H5) + S1B(protocol bot) passed"
+elif [[ $S0_OK -eq 1 && ( "$S1_A" -eq 2 || "$S1_B" -eq 2 ) ]]; then
+  verdict INCONCLUSIVE "S1 tooling missing (h5=$S1_A bot=$S1_B)"
+elif [[ $S0_OK -eq 1 && "$S1_B" -ne 0 && "$S1_B" -ne 2 ]]; then
+  verdict FAIL "SERVER_FAIL: protocol bot failed (h5=$S1_A bot=$S1_B)"
+elif [[ $S0_OK -eq 1 && "$S1_A" -ne 0 && "$S1_A" -ne 2 && "$S1_B" -eq 0 ]]; then
+  verdict FAIL "H5_FAIL_SERVER_PASS: real H5 failed while protocol bot passed (h5=$S1_A bot=$S1_B)"
+else
+  verdict FAIL "S0 or S1 failed (s0=$S0_OK h5=$S1_A bot=$S1_B)"
+fi

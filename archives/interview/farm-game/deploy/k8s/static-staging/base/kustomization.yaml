@@ -1,0 +1,45 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: farm-staging-system
+resources:
+  - resources/namespace.json
+  - resources/platform-config.json
+  - resources/nginx-config.json
+  - resources/gate-deployment.json
+  - resources/gate-service.json
+  - resources/gate-pdb.json
+  - resources/player-statefulset.json
+  - resources/player-service.json
+  - resources/player-headless-service.json
+  - resources/player-pdb.json
+  - resources/farm-statefulset.json
+  - resources/farm-service.json
+  - resources/farm-headless-service.json
+  - resources/farm-pdb.json
+  - resources/worker-deployment.json
+  - resources/worker-service.json
+  - resources/worker-pdb.json
+  - resources/h5-deployment.json
+  - resources/h5-service.json
+  - resources/h5-pdb.json
+  - resources/ingress.json
+  - resources/networkpolicy-default-deny.json
+  - resources/networkpolicy-gate.json
+  - resources/networkpolicy-player.json
+  - resources/networkpolicy-farm.json
+  - resources/networkpolicy-worker.json
+  - resources/networkpolicy-h5.json
+  - resources/networkpolicy-redis.json
+  - resources/servicemonitor-gate.json
+  - resources/servicemonitor-player.json
+  - resources/servicemonitor-farm.json
+  - resources/servicemonitor-worker.json
+configMapGenerator:
+  - name: farm-static-route
+    files:
+      - route-snapshot.json=route-snapshot.v1.json
+    options:
+      disableNameSuffixHash: true
+generatorOptions:
+  labels:
+    farm.io/config-role: static-route

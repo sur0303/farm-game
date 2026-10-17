@@ -1,0 +1,49 @@
+job.batch/ws-stress-join-134148 created
+job=ws-stress-join-134148
+job.batch/ws-stress-join-134148 condition met
+2026/08/17 05:41:49 ws-stress HTTP=http://farm-gate:8080 WSS=ws://farm-gate:8080/ws conns=10000 rate=3500/s duration=15s scenario=join run_id=dkqz8uffbvno
+{
+  "run_id": "dkqz8uffbvno",
+  "cell_run_id": "dkqz8uffbvno",
+  "scenario": "join",
+  "auth_mode": "load_test_token",
+  "configured_connections": 10000,
+  "player_start": 1787140000000,
+  "connect_rate_per_second": 3500,
+  "configured_duration_seconds": 15,
+  "started_at": "2026-08-17T05:41:49.620403876Z",
+  "finished_at": "2026-08-17T05:42:04.749555588Z",
+  "attempted": 10000,
+  "ready": 9999,
+  "active_at_end": 0,
+  "peak_active": 9999,
+  "login_errors": 1,
+  "connect_errors": 0,
+  "hello_errors": 0,
+  "join_errors": 0,
+  "scenario_attempted": 0,
+  "scenario_succeeded": 0,
+  "scenario_errors": 0,
+  "unexpected_disconnects": 0,
+  "ready_rate": 0.9999,
+  "elapsed_ms": 15111.076084,
+  "qps": 661.7000632130495,
+  "ready_p50_ms": 130.172792,
+  "ready_p95_ms": 327.660384,
+  "ready_p99_ms": 403.669476,
+  "ready_max_ms": 508.68281,
+  "login_p50_ms": 23.604883,
+  "login_p95_ms": 112.332738,
+  "hello_p50_ms": 7.065819,
+  "hello_p95_ms": 41.919967,
+  "join_accepted_p50_ms": 49.968224,
+  "join_accepted_p95_ms": 232.067125,
+  "snapshot_p50_ms": 12.115375,
+  "snapshot_p95_ms": 96.123656,
+  "scenario_p95_ms": 0,
+  "failure_reasons": {
+    "login: login status 401: {\"error\":\"unauthorized\",\"error_code\":\"ERR_UNAUTHENTICATED\"}\n": 1
+  },
+  "git_sha": "unknown",
+  "test_environment": "developer_026-qqfarm"
+}

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+RUN_ID="${ROUTE_RUN_ID:-}"
+MODE="${1:---dry-run}"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO=$(CDPATH= cd -- "$SCRIPT_DIR/../.." && pwd)
+case "$MODE" in --dry-run|--build-publish) ;; *) echo "usage: ROUTE_RUN_ID=<id> $0 [--dry-run|--build-publish]" >&2; exit 2;; esac
+[[ "$RUN_ID" =~ ^[a-z0-9][a-z0-9-]{0,62}$ ]] || { echo "publish-route-runtime-image: ROUTE_RUN_ID is required" >&2; exit 1; }
+HEAD=$(git -C "$REPO" rev-parse HEAD)
+SHORT=${HEAD:0:12}
+TARGET="127.0.0.1:5001/farm/route-runtime:$SHORT"
+RECEIPT="$LAB_ROOT/receipts/route-runtime-image-$RUN_ID.json"
+
+if [[ "$MODE" == "--dry-run" ]]; then
+  python3 - "$RUN_ID" "$HEAD" "$TARGET" <<'PY'
+import json,sys
+run_id,head,target=sys.argv[1:]
+print(json.dumps({"schema_version":"farm-local-route-runtime-image-plan.v1","status":"DRY_RUN_NOT_BUILT","run_id":run_id,"source_head":head,"target":target,"company_redis_contacted":False,"active_binding_authorized":False},sort_keys=True,indent=2))
+PY
+  exit 0
+fi
+
+[[ -z "$(git -C "$REPO" status --porcelain=v1 --untracked-files=all)" ]] || { echo "publish-route-runtime-image: source worktree must be clean" >&2; exit 1; }
+for command in docker curl python3; do command -v "$command" >/dev/null || { echo "publish-route-runtime-image: $command missing" >&2; exit 1; }; done
+curl -fsS http://127.0.0.1:5001/v2/ >/dev/null || { echo "publish-route-runtime-image: local Registry unavailable" >&2; exit 1; }
+
+BINARY_DIR=".local-build/route-runtime-$SHORT"
+rm -rf "$REPO/$BINARY_DIR"
+install -d -m 0700 "$REPO/$BINARY_DIR"
+cleanup() { rm -rf "$REPO/$BINARY_DIR"; }
+trap cleanup EXIT
+for service in player-svr farm-svr farm-worker farm-gate route-controller route-authority-fence-probe; do
+  (cd "$REPO" && CGO_ENABLED=0 GOOS=linux go build -buildvcs=false -tags timetzdata -trimpath \
+    -ldflags "-s -w -X farmgame.GitCommit=$HEAD -X farmgame.ImageRevision=$HEAD" \
+    -o "$REPO/$BINARY_DIR/$service" "./cmd/$service")
+done
+docker build --file "$REPO/Dockerfile.runtime.prebuilt" --build-arg BINARY_DIR="$BINARY_DIR" \
+  --build-arg APP_PROFILE=showcase --build-arg IMAGE_REVISION="$HEAD" --tag "$TARGET" "$REPO" >/dev/null
+docker push "$TARGET" >/dev/null
+IMAGE_ID=$(docker image inspect "$TARGET" -f '{{.Id}}')
+DIGEST=$(docker image inspect "$TARGET" -f '{{range .RepoDigests}}{{println .}}{{end}}' | awk -F@ '$1=="127.0.0.1:5001/farm/route-runtime" {print $2; exit}')
+[[ "$IMAGE_ID" =~ ^sha256:[0-9a-f]{64}$ && "$DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]] || { echo "publish-route-runtime-image: immutable image identity missing" >&2; exit 1; }
+
+python3 - "$RECEIPT" "$RUN_ID" "$HEAD" "$IMAGE_ID" "$DIGEST" <<'PY'
+import json,os,sys,tempfile
+path,run_id,head,image_id,digest=sys.argv[1:]
+value={
+ "schema_version":"farm-local-route-runtime-image-receipt.v1",
+ "status":"PUBLISHED_LOCAL_ROUTE_RUNTIME_NOT_DEPLOYED",
+ "run_id":run_id,"source_head":head,"business_identity":"5ce43715363eea4f18e0925b6992429785053261",
+ "verification_identity":head,"local_image_id":image_id,
+ "registry_ref":"127.0.0.1:5001/farm/route-runtime@"+digest,
+ "contains_services":["player-svr","farm-svr","farm-worker","farm-gate","route-controller"],
+ "contains_tools":["route-authority-fence-probe"],
+ "company_redis_contacted":False,"cluster_applied":False,"active_binding_authorized":False,
+ "capacity_constant_eligible":False,"supports_30m_dau":False,
+}
+os.makedirs(os.path.dirname(path),exist_ok=True)
+fd,temp=tempfile.mkstemp(prefix=".route-runtime-image-",dir=os.path.dirname(path),text=True)
+with os.fdopen(fd,"w") as out:
+ json.dump(value,out,sort_keys=True,indent=2); out.write("\n"); out.flush(); os.fsync(out.fileno())
+os.replace(temp,path); os.chmod(path,0o640)
+print(json.dumps(value,sort_keys=True,indent=2))
+PY

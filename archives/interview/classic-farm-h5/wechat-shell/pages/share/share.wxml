@@ -1,0 +1,7 @@
+<view class="page">
+  <view class="state-card">
+    <text class="title">农场邀请</text>
+    <text class="hint">{{shareToken ? '已收到好友邀请，进入后会由服务端验证分享权限。' : '进入农场后可以继续完成登录和好友访问。'}}</text>
+    <button bindtap="openGame">进入农场</button>
+  </view>
+</view>

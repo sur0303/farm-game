@@ -1,0 +1,528 @@
+{
+  "schema_version": "cap-redis-l1-r1.v1",
+  "purpose": "redis_serialization_baseline_r1",
+  "baseline_eligible": false,
+  "supports_30m_dau": false,
+  "frozen_identity": {
+    "task_id": "CAP-REDIS-L1-R1",
+    "backend_business_commit": "4824c9c02fe70873b2f9a8eab3ce274d227063a8",
+    "backend_evidence_head": "54c6d0a15cd2e0555d309b59319f1ce30fab268c",
+    "h5_commit": "525c4d324100b17a891f02797c4880fa9a02f70a",
+    "backend_image_digest": "sha256:f36a4d8f5f8c05ac44ed173895e46f5348af6d5b133835e6d25d13da2b51c39b",
+    "h5_image_digest": "sha256:9bfdedaa70f7cbf8bac86bb25cc2ff62dba1cf7832fb5d8f66c72c1f113486fd"
+  },
+  "runtime_identity": {
+    "run_id": "capredis-l1-r1-20260810T042125Z-2582048-smoke-1",
+    "round_kind": "smoke",
+    "round_number": 1,
+    "started_at_utc": "2026-08-10T04:21:26.551220258Z",
+    "completed_at_utc": "2026-08-10T04:21:27.064289476Z",
+    "redis_endpoint_hash": "3a7918ed1c9654e30a35c4176064a58925910773cb6a16554925bcdf26d5608e",
+    "redis_config_hash": "62bbe51e7ff885f80952f3ef742ec245b771510300b4af740cab9bb5a52079b9",
+    "namespace": "capr1:r11786335686416646554",
+    "machine_spec_hash": "b411797bb948b74a8c08e8a3dfa186d98316662a0f450503985f43e4a09a75a1",
+    "machine_spec": {
+      "cpu_model": "AMD EPYC 7K62 48-Core Processor",
+      "docker_server": "29.3.1",
+      "go_version": "go1.26.3-X:nodwarf5 linux/amd64",
+      "kernel": "Linux 6.6.119-49.20.tl4.x86_64 #1 SMP Sat May  2 07:46:47 CST 2026 x86_64 GNU/Linux",
+      "logical_cpus": "32",
+      "memory_bytes": "66879913984"
+    },
+    "cpu_governor": "unavailable",
+    "container_cpu_limit": "4",
+    "container_memory_limit": "4g",
+    "go_gc": "100",
+    "go_mem_limit": "4GiB",
+    "redis_pool_size": 400,
+    "redis_min_idle_conns": 400,
+    "model_layout_version": "R1:authority-v1+workflow-v1+friend-v1;Model-Field-V2-not-yet-claimed",
+    "route_snapshot_hash": "3a4cff47a12d0e2b78ca3988c2b2698a9104e9c344805849d8700caf16f7c5a7",
+    "lease_profile_hash": "acb6428cca9364ba3eb0d2aeaaca9d3a7a488444515b6f2bdd0ba77ed2acb464",
+    "profile_hash": "eb4ee6ee0a69b760423495eb42bf3778d0e69309ac55be6eb161df52efff7729",
+    "random_seed": 2026080901
+  },
+  "cells": [
+    {
+      "operation": "friend_pair_activate",
+      "group": "friend_authority",
+      "key_distribution": "uniform_pair_keys",
+      "concurrency": 10,
+      "planned_operations": 300,
+      "completed_operations": 291,
+      "failed_operations": 9,
+      "correctness_violations": 9,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 9.856666666666667,
+      "pipeline_items_per_op": 0.06,
+      "request_bytes_per_op": 5848.446666666667,
+      "response_bytes_per_op": 701.6533333333333,
+      "logical_request_bytes": {
+        "p50": 152,
+        "p95": 155,
+        "p99": 155,
+        "min": 146,
+        "max": 155
+      },
+      "logical_response_bytes": {
+        "p50": 48,
+        "p95": 48,
+        "p99": 48,
+        "min": 48,
+        "max": 48
+      },
+      "payload_bytes": {
+        "p50": 32,
+        "p95": 32,
+        "p99": 32,
+        "min": 32,
+        "max": 32
+      },
+      "client_latency_us": {
+        "p50": 12124.801,
+        "p95": 15076.079,
+        "p99": 17302.874,
+        "min": 2795.155,
+        "max": 20175.536
+      },
+      "lua_execution_us": {
+        "p50": 594,
+        "p95": 842,
+        "p99": 1220,
+        "min": 129,
+        "max": 1427
+      },
+      "network_rtt_us": {
+        "p50": 108.735,
+        "p95": 178.115,
+        "p99": 178.115,
+        "min": 102.012,
+        "max": 178.115
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.06,
+        "p95": 0.16,
+        "p99": 0.221,
+        "min": 0.03,
+        "max": 0.751
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 536.8333333333334,
+      "client_cpu_us_per_op": 811.7366666666667,
+      "redis_cpu_us_per_op": 1140.6000000000001,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "CLIENT",
+          "count": 18
+        },
+        {
+          "name": "EVALSHA",
+          "count": 582
+        },
+        {
+          "name": "HELLO",
+          "count": 9
+        },
+        {
+          "name": "HGET",
+          "count": 291
+        },
+        {
+          "name": "HLEN",
+          "count": 236
+        },
+        {
+          "name": "HMGET",
+          "count": 527
+        },
+        {
+          "name": "TYPE",
+          "count": 600
+        },
+        {
+          "name": "ZCARD",
+          "count": 694
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:3a8941295f78ba43f70e86c72f12d6569c434695",
+        "EVALSHA:ecd60e214245a8e88bc16f3a540f43474b8d36da"
+      ],
+      "outcome_counts": {
+        "SUCCEEDED": 291
+      },
+      "failure_diagnostics_expected": 9,
+      "failure_diagnostics_captured": 9,
+      "failure_diagnostics_complete": true,
+      "failure_diagnostics": [
+        {
+          "operation_index": 46,
+          "operation_id_hash": "97c9e05d8880d467c27bf8bec6d34256d1efde837a7023da727818f920457b9f",
+          "pair_id_hash": "c62957bdcd68ce3878f61e3a7644e15f0223c3c84105118c184ee843cb949d5e",
+          "bucket_id": 19,
+          "error_class": "ERR_FRIEND_RECONCILE",
+          "api_error": "friend: commit attempt reconcile required: bucket attempt count",
+          "pair_record_present_before": false,
+          "pair_record_version_before": 0,
+          "pair_record_present": false,
+          "pair_status": "",
+          "pair_relation_epoch": 0,
+          "pair_record_version": 0,
+          "receipt_present": false,
+          "receipt_field_count": 0,
+          "attempt_present": false,
+          "attempt_field_count": 0,
+          "attempt_states": [],
+          "bucket_meta": {
+            "receipt_count": 8,
+            "pending_work_count": 0,
+            "attempt_count": 8,
+            "manifest_hlen": 11
+          },
+          "due_counts": {
+            "receipt_due": 8,
+            "source_due": 0,
+            "attempt_due": 8
+          },
+          "final_classification": "NOT_COMMITTED",
+          "classification_basis": "NO_PAIR_RECORD_RECEIPT_OR_ATTEMPT",
+          "evidence_hash": "6380054b52004a6bb12954535125146fbead977a8e9de7e5cc827be1c49d5393"
+        },
+        {
+          "operation_index": 133,
+          "operation_id_hash": "ad3db603902535148a6d8e1fac94def5054b1f1a2345c564335b5c5c23e8a40b",
+          "pair_id_hash": "606575cda12723df63fd9d62c7c21b7500987125ee92d3eea048366a3d347d40",
+          "bucket_id": 44,
+          "error_class": "ERR_FRIEND_RECONCILE",
+          "api_error": "friend: commit attempt reconcile required: bucket receipt count",
+          "pair_record_present_before": false,
+          "pair_record_version_before": 0,
+          "pair_record_present": false,
+          "pair_status": "",
+          "pair_relation_epoch": 0,
+          "pair_record_version": 0,
+          "receipt_present": false,
+          "receipt_field_count": 0,
+          "attempt_present": false,
+          "attempt_field_count": 0,
+          "attempt_states": [],
+          "bucket_meta": {
+            "receipt_count": 3,
+            "pending_work_count": 0,
+            "attempt_count": 3,
+            "manifest_hlen": 11
+          },
+          "due_counts": {
+            "receipt_due": 3,
+            "source_due": 0,
+            "attempt_due": 3
+          },
+          "final_classification": "NOT_COMMITTED",
+          "classification_basis": "NO_PAIR_RECORD_RECEIPT_OR_ATTEMPT",
+          "evidence_hash": "bf2c839de06cc6891d9ba7e0535765bec14d9ef07545b62e867e3f094ad8e542"
+        },
+        {
+          "operation_index": 168,
+          "operation_id_hash": "d05d4a5cf70a5e79af05099c2f3423a642ede10751dc41adfc186379a6313736",
+          "pair_id_hash": "9c20362be60fc4d0d58bc1700a10358a464e71d13153ccfbd4ba83f5fb8cc323",
+          "bucket_id": 9,
+          "error_class": "ERR_FRIEND_RECONCILE",
+          "api_error": "friend: commit attempt reconcile required: bucket attempt count",
+          "pair_record_present_before": false,
+          "pair_record_version_before": 0,
+          "pair_record_present": false,
+          "pair_status": "",
+          "pair_relation_epoch": 0,
+          "pair_record_version": 0,
+          "receipt_present": false,
+          "receipt_field_count": 0,
+          "attempt_present": false,
+          "attempt_field_count": 0,
+          "attempt_states": [],
+          "bucket_meta": {
+            "receipt_count": 7,
+            "pending_work_count": 0,
+            "attempt_count": 7,
+            "manifest_hlen": 11
+          },
+          "due_counts": {
+            "receipt_due": 7,
+            "source_due": 0,
+            "attempt_due": 7
+          },
+          "final_classification": "NOT_COMMITTED",
+          "classification_basis": "NO_PAIR_RECORD_RECEIPT_OR_ATTEMPT",
+          "evidence_hash": "3a5097bc4401083f3382aacfcb70d2382dc04030c99548b40b082fb939e9bbb5"
+        },
+        {
+          "operation_index": 199,
+          "operation_id_hash": "ebcb8b030bb6b958d73c31d536ed280d089a5c3a639b617c9b64efd9ce9f7644",
+          "pair_id_hash": "2567455ceaf7376fc58cb470ba4097c8c3ea615374b83b4052b457eff794551c",
+          "bucket_id": 10,
+          "error_class": "ERR_FRIEND_RECONCILE",
+          "api_error": "friend: commit attempt reconcile required: bucket receipt count",
+          "pair_record_present_before": false,
+          "pair_record_version_before": 0,
+          "pair_record_present": false,
+          "pair_status": "",
+          "pair_relation_epoch": 0,
+          "pair_record_version": 0,
+          "receipt_present": false,
+          "receipt_field_count": 0,
+          "attempt_present": false,
+          "attempt_field_count": 0,
+          "attempt_states": [],
+          "bucket_meta": {
+            "receipt_count": 4,
+            "pending_work_count": 0,
+            "attempt_count": 4,
+            "manifest_hlen": 11
+          },
+          "due_counts": {
+            "receipt_due": 4,
+            "source_due": 0,
+            "attempt_due": 4
+          },
+          "final_classification": "NOT_COMMITTED",
+          "classification_basis": "NO_PAIR_RECORD_RECEIPT_OR_ATTEMPT",
+          "evidence_hash": "eabc9cbbcc91923f6cf39f425623de70899aa8478fbfd871e1938c1f65df4689"
+        },
+        {
+          "operation_index": 232,
+          "operation_id_hash": "5bd6ec72488997cc324ecca086b3df7efa64f02c9a43b9d05096db61e0b59a29",
+          "pair_id_hash": "bdcb28b0ee09b3b7c756c8c4b50c8fefb8beb2a843a78a529edc43240c012133",
+          "bucket_id": 53,
+          "error_class": "ERR_FRIEND_RECONCILE",
+          "api_error": "friend: commit attempt reconcile required: bucket receipt count",
+          "pair_record_present_before": false,
+          "pair_record_version_before": 0,
+          "pair_record_present": false,
+          "pair_status": "",
+          "pair_relation_epoch": 0,
+          "pair_record_version": 0,
+          "receipt_present": false,
+          "receipt_field_count": 0,
+          "attempt_present": false,
+          "attempt_field_count": 0,
+          "attempt_states": [],
+          "bucket_meta": {
+            "receipt_count": 5,
+            "pending_work_count": 0,
+            "attempt_count": 5,
+            "manifest_hlen": 11
+          },
+          "due_counts": {
+            "receipt_due": 5,
+            "source_due": 0,
+            "attempt_due": 5
+          },
+          "final_classification": "NOT_COMMITTED",
+          "classification_basis": "NO_PAIR_RECORD_RECEIPT_OR_ATTEMPT",
+          "evidence_hash": "66d6ad38bcc92467bd6f70c38f7deab4a71c3a5ca3a37f033c6268062b393bc0"
+        },
+        {
+          "operation_index": 246,
+          "operation_id_hash": "50362f9265a07f59118178f431015438983134f0b6dee0065cc2c2e693f3e14f",
+          "pair_id_hash": "3eef4e173c1ea2ae25043af6a62e118a77c95f847533547849b8d38aa2916f52",
+          "bucket_id": 52,
+          "error_class": "ERR_FRIEND_RECONCILE",
+          "api_error": "friend: commit attempt reconcile required: bucket attempt count",
+          "pair_record_present_before": false,
+          "pair_record_version_before": 0,
+          "pair_record_present": false,
+          "pair_status": "",
+          "pair_relation_epoch": 0,
+          "pair_record_version": 0,
+          "receipt_present": false,
+          "receipt_field_count": 0,
+          "attempt_present": false,
+          "attempt_field_count": 0,
+          "attempt_states": [],
+          "bucket_meta": {
+            "receipt_count": 6,
+            "pending_work_count": 0,
+            "attempt_count": 6,
+            "manifest_hlen": 11
+          },
+          "due_counts": {
+            "receipt_due": 6,
+            "source_due": 0,
+            "attempt_due": 6
+          },
+          "final_classification": "NOT_COMMITTED",
+          "classification_basis": "NO_PAIR_RECORD_RECEIPT_OR_ATTEMPT",
+          "evidence_hash": "2619175d03a1cbfe815c5d6136756d5b7e8f56ff8f9bdd8887f42953c7f51bd1"
+        },
+        {
+          "operation_index": 249,
+          "operation_id_hash": "6cbf0455b434e90c41888f8d22964d7196675178d83c497780250c1e5bead790",
+          "pair_id_hash": "137c64eb440bd7e00ac0bbc5d419f8c8865cf128e123a8dd1f96faf571d7f8f4",
+          "bucket_id": 61,
+          "error_class": "ERR_FRIEND_RECONCILE",
+          "api_error": "friend: commit attempt reconcile required: bucket attempt count",
+          "pair_record_present_before": false,
+          "pair_record_version_before": 0,
+          "pair_record_present": false,
+          "pair_status": "",
+          "pair_relation_epoch": 0,
+          "pair_record_version": 0,
+          "receipt_present": false,
+          "receipt_field_count": 0,
+          "attempt_present": false,
+          "attempt_field_count": 0,
+          "attempt_states": [],
+          "bucket_meta": {
+            "receipt_count": 3,
+            "pending_work_count": 0,
+            "attempt_count": 3,
+            "manifest_hlen": 11
+          },
+          "due_counts": {
+            "receipt_due": 3,
+            "source_due": 0,
+            "attempt_due": 3
+          },
+          "final_classification": "NOT_COMMITTED",
+          "classification_basis": "NO_PAIR_RECORD_RECEIPT_OR_ATTEMPT",
+          "evidence_hash": "27c417eb787823e93962acbc81d7190caa67c9a9e63256d7cfaf6968f304ac72"
+        },
+        {
+          "operation_index": 250,
+          "operation_id_hash": "1ce22ff19d9934b2f40c21789944aa17f9bac66d39f50c91c17388f6b5233440",
+          "pair_id_hash": "6db9b876ea9452bbfb884fcc7fc30417566a93a4f0289acf0d6c1b2ac76c657a",
+          "bucket_id": 51,
+          "error_class": "ERR_FRIEND_RECONCILE",
+          "api_error": "friend: commit attempt reconcile required: bucket receipt count",
+          "pair_record_present_before": false,
+          "pair_record_version_before": 0,
+          "pair_record_present": false,
+          "pair_status": "",
+          "pair_relation_epoch": 0,
+          "pair_record_version": 0,
+          "receipt_present": false,
+          "receipt_field_count": 0,
+          "attempt_present": false,
+          "attempt_field_count": 0,
+          "attempt_states": [],
+          "bucket_meta": {
+            "receipt_count": 5,
+            "pending_work_count": 0,
+            "attempt_count": 5,
+            "manifest_hlen": 11
+          },
+          "due_counts": {
+            "receipt_due": 5,
+            "source_due": 0,
+            "attempt_due": 5
+          },
+          "final_classification": "NOT_COMMITTED",
+          "classification_basis": "NO_PAIR_RECORD_RECEIPT_OR_ATTEMPT",
+          "evidence_hash": "65d592baa74a1ec3df22fc7592809ddb15e0ae4243067a70d3ce7999628f76fc"
+        },
+        {
+          "operation_index": 274,
+          "operation_id_hash": "db9f7e8fca0b7762f4ca34b002b81ef229435b8201f50399c7242e1c65365b7f",
+          "pair_id_hash": "a73c69860fc200cb1ac877436461611e260456f57a0402e3443ac31ea0451d9b",
+          "bucket_id": 15,
+          "error_class": "ERR_FRIEND_RECONCILE",
+          "api_error": "friend: commit attempt reconcile required: bucket receipt count",
+          "pair_record_present_before": false,
+          "pair_record_version_before": 0,
+          "pair_record_present": false,
+          "pair_status": "",
+          "pair_relation_epoch": 0,
+          "pair_record_version": 0,
+          "receipt_present": false,
+          "receipt_field_count": 0,
+          "attempt_present": false,
+          "attempt_field_count": 0,
+          "attempt_states": [],
+          "bucket_meta": {
+            "receipt_count": 5,
+            "pending_work_count": 0,
+            "attempt_count": 5,
+            "manifest_hlen": 11
+          },
+          "due_counts": {
+            "receipt_due": 5,
+            "source_due": 0,
+            "attempt_due": 5
+          },
+          "final_classification": "NOT_COMMITTED",
+          "classification_basis": "NO_PAIR_RECORD_RECEIPT_OR_ATTEMPT",
+          "evidence_hash": "5a3d555702758890f031b1b58bf57d491c36f693d8f77904eaca30bbe272f45d"
+        }
+      ],
+      "failure_evidence_hash_index": [
+        {
+          "operation_index": 46,
+          "evidence_hash": "6380054b52004a6bb12954535125146fbead977a8e9de7e5cc827be1c49d5393"
+        },
+        {
+          "operation_index": 133,
+          "evidence_hash": "bf2c839de06cc6891d9ba7e0535765bec14d9ef07545b62e867e3f094ad8e542"
+        },
+        {
+          "operation_index": 168,
+          "evidence_hash": "3a5097bc4401083f3382aacfcb70d2382dc04030c99548b40b082fb939e9bbb5"
+        },
+        {
+          "operation_index": 199,
+          "evidence_hash": "eabc9cbbcc91923f6cf39f425623de70899aa8478fbfd871e1938c1f65df4689"
+        },
+        {
+          "operation_index": 232,
+          "evidence_hash": "66d6ad38bcc92467bd6f70c38f7deab4a71c3a5ca3a37f033c6268062b393bc0"
+        },
+        {
+          "operation_index": 246,
+          "evidence_hash": "2619175d03a1cbfe815c5d6136756d5b7e8f56ff8f9bdd8887f42953c7f51bd1"
+        },
+        {
+          "operation_index": 249,
+          "evidence_hash": "27c417eb787823e93962acbc81d7190caa67c9a9e63256d7cfaf6968f304ac72"
+        },
+        {
+          "operation_index": 250,
+          "evidence_hash": "65d592baa74a1ec3df22fc7592809ddb15e0ae4243067a70d3ce7999628f76fc"
+        },
+        {
+          "operation_index": 274,
+          "evidence_hash": "5a3d555702758890f031b1b58bf57d491c36f693d8f77904eaca30bbe272f45d"
+        }
+      ],
+      "failure_evidence_aggregate_hash": "a8e119910ca3529428eeac70e2c8fe871f6f18e2b04346e17cf318a56c1506b2"
+    }
+  ],
+  "faults": null,
+  "hard_correctness_gates": {
+    "duplicate_grant_total": 0,
+    "duplicate_debit_total": 0,
+    "stale_holder_commit_success_total": 0,
+    "farm_version_gap_total": 0,
+    "workflow_step_unknown_residual": 0,
+    "invalid_order_total": 0,
+    "due_residual": 0,
+    "h5_pending_journal_residual": 0,
+    "authority_client_mismatch_total": 0,
+    "silent_drop_total": 0,
+    "unexpected_lease_expiry_total": 0,
+    "friend_pair_index_unrepaired": 0,
+    "friend_authority_reconcile_required_total": 9
+  },
+  "correctness_observation_complete": false,
+  "observability_required_gaps": null,
+  "verdict": "FAIL_CORRECTNESS",
+  "verdict_reasons": [
+    "friend_pair_activate/uniform/c10: friend: commit attempt reconcile required: bucket attempt count"
+  ]
+}

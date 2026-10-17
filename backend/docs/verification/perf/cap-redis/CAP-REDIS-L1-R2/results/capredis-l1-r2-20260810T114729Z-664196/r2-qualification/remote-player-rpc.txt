@@ -1,0 +1,14 @@
+=== RUN   TestAllFriendshipRPCMethodMappings
+--- PASS: TestAllFriendshipRPCMethodMappings (0.00s)
+=== RUN   TestFriendshipRPCMapsObservationOnlyEndToEnd
+--- PASS: TestFriendshipRPCMapsObservationOnlyEndToEnd (0.00s)
+=== RUN   TestAnyInstanceCanServeSharedStatelessFriendshipDomain
+--- PASS: TestAnyInstanceCanServeSharedStatelessFriendshipDomain (0.00s)
+PASS
+ok  	farmgame/internal/friendshipservice	0.007s
+=== RUN   TestRemotePlayerAssemblyNeverConstructsLocalFriendAuthority
+--- PASS: TestRemotePlayerAssemblyNeverConstructsLocalFriendAuthority (0.00s)
+=== RUN   TestGatewayFriendshipAssemblyModeMatrixAndFailClosed
+--- PASS: TestGatewayFriendshipAssemblyModeMatrixAndFailClosed (0.00s)
+PASS
+ok  	farmgame/internal/gatewayapp	0.007s

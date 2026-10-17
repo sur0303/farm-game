@@ -1,0 +1,20 @@
+{
+  "attachments": {
+    "business-command-amplification.json": "0b5742094db1bdcbf17763d2729035158cec519bdd5317031c9422d9043f6cf9",
+    "h5-bundle.json": "3e735616ca4fd670d11fb73f42f09a8c79077a59f650ee6b686a611e9eb95331",
+    "tool-artifacts.json": "504bd81cc6b1f57aa5b4e7f89a5a31ffd27eed2205b7a70d94765855229e5e28"
+  },
+  "checks": {
+    "browser_pass": true,
+    "claim_task_noscript_observed": true,
+    "prewarm_completed": true,
+    "published_baseline_row": false,
+    "stack_correctness_pass": true
+  },
+  "classification": "HARNESS_REJECTED_EXACT_SOURCE_NOSCRIPT_RECOVERY_AS_UNRESOLVED",
+  "correctness": "PASS",
+  "disposition": "RETAINED_NOT_ELIGIBLE_NOT_USED_BY_SUMMARY",
+  "schema_version": "cap-redis-business-trace-attempt-v1",
+  "trace_run": "capredis-business-e2e-20260810T064900Z",
+  "verdict": "FAIL_QUALIFICATION"
+}

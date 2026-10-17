@@ -1,0 +1,26 @@
+{
+  "apiVersion": "v1",
+  "kind": "Service",
+  "metadata": {
+    "name": "farm-h5",
+    "labels": {
+      "app.kubernetes.io/name": "farm-h5",
+      "app.kubernetes.io/component": "h5-nginx",
+      "app.kubernetes.io/part-of": "farm-game"
+    }
+  },
+  "spec": {
+    "type": "ClusterIP",
+    "selector": {
+      "app.kubernetes.io/name": "farm-h5"
+    },
+    "ports": [
+      {
+        "name": "http",
+        "port": 80,
+        "targetPort": "http",
+        "protocol": "TCP"
+      }
+    ]
+  }
+}

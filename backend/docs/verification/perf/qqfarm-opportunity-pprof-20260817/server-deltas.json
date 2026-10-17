@@ -1,0 +1,46 @@
+{
+  "window": "300 new viewers at 100/s, 30s job",
+  "player": {
+    "get_next_calls": 300,
+    "get_next_seconds": 203.599909959,
+    "get_next_average_ms": 678.66636653,
+    "actor_turn_count": 600,
+    "actor_turn_seconds": 28.544885969,
+    "process_cpu_seconds": 14.13,
+    "rss_bytes_delta": 35307520,
+    "request_buckets": {
+      "le_100ms": 2,
+      "100_to_250ms": 28,
+      "250_to_500ms": 85,
+      "500_to_1000ms": 116,
+      "1000_to_2500ms": 69
+    }
+  },
+  "farm": {
+    "header_calls": 600,
+    "header_farms": 15000,
+    "header_seconds": 1.514705115,
+    "header_average_ms": 2.524508525,
+    "exact_calls": 600,
+    "exact_seconds": 1.449167669,
+    "exact_average_ms": 2.415279448,
+    "process_cpu_seconds": 1.5,
+    "narrow_unavailable": 0,
+    "full_fallback": 0,
+    "unknown": 0,
+    "downlink_queue_full": 0
+  },
+  "gate": {
+    "connections": 300,
+    "rejected": 0,
+    "process_cpu_seconds": 3.53,
+    "pprof_duration_seconds": 12,
+    "pprof_cpu_samples_seconds": 0.92
+  },
+  "prometheus_max_rate_10s_cores": {
+    "player": 2.236,
+    "gate": 0.288,
+    "farm": 0.204
+  }
+}
+

@@ -1,0 +1,257 @@
+#!/usr/bin/env bash
+# S1A hardened 10x: deploy one authority stack, then run the real-H5 Playwright
+# vertical smoke (Bootstrap -> Buy -> Plant -> MATURE -> Harvest) 10 times, each
+# with a fresh account, asserting the full hard-assertion list every time.
+#
+# Exit codes: 0 = 10/10 PASS, 1 = any run failed.
+# Evidence: docs/verification/results/s1a-hardened-<ts>/run-<n>.log
+set -Eeuo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+cd "$ROOT_DIR"
+STAMP="$(date +%Y%m%dT%H%M%SZ)"
+OUT="$ROOT_DIR/docs/verification/results/s1a-hardened-${STAMP}"
+mkdir -p "$OUT"
+BIN="$OUT/bin"
+mkdir -p "$BIN"
+
+H5_ROOT="${FARM_S1A_H5_ROOT:-$ROOT_DIR/../classic-farm-h5-premerge-a-final-20260806}"
+RUNS="${FARM_S1A_RUNS:-10}"
+PASSES=0
+
+pick_port() { python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1]); s.close()'; }
+
+cleanup() {
+  set +e
+  [[ -f "$OUT/pids" ]] && while read -r pid; do kill "$pid" 2>/dev/null; done < "$OUT/pids"
+  sleep 1
+  [[ -f "$OUT/pids" ]] && while read -r pid; do kill -9 "$pid" 2>/dev/null; done < "$OUT/pids"
+}
+trap cleanup EXIT
+
+echo "=== 1. build ==="
+GOCACHE="${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache}"
+for svc in player-svr farm-svr farm-worker farm-gate authority-smoke-fixture gate-vertical-e2e; do
+  echo "  building $svc"
+  GOCACHE="$GOCACHE" CGO_ENABLED=0 go build -buildvcs=false -trimpath -o "$BIN/$svc" "./cmd/$svc"
+done
+
+REDIS_CONFIG="${FARM_REDIS_CONFIG:-$ROOT_DIR/deploy/secrets/redis.conf.local}"
+[[ -f "$REDIS_CONFIG" ]] || { echo "missing Redis config: $REDIS_CONFIG" >&2; exit 2; }
+read_config_value() { sed -n -E "s/^[[:space:]]*$1:[[:space:]]*(.*[^[:space:]])[[:space:]]*$/\1/p" "$REDIS_CONFIG" | head -n 1; }
+uri_encode() {
+  local input="$1" output="" char encoded index
+  LC_ALL=C
+  for ((index = 0; index < ${#input}; index++)); do
+    char="${input:index:1}"
+    case "$char" in [a-zA-Z0-9.~_-]) output+="$char" ;; *) printf -v encoded '%%%02X' "'$char"; output+="$encoded" ;; esac
+  done
+  printf '%s' "$output"
+}
+redis_host=$(read_config_value host); redis_port=$(read_config_value port)
+redis_password=$(read_config_value password); redis_db=$(read_config_value db); redis_db="${redis_db:-0}"
+REDIS_URL="redis://:$(uri_encode "$redis_password")@${redis_host}:${redis_port}/${redis_db}"
+
+PLAYER_PORT="$(pick_port)"; PLAYER_HEALTH="$(pick_port)"
+FARM_PORT="$(pick_port)"; FARM_HEALTH="$(pick_port)"
+WORKER_HEALTH="$(pick_port)"
+GATE_HTTP="$(pick_port)"; GATE_DOWNLINK_REAL="$(pick_port)"; GATE_CONTROL="$(pick_port)"
+DOWNLINK_PROXY="$(pick_port)"; PROXY_ADMIN="$(pick_port)"
+NAMESPACE="s1a10-${STAMP,,}"
+PROFILE="redis-physical-v1"; REALM="smoke-authority"
+PLAYER_HOLDER="s1a10-player"; FARM_HOLDER="s1a10-farm"
+PLAYER_BOOT="s1a10-player-${STAMP}"; FARM_BOOT="s1a10-farm-${STAMP}"
+ROUTE="$OUT/route-snapshot.json"
+PERMIT_SECRET="s1a10-permit-${STAMP}-at-least-32-bytes!!"
+WORKFLOW_PREFIX="s1a10:${STAMP}:workflow"
+
+start() { local name="$1"; shift; nohup "$@" > "$OUT/$name.log" 2>&1 & echo "$!" > "$OUT/pid-$name"; echo "$!" >> "$OUT/pids"; echo "  started $name"; }
+wait_http() { local url="$1" deadline=$((SECONDS + 40)); until curl -fsS "$url" >/dev/null 2>&1; do ((SECONDS >= deadline)) && return 1; sleep 0.3; done; }
+
+echo "=== 2. fixture init ==="
+"$BIN/authority-smoke-fixture" init \
+  --redis-url "$REDIS_URL" --namespace "$NAMESPACE" --zone local \
+  --profile "$PROFILE" --realm "$REALM" --run-id "$STAMP" \
+  --player-holder "$PLAYER_HOLDER" --player-boot "$PLAYER_BOOT" \
+  --player-endpoint "127.0.0.1:$PLAYER_PORT" \
+  --farm-holder "$FARM_HOLDER" --farm-boot "$FARM_BOOT" \
+  --farm-endpoint "127.0.0.1:$FARM_PORT" \
+  --route-out "$ROUTE" --json-out "$OUT/fixture.json" >/dev/null
+
+# Q1 WF-PARTICIPANT-INVOCATION-UNKNOWN-DIAG (control validation):
+# fixture init writes lease_expire_at_ms = now + ACTOR_AUTHORITY_LEASE_TTL (55s).
+# farm-worker loads the route snapshot ONCE at startup and StaticResolver checks
+# time.Now() >= LeaseUntilMs on every resolve. With one shared worker across
+# 10 runs (>55s), the fixed snapshot lease expires -> every PLAYER route resolve
+# fails with "actor route: holder lease expired" -> participant call is blocked ->
+# INVOCATION_UNKNOWN -> workflow permanently stuck. Refresh the snapshot lease to
+# now+1h before the worker starts to prove the root cause.
+python3 - "$ROUTE" <<'PYEOF'
+import json, sys, time
+path = sys.argv[1]
+d = json.load(open(path))
+deadline = int(time.time() * 1000) + 3600_000
+for domain in ("player", "farm"):
+    for route in d.get(domain, {}).get("routes", []):
+        route["lease_expire_at_ms"] = deadline
+json.dump(d, open(path, "w"))
+print("  refreshed route snapshot lease to now+1h")
+PYEOF
+
+COMMON_AUTH=(
+  "ACTOR_AUTHORITY_MODE=authority" "ACTOR_ROUTE_SNAPSHOT=$ROUTE"
+  "ACTOR_AUTHORITY_LEASE_TTL=55s" "ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN=3s"
+  "ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL=5s"
+  "REDIS_PHYSICAL_PROFILE_VERSION=$PROFILE"
+  "REDIS_NAMESPACE_ENVIRONMENT=$NAMESPACE" "REDIS_NAMESPACE_ZONE=local"
+  "REDIS_AUTHORITY_LAYOUT_VERSION=v1" "REDIS_WORKFLOW_LAYOUT_VERSION=v1"
+  "REDIS_WORKFLOW_HASH_VERSION=1" "REDIS_WORKFLOW_BUCKET_COUNT=256"
+  "FARM_REDIS_URL=$REDIS_URL" "WORKFLOW_STORE_PREFIX=$WORKFLOW_PREFIX"
+)
+
+echo "=== 3. start services ==="
+: > "$OUT/pids"
+start gate env \
+  "GATEWAY_LISTEN=127.0.0.1:$GATE_HTTP" "GATEWAY_ID=s1a10-gate" \
+  "GATEWAY_DOWNLINK_LISTEN=127.0.0.1:$GATE_DOWNLINK_REAL" "GATE_CONTROL_LISTEN=127.0.0.1:$GATE_CONTROL" \
+  "GATE_TRANSPORT=websocket" "GATE_WS_PATH=/ws" "GATE_WS_ALLOWED_ORIGINS=127.0.0.1:5194" \
+  "PLAYER_ADDR=127.0.0.1:$PLAYER_PORT" "FARM_ADDR=127.0.0.1:$FARM_PORT" \
+  "LOGIC_HEALTH_ADDR=http://127.0.0.1:$FARM_HEALTH" \
+  "FARM_REDIS_URL=$REDIS_URL" \
+  "WEB_ACCOUNT_STORE_PREFIX=s1a10:${STAMP}:web-account" "WEB_ACCOUNT_PLAYER_ID_BASE=2000000" \
+  "DEMO_PLATFORM_TOKEN=demo-platform-token" "DEMO_PLAYER_ID=10001" \
+  "HTTP_SESSION_TTL=2h" "HTTP_SESSION_COOKIE_SECURE=0" \
+  "PERMIT_SECRET=$PERMIT_SECRET" "GATEWAY_TICKET_TTL=60s" "GATE_ROUTE_LEASE_TTL=30s" \
+  "GATE_BOOT_LEASE_PREFIX=s1a10:${STAMP}:gate-boot-lease" "GATE_BOOT_LEASE_TTL=15s" \
+  "GATE_BOOT_LEASE_RENEW_TIMEOUT=3s" "INITIAL_RULE_VERSION=1" \
+  "GATE_WS_METRICS=1" "GATE_WS_RATE_PER_SEC=100" "GATE_WS_RATE_BURST=200" \
+  "WSS_ENDPOINT=ws://127.0.0.1:$GATE_HTTP/ws" \
+  "$BIN/farm-gate"
+start proxy "$BIN/gate-vertical-e2e" proxy \
+  --listen "127.0.0.1:$DOWNLINK_PROXY" --upstream "127.0.0.1:$GATE_DOWNLINK_REAL" \
+  --admin-listen "127.0.0.1:$PROXY_ADMIN" --events-out "$OUT/protocol-events.ndjson"
+start player env "${COMMON_AUTH[@]}" \
+  "ACTOR_HOLDER_POD=$PLAYER_HOLDER" "ACTOR_HOLDER_BOOT_ID=$PLAYER_BOOT" \
+  "PLAYER_LISTEN=127.0.0.1:$PLAYER_PORT" "PLAYER_HEALTH_LISTEN=127.0.0.1:$PLAYER_HEALTH" \
+  "PERMIT_SECRET=$PERMIT_SECRET" "$BIN/player-svr"
+start farm env "${COMMON_AUTH[@]}" \
+  "ACTOR_HOLDER_POD=$FARM_HOLDER" "ACTOR_HOLDER_BOOT_ID=$FARM_BOOT" \
+  "FARM_LISTEN=127.0.0.1:$FARM_PORT" "FARM_HEALTH_LISTEN=127.0.0.1:$FARM_HEALTH" \
+  "PLAYER_ADDR=127.0.0.1:$PLAYER_PORT" "GATEWAY_DOWNLINK_ADDR=127.0.0.1:$DOWNLINK_PROXY" \
+  "PERMIT_SECRET=$PERMIT_SECRET" \
+  "THEFT_PRF_MODE=test" "THEFT_PRF_HMAC_SECRET=s1a10-theft-prf-${STAMP}-at-least-32-bytes" \
+  "FARM_CROP_MATURE_AFTER=5s" \
+  "FARM_SUBSCRIPTION_LEASE_INITIAL_TTL=30s" "FARM_SUBSCRIPTION_LEASE_MAX_EXTENSION=30s" \
+  "GATE_BOOT_REAPER_MODE=disabled" \
+  "$BIN/farm-svr"
+start worker env \
+  "ACTOR_AUTHORITY_MODE=authority" "ACTOR_ROUTE_SNAPSHOT=$ROUTE" \
+  "FARM_REDIS_URL=$REDIS_URL" "WORKFLOW_STORE_PREFIX=$WORKFLOW_PREFIX" \
+  "REDIS_PHYSICAL_PROFILE_VERSION=$PROFILE" \
+  "REDIS_NAMESPACE_ENVIRONMENT=$NAMESPACE" "REDIS_NAMESPACE_ZONE=local" \
+  "REDIS_AUTHORITY_LAYOUT_VERSION=v1" "REDIS_WORKFLOW_LAYOUT_VERSION=v1" \
+  "REDIS_WORKFLOW_HASH_VERSION=1" "REDIS_WORKFLOW_BUCKET_COUNT=256" \
+  "PLAYER_ADDR=127.0.0.1:$PLAYER_PORT" "FARM_ADDR=127.0.0.1:$FARM_PORT" \
+  "WORKER_ID=s1a10-worker" "WORKER_BOOT_ID=s1a10-worker-$STAMP" "WORKER_LEASE_TOKEN=s1a10-lease-$STAMP" \
+  "WORKER_POLL_INTERVAL=100ms" "WORKER_CLAIM_LIMIT=8" "WORKER_CLAIM_LEASE=5s" \
+  "WORKER_OPERATION_TIMEOUT=3s" "WORKER_PARTICIPANT_BUDGET_MS=5000" \
+  "WORKER_HEALTH_LISTEN=127.0.0.1:$WORKER_HEALTH" \
+  "$BIN/farm-worker"
+
+echo "=== 4. wait ready ==="
+wait_http "http://127.0.0.1:$PLAYER_HEALTH/readyz" || { echo "player-svr not ready" >&2; exit 2; }
+wait_http "http://127.0.0.1:$FARM_HEALTH/readyz" || { echo "farm-svr not ready" >&2; exit 2; }
+wait_http "http://127.0.0.1:$WORKER_HEALTH/readyz" || { echo "worker not ready" >&2; exit 2; }
+for _ in $(seq 1 50); do curl -sf "http://127.0.0.1:$GATE_HTTP/readyz" >/dev/null 2>&1 && break; sleep 0.3; done
+curl -sf "http://127.0.0.1:$GATE_HTTP/readyz" >/dev/null 2>&1 || { echo "gate not ready" >&2; exit 2; }
+echo "  all ready"
+
+echo "=== 5. S1A x $RUNS ==="
+ACCT_BASE="s1a${STAMP,,}"
+PLAYER_PID=$(cat "$OUT/pid-player" 2>/dev/null || echo "")
+RES_SAMPLES="$OUT/resource-samples.tsv"
+echo -e "run\tplayer_fd\tplayer_rss_kb" > "$RES_SAMPLES"
+for i in $(seq 1 "$RUNS"); do
+  ACCT="${ACCT_BASE}a${i}"
+  LOG="$OUT/run-$i.log"
+  echo "  run $i/$RUNS account=$ACCT"
+  set +e
+  (cd "$H5_ROOT" && \
+    FARM_E2E_API_BASE_URL="http://127.0.0.1:$GATE_HTTP" \
+    FARM_E2E_WS_PROXY_TARGET="ws://127.0.0.1:$GATE_HTTP" \
+    FARM_E2E_WSS_URL="/ws" \
+    FARM_E2E_USER_A="$ACCT" FARM_E2E_PASSWORD="smoke123" \
+    npx playwright test --config=playwright.authority-smoke.config.ts) > "$LOG" 2>&1
+  code=$?
+  set -e
+  if [[ $code -eq 0 ]] && grep -q "1 passed" "$LOG"; then
+    PASSES=$((PASSES + 1)); echo "    PASS"
+  else
+    echo "    FAIL (exit=$code)"; tail -20 "$LOG"
+  fi
+  # resource sample: player-svr fd count + RSS (monotonic growth check).
+  if [[ -n "$PLAYER_PID" ]] && [[ -r "/proc/$PLAYER_PID/status" ]]; then
+    fd=$(ls /proc/$PLAYER_PID/fd 2>/dev/null | wc -l)
+    rss=$(grep VmRSS /proc/$PLAYER_PID/status 2>/dev/null | awk '{print $2}')
+    echo -e "$i\t${fd:-0}\t${rss:-0}" >> "$RES_SAMPLES"
+  fi
+done
+
+echo "=== 6. post-run liveness validation ==="
+WORKFLOW_OK=0
+python3 - "$STAMP" "$REDIS_URL" <<'PYEOF'
+import re, sys, redis, json
+stamp, redis_url = sys.argv[1], sys.argv[2]
+r = redis.Redis.from_url(redis_url, decode_responses=True)
+ks = [k for k in r.scan_iter(match=f'*s1a10:{stamp}:workflow*', count=800)]
+rec = [k for k in ks if k.endswith(':record') or ':record:' in k]
+due = [k for k in ks if ':due' in k]
+states = {}
+unknown = []
+for k in rec:
+    if r.type(k) != 'hash': continue
+    h = r.hgetall(k)
+    d = json.loads(h.get('data', '{}')) if isinstance(h.get('data'), str) else {}
+    st = d.get('state')
+    states[st] = states.get(st, 0) + 1
+    if st == 3:
+        unknown.append(str(d.get('operation_id'))[:24])
+print(f"workflows={len(rec)} states={states} due_keys={len(due)}")
+if states.get(3, 0) > 0:
+    print("STEP_UNKNOWN_RESIDUE:", unknown[:5])
+    sys.exit(1)
+if len(due) > 0:
+    print("DUE_RESIDUE:", due[:3])
+    sys.exit(1)
+PYEOF
+if [[ $? -eq 0 ]]; then WORKFLOW_OK=1; echo "  workflow: all COMPLETED, no StepUnknown residue, no due residue"; else echo "  workflow: FAIL (StepUnknown/due residue)"; fi
+
+WORKER_OK=0
+if grep -q "Retried:[1-9]" worker.log; then
+  echo "  worker: FAIL (perpetual Retried loop present)"
+else
+  WORKER_OK=1
+  echo "  worker: no perpetual Claimed/Retried loop"
+fi
+
+echo "=== 7. resource samples ==="
+cat "$RES_SAMPLES"
+python3 - "$RES_SAMPLES" <<'PYEOF'
+import sys
+rows = [l.split('\t') for l in open(sys.argv[1]).read().splitlines()[1:] if l.strip()]
+fds = [int(r[1]) for r in rows]; rss = [int(r[2]) for r in rows]
+def trend(vals):
+    return "flat/dec" if len(vals) < 2 or vals[-1] <= vals[0] else "INCREASING"
+print(f"  player_fd: {fds} trend={trend(fds)}")
+print(f"  player_rss: {rss} trend={trend(rss)}")
+PYEOF
+
+echo "=== result ==="
+echo "  s1a passes: $PASSES / $RUNS"
+echo "  workflow liveness: $WORKFLOW_OK  worker loop: $WORKER_OK"
+echo "  evidence: $OUT"
+if [[ "$PASSES" -eq "$RUNS" ]] && [[ "$WORKFLOW_OK" -eq 1 ]] && [[ "$WORKER_OK" -eq 1 ]]; then
+  echo "  verdict: PASS"; exit 0
+else
+  echo "  verdict: FAIL"; exit 1
+fi

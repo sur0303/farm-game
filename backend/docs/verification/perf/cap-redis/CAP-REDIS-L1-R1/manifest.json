@@ -1,0 +1,31 @@
+{
+  "schema_version": "cap-redis-l1-r1.v1",
+  "frozen_identity": {
+    "task_id": "CAP-REDIS-L1-R1",
+    "backend_business_commit": "93a66ce76d509d86e8cac8e1d87563d084eba821",
+    "backend_evidence_head": "34d94b58b4cc941f184923b05cae79086c5d9da0",
+    "h5_commit": "525c4d324100b17a891f02797c4880fa9a02f70a",
+    "backend_image_digest": "sha256:9498736750d89ece6cc511acf3f7fa243218ac1a2ce64f2806580f898a053ab7",
+    "h5_image_digest": "sha256:9bfdedaa70f7cbf8bac86bb25cc2ff62dba1cf7832fb5d8f66c72c1f113486fd"
+  },
+  "redis_config_hash": "62bbe51e7ff885f80952f3ef742ec245b771510300b4af740cab9bb5a52079b9",
+  "machine_spec_hash": "b411797bb948b74a8c08e8a3dfa186d98316662a0f450503985f43e4a09a75a1",
+  "machine_spec": {
+    "kernel": "Linux 6.6.119-49.20.tl4.x86_64 #1 SMP Sat May  2 07:46:47 CST 2026 x86_64 GNU/Linux",
+    "cpu_model": "AMD EPYC 7K62 48-Core Processor",
+    "logical_cpus": "32",
+    "memory_bytes": "66879913984",
+    "go_version": "go1.26.3-X:nodwarf5 linux/amd64",
+    "docker_server": "29.3.1"
+  },
+  "cpu_governor": "unavailable",
+  "container_cpu_limit": "4",
+  "container_memory_limit": "4g",
+  "model_layout_version": "R1:authority-v1+workflow-v1+friend-v1;Model-Field-V2-not-yet-claimed",
+  "route_snapshot_hash": "3a4cff47a12d0e2b78ca3988c2b2698a9104e9c344805849d8700caf16f7c5a7",
+  "lease_profile_hash": "acb6428cca9364ba3eb0d2aeaaca9d3a7a488444515b6f2bdd0ba77ed2acb464",
+  "profile_hash": "eb4ee6ee0a69b760423495eb42bf3778d0e69309ac55be6eb161df52efff7729",
+  "random_seed": 2026080901,
+  "redis_pool_size": 400,
+  "redis_min_idle_conns": 400
+}

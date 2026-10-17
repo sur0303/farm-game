@@ -1,0 +1,18 @@
+# Allocated cold-login ID ranges. Each range is disjoint and each ID may be consumed once.
+# The two jobs in a stage must use job_a and job_b separately.
+# These ranges are reserved for this plan and are not pre-logged/bootstraped/joined.
+stage,target_total_rate_s,launch_duration_s,total_ids,job_a_start,job_a_end,job_b_start,job_b_end,status
+smoke-10,10,60,1000,969000000,969000499,969000500,969000999,consumed-invalid-stale-route
+smoke-10-r2,10,60,1000,969001000,969001499,969001500,969001999,consumed-valid-smoke
+cold-500,500,300,165000,970000000,970082499,970082500,970164999,consumed-valid-500
+cold-1000,1000,300,330000,971000000,971164999,971165000,971329999,consumed-invalid-stale-route
+cold-1500,1500,300,495000,972000000,972247499,972247500,972494999,reserved
+cold-2000,2000,300,660000,973000000,973329999,973330000,973659999,reserved
+cold-1000-r2,1000,300,330000,974000000,974164999,974165000,974329999,consumed-invalid-load-generator
+cold-1000-split4-a,500,300,165000,975000000,975082499,975082500,975164999,consumed-invalid-preempted
+cold-1000-split4-b,500,300,165000,975165000,975247499,975247500,975329999,consumed-invalid-preempted
+cold-1000-priority-split4-a,500,300,165000,976000000,976082499,976082500,976164999,consumed-valid-1000-priority-split4
+cold-1000-priority-split4-b,500,300,165000,976165000,976247499,976247500,976329999,consumed-valid-1000-priority-split4
+cold-1500-priority-split6-a,500,300,150000,977000000,977074999,977075000,977149999,consumed-valid-1500-opportunity-busy
+cold-1500-priority-split6-b,500,300,150000,977150000,977224999,977225000,977299999,consumed-valid-1500-opportunity-busy
+cold-1500-priority-split6-c,500,300,150000,977300000,977374999,977375000,977449999,consumed-valid-1500-opportunity-busy

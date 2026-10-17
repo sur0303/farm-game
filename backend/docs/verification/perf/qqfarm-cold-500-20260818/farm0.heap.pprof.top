@@ -1,0 +1,43 @@
+File: farm-svr
+Build ID: ffca9b336f4ed02ff98b4a0969503ed0381e1583
+Type: inuse_space
+Time: 2026-08-18 13:51:05 CST
+Showing nodes accounting for 309.33MB, 94.57% of 327.10MB total
+Dropped 124 nodes (cum <= 1.64MB)
+Showing top 35 nodes out of 65
+      flat  flat%   sum%        cum   cum%
+  251.61MB 76.92% 76.92%   251.61MB 76.92%  farmgame/internal/logic/actor/runtime.(*Executor).mailboxFor
+      21MB  6.42% 83.34%       21MB  6.42%  reflect.unsafe_New
+    6.50MB  1.99% 85.33%     6.50MB  1.99%  farmgame/internal/logic/actor/authority.cloneAuthorityModelState (inline)
+       6MB  1.83% 87.17%       10MB  3.06%  farmgame/internal/farm/actor.(*FarmActor).joinWithMode
+    5.50MB  1.68% 88.85%     5.50MB  1.68%  runtime.mallocgc
+       4MB  1.22% 90.07%        4MB  1.22%  farmgame/internal/farm/actor.(*FarmActor).rememberJoinIdempotency
+    3.69MB  1.13% 91.20%     3.69MB  1.13%  farmgame/internal/actorrouting.cloneRouteSnapshot (inline)
+    2.50MB  0.76% 91.97%    38.12MB 11.65%  farmgame/internal/farm/actor.(*Registry).loadAndClaimActor
+    2.01MB  0.61% 92.58%     2.01MB  0.61%  farmgame/internal/logic/actor/activation.(*Controller).ensureLocked (inline)
+       2MB  0.61% 93.19%        2MB  0.61%  farmgame/internal/logic/actor/persistence.NewLane (inline)
+       2MB  0.61% 93.80%        2MB  0.61%  fmt.Sprintf
+    1.50MB  0.46% 94.26%    22.50MB  6.88%  farmgame/internal/farm/actormodelv2.Decode
+    0.50MB  0.15% 94.42%    11.61MB  3.55%  farmgame/internal/logic/actor/authority.(*Provider).ClaimWithModelLayout
+    0.50MB  0.15% 94.57%    10.50MB  3.21%  farmgame/internal/farm/subscription.(*FarmEventLane).applyRequest
+         0     0% 94.57%   254.63MB 77.85%  farmgame/api/gen/logicrpc._LogicService_ExecuteCommand_Handler
+         0     0% 94.57%   253.13MB 77.39%  farmgame/api/gen/logicrpc._LogicService_ExecuteCommand_Handler.func1
+         0     0% 94.57%     2.11MB  0.65%  farmgame/internal/actorrouting.(*DynamicAssignmentProvider).CurrentSnapshot
+         0     0% 94.57%     2.11MB  0.65%  farmgame/internal/actorrouting.(*DynamicAssignmentProvider).Snapshot
+         0     0% 94.57%       10MB  3.06%  farmgame/internal/farm/actor.(*FarmActor).CreateOrReuseJoining.func1
+         0     0% 94.57%   253.63MB 77.54%  farmgame/internal/farm/actor.(*Registry).Submit
+         0     0% 94.57%    42.13MB 12.88%  farmgame/internal/farm/actor.(*Registry).Submit.func1
+         0     0% 94.57%    40.12MB 12.26%  farmgame/internal/farm/actor.(*Registry).actorAuthority
+         0     0% 94.57%        2MB  0.61%  farmgame/internal/farm/actor.(*Registry).actorAuthority.func1
+         0     0% 94.57%    22.50MB  6.88%  farmgame/internal/farm/actor.decodeFarmAuthoritySnapshot
+         0     0% 94.57%       21MB  6.42%  farmgame/internal/farm/actormodelv2.unmarshalCanonical
+         0     0% 94.57%   253.13MB 77.39%  farmgame/internal/farm/ingress.(*Service).ExecuteCommand
+         0     0% 94.57%   252.63MB 77.23%  farmgame/internal/farm/ingress.(*Service).join
+         0     0% 94.57%    11.50MB  3.52%  farmgame/internal/farm/subscription.(*FarmEventLane).run
+         0     0% 94.57%       10MB  3.06%  farmgame/internal/farm/subscription.(*SubscriptionHub).ExecuteCreateOrReuseJoining.func1
+         0     0% 94.57%     2.01MB  0.61%  farmgame/internal/logic/actor/activation.(*Controller).AdmitUserCommand
+         0     0% 94.57%        2MB  0.61%  farmgame/internal/logic/actor/activation.(*LoadFutureGroup).BeginOrJoin
+         0     0% 94.57%     6.50MB  1.99%  farmgame/internal/logic/actor/authority.(*Binding).syncSnapshot
+         0     0% 94.57%     2.11MB  0.65%  farmgame/internal/logic/actor/authority.(*DynamicFenceSource).WriteFence
+         0     0% 94.57%        2MB  0.61%  farmgame/internal/logic/actor/authority.(*Provider).NewClaimIdentity
+         0     0% 94.57%   252.61MB 77.23%  farmgame/internal/logic/actor/runtime.(*Executor).Submit

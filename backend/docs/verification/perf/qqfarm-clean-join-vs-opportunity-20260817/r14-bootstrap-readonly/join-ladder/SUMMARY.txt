@@ -1,0 +1,10 @@
+join ladder 10000 players 15s
+===== START r2500 player-start=1787950000000 =====
+{"run_id": "dkr8wbjp31sr", "attempted": 10000, "ready": 10000, "login_errors": 0, "connect_errors": 0, "hello_errors": 0, "join_errors": 0, "unexpected_disconnects": 0, "ready_p95_ms": 753.305541, "snapshot_p95_ms": 109.920715, "login_p95_ms": 591.668964, "peak_active": 10000}
+verdict=SOFT ready=10000/10000 errs=0 disc=0 p95=753.3 snap_p95=109.9 queue_full_delta=0 run=dkr8wbjp31sr
+===== START r3000 player-start=1787960000000 =====
+{"run_id": "dkr8wnfo7ecg", "attempted": 10000, "ready": 10000, "login_errors": 0, "connect_errors": 0, "hello_errors": 0, "join_errors": 0, "unexpected_disconnects": 0, "ready_p95_ms": 1281.801759, "snapshot_p95_ms": 178.441957, "login_p95_ms": 991.338941, "peak_active": 10000}
+verdict=SOFT ready=10000/10000 errs=0 disc=0 p95=1281.8 snap_p95=178.4 queue_full_delta=0 run=dkr8wnfo7ecg
+===== START r3500 player-start=1787970000000 =====
+{"run_id": "dkr8wz1rckfb", "attempted": 10000, "ready": 9999, "login_errors": 1, "connect_errors": 0, "hello_errors": 0, "join_errors": 0, "unexpected_disconnects": 0, "ready_p95_ms": 1726.415103, "snapshot_p95_ms": 258.861255, "login_p95_ms": 1503.967148, "peak_active": 9999}
+verdict=FAIL ready=9999/10000 errs=1 disc=0 p95=1726.4 snap_p95=258.9 queue_full_delta=0 run=dkr8wz1rckfb

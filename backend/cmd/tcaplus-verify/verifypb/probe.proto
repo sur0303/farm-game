@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+// verifypb 定义 Tcaplus 最小验证用的测试表。需先在集群控制台按此结构建表
+// (表名 owner_probe,主键 owner_id)。仅用于 D7 真库验证,不属于业务表。
+package tcaplusservice;
+
+option go_package = "farmgame/cmd/tcaplus-verify/verifypb;verifypb";
+
+import "tcapluspb/options.proto";
+
+// OwnerProbe 是最小验证表:一个主键 + 一个计数器 + 一段可变长 blob,
+// 用于测 CAS(RecordVersion)、写放大(blob 大小档)、读写延迟。
+// Message 名必须与控制台/SDK 使用的表名一致；Go 生成类型仍为 OwnerProbe。
+message owner_probe {
+  option (tcaplusservice.tcaplus_primary_key) = "owner_id";
+
+  int64 owner_id = 1;
+  int64 counter = 2;    // 用于 CAS 自增测试
+  bytes blob = 3;       // 用于写放大测试(填充到 16/32/64/128KB)
+}

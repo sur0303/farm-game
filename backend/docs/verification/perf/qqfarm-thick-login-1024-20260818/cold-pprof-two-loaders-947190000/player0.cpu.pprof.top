@@ -1,0 +1,39 @@
+File: player-svr
+Build ID: 0565d61ea6e95006db33febdf1265cfc4ebf0546
+Type: cpu
+Time: 2026-08-18 11:59:02 CST
+Duration: 20s, Total samples = 5.15s (25.75%)
+Showing nodes accounting for 2.56s, 49.71% of 5.15s total
+Dropped 437 nodes (cum <= 0.03s)
+Showing top 30 nodes out of 408
+      flat  flat%   sum%        cum   cum%
+     0.86s 16.70% 16.70%      0.86s 16.70%  internal/runtime/syscall/linux.Syscall6
+     0.19s  3.69% 20.39%      0.19s  3.69%  runtime.memmove
+     0.16s  3.11% 23.50%      0.16s  3.11%  runtime.futex
+     0.14s  2.72% 26.21%      0.22s  4.27%  runtime.scanObject
+     0.11s  2.14% 28.35%      0.11s  2.14%  runtime.memclrNoHeapPointers
+     0.09s  1.75% 30.10%      0.10s  1.94%  runtime.step
+     0.08s  1.55% 31.65%      0.08s  1.55%  runtime.nextFreeFast (inline)
+     0.08s  1.55% 33.20%      0.18s  3.50%  runtime.pcvalue
+     0.06s  1.17% 34.37%      0.06s  1.17%  runtime.(*mspan).writeHeapBitsSmall
+     0.06s  1.17% 35.53%      0.28s  5.44%  runtime.newobject
+     0.05s  0.97% 36.50%      0.07s  1.36%  reflect.(*rtype).ptrTo
+     0.05s  0.97% 37.48%      0.16s  3.11%  runtime.(*unwinder).resolveInternal
+     0.05s  0.97% 38.45%      0.05s  0.97%  runtime.nanotime (inline)
+     0.04s  0.78% 39.22%      0.04s  0.78%  memeqbody
+     0.04s  0.78% 40.00%      0.04s  0.78%  runtime.findfunc
+     0.04s  0.78% 40.78%      0.11s  2.14%  runtime.mallocgcSmallNoscan
+     0.04s  0.78% 41.55%      0.31s  6.02%  runtime.mallocgcSmallScanNoHeader
+     0.04s  0.78% 42.33%      0.07s  1.36%  runtime.selectgo
+     0.04s  0.78% 43.11%      0.04s  0.78%  runtime.typePointers.nextFast (inline)
+     0.04s  0.78% 43.88%      0.06s  1.17%  slices.insertionSortOrdered[go.shape.string]
+     0.03s  0.58% 44.47%      1.84s 35.73%  google.golang.org/grpc.(*Server).processUnaryRPC
+     0.03s  0.58% 45.05%      0.03s  0.58%  indexbytebody
+     0.03s  0.58% 45.63%      0.03s  0.58%  internal/runtime/maps.ctrlGroup.matchH2 (inline)
+     0.03s  0.58% 46.21%      0.03s  0.58%  internal/sync.(*Mutex).Lock (inline)
+     0.03s  0.58% 46.80%      0.03s  0.58%  runtime.(*mspan).refillAllocCache
+     0.03s  0.58% 47.38%      0.15s  2.91%  runtime.adjustframe
+     0.03s  0.58% 47.96%      0.03s  0.58%  runtime.adjustpointers
+     0.03s  0.58% 48.54%      0.38s  7.38%  runtime.gcDrain
+     0.03s  0.58% 49.13%      0.13s  2.52%  runtime.lock2
+     0.03s  0.58% 49.71%      0.59s 11.46%  runtime.mallocgc

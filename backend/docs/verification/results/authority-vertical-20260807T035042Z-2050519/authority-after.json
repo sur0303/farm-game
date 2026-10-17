@@ -1,0 +1,91 @@
+{
+  "audited_at": "2026-08-07T03:51:21Z",
+  "authority": {
+    "farm": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-farm-20260807T035042Z-2050519",
+        "holder_instance_id": "smoke-farm",
+        "last_transition_at_ms": "1786074649616",
+        "last_transition_digest": "24fe77f25137a08743e9a2b10d52281a759f4ddb8475f14bc361305a26dceb48",
+        "last_transition_id": "claim-FARM-20260807T035042Z-2050519",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786074734655",
+        "lease_state": "ACTIVE",
+        "route_domain": "FARM",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260807t035042z-2050519:local:auth:farm:v1:s:0}:shard-authority"
+    },
+    "player": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-player-20260807T035042Z-2050519",
+        "holder_instance_id": "smoke-player",
+        "last_transition_at_ms": "1786074649616",
+        "last_transition_digest": "6258501f82724c534a9c9cf494fb6fe1293a62f083d86830e8cd7464d2392b8b",
+        "last_transition_id": "claim-PLAYER-20260807T035042Z-2050519",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786074734642",
+        "lease_state": "ACTIVE",
+        "route_domain": "PLAYER",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260807t035042z-2050519:local:auth:player:v1:s:0}:shard-authority"
+    }
+  },
+  "protocol_verdict": {
+    "finished_at": "2026-08-07T03:51:21Z",
+    "frames": 19,
+    "steps": {
+      "bootstrap": {
+        "status": "ok"
+      },
+      "bootstrap_refresh": {
+        "detail": "harvest produce not converged: inventory=map[] (seed_item=1001)",
+        "status": "fail"
+      },
+      "buy": {
+        "status": "ok"
+      },
+      "grow": {
+        "status": "ok"
+      },
+      "harvest": {
+        "status": "ok"
+      },
+      "hello": {
+        "status": "ok"
+      },
+      "join": {
+        "status": "ok"
+      },
+      "login": {
+        "status": "ok"
+      },
+      "plant": {
+        "detail": "plot=0 cycle=sid1_Sx5G_uzdt21tVRtMW1C3WdybcR4hTuQcVHsk5LjwOzQ mature_at_ms=1786074679839 farm_version=1",
+        "status": "ok"
+      },
+      "premature_reject": {
+        "status": "ok"
+      },
+      "recovery_complete": {
+        "status": "ok"
+      },
+      "register": {
+        "status": "ok"
+      }
+    },
+    "verdict": "FAIL"
+  },
+  "route_snapshot_sha256": "41a"
+}

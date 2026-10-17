@@ -1,0 +1,398 @@
+group=0 viewer=950000000 count=300 fake-base=8000000000
+{
+  "run_id": "bot-pool-g0",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950000000,
+  "viewer_count": 300,
+  "viewer_end": 950000299,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 20490,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=0 viewers=950000000-950000299 fakes=8000000000-8000000059 initialized=360
+group=1 viewer=950000300 count=300 fake-base=8000000060
+{
+  "run_id": "bot-pool-g1",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950000300,
+  "viewer_count": 300,
+  "viewer_end": 950000599,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 19276,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=1 viewers=950000300-950000599 fakes=8000000060-8000000119 initialized=360
+group=2 viewer=950000600 count=300 fake-base=8000000120
+{
+  "run_id": "bot-pool-g2",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950000600,
+  "viewer_count": 300,
+  "viewer_end": 950000899,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 18806,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=2 viewers=950000600-950000899 fakes=8000000120-8000000179 initialized=360
+group=3 viewer=950000900 count=300 fake-base=8000000180
+{
+  "run_id": "bot-pool-g3",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950000900,
+  "viewer_count": 300,
+  "viewer_end": 950001199,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 19046,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=3 viewers=950000900-950001199 fakes=8000000180-8000000239 initialized=360
+group=4 viewer=950001200 count=300 fake-base=8000000240
+{
+  "run_id": "bot-pool-g4",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950001200,
+  "viewer_count": 300,
+  "viewer_end": 950001499,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 19470,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=4 viewers=950001200-950001499 fakes=8000000240-8000000299 initialized=360
+group=5 viewer=950001500 count=300 fake-base=8000000300
+{
+  "run_id": "bot-pool-g5",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950001500,
+  "viewer_count": 300,
+  "viewer_end": 950001799,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 20000,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=5 viewers=950001500-950001799 fakes=8000000300-8000000359 initialized=360
+group=6 viewer=950001800 count=300 fake-base=8000000360
+{
+  "run_id": "bot-pool-g6",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950001800,
+  "viewer_count": 300,
+  "viewer_end": 950002099,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 20768,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=6 viewers=950001800-950002099 fakes=8000000360-8000000419 initialized=360
+group=7 viewer=950002100 count=300 fake-base=8000000420
+{
+  "run_id": "bot-pool-g7",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950002100,
+  "viewer_count": 300,
+  "viewer_end": 950002399,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 19078,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=7 viewers=950002100-950002399 fakes=8000000420-8000000479 initialized=360
+group=8 viewer=950002400 count=300 fake-base=8000000480
+{
+  "run_id": "bot-pool-g8",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950002400,
+  "viewer_count": 300,
+  "viewer_end": 950002699,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 21040,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=8 viewers=950002400-950002699 fakes=8000000480-8000000539 initialized=360
+group=9 viewer=950002700 count=300 fake-base=8000000540
+{
+  "run_id": "bot-pool-g9",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950002700,
+  "viewer_count": 300,
+  "viewer_end": 950002999,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 20228,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=9 viewers=950002700-950002999 fakes=8000000540-8000000599 initialized=360
+group=10 viewer=950003000 count=300 fake-base=8000000600
+{
+  "run_id": "bot-pool-g10",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950003000,
+  "viewer_count": 300,
+  "viewer_end": 950003299,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 20770,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=10 viewers=950003000-950003299 fakes=8000000600-8000000659 initialized=360
+group=11 viewer=950003300 count=300 fake-base=8000000660
+{
+  "run_id": "bot-pool-g11",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950003300,
+  "viewer_count": 300,
+  "viewer_end": 950003599,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 20499,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=11 viewers=950003300-950003599 fakes=8000000660-8000000719 initialized=360
+group=12 viewer=950003600 count=300 fake-base=8000000720
+{
+  "run_id": "bot-pool-g12",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950003600,
+  "viewer_count": 300,
+  "viewer_end": 950003899,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 20838,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=12 viewers=950003600-950003899 fakes=8000000720-8000000779 initialized=360
+group=13 viewer=950003900 count=300 fake-base=8000000780
+{
+  "run_id": "bot-pool-g13",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950003900,
+  "viewer_count": 300,
+  "viewer_end": 950004199,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 20410,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=13 viewers=950003900-950004199 fakes=8000000780-8000000839 initialized=360
+group=14 viewer=950004200 count=300 fake-base=8000000840
+{
+  "run_id": "bot-pool-g14",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950004200,
+  "viewer_count": 300,
+  "viewer_end": 950004499,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 20848,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=14 viewers=950004200-950004499 fakes=8000000840-8000000899 initialized=360
+group=15 viewer=950004500 count=300 fake-base=8000000900
+{
+  "run_id": "bot-pool-g15",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950004500,
+  "viewer_count": 300,
+  "viewer_end": 950004799,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 360,
+  "activated_pairs": 18000,
+  "index_rows_applied": 36000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 20840,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 360 pairs 18000
+group=15 viewers=950004500-950004799 fakes=8000000900-8000000959 initialized=360
+group=16 viewer=950004800 count=200 fake-base=8000000960
+{
+  "run_id": "bot-pool-g16",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950004800,
+  "viewer_count": 200,
+  "viewer_end": 950004999,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 260,
+  "activated_pairs": 12000,
+  "index_rows_applied": 24000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 13811,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}
+group OK initialized 260 pairs 12000
+group=16 viewers=950004800-950004999 fakes=8000000960-8000001019 initialized=260
+viewer_start=950000000
+viewer_end=950004999
+viewer_count=5000
+fake_start=8000000000
+fake_end=8000001019
+friend_count_per_group=60
+reuse=thick-login returning players; do not FLUSHALL; do not HSET viewer farms

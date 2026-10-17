@@ -1,0 +1,11 @@
+=== RUN   TestLiveQ2R2NoScriptReloadWithoutGlobalFlush
+    q2r2_probe_test.go:469: Q2R2-NOSCRIPT OK unique_sha=767dff681eb8eb8aeaa2f2568e2b4c7fa4bf12d8 reloaded without global flush
+--- PASS: TestLiveQ2R2NoScriptReloadWithoutGlobalFlush (0.00s)
+=== RUN   TestLiveQ2R2CommitIdempotentReplayAfterUnknown
+    q2r2_probe_test.go:523: Q2R2-7 OK commit then same-identity replay resolved ALREADY_COMMITTED; lookup status=1
+--- PASS: TestLiveQ2R2CommitIdempotentReplayAfterUnknown (0.01s)
+=== RUN   TestLiveQ2R2CleanupUsesExactKeys
+    q2r2_probe_test.go:554: Q2R2-CLEANUP OK exact-key DEL + EXISTS == 0 (no KEYS/SCAN)
+--- PASS: TestLiveQ2R2CleanupUsesExactKeys (0.00s)
+PASS
+ok  	farmgame/internal/storage/redis/authority	0.020s

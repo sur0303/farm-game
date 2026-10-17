@@ -1,0 +1,91 @@
+{
+  "verdict": "PASS",
+  "flow": "login->buy->plant->harvest->share-friend->friend-farm->water->theft->home",
+  "steps": [
+    {
+      "step": "login",
+      "detail": {
+        "ownerA": "1000003",
+        "ownerB": "1000002"
+      }
+    },
+    {
+      "step": "buy-and-plant",
+      "detail": {
+        "aHarvestPlot": "plot-0",
+        "bTheftPlot": "plot-0"
+      }
+    },
+    {
+      "step": "harvest"
+    },
+    {
+      "step": "reverse-visit-b-to-a-ready"
+    },
+    {
+      "step": "share-and-join-friend"
+    },
+    {
+      "step": "f1-lost-care-result-recovered",
+      "detail": {
+        "farmVersion": "3",
+        "revision": "8",
+        "generationBefore": "1"
+      }
+    },
+    {
+      "step": "friend-farm-simulated-disconnect-recovery"
+    },
+    {
+      "step": "f2-gate-drain-restored-friend-target"
+    },
+    {
+      "step": "water-cycle-cleared-on-harvest"
+    },
+    {
+      "step": "f3-farm-change-failure-rejoined",
+      "detail": {
+        "stolenBefore": 0,
+        "stolenAfter": 10,
+        "bFarmVersionAfterTheft": "5"
+      }
+    },
+    {
+      "step": "task-list-visit-interact-growth-and-claims",
+      "detail": {
+        "lostClaimResultRecovered": true,
+        "generationBeforeLostClaimResult": "4"
+      }
+    },
+    {
+      "step": "return-home",
+      "detail": {
+        "finalProduce": 510
+      }
+    },
+    {
+      "step": "final-authority-stable"
+    }
+  ],
+  "details": {
+    "ownerA": "1000003",
+    "ownerB": "1000002",
+    "relationEpoch": "1",
+    "friendActionMask": 13,
+    "bFarmVersionAfterTheft": "5",
+    "bTheftPlotIndex": 0,
+    "bStolenTotal": 10,
+    "aFinalProduce": 510,
+    "aPlayerStateRevision": "13"
+  },
+  "console_errors": [
+    "A: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "B: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "B: WebSocket connection to 'ws://127.0.0.1:48775/ws' failed: Error during WebSocket handshake: Unexpected response code: 502",
+    "B: WebSocket connection to 'ws://127.0.0.1:48775/ws' failed: Error during WebSocket handshake: Unexpected response code: 502",
+    "A: WebSocket connection to 'ws://127.0.0.1:48775/ws' failed: Error during WebSocket handshake: Unexpected response code: 502",
+    "B: WebSocket connection to 'ws://127.0.0.1:48775/ws' failed: Error during WebSocket handshake: Unexpected response code: 502",
+    "A: WebSocket connection to 'ws://127.0.0.1:48775/ws' failed: Error during WebSocket handshake: Unexpected response code: 502"
+  ],
+  "finished_at": "2026-08-09T12:27:39.351Z"
+}

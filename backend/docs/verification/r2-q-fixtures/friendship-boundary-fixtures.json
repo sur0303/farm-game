@@ -1,0 +1,19 @@
+{
+  "schema": "farm.r2-q.fixture/friendship-boundary/v1",
+  "fixture_id": "friendship-boundary-v1",
+  "contract_status": "SKIPPED_NOT_COMPOSED",
+  "deterministic": true,
+  "production_semantics_changed": false,
+  "modes": {"service": ["local_gate", "remote_shadow", "remote_player"], "legacy": ["write", "shadow_read", "unavailable", "retired"]},
+  "comparison_fields": ["relation_id", "relation_epoch", "status", "friend_list", "action_mask", "next_opportunity"],
+  "difference_counters": ["relation_id", "relation_epoch", "status", "friend_list", "action_mask", "next_opportunity", "malformed_shadow"],
+  "cases": [
+    {"case_id": "local-gate", "mode": "local_gate", "formal_result_source": "gate_legacy_path", "shadow_invocations": 0, "business_writes": 1},
+    {"case_id": "remote-shadow-read-only", "mode": "remote_shadow", "formal_result_source": "old_path", "shadow_invocations": 1, "shadow_business_writes": 0, "duplicate_write": false, "malformed_shadow_fails_closed": true},
+    {"case_id": "remote-player", "mode": "remote_player", "formal_result_source": "player_friendship_service", "gate_friend_authority_repositories": 0, "gate_friend_lua_or_keys": 0, "gate_repair_workers": 0},
+    {"case_id": "permit-chain", "mode": "remote_player", "visit_permit": "canonical_pair_recheck", "action_admission": "canonical_pair_and_operation_admission", "farm_actor_write_chain": "required"},
+    {"case_id": "public-surface", "mode": "remote_player", "public_block_unblock_absent": true, "public_scb_unchanged": true}
+  ],
+  "required_assertions": ["no_duplicate_write_in_shadow", "bounded_difference_counters", "no_gate_friend_authority", "visit_permit", "action_admission", "public_block_unblock_absent"],
+  "cases_index": ["local_gate_assembly", "remote_shadow_read_only", "remote_player_authority_exclusion", "permit_admission", "public_surface"]
+}

@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "farmgame/api/gen/common;commonpb";
+
+import "common/enums.proto";
+
+message ClientHello {
+  string connection_ticket = 1;
+  reserved 2;
+  reserved "protocol_version";
+  string client_build = 3;
+}
+
+message ServerHello {
+  string session_id = 1;
+  uint64 active_session_epoch = 2;
+  uint64 session_authority_epoch = 3;
+  int64 server_time_ms = 4;
+  // Heartbeat remains transport-owned until TCONND T8 freezes its semantics.
+  reserved 5;
+  reserved "heartbeat_interval_ms";
+  uint32 max_frame_bytes = 6;
+  // Authoritative identity established by ClientHello ticket activation.
+  uint64 player_id = 7;
+}
+
+message ConnectionError {
+  ErrorCode error_code = 1;
+  string error_message = 2;
+}
+
+// ClientRecoveryComplete marks the current authenticated connection
+// generation as having completed the client-side recovery barrier. It carries
+// no identity: Gate derives the exact connection/session fence from the
+// transport and the activated SessionLane.
+message ClientRecoveryComplete {}
+
+// ControlFrame is deliberately small and connection-scoped. New controls are
+// added as oneof alternatives so an empty/unknown control fails closed.
+// 方向约束(28 §2):ClientRecoveryComplete 只允许 Client → Server;
+// ConnectionError 只允许 Server → Client,由 ProtocolGuard 校验。
+message ControlFrame {
+  oneof body {
+    ClientRecoveryComplete client_recovery_complete = 1;
+    // 连接级协议错误(替代旧 FRAME_KIND_CONNECTION_ERROR 独立大类)。
+    ConnectionError connection_error = 2;
+  }
+}
+
+// DrainNotice is an advisory rollout hint. It is queued through the same
+// per-connection writer as responses/pushes; clients that do not understand it
+// still receive the subsequent WebSocket 1012 close frame.
+message DrainNotice {
+  string drain_id = 1;
+  uint32 reconnect_after_ms = 2;
+  int64 deadline_ms = 3;
+}

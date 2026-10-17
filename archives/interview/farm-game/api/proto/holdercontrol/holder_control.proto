@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package farmgame.holdercontrol;
+
+option go_package = "farmgame/api/gen/holdercontrol;holdercontrol";
+
+// The local control phase is a bounded lifecycle marker. It is not an
+// AuthorityStore generation state machine.
+enum DrainPhase {
+  DRAIN_PHASE_UNSPECIFIED = 0;
+  DRAIN_PHASE_OPEN = 1;
+  DRAIN_PHASE_STOPPED = 2;
+  DRAIN_PHASE_WAITED = 3;
+  DRAIN_PHASE_FACTS_COMMITTED = 4;
+}
+
+// This is the complete route authority generation tuple needed to prepare a
+// shard. WriterClaim and other storage credentials are deliberately absent.
+message AuthorityGeneration {
+  string holder_id = 1;
+  string holder_boot_id = 2;
+  uint64 assignment_revision = 3;
+  uint64 writer_epoch = 4;
+  uint64 lease_epoch = 5;
+  int64 lease_until_ms = 6;
+}
+
+message ShardStatus {
+  string domain = 1;
+  uint32 shard = 2;
+  DrainPhase phase = 3;
+  uint64 accepted_user_jobs = 4;
+  bool wait_complete = 5;
+  bool admitting = 6;
+  bool prepared = 7;
+  AuthorityGeneration prepared_generation = 8;
+  // Holder identity is part of every status binding. Implementations must
+  // reject empty or over-budget values.
+  string holder_id = 9;
+  string holder_boot_id = 10;
+}
+
+message StopNewActivationAndTurnsRequest {
+  string domain = 1;
+  uint32 shard = 2;
+}
+
+message WaitCurrentTurnsRequest {
+  string domain = 1;
+  uint32 shard = 2;
+}
+
+message ConfirmFactsCommittedRequest {
+  string domain = 1;
+  uint32 shard = 2;
+}
+
+message PrepareShardGenerationRequest {
+  string domain = 1;
+  uint32 shard = 2;
+  AuthorityGeneration generation = 3;
+}
+
+message GetShardStatusRequest {
+  string domain = 1;
+  uint32 shard = 2;
+}
+
+message HolderControlResponse {
+  ShardStatus status = 1;
+}
+
+message GetShardStatusResponse {
+  ShardStatus status = 1;
+}
+
+service HolderControlService {
+  rpc StopNewActivationAndTurns(StopNewActivationAndTurnsRequest) returns (HolderControlResponse);
+  rpc WaitCurrentTurns(WaitCurrentTurnsRequest) returns (HolderControlResponse);
+  rpc ConfirmFactsCommitted(ConfirmFactsCommittedRequest) returns (HolderControlResponse);
+  rpc PrepareShardGeneration(PrepareShardGenerationRequest) returns (HolderControlResponse);
+  rpc GetShardStatus(GetShardStatusRequest) returns (GetShardStatusResponse);
+  rpc GetRuntimeIdentity(GetRuntimeIdentityRequest) returns (RuntimeIdentity);
+  rpc ConfirmZeroShard(ConfirmZeroShardRequest) returns (RuntimeIdentity);
+}
+
+message GetRuntimeIdentityRequest {
+  string domain = 1;
+}
+
+// RuntimeIdentity is one process-level snapshot. The identity, deployment
+// tuple, lifecycle facts, route revision and observation time are captured
+// from the same status-source read.
+message RuntimeIdentity {
+  string domain = 1;
+  string holder_id = 2;
+  string boot_id = 3;
+  string workload_uid = 4;
+  string pod_uid = 5;
+  int32 ordinal = 6;
+  bool process_ready = 7;
+  bool draining = 8;
+  uint32 serving_shard_count = 9;
+  uint64 observed_route_revision = 10;
+  string lifecycle_state = 11;
+  int64 observed_at_ms = 12;
+  string workload_identity_token = 13;
+  // Public verification material for this exact holder process boot. The
+  // private Ed25519 key is process-local and is never part of HolderControl.
+  string commit_proof_key_id = 14;
+  bytes commit_proof_public_key = 15;
+}
+
+message ConfirmZeroShardRequest {
+  string domain = 1;
+  string boot_id = 2;
+}

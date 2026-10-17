@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "session-route-c2.v1",
+  "title": "SessionRoute C2.1 probe evidence",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "purpose",
+    "run_id",
+    "topology_label",
+    "cluster_verification",
+    "supports_30m_dau",
+    "go_no_go",
+    "correctness_ok",
+    "cells"
+  ],
+  "properties": {
+    "schema_version": { "const": "session-route-c2.v1" },
+    "purpose": { "type": "string" },
+    "run_id": { "type": "string" },
+    "started_at_utc": { "type": "string", "format": "date-time" },
+    "completed_at_utc": { "type": "string", "format": "date-time" },
+    "mode": { "enum": ["smoke", "full"] },
+    "topology_label": { "enum": ["SINGLE_NODE_ONLY"] },
+    "cluster_verification": { "enum": ["NOT_VERIFIED", "VERIFIED_CLUSTER_CLIENT"] },
+    "supports_30m_dau": { "const": false },
+    "go_no_go": { "enum": ["GO_FOR_MEASUREMENT_ONLY", "NO_GO"] },
+    "correctness_ok": { "type": "boolean" },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "cells": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/cell" }
+    }
+  },
+  "$defs": {
+    "optional_number": {
+      "type": "object",
+      "required": ["available"],
+      "properties": {
+        "available": { "type": "boolean" },
+        "value": { "type": "number" },
+        "reason": { "type": "string" }
+      }
+    },
+    "optional_uint": {
+      "type": "object",
+      "required": ["available"],
+      "properties": {
+        "available": { "type": "boolean" },
+        "value": { "type": "integer", "minimum": 0 },
+        "reason": { "type": "string" }
+      }
+    },
+    "percentiles": {
+      "type": "object",
+      "properties": {
+        "p50": { "type": "number" },
+        "p95": { "type": "number" },
+        "p99": { "type": "number" },
+        "min": { "type": "number" },
+        "max": { "type": "number" }
+      }
+    },
+    "cell": {
+      "type": "object",
+      "required": [
+        "cell_name",
+        "friend_count",
+        "online_ratio_pct",
+        "dispatch_batch_size",
+        "route_state_mode",
+        "expected_malformed",
+        "successful_count",
+        "filtered_count",
+        "malformed_count",
+        "observed_malformed",
+        "observed_rpc_batch_sizes",
+        "latency_us",
+        "redis_command_count",
+        "pipeline_item_count",
+        "request_bytes",
+        "response_bytes",
+        "redis_cpu_us",
+        "slowlog",
+        "topology_label",
+        "cluster_verification",
+        "correctness_ok"
+      ],
+      "properties": {
+        "cell_name": { "type": "string" },
+        "friend_count": { "type": "integer", "enum": [0, 20, 100, 300] },
+        "online_ratio_pct": { "type": "integer", "enum": [0, 5, 20, 50] },
+        "dispatch_batch_size": { "type": "integer", "enum": [1, 10, 100, 300] },
+        "route_state_mode": {
+          "type": "string",
+          "enum": ["ACTIVE", "missing", "expired", "malformed"]
+        },
+        "expected_active": { "type": "integer", "minimum": 0 },
+        "expected_filtered": { "type": "integer", "minimum": 0 },
+        "expected_malformed": { "type": "integer", "minimum": 0 },
+        "successful_count": { "type": "integer", "minimum": 0 },
+        "filtered_count": { "type": "integer", "minimum": 0 },
+        "malformed_count": { "$ref": "#/$defs/optional_uint" },
+        "observed_malformed": { "$ref": "#/$defs/optional_uint" },
+        "observed_rpc_batch_sizes": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 }
+        },
+        "latency_us": { "$ref": "#/$defs/percentiles" },
+        "redis_command_count": { "$ref": "#/$defs/optional_uint" },
+        "pipeline_item_count": { "$ref": "#/$defs/optional_uint" },
+        "request_bytes": { "$ref": "#/$defs/optional_uint" },
+        "response_bytes": { "$ref": "#/$defs/optional_uint" },
+        "redis_cpu_us": { "$ref": "#/$defs/optional_number" },
+        "slowlog": { "$ref": "#/$defs/optional_number" },
+        "topology_label": { "enum": ["SINGLE_NODE_ONLY"] },
+        "cluster_verification": { "enum": ["NOT_VERIFIED", "VERIFIED_CLUSTER_CLIENT"] },
+        "correctness_ok": { "type": "boolean" },
+        "violations": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

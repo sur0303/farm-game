@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package ownercore;
+
+option go_package = "farmgame/api/gen/ownercore;ownercorepb";
+
+import "tcapluspb/options.proto";
+import "economy/economy.proto";
+import "farm/farm.proto";
+import "settlement/settlement.proto";
+
+// OwnerMeta 是记录级元信息与并发控制。
+message OwnerMeta {
+  uint64 owner_id = 1;
+  uint64 owner_epoch = 2;      // 所有权代次,防旧 Actor/双活写入(fencing)
+  uint64 state_version = 3;    // 逻辑状态版本(与 Tcaplus RecordVersion 配合)
+  int32 schema_version = 4;    // 记录 schema 版本,支持滚动兼容
+  string bootstrap_id = 5;     // 建档幂等键
+  int32 applied_bootstrap_rule_version = 6;
+}
+
+// TaskState / MailReceipts / PetState / AlbumState 是 P0b 子系统状态。
+// P0a 阶段留空,此处定义占位以固定单记录边界。
+message TaskState {
+  message TaskProgress {
+    int32 task_id = 1;
+    int64 progress = 2;
+    bool claimed = 3;
+  }
+  repeated TaskProgress tasks = 1;
+}
+
+message MailReceipts {
+  message MailReceipt {
+    string mail_id = 1;
+    bool read = 2;
+    bool attachment_claimed = 3;
+  }
+  repeated MailReceipt receipts = 1;
+}
+
+message PetState {
+  int32 active_pet_id = 1;
+  int64 guard_until = 2;   // 守护有效期
+}
+
+message AlbumState {
+  repeated int32 unlocked_entries = 1;
+}
+
+// OwnerCoreRecord 是单条权威记录(交接文档 §9.2)。一个 Owner 的全部权威事实
+// 共同存于此,在一次 RecordVersion 条件写中原子提交。primary key = owner_id。
+//
+// 逻辑模块化不意味着拆成多条记录:recent_operation_results / pending_outbox /
+// active_theft_settlements / recent_loot_receipts 必须与业务状态在同一条件写中共同提交。
+message OwnerCoreRecord {
+  option (tcaplusservice.tcaplus_primary_key) = "owner_id";
+
+  uint64 owner_id = 1;                       // 主键(与 owner_meta.owner_id 一致)
+
+  OwnerMeta owner_meta = 2;
+  economy.PlayerProfile player_profile = 3;
+  economy.Progression progression = 4;
+
+  economy.Wallet wallet = 5;
+  economy.Inventory inventory = 6;
+
+  farm.FarmCore farm = 7;
+
+  TaskState task_state = 8;
+  MailReceipts mail_receipts = 9;
+  PetState pet_state = 10;
+  AlbumState album_state = 11;
+
+  // Owner 内可靠执行状态,热窗口有限,归档见 D4 §热窗口。
+  repeated settlement.OperationResult recent_operation_results = 12;
+  repeated settlement.PendingOutbox pending_outbox = 13;
+  repeated settlement.TheftSettlement active_theft_settlements = 14;
+  repeated settlement.LootReceipt recent_loot_receipts = 15;
+}

@@ -1,0 +1,14 @@
+label=baseline-C3-package-shuffle-count20
+worktree=/data/home/developer_026/CodeBuddy/20260519141303/farm-game-r1-t-authcomp-panic-triage-20260809
+commit=dd7104a3c43cecdc85c8d7962014f9760bf28f2d
+command=go test -buildvcs=false ./internal/authoritycomposition/... -shuffle=on -count=20
+process_isolation=independent go test process
+gocache=/tmp/r1-t-authcomp-panic-triage-baseline-C3-package-shuffle-count20-2/gocache
+gotmpdir=/tmp/r1-t-authcomp-panic-triage-baseline-C3-package-shuffle-count20-2/gotmp
+started_utc=2026-08-09T11:58:43Z
+started_asia_shanghai=2026-08-09T19:58:43+08:00
+completed_utc=2026-08-09T11:59:29Z
+completed_asia_shanghai=2026-08-09T19:59:29+08:00
+duration_seconds=46
+exit_code=1
+shuffle_seeds=1786276738734200727

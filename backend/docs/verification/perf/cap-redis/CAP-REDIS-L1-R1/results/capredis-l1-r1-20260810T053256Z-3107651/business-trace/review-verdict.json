@@ -1,0 +1,30 @@
+{
+  "aggregate_sha256": "3a7006f2122c2cd5d6ae8e2d9af6cbd97656459a339196f84b3a49bfcbe11f89",
+  "attachments": {
+    "business-command-amplification.json": "da306ce4bc5116cf246e7e0fec8675bbb56d5d2a5fee80df7c234bb7eb3de54f",
+    "cleanup.txt": "84442a9d7c5a9a562b643400998900ada7d7c2f82a97e0f21e41731a85028648",
+    "correctness-witness.json": "fceb5280d33144996c6596651e61cd3b9d8977dfc4af2104bf43ad4f5d6a3bc3",
+    "h5-bundle.json": "3e735616ca4fd670d11fb73f42f09a8c79077a59f650ee6b686a611e9eb95331",
+    "qualification.json": "a6741b9ab218a65ce2e2c89d8b554c9828204c8ae3621accdd6f53fa4af221fe",
+    "tool-artifacts.json": "588c9da29676b01bad4b2f511c305601a56c1cce7740847dc885d72e49fbf729"
+  },
+  "checks": {
+    "background_excluded": true,
+    "correctness_oracle": true,
+    "exact_head_closure": true,
+    "operation_bound": true,
+    "p0_zero": true,
+    "p1_zero": true,
+    "p2_zero": true,
+    "raw_identity_absent": true,
+    "real_h5_end_to_end": true,
+    "redis_teardown": true
+  },
+  "review_result_head": "a9073cb0e207bce061054bab9e8cb7e3bf64bfa8",
+  "reviewed_evidence_head": "7b75400803db6cc07f163ba624f65894a875f7f5",
+  "schema_version": "cap-redis-business-trace-review-v1",
+  "tool_head": "3f1f9c6e1143a2c4589061ff2f50d73021c64f1f",
+  "trace_run": "capredis-business-e2e-20260810T072200Z",
+  "train_run_id": "capredis-l1-r1-20260810T053256Z-3107651",
+  "verdict": "PASS"
+}

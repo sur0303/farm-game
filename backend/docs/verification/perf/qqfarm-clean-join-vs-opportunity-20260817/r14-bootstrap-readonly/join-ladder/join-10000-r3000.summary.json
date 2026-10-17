@@ -1,0 +1,1 @@
+{"run_id": "dkr8wnfo7ecg", "attempted": 10000, "ready": 10000, "login_errors": 0, "connect_errors": 0, "hello_errors": 0, "join_errors": 0, "unexpected_disconnects": 0, "ready_p95_ms": 1281.801759, "snapshot_p95_ms": 178.441957, "login_p95_ms": 991.338941, "peak_active": 10000}

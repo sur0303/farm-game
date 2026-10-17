@@ -1,0 +1,14 @@
+label=candidate-B1-package-shuffle-count20
+worktree=/data/home/developer_026/CodeBuddy/20260519141303/farm-game-r1-4-merge-queue-20260809
+commit=1ec3dcd166a7449b40aa934ee7324154474b3c05
+command=go test -buildvcs=false ./internal/authoritycomposition/... -shuffle=on -count=20
+process_isolation=independent go test process
+gocache=/tmp/r1-t-authcomp-panic-triage-candidate-B1-package-shuffle-count20-2/gocache
+gotmpdir=/tmp/r1-t-authcomp-panic-triage-candidate-B1-package-shuffle-count20-2/gotmp
+started_utc=2026-08-09T11:54:50Z
+started_asia_shanghai=2026-08-09T19:54:50+08:00
+completed_utc=2026-08-09T11:55:37Z
+completed_asia_shanghai=2026-08-09T19:55:37+08:00
+duration_seconds=47
+exit_code=1
+shuffle_seeds=1786276506503064082

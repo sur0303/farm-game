@@ -1,0 +1,6 @@
+namespace=foperf-b2-fusion202608111sb2
+attach=true
+wakeup=true
+client_mode=B2
+friend_navigation=v3-player-svr
+topology=random-loopback-real-processes

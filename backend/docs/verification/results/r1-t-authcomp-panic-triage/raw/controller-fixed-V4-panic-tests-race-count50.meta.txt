@@ -1,0 +1,4 @@
+started_utc=2026-08-09T12:23:47Z
+completed_utc=2026-08-09T12:23:58Z
+exit_code=0
+command=go test -buildvcs=false -race ./internal/authoritycomposition/... -run ^(three panic tests)$ -count=50 -v

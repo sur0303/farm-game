@@ -1,0 +1,196 @@
+# RT2I explicit composed + remote-watch example.
+#
+# This file contains identities and file paths only. Put the actual PEM files
+# in the ignored deploy/secrets/*.local mechanism and provide the Redis URL and
+# non-secret route-control settings through the deployment environment.
+# route-controller is deliberately a singleton. container_name makes Compose
+# reject --scale route-controller=N, while deploy.replicas and stop-first make
+# the same constraint explicit to Swarm-style tooling. Do not remove either
+# guard until the controller has a separately reviewed HA/leader contract. Its
+# boot ID is deployment-generated and immutable for one controller generation.
+name: farm-game-s2-remote-watch
+
+x-route-watch-environment: &route-watch-environment
+  AUTHORITY_MEMBERSHIP_MODE: "composed"
+  ACTOR_ASSIGNMENT_MODE: "remote-watch"
+  ACTOR_ROUTE_REALM: "${ACTOR_ROUTE_REALM:?set ACTOR_ROUTE_REALM}"
+  ROUTE_CONTROL_ADDR: "route-controller:19090"
+  ROUTE_CONTROL_CONTROLLER_ID: "${ROUTE_CONTROL_CONTROLLER_ID:?set ROUTE_CONTROL_CONTROLLER_ID}"
+  ROUTE_CONTROL_SERVER_NAME: "${ROUTE_CONTROL_SERVER_NAME:?set ROUTE_CONTROL_SERVER_NAME}"
+  ROUTE_CONTROL_SERVER_IDENTITY: "${ROUTE_CONTROL_SERVER_IDENTITY:?set ROUTE_CONTROL_SERVER_IDENTITY}"
+  ROUTE_CONTROL_CLIENT_CERT_FILE: "/run/farm/route-control/client.crt"
+  ROUTE_CONTROL_CLIENT_KEY_FILE: "/run/farm/route-control/client.key"
+  ROUTE_CONTROL_SERVER_CA_FILE: "/run/farm/route-control/ca.crt"
+  ROUTE_CONTROL_DIAL_TIMEOUT: "${ROUTE_CONTROL_DIAL_TIMEOUT:-5s}"
+  ROUTE_CONTROL_RETIRED_BOOT_LIMIT: "${ROUTE_CONTROL_RETIRED_BOOT_LIMIT-8}"
+  ACTOR_ROUTE_INITIAL_FETCH_TIMEOUT: "${ACTOR_ROUTE_INITIAL_FETCH_TIMEOUT:-5s}"
+  ACTOR_ROUTE_STARTUP_TIMEOUT: "${ACTOR_ROUTE_STARTUP_TIMEOUT:-30s}"
+  ACTOR_ROUTE_ENDPOINT_DIAL_TIMEOUT: "${ACTOR_ROUTE_ENDPOINT_DIAL_TIMEOUT:-5s}"
+  ACTOR_ROUTE_ENDPOINT_RETIRE_GRACE: "${ACTOR_ROUTE_ENDPOINT_RETIRE_GRACE:-5s}"
+  ACTOR_ROUTE_MAX_ENDPOINTS: "${ACTOR_ROUTE_MAX_ENDPOINTS:-256}"
+
+x-redis-keyspace-environment: &redis-keyspace-environment
+  REDIS_PHYSICAL_PROFILE_VERSION: "${REDIS_PHYSICAL_PROFILE_VERSION:?set REDIS_PHYSICAL_PROFILE_VERSION}"
+  REDIS_NAMESPACE_ENVIRONMENT: "${REDIS_NAMESPACE_ENVIRONMENT:?set REDIS_NAMESPACE_ENVIRONMENT}"
+  REDIS_NAMESPACE_ZONE: "${REDIS_NAMESPACE_ZONE:?set REDIS_NAMESPACE_ZONE}"
+  REDIS_AUTHORITY_LAYOUT_VERSION: "${REDIS_AUTHORITY_LAYOUT_VERSION:?set REDIS_AUTHORITY_LAYOUT_VERSION}"
+  REDIS_WORKFLOW_LAYOUT_VERSION: "${REDIS_WORKFLOW_LAYOUT_VERSION:?set REDIS_WORKFLOW_LAYOUT_VERSION}"
+  REDIS_WORKFLOW_HASH_VERSION: "${REDIS_WORKFLOW_HASH_VERSION:?set REDIS_WORKFLOW_HASH_VERSION}"
+  REDIS_WORKFLOW_BUCKET_COUNT: "${REDIS_WORKFLOW_BUCKET_COUNT:?set REDIS_WORKFLOW_BUCKET_COUNT}"
+
+services:
+  route-controller:
+    container_name: farm-game-s2-route-controller-singleton
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        SERVICE: route-controller
+    restart: unless-stopped
+    # Must remain at least PLAN_OPERATION_TIMEOUT plus bounded cleanup margin.
+    stop_grace_period: "${ROUTE_CONTROLLER_STOP_GRACE_PERIOD:-45s}"
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+        order: stop-first
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+    environment:
+      <<: *redis-keyspace-environment
+      ROUTE_CONTROLLER_LISTEN: ":19090"
+      ROUTE_CONTROLLER_METRICS_LISTEN: "0.0.0.0:9090"
+      ROUTE_CONTROLLER_ID: "${ROUTE_CONTROL_CONTROLLER_ID:?set ROUTE_CONTROL_CONTROLLER_ID}"
+      ROUTE_CONTROLLER_BOOT: "${ROUTE_CONTROLLER_BOOT:?set a deployment-generated boot ID immutable for this controller generation}"
+      ROUTE_CONTROLLER_SINGLE_CONTROLLER_ATTESTATION: "single-replica-recreate-no-overlap-v1"
+      ROUTE_CONTROLLER_REALM: "${ACTOR_ROUTE_REALM:?set ACTOR_ROUTE_REALM}"
+      ROUTE_CONTROLLER_ALLOWED_CLIENT_IDENTITIES: "${ROUTE_CONTROLLER_ALLOWED_CLIENT_IDENTITIES:?set exact route client certificate identities}"
+      ROUTE_CONTROLLER_PLAN_READ_IDENTITIES: "${ROUTE_CONTROLLER_PLAN_READ_IDENTITIES:?set exact plan-read client DNS SAN identities}"
+      ROUTE_CONTROLLER_OPERATOR_IDENTITIES: "${ROUTE_CONTROLLER_OPERATOR_IDENTITIES:?set exact routectl operator DNS SAN identities}"
+      ROUTE_CONTROLLER_TLS_CERT: "/run/farm/route-controller/server.crt"
+      ROUTE_CONTROLLER_TLS_KEY: "/run/farm/route-controller/server.key"
+      ROUTE_CONTROLLER_TLS_CA: "/run/farm/route-controller/client-ca.crt"
+      ROUTE_CONTROLLER_HOLDER_CLIENT_CERT: "/run/farm/holder-operator/client.crt"
+      ROUTE_CONTROLLER_HOLDER_CLIENT_KEY: "/run/farm/holder-operator/client.key"
+      ROUTE_CONTROLLER_HOLDER_CLIENT_CA: "/run/farm/holder-operator/holder-ca.crt"
+      ROUTE_CONTROLLER_GATE_VERIFIER_CLIENT_CERT: "/run/farm/gate-verifier/client.crt"
+      ROUTE_CONTROLLER_GATE_VERIFIER_CLIENT_KEY: "/run/farm/gate-verifier/client.key"
+      ROUTE_CONTROLLER_GATE_VERIFIER_CLIENT_CA: "/run/farm/gate-verifier/server-ca.crt"
+      ROUTE_CONTROLLER_GATE_VERIFIER_PEERS: '[{"name":"farm-gate-1","address":"farm-gate:19091","server_name":"${GATE_VERIFIER_SERVER_NAME:?set exact Gate verifier DNS SAN}","expected_identity":"${GATE_VERIFIER_SERVER_IDENTITY:?set exact Gate verifier verified leaf DNS SAN}"}]'
+      ROUTE_CONTROLLER_GATE_VERIFIER_TIMEOUT: "${ROUTE_CONTROLLER_GATE_VERIFIER_TIMEOUT:-5s}"
+      ROUTE_CONTROLLER_PLAN_OPERATION_TIMEOUT: "${ROUTE_CONTROLLER_PLAN_OPERATION_TIMEOUT:-30s}"
+      ROUTE_CONTROLLER_PLAN_TTL: "${ROUTE_CONTROLLER_PLAN_TTL-24h}"
+      ROUTE_CONTROLLER_DEADLINE_REFRESH_INTERVAL: "${ROUTE_CONTROLLER_DEADLINE_REFRESH_INTERVAL:-1s}"
+      ROUTE_CONTROLLER_DEADLINE_REFRESH_LEAD: "${ROUTE_CONTROLLER_DEADLINE_REFRESH_LEAD:-30s}"
+      FARM_REDIS_URL: "${FARM_REDIS_URL:-}"
+      FARM_REDIS_CLUSTER_URLS: "${FARM_REDIS_CLUSTER_URLS:-}"
+    volumes:
+      - "./secrets/route-controller.crt.local:/run/farm/route-controller/server.crt:ro"
+      - "./secrets/route-controller.key.local:/run/farm/route-controller/server.key:ro"
+      - "./secrets/route-control-client-ca.crt.local:/run/farm/route-controller/client-ca.crt:ro"
+      - "./secrets/holder-operator-client.crt.local:/run/farm/holder-operator/client.crt:ro"
+      - "./secrets/holder-operator-client.key.local:/run/farm/holder-operator/client.key:ro"
+      - "./secrets/holder-operator-ca.crt.local:/run/farm/holder-operator/holder-ca.crt:ro"
+      - "./secrets/gate-verifier-controller.crt.local:/run/farm/gate-verifier/client.crt:ro"
+      - "./secrets/gate-verifier-controller.key.local:/run/farm/gate-verifier/client.key:ro"
+      - "./secrets/gate-verifier-server-ca.crt.local:/run/farm/gate-verifier/server-ca.crt:ro"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "127.0.0.1", "19090"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  player-svr:
+    depends_on:
+      route-controller:
+        condition: service_healthy
+    environment:
+      <<: [*route-watch-environment, *redis-keyspace-environment]
+      ACTOR_AUTHORITY_MODE: "authority"
+      ACTOR_HOLDER_POD: "${PLAYER_HOLDER_ID:?set PLAYER_HOLDER_ID}"
+      ACTOR_HOLDER_IDENTITY_MODE: "kubernetes-process-v1"
+      ACTOR_HOLDER_POD_UID: "${PLAYER_HOLDER_POD_UID:?set trusted PLAYER_HOLDER_POD_UID}"
+      ACTOR_HOLDER_WORKLOAD_UID: "${PLAYER_HOLDER_WORKLOAD_UID:?set trusted PLAYER_HOLDER_WORKLOAD_UID}"
+      ACTOR_HOLDER_ORDINAL: "${PLAYER_HOLDER_ORDINAL:?set canonical PLAYER_HOLDER_ORDINAL}"
+      HOLDER_CONTROL_CONTROLLER_IDENTITY: "${HOLDER_CONTROL_CONTROLLER_IDENTITY:?set HOLDER_CONTROL_CONTROLLER_IDENTITY}"
+      PLAYER_LOGIC_ENDPOINT: "${PLAYER_LOGIC_ENDPOINT:?set PLAYER_LOGIC_ENDPOINT}"
+      PLAYER_HOLDER_ENDPOINT: "${PLAYER_HOLDER_ENDPOINT:?set PLAYER_HOLDER_ENDPOINT}"
+      PLAYER_HOLDER_TLS_DNS_IDENTITY: "${PLAYER_HOLDER_TLS_DNS_IDENTITY:?set PLAYER_HOLDER_TLS_DNS_IDENTITY}"
+      PLAYER_HOLDER_TLS_CERT_FILE: "/run/farm/holder-tls/player.crt"
+      PLAYER_HOLDER_TLS_KEY_FILE: "/run/farm/holder-tls/player.key"
+      PLAYER_HOLDER_CLIENT_CA_FILE: "/run/farm/holder-tls/ca.crt"
+      PLAYER_HOLDER_CONTROL_LISTEN: ":19100"
+      ACTOR_AUTHORITY_LEASE_TTL: "${ACTOR_AUTHORITY_LEASE_TTL:-60s}"
+      ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN: "${ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN:-10s}"
+      ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL: "${ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL:-40s}"
+    volumes:
+      - "./secrets/route-control-client.crt.local:/run/farm/route-control/client.crt:ro"
+      - "./secrets/route-control-client.key.local:/run/farm/route-control/client.key:ro"
+      - "./secrets/route-control-ca.crt.local:/run/farm/route-control/ca.crt:ro"
+      - "./secrets/player-holder.crt.local:/run/farm/holder-tls/player.crt:ro"
+      - "./secrets/player-holder.key.local:/run/farm/holder-tls/player.key:ro"
+      - "./secrets/holder-client-ca.crt.local:/run/farm/holder-tls/ca.crt:ro"
+
+  farm-svr:
+    depends_on:
+      route-controller:
+        condition: service_healthy
+    environment:
+      <<: [*route-watch-environment, *redis-keyspace-environment]
+      ACTOR_AUTHORITY_MODE: "authority"
+      ACTOR_HOLDER_POD: "${FARM_HOLDER_ID:?set FARM_HOLDER_ID}"
+      ACTOR_HOLDER_IDENTITY_MODE: "kubernetes-process-v1"
+      ACTOR_HOLDER_POD_UID: "${FARM_HOLDER_POD_UID:?set trusted FARM_HOLDER_POD_UID}"
+      ACTOR_HOLDER_WORKLOAD_UID: "${FARM_HOLDER_WORKLOAD_UID:?set trusted FARM_HOLDER_WORKLOAD_UID}"
+      ACTOR_HOLDER_ORDINAL: "${FARM_HOLDER_ORDINAL:?set canonical FARM_HOLDER_ORDINAL}"
+      HOLDER_CONTROL_CONTROLLER_IDENTITY: "${HOLDER_CONTROL_CONTROLLER_IDENTITY:?set HOLDER_CONTROL_CONTROLLER_IDENTITY}"
+      FARM_LOGIC_ENDPOINT: "${FARM_LOGIC_ENDPOINT:?set FARM_LOGIC_ENDPOINT}"
+      FARM_HOLDER_ENDPOINT: "${FARM_HOLDER_ENDPOINT:?set FARM_HOLDER_ENDPOINT}"
+      FARM_HOLDER_TLS_DNS_IDENTITY: "${FARM_HOLDER_TLS_DNS_IDENTITY:?set FARM_HOLDER_TLS_DNS_IDENTITY}"
+      FARM_HOLDER_TLS_CERT_FILE: "/run/farm/holder-tls/farm.crt"
+      FARM_HOLDER_TLS_KEY_FILE: "/run/farm/holder-tls/farm.key"
+      FARM_HOLDER_CLIENT_CA_FILE: "/run/farm/holder-tls/ca.crt"
+      FARM_HOLDER_CONTROL_LISTEN: ":19101"
+      ACTOR_AUTHORITY_LEASE_TTL: "${ACTOR_AUTHORITY_LEASE_TTL:-60s}"
+      ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN: "${ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN:-10s}"
+      ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL: "${ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL:-40s}"
+    volumes:
+      - "./secrets/route-control-client.crt.local:/run/farm/route-control/client.crt:ro"
+      - "./secrets/route-control-client.key.local:/run/farm/route-control/client.key:ro"
+      - "./secrets/route-control-ca.crt.local:/run/farm/route-control/ca.crt:ro"
+      - "./secrets/farm-holder.crt.local:/run/farm/holder-tls/farm.crt:ro"
+      - "./secrets/farm-holder.key.local:/run/farm/holder-tls/farm.key:ro"
+      - "./secrets/holder-client-ca.crt.local:/run/farm/holder-tls/ca.crt:ro"
+
+  farm-worker:
+    depends_on:
+      route-controller:
+        condition: service_healthy
+    environment:
+      <<: [*route-watch-environment, *redis-keyspace-environment]
+    volumes:
+      - "./secrets/route-control-client.crt.local:/run/farm/route-control/client.crt:ro"
+      - "./secrets/route-control-client.key.local:/run/farm/route-control/client.key:ro"
+      - "./secrets/route-control-ca.crt.local:/run/farm/route-control/ca.crt:ro"
+
+  farm-gate:
+    depends_on:
+      route-controller:
+        condition: service_healthy
+    environment:
+      <<: [*route-watch-environment, *redis-keyspace-environment]
+      GATE_VERIFIER_LISTEN: ":19091"
+      GATE_VERIFIER_TLS_CERT: "/run/farm/gate-verifier/server.crt"
+      GATE_VERIFIER_TLS_KEY: "/run/farm/gate-verifier/server.key"
+      GATE_VERIFIER_CLIENT_CA: "/run/farm/gate-verifier/controller-ca.crt"
+      GATE_VERIFIER_ALLOWED_CLIENT_IDENTITY: "${GATE_VERIFIER_CONTROLLER_IDENTITY:?set exact controller verifier client DNS SAN}"
+    volumes:
+      - "./secrets/route-control-client.crt.local:/run/farm/route-control/client.crt:ro"
+      - "./secrets/route-control-client.key.local:/run/farm/route-control/client.key:ro"
+      - "./secrets/route-control-ca.crt.local:/run/farm/route-control/ca.crt:ro"
+      - "./secrets/gate-verifier-server.crt.local:/run/farm/gate-verifier/server.crt:ro"
+      - "./secrets/gate-verifier-server.key.local:/run/farm/gate-verifier/server.key:ro"
+      - "./secrets/gate-verifier-controller-ca.crt.local:/run/farm/gate-verifier/controller-ca.crt:ro"

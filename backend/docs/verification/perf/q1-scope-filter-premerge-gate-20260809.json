@@ -1,0 +1,66 @@
+{
+  "schema": "farm-game.q1-scope-filter-premerge-gate.v1",
+  "checkpoint": "CP-Q1-SCOPE-FILTER-CORRECTNESS",
+  "result": "PASS",
+  "backend_integration_base": "4c6195c8141bdc3368ecda3922e4f9f3252d0046",
+  "backend_premerge_code_head": "bf0c6063201051caf08be5da4c062c7bd5189ffa",
+  "h5_integration_base": "fdb9849c0aad613b9a1c45ab8bf33a692c5ee967",
+  "h5_premerge_head": "c1bc17bcad17b88688ae7c8fae77d384f21d5fbb",
+  "source_heads": {
+    "backend": "9ee567cdcddfbd3ab9f9531786ef61c2cdf97f5f",
+    "h5": "48ea2dbb52ed50902e15372a5d07721e46d333ca",
+    "q1_handoff": "113332a669796067a368899a63752419c5112919",
+    "q1_harness_code": "dae92dd513872b4247fcb17311b950c48c46b5e9"
+  },
+  "focused_review": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "exact_head_closure": "PASS"
+  },
+  "mechanical_gates": {
+    "go_test_all": "PASS",
+    "focused_race": "PASS",
+    "go_vet": "PASS",
+    "go_build_cmd_all": "PASS",
+    "diff_check": "PASS",
+    "legacy_due_10x": "PASS",
+    "harness_negative_controls": "PASS",
+    "h5_unit_204": "PASS",
+    "h5_tsc": "PASS",
+    "h5_vite_build": "PASS"
+  },
+  "combination_run": {
+    "run_id": "q1perf-premerge2-0809144959",
+    "scenario_status": "PASS",
+    "f3_classification": "F3_CHAIN_PASS",
+    "invalid_order_classification": "NO_INVALID_PAIR_DUE_RESIDUE",
+    "invalid_processing_observations": 0,
+    "physical_pair_due_residual": 0,
+    "unmatched_pair_due_residual": 0,
+    "wire_theft_after_first_click": 0,
+    "wire_theft_after_second_click": 1,
+    "hard_correctness_incident_count": 0,
+    "care_completed_two": true,
+    "worker_invalid_orders_nonzero": false,
+    "redis_cleanup_completed": true,
+    "baseline_eligible": false,
+    "diagnostic_verdict": "INCONCLUSIVE_ENVIRONMENT",
+    "evidence_hashes": {
+      "baseline-run-manifest.json": "sha256:a2d592ae9bc5daabb1e7170abec0eb887e9d46d664417f685b5656ac535b6a66",
+      "baseline-verdict.json": "sha256:9e18dffe29fbf0798226b16a0bb6492d643f7341b9ea82278901c187cea4f83c",
+      "scenarios/product-correctness-anchor.json": "sha256:19af517052a95d70c2e953aa64a52e83628d99df21248fdea809a8fe4d242295",
+      "evidence/product-correctness-anchor/f3-fault-chain-triage.json": "sha256:fc6fb42ff0f8a55e504fbe4f5af789b8063175d56a2a10e2e59a193aa49b99b0",
+      "evidence/product-correctness-anchor/theft-invalid-order-triage.json": "sha256:f879e6ed9f83dc8eeb3a14c2e9a838887e287a7ed0aefad991b0cbb362f21fcb",
+      "evidence/product-correctness-anchor/browser-verdict.json": "sha256:fe8cf1617e206ba44e262b7cd55533a3d05dd03307f7ebe3920d43cd34828082"
+    }
+  },
+  "environment_attempt": {
+    "first_run_id": "q1perf-premerge-0809144851",
+    "classification": "INVALID_ENVIRONMENT_ATTEMPT",
+    "reason": "shared node_modules Vite cache contained root-owned files; no Browser scenario started successfully",
+    "used_for_gate": false
+  },
+  "supports_30m_dau": false,
+  "formal_performance_baseline": "NOT_RECORDED"
+}

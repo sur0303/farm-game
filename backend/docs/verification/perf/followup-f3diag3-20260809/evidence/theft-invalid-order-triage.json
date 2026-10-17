@@ -1,0 +1,207 @@
+{
+  "classification": "PRODUCT_WORKER_RECOVERY_SCOPE_FILTER_BUG",
+  "conclusion": "both persistent invalid DueIndex candidates resolve to the pre-F3 F1 CARE operation; Theft recovery repeatedly treats them as Theft and asks for a Theft target binding",
+  "counter_semantics": "InvalidOrders is a per-recovery-round processing count, not a unique-order cardinality",
+  "evidence_limit": null,
+  "generated_at": "2026-08-09T12:27:51.833510Z",
+  "observations": {
+    "care_due_candidate_count": 2,
+    "dumped_source_order_count": 4,
+    "f3_plan_armed_at": "2026-08-09T12:27:25.756349Z",
+    "first_invalid_at": "2026-08-09T12:27:12Z",
+    "first_invalid_predates_f3_plan": true,
+    "invalid_processing_observations": 22,
+    "matching_due_order_count": 0,
+    "max_discovered_in_one_round": 4,
+    "max_invalid_orders_in_one_round": 2,
+    "rounds_with_invalid_orders": 11,
+    "tapped_theft_operation_ids": [
+      "f8b1e82e-f0ab-4991-b32d-7f0170b38ac3"
+    ],
+    "unique_due_candidate_count": 2,
+    "unique_order_count": 2
+  },
+  "orders": [
+    {
+      "correlated_operation_id": "f8b1e82e-f0ab-4991-b32d-7f0170b38ac3",
+      "created_at_ms": "1786278446187",
+      "crop_cycle_id": "sid1_t1XVhIywRpXletGRjSi03pox2MLA5TJPkXqHHuxNDkY",
+      "due_candidate_at_dump": false,
+      "due_score": null,
+      "last_error": null,
+      "order_id": "sid1_OGH7YACuwL6SRTXq1-j4ZoEfbtQLH0sUSX4PRT9AYQU",
+      "retry_count": "0",
+      "source_command_type": "THEFT",
+      "source_operation_id": "f8b1e82e-f0ab-4991-b32d-7f0170b38ac3",
+      "source_player_id": "1000003",
+      "target_binding": {
+        "CropCycleID": "sid1_t1XVhIywRpXletGRjSi03pox2MLA5TJPkXqHHuxNDkY",
+        "DispatchOrderID": "sid1_OGH7YACuwL6SRTXq1-j4ZoEfbtQLH0sUSX4PRT9AYQU",
+        "OperationID": "f8b1e82e-f0ab-4991-b32d-7f0170b38ac3",
+        "OwnerPlayerID": 1000002,
+        "PairID": "sid1_Rcqi-0h_px-cGCu52mdg4Qn37x6ylLsFZrrDlfyTuvo",
+        "PayloadHash": "O9Gc4GxkrHRWbbK4n1jhJOGTguyyGccXM8RxdyZsfR8=",
+        "PlotID": 1,
+        "TargetBindingHash": "P94L03SepKxK1Ro4iJkhNFl7baPi5PYPs5nd2CG3hQU=",
+        "TargetFarmID": 1000002,
+        "VisitorPlayerID": 1000003,
+        "redis_key_hash": "sha256:bcd37cb68b2c4866d8a12d76dd6e34e8cad47505cfc2743bb7cfe08d1645e88d"
+      },
+      "target_farm_id": "1000002",
+      "target_player_id": "1000002",
+      "theft_attempt_id": null,
+      "updated_at_ms": "1786278448093",
+      "workflow_id": null
+    },
+    {
+      "correlated_operation_id": "20b39d68-dd51-47de-97f8-ba08931c95dc",
+      "created_at_ms": "1786278431671",
+      "crop_cycle_id": null,
+      "due_candidate_at_dump": true,
+      "due_score": "0",
+      "last_error": null,
+      "order_id": "sid1_PWNZC-CL2sb_t49b2lWr5gTQ0kTId26knGLoFESGtRs",
+      "retry_count": "0",
+      "source_command_type": "CARE",
+      "source_operation_id": "20b39d68-dd51-47de-97f8-ba08931c95dc",
+      "source_player_id": "1000003",
+      "target_binding": null,
+      "target_farm_id": "1000002",
+      "target_player_id": "1000002",
+      "theft_attempt_id": null,
+      "updated_at_ms": "1786278431671",
+      "workflow_id": null
+    },
+    {
+      "correlated_operation_id": "f8b1e82e-f0ab-4991-b32d-7f0170b38ac3",
+      "created_at_ms": "1786278446187",
+      "crop_cycle_id": "sid1_t1XVhIywRpXletGRjSi03pox2MLA5TJPkXqHHuxNDkY",
+      "due_candidate_at_dump": false,
+      "due_score": null,
+      "last_error": null,
+      "order_id": "sid1_B7hRLpU4b40jieEmOI1hFrGy6P6bWlKdW5j0frb609Q",
+      "retry_count": "0",
+      "source_command_type": "THEFT",
+      "source_operation_id": null,
+      "source_player_id": null,
+      "target_binding": {
+        "CropCycleID": "sid1_t1XVhIywRpXletGRjSi03pox2MLA5TJPkXqHHuxNDkY",
+        "DispatchOrderID": "sid1_OGH7YACuwL6SRTXq1-j4ZoEfbtQLH0sUSX4PRT9AYQU",
+        "OperationID": "f8b1e82e-f0ab-4991-b32d-7f0170b38ac3",
+        "OwnerPlayerID": 1000002,
+        "PairID": "sid1_Rcqi-0h_px-cGCu52mdg4Qn37x6ylLsFZrrDlfyTuvo",
+        "PayloadHash": "O9Gc4GxkrHRWbbK4n1jhJOGTguyyGccXM8RxdyZsfR8=",
+        "PlotID": 1,
+        "TargetBindingHash": "P94L03SepKxK1Ro4iJkhNFl7baPi5PYPs5nd2CG3hQU=",
+        "TargetFarmID": 1000002,
+        "VisitorPlayerID": 1000003,
+        "redis_key_hash": "sha256:bcd37cb68b2c4866d8a12d76dd6e34e8cad47505cfc2743bb7cfe08d1645e88d"
+      },
+      "target_farm_id": null,
+      "target_player_id": null,
+      "theft_attempt_id": null,
+      "updated_at_ms": "1786278448089",
+      "workflow_id": null
+    },
+    {
+      "correlated_operation_id": "20b39d68-dd51-47de-97f8-ba08931c95dc",
+      "created_at_ms": "1786278431671",
+      "crop_cycle_id": null,
+      "due_candidate_at_dump": true,
+      "due_score": "0",
+      "last_error": null,
+      "order_id": "sid1_Yzw5MjYK-2SjtX80F_IsGRzDseA6_ivx2i8oMMLJOk0",
+      "retry_count": "0",
+      "source_command_type": "CARE",
+      "source_operation_id": null,
+      "source_player_id": null,
+      "target_binding": null,
+      "target_farm_id": null,
+      "target_player_id": null,
+      "theft_attempt_id": null,
+      "updated_at_ms": "1786278431671",
+      "workflow_id": null
+    }
+  ],
+  "rounds": [
+    {
+      "discovered": 2,
+      "errors": 2,
+      "invalid_orders": 2,
+      "last_error": "theft online: target binding unavailable: not found",
+      "observed_at": "2026-08-09T12:27:12Z"
+    },
+    {
+      "discovered": 2,
+      "errors": 2,
+      "invalid_orders": 2,
+      "last_error": "theft online: target binding unavailable: not found",
+      "observed_at": "2026-08-09T12:27:16Z"
+    },
+    {
+      "discovered": 2,
+      "errors": 2,
+      "invalid_orders": 2,
+      "last_error": "theft online: target binding unavailable: not found",
+      "observed_at": "2026-08-09T12:27:20Z"
+    },
+    {
+      "discovered": 2,
+      "errors": 2,
+      "invalid_orders": 2,
+      "last_error": "theft online: target binding unavailable: not found",
+      "observed_at": "2026-08-09T12:27:24Z"
+    },
+    {
+      "discovered": 4,
+      "errors": 2,
+      "invalid_orders": 2,
+      "last_error": "theft online: target binding unavailable: not found",
+      "observed_at": "2026-08-09T12:27:28Z"
+    },
+    {
+      "discovered": 2,
+      "errors": 2,
+      "invalid_orders": 2,
+      "last_error": "theft online: target binding unavailable: not found",
+      "observed_at": "2026-08-09T12:27:31Z"
+    },
+    {
+      "discovered": 2,
+      "errors": 2,
+      "invalid_orders": 2,
+      "last_error": "theft online: target binding unavailable: not found",
+      "observed_at": "2026-08-09T12:27:35Z"
+    },
+    {
+      "discovered": 2,
+      "errors": 2,
+      "invalid_orders": 2,
+      "last_error": "theft online: target binding unavailable: not found",
+      "observed_at": "2026-08-09T12:27:39Z"
+    },
+    {
+      "discovered": 2,
+      "errors": 2,
+      "invalid_orders": 2,
+      "last_error": "theft online: target binding unavailable: not found",
+      "observed_at": "2026-08-09T12:27:43Z"
+    },
+    {
+      "discovered": 2,
+      "errors": 2,
+      "invalid_orders": 2,
+      "last_error": "theft online: target binding unavailable: not found",
+      "observed_at": "2026-08-09T12:27:47Z"
+    },
+    {
+      "discovered": 2,
+      "errors": 2,
+      "invalid_orders": 2,
+      "last_error": "theft online: target binding unavailable: not found",
+      "observed_at": "2026-08-09T12:27:50Z"
+    }
+  ],
+  "schema": "farm-game.q1-perf-evidence.v1",
+  "task": "WF-THEFT-INVALID-ORDER-DIAG"
+}

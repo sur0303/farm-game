@@ -1,0 +1,492 @@
+# HELP farm_actor_activation_actors Current actors in the given activation FSM state.
+# TYPE farm_actor_activation_actors gauge
+farm_actor_activation_actors{actor_kind="farm",state="ABSENT"} 0
+farm_actor_activation_actors{actor_kind="farm",state="ACTIVE"} 0
+farm_actor_activation_actors{actor_kind="farm",state="CLAIM_UNKNOWN"} 0
+farm_actor_activation_actors{actor_kind="farm",state="DRAINING"} 0
+farm_actor_activation_actors{actor_kind="farm",state="FENCED"} 0
+farm_actor_activation_actors{actor_kind="farm",state="LOADING"} 0
+farm_actor_activation_actors{actor_kind="farm",state="PASSIVATING"} 0
+farm_actor_activation_actors{actor_kind="farm",state="QUIESCING"} 0
+farm_actor_activation_actors{actor_kind="farm",state="RECONCILE_REQUIRED"} 0
+farm_actor_activation_actors{actor_kind="farm",state="RESOLVING_UNKNOWN"} 0
+# HELP farm_actor_activation_backoff_total Load attempts rejected while in load-failure backoff.
+# TYPE farm_actor_activation_backoff_total counter
+farm_actor_activation_backoff_total{actor_kind="farm"} 0
+# HELP farm_actor_activation_concurrent_loads In-flight actor loads holding a concurrency slot.
+# TYPE farm_actor_activation_concurrent_loads gauge
+farm_actor_activation_concurrent_loads{actor_kind="farm"} 0
+# HELP farm_actor_activation_entry_forgotten_total ABSENT activation entries removed after passivation released all resources.
+# TYPE farm_actor_activation_entry_forgotten_total counter
+farm_actor_activation_entry_forgotten_total{actor_kind="farm"} 0
+# HELP farm_actor_activation_load_fail_total Failed actor loads that entered backoff.
+# TYPE farm_actor_activation_load_fail_total counter
+farm_actor_activation_load_fail_total{actor_kind="farm"} 0
+# HELP farm_actor_activation_panic_total Actors forced ABSENT after panic supervision.
+# TYPE farm_actor_activation_panic_total counter
+farm_actor_activation_panic_total{actor_kind="farm"} 0
+# HELP farm_actor_activation_passivate_completed_total Completed PASSIVATING to ABSENT passivations.
+# TYPE farm_actor_activation_passivate_completed_total counter
+farm_actor_activation_passivate_completed_total{actor_kind="farm"} 0
+# HELP farm_actor_activation_pending_loads Pending load waiters against the concurrency hard gate.
+# TYPE farm_actor_activation_pending_loads gauge
+farm_actor_activation_pending_loads{actor_kind="farm"} 0
+# HELP farm_actor_activation_reactivated_total Actor loads following a completed passivation (vs cold starts).
+# TYPE farm_actor_activation_reactivated_total counter
+farm_actor_activation_reactivated_total{actor_kind="farm"} 0
+# HELP farm_actor_activation_throttled_total Activation / load admissions rejected by rate or concurrency gates.
+# TYPE farm_actor_activation_throttled_total counter
+farm_actor_activation_throttled_total{actor_kind="farm"} 0
+# HELP farm_actor_activation_tracked_keys Tracked activation FSM entries.
+# TYPE farm_actor_activation_tracked_keys gauge
+farm_actor_activation_tracked_keys{actor_kind="farm"} 0
+# HELP farm_actor_active_keys Active keyed actor mailboxes.
+# TYPE farm_actor_active_keys gauge
+farm_actor_active_keys{actor_kind="farm"} 0
+# HELP farm_actor_idle_sweeper_blocked_total Candidates kept alive by a passivation blocker, by reason.
+# TYPE farm_actor_idle_sweeper_blocked_total counter
+farm_actor_idle_sweeper_blocked_total{actor_kind="farm",reason="dirty_unhanded"} 0
+farm_actor_idle_sweeper_blocked_total{actor_kind="farm",reason="participant_result_unanchored"} 0
+farm_actor_idle_sweeper_blocked_total{actor_kind="farm",reason="persistence_in_flight"} 0
+farm_actor_idle_sweeper_blocked_total{actor_kind="farm",reason="resolving_unknown"} 0
+farm_actor_idle_sweeper_blocked_total{actor_kind="farm",reason="system_queue_nonempty"} 0
+farm_actor_idle_sweeper_blocked_total{actor_kind="farm",reason="turn_running"} 0
+farm_actor_idle_sweeper_blocked_total{actor_kind="farm",reason="user_queue_nonempty"} 0
+# HELP farm_actor_idle_sweeper_buckets Non-empty time buckets in the idle sweeper.
+# TYPE farm_actor_idle_sweeper_buckets gauge
+farm_actor_idle_sweeper_buckets{actor_kind="farm"} 0
+# HELP farm_actor_idle_sweeper_candidates_total Idle candidates re-validated by the retire callback.
+# TYPE farm_actor_idle_sweeper_candidates_total counter
+farm_actor_idle_sweeper_candidates_total{actor_kind="farm"} 0
+# HELP farm_actor_idle_sweeper_lag_seconds How far the oldest unprocessed expired bucket lags behind, in seconds.
+# TYPE farm_actor_idle_sweeper_lag_seconds gauge
+farm_actor_idle_sweeper_lag_seconds{actor_kind="farm"} 0
+# HELP farm_actor_idle_sweeper_not_idle_total Candidates that showed fresh activity during revalidation.
+# TYPE farm_actor_idle_sweeper_not_idle_total counter
+farm_actor_idle_sweeper_not_idle_total{actor_kind="farm"} 0
+# HELP farm_actor_idle_sweeper_retired_total Candidates fully released by the retire callback.
+# TYPE farm_actor_idle_sweeper_retired_total counter
+farm_actor_idle_sweeper_retired_total{actor_kind="farm"} 0
+# HELP farm_actor_idle_sweeper_sweeps_total Idle sweeper ticks executed.
+# TYPE farm_actor_idle_sweeper_sweeps_total counter
+farm_actor_idle_sweeper_sweeps_total{actor_kind="farm"} 0
+# HELP farm_actor_idle_sweeper_tracked_keys Keys currently tracked by the idle sweeper.
+# TYPE farm_actor_idle_sweeper_tracked_keys gauge
+farm_actor_idle_sweeper_tracked_keys{actor_kind="farm"} 0
+# HELP farm_actor_mailbox_max_depth Maximum current user mailbox depth in this process.
+# TYPE farm_actor_mailbox_max_depth gauge
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+# HELP farm_actor_mailbox_queued Queued actor turns across this process (user + system).
+# TYPE farm_actor_mailbox_queued gauge
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+# HELP farm_actor_mailbox_rejected_total Actor turns rejected because a queue was full (user + system).
+# TYPE farm_actor_mailbox_rejected_total counter
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+# HELP farm_actor_mailbox_retire_busy_total Per-key retire attempts kept because queued or in-flight work remained.
+# TYPE farm_actor_mailbox_retire_busy_total counter
+farm_actor_mailbox_retire_busy_total{actor_kind="farm"} 0
+# HELP farm_actor_mailbox_retire_stale_total Per-key retire attempts abandoned on generation mismatch (newer mailbox reused the key).
+# TYPE farm_actor_mailbox_retire_stale_total counter
+farm_actor_mailbox_retire_stale_total{actor_kind="farm"} 0
+# HELP farm_actor_mailbox_retired_total Mailboxes retired per key after going idle (goroutine and queues released).
+# TYPE farm_actor_mailbox_retired_total counter
+farm_actor_mailbox_retired_total{actor_kind="farm"} 0
+# HELP farm_actor_route_snapshot_age_seconds Seconds since the local route snapshot was last Replace-d.
+# TYPE farm_actor_route_snapshot_age_seconds gauge
+farm_actor_route_snapshot_age_seconds 2.283083457
+# HELP farm_actor_route_snapshot_revision Last successfully installed RouteSnapshot GlobalRevision.
+# TYPE farm_actor_route_snapshot_revision gauge
+farm_actor_route_snapshot_revision 1
+# HELP farm_actor_submit_total Accepted actor turns.
+# TYPE farm_actor_submit_total counter
+farm_actor_submit_total{actor_kind="farm"} 0
+# HELP farm_actor_system_queue_queued Queued system turns across this process.
+# TYPE farm_actor_system_queue_queued gauge
+farm_actor_system_queue_queued{actor_kind="farm"} 0
+# HELP farm_actor_system_queue_rejected_total System turns rejected because the system queue was full.
+# TYPE farm_actor_system_queue_rejected_total counter
+farm_actor_system_queue_rejected_total{actor_kind="farm"} 0
+# HELP farm_actor_turn_latency_seconds Actor turn execution latency (task only, queue wait excluded).
+# TYPE farm_actor_turn_latency_seconds histogram
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="5e-05"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="0.0001"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="0.0005"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="0.001"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="0.0025"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="0.005"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="0.01"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="0.025"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="0.05"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="0.1"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="0.25"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="0.5"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="1"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="2.5"} 0
+farm_actor_turn_latency_seconds_bucket{actor_kind="farm",le="+Inf"} 0
+farm_actor_turn_latency_seconds_sum{actor_kind="farm"} 0
+farm_actor_turn_latency_seconds_count{actor_kind="farm"} 0
+# HELP farm_actor_user_mailbox_bytes Queued user mailbox payload bytes across this process.
+# TYPE farm_actor_user_mailbox_bytes gauge
+farm_actor_user_mailbox_bytes{actor_kind="farm"} 0
+# HELP farm_actor_user_mailbox_oldest_wait_seconds Oldest user mailbox head wait across keys (enqueue timestamp FIFO).
+# TYPE farm_actor_user_mailbox_oldest_wait_seconds gauge
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+# HELP farm_actor_user_mailbox_queued Queued user turns across this process.
+# TYPE farm_actor_user_mailbox_queued gauge
+farm_actor_user_mailbox_queued{actor_kind="farm"} 0
+# HELP farm_actor_user_mailbox_rejected_total User turns rejected because the user mailbox was full.
+# TYPE farm_actor_user_mailbox_rejected_total counter
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+# HELP farm_actor_writer_epoch_mismatch_total Writer-epoch fence mismatches that triggered actor eviction.
+# TYPE farm_actor_writer_epoch_mismatch_total counter
+farm_actor_writer_epoch_mismatch_total 0
+# HELP farm_downlink_lanes_created_total Gateway downlink lanes created.
+# TYPE farm_downlink_lanes_created_total counter
+farm_downlink_lanes_created_total 0
+# HELP farm_downlink_lanes_current Current gateway-isolated downlink lanes.
+# TYPE farm_downlink_lanes_current gauge
+farm_downlink_lanes_current 0
+# HELP farm_downlink_lanes_retired_total Idle gateway downlink lanes retired.
+# TYPE farm_downlink_lanes_retired_total counter
+farm_downlink_lanes_retired_total 0
+# HELP farm_downlink_queue_full_total Items rejected by a full per-Gate downlink lane.
+# TYPE farm_downlink_queue_full_total counter
+farm_downlink_queue_full_total 0
+# HELP farm_downlink_rpc_failure_total Per-Gate downlink batches failed or timed out.
+# TYPE farm_downlink_rpc_failure_total counter
+farm_downlink_rpc_failure_total 0
+# HELP farm_event_lane_full_total FarmEventLane bounded admission failures.
+# TYPE farm_event_lane_full_total counter
+farm_event_lane_full_total 0
+# HELP farm_event_lane_resync_total Presence generations forced to RESYNC_REQUIRED after a committed change could not enter its FarmEventLane.
+# TYPE farm_event_lane_resync_total counter
+farm_event_lane_resync_total 0
+# HELP farm_gate_boot_reaper_boots_checked_total Gate boots checked; sourced only from local SubscriptionHub fences.
+# TYPE farm_gate_boot_reaper_boots_checked_total counter
+farm_gate_boot_reaper_boots_checked_total 0
+# HELP farm_gate_boot_reaper_dead_boots_total Expired Gate boot leases observed by this holder.
+# TYPE farm_gate_boot_reaper_dead_boots_total counter
+farm_gate_boot_reaper_dead_boots_total 0
+# HELP farm_gate_boot_reaper_errors_total Lease authority or Hub cleanup errors; errors retain Presence.
+# TYPE farm_gate_boot_reaper_errors_total counter
+farm_gate_boot_reaper_errors_total 0
+# HELP farm_gate_boot_reaper_presences_removed_total Exact Presence generations removed for expired Gate boots.
+# TYPE farm_gate_boot_reaper_presences_removed_total counter
+farm_gate_boot_reaper_presences_removed_total 0
+# HELP farm_gate_boot_reaper_sweeps_total Local GateBootReaper sweeps.
+# TYPE farm_gate_boot_reaper_sweeps_total counter
+farm_gate_boot_reaper_sweeps_total 0
+# HELP farm_gate_boot_reaper_would_reap_total Shadow mode: presences that would have been reaped; convergence to zero after lease expiry proves BatchRenew alone handles gate death.
+# TYPE farm_gate_boot_reaper_would_reap_total counter
+farm_gate_boot_reaper_would_reap_total 0
+# HELP farm_opportunity_header_read_calls_total Header coarse-read calls by implementation mode.
+# TYPE farm_opportunity_header_read_calls_total counter
+farm_opportunity_header_read_calls_total{mode="full"} 0
+farm_opportunity_header_read_calls_total{mode="narrow"} 0
+farm_opportunity_header_read_calls_total{mode="narrow-shadow"} 0
+# HELP farm_opportunity_header_read_farms_total Farm headers inspected across all coarse-read modes.
+# TYPE farm_opportunity_header_read_farms_total counter
+farm_opportunity_header_read_farms_total 0
+# HELP farm_opportunity_header_read_full_fallback_total Farm rows retried through the complete Authority read path.
+# TYPE farm_opportunity_header_read_full_fallback_total counter
+farm_opportunity_header_read_full_fallback_total 0
+# HELP farm_opportunity_header_read_narrow_unavailable_total Narrow Header batch reads that failed before row decoding.
+# TYPE farm_opportunity_header_read_narrow_unavailable_total counter
+farm_opportunity_header_read_narrow_unavailable_total 0
+# HELP farm_opportunity_header_read_shadow_mismatch_total Shadow comparisons where narrow and complete Header outcomes differed.
+# TYPE farm_opportunity_header_read_shadow_mismatch_total counter
+farm_opportunity_header_read_shadow_mismatch_total 0
+# HELP farm_opportunity_header_read_unknown_total Narrow header rows that remained UNKNOWN before bounded fallback.
+# TYPE farm_opportunity_header_read_unknown_total counter
+farm_opportunity_header_read_unknown_total 0
+# HELP farm_realtime_delivery_generation_sum Sum of delivery generations across farm lanes.
+# TYPE farm_realtime_delivery_generation_sum gauge
+farm_realtime_delivery_generation_sum 0
+# HELP farm_realtime_invalid_farms Farms whose realtime stream is currently marked invalid.
+# TYPE farm_realtime_invalid_farms gauge
+farm_realtime_invalid_farms 0
+# HELP farm_redis_workload_batch_size Number of commands in one dispatch (single command or pipeline); recorded once per dispatch, never per command.
+# TYPE farm_redis_workload_batch_size histogram
+farm_redis_workload_batch_size_bucket{component="unspecified",le="1"} 22
+farm_redis_workload_batch_size_bucket{component="unspecified",le="2"} 22
+farm_redis_workload_batch_size_bucket{component="unspecified",le="4"} 22
+farm_redis_workload_batch_size_bucket{component="unspecified",le="8"} 22
+farm_redis_workload_batch_size_bucket{component="unspecified",le="16"} 22
+farm_redis_workload_batch_size_bucket{component="unspecified",le="32"} 22
+farm_redis_workload_batch_size_bucket{component="unspecified",le="64"} 23
+farm_redis_workload_batch_size_bucket{component="unspecified",le="128"} 23
+farm_redis_workload_batch_size_bucket{component="unspecified",le="256"} 23
+farm_redis_workload_batch_size_bucket{component="unspecified",le="512"} 23
+farm_redis_workload_batch_size_bucket{component="unspecified",le="+Inf"} 23
+farm_redis_workload_batch_size_sum{component="unspecified"} 62
+farm_redis_workload_batch_size_count{component="unspecified"} 23
+# HELP farm_redis_workload_commands_total Observed Redis commands in the opt-in workload window; arguments are never recorded.
+# TYPE farm_redis_workload_commands_total counter
+farm_redis_workload_commands_total{command="evalsha",component="unspecified",outcome="ok"} 1
+farm_redis_workload_commands_total{command="hlen",component="unspecified",outcome="ok"} 20
+farm_redis_workload_commands_total{command="hmget",component="unspecified",outcome="ok"} 20
+farm_redis_workload_commands_total{command="other",component="unspecified",outcome="ok"} 21
+# HELP farm_redis_workload_pipeline_width Number of commands in one go-redis pipeline dispatch.
+# TYPE farm_redis_workload_pipeline_width histogram
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="1"} 0
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="2"} 0
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="4"} 0
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="8"} 0
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="16"} 0
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="32"} 0
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="64"} 1
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="128"} 1
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="256"} 1
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="512"} 1
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="+Inf"} 1
+farm_redis_workload_pipeline_width_sum{component="unspecified"} 40
+farm_redis_workload_pipeline_width_count{component="unspecified"} 1
+# HELP farm_redis_workload_request_bytes_total RESP request bytes calculated from in-memory command arguments; values are not exported.
+# TYPE farm_redis_workload_request_bytes_total counter
+farm_redis_workload_request_bytes_total{command="evalsha",component="unspecified"} 309
+farm_redis_workload_request_bytes_total{command="hlen",component="unspecified"} 2099
+farm_redis_workload_request_bytes_total{command="hmget",component="unspecified"} 9819
+farm_redis_workload_request_bytes_total{command="other",component="unspecified"} 61521
+# HELP farm_redis_workload_response_bytes_total ESTIMATED RESP response bytes reconstructed from in-memory command arguments and command-specific reply shapes; never exact wire truth (use a Harness proxy for exact bytes).
+# TYPE farm_redis_workload_response_bytes_total counter
+farm_redis_workload_response_bytes_total{command="evalsha",component="unspecified",estimated="true"} 16
+farm_redis_workload_response_bytes_total{command="hlen",component="unspecified",estimated="true"} 320
+farm_redis_workload_response_bytes_total{command="hmget",component="unspecified",estimated="true"} 8599
+farm_redis_workload_response_bytes_total{command="other",component="unspecified",estimated="true"} 336
+# HELP farm_redis_workload_round_trip_duration_seconds go-redis process and pipeline dispatch latency.
+# TYPE farm_redis_workload_round_trip_duration_seconds histogram
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.0001"} 0
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.00025"} 0
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.0005"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.001"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.0025"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.005"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.01"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.025"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.05"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.1"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.25"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.5"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="1"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="2.5"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="+Inf"} 1
+farm_redis_workload_round_trip_duration_seconds_sum{component="unspecified",kind="pipeline"} 0.000326275
+farm_redis_workload_round_trip_duration_seconds_count{component="unspecified",kind="pipeline"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.0001"} 0
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.00025"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.0005"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.001"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.0025"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.005"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.01"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.025"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.05"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.1"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.25"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.5"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="1"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="2.5"} 22
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="+Inf"} 22
+farm_redis_workload_round_trip_duration_seconds_sum{component="unspecified",kind="single"} 0.002793272
+farm_redis_workload_round_trip_duration_seconds_count{component="unspecified",kind="single"} 22
+# HELP farm_redis_workload_round_trips_total go-redis process and pipeline dispatches.
+# TYPE farm_redis_workload_round_trips_total counter
+farm_redis_workload_round_trips_total{component="unspecified",kind="pipeline",outcome="ok"} 1
+farm_redis_workload_round_trips_total{component="unspecified",kind="single",outcome="ok"} 22
+# HELP farm_rpc_calls_total Internal gRPC server calls by service, method and status code.
+# TYPE farm_rpc_calls_total counter
+farm_rpc_calls_total{code="OK",method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService"} 1
+# HELP farm_rpc_server_seconds Internal gRPC server handler latency.
+# TYPE farm_rpc_server_seconds histogram
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="0.0001"} 0
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="0.0005"} 0
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="0.001"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="0.0025"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="0.005"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="0.01"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="0.025"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="0.05"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="0.1"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="0.25"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="0.5"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="1"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="2.5"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="5"} 1
+farm_rpc_server_seconds_bucket{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService",le="+Inf"} 1
+farm_rpc_server_seconds_sum{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService"} 0.000523796
+farm_rpc_server_seconds_count{method="BatchEvaluateFarmOpportunity",service="logicrpc.LogicService"} 1
+# HELP farm_subscription_fallback_expired_total Presence generations removed by the long, non-renewed fallback TTL.
+# TYPE farm_subscription_fallback_expired_total counter
+farm_subscription_fallback_expired_total 0
+# HELP farm_subscription_hub_active_lanes FarmEventLanes currently owned by this holder's SubscriptionHub.
+# TYPE farm_subscription_hub_active_lanes gauge
+farm_subscription_hub_active_lanes 0
+# HELP farm_subscription_hub_boot_fences Distinct GateBoot fences represented by local Presence.
+# TYPE farm_subscription_hub_boot_fences gauge
+farm_subscription_hub_boot_fences 0
+# HELP farm_subscription_hub_joining_buffer_dropped_total Subscriptions invalidated by joining/post-ready buffer overflow.
+# TYPE farm_subscription_hub_joining_buffer_dropped_total counter
+farm_subscription_hub_joining_buffer_dropped_total 0
+# HELP farm_subscription_hub_lanes_retired_total Empty FarmEventLanes independently retired by SubscriptionHub.
+# TYPE farm_subscription_hub_lanes_retired_total counter
+farm_subscription_hub_lanes_retired_total 0
+# HELP farm_subscription_hub_post_ready_buffer_len Buffered post-ready changes waiting behind SUBSCRIPTION_READY.
+# TYPE farm_subscription_hub_post_ready_buffer_len gauge
+farm_subscription_hub_post_ready_buffer_len 0
+# HELP farm_subscription_hub_subscription_state Subscriptions per join state (26 section 12).
+# TYPE farm_subscription_hub_subscription_state gauge
+farm_subscription_hub_subscription_state{state="activating"} 0
+farm_subscription_hub_subscription_state{state="flushing"} 0
+farm_subscription_hub_subscription_state{state="in_farm"} 0
+farm_subscription_hub_subscription_state{state="joining_armed"} 0
+farm_subscription_hub_subscription_state{state="joining_unarmed"} 0
+# HELP farm_subscription_lease_expired_total Presences removed because their renewable subscription lease expired.
+# TYPE farm_subscription_lease_expired_total counter
+farm_subscription_lease_expired_total 0
+# HELP farm_theft_dispatch_coalesced_total Duplicate Theft fast-path submissions coalesced by order id.
+# TYPE farm_theft_dispatch_coalesced_total counter
+farm_theft_dispatch_coalesced_total 0
+# HELP farm_theft_dispatch_completed_total Theft orders completed successfully by the local fast path.
+# TYPE farm_theft_dispatch_completed_total counter
+farm_theft_dispatch_completed_total 0
+# HELP farm_theft_dispatch_delegate_error_total Theft fast-path delegate failures left to durable recovery.
+# TYPE farm_theft_dispatch_delegate_error_total counter
+farm_theft_dispatch_delegate_error_total 0
+# HELP farm_theft_dispatch_enqueued_total Theft orders admitted to the local fast path.
+# TYPE farm_theft_dispatch_enqueued_total counter
+farm_theft_dispatch_enqueued_total 0
+# HELP farm_theft_dispatch_in_flight Theft fast-path delegate calls currently running.
+# TYPE farm_theft_dispatch_in_flight gauge
+farm_theft_dispatch_in_flight 0
+# HELP farm_theft_dispatch_queue_bytes Logical bytes retained by the Theft fast-path queue.
+# TYPE farm_theft_dispatch_queue_bytes gauge
+farm_theft_dispatch_queue_bytes 0
+# HELP farm_theft_dispatch_queue_full_total Theft orders left to durable recovery because the local fast path was full.
+# TYPE farm_theft_dispatch_queue_full_total counter
+farm_theft_dispatch_queue_full_total 0
+# HELP farm_theft_dispatch_queue_items Queued or in-flight Theft fast-path orders.
+# TYPE farm_theft_dispatch_queue_items gauge
+farm_theft_dispatch_queue_items 0
+# HELP go_gc_duration_seconds A summary of the wall-time pause (stop-the-world) duration in garbage collection cycles.
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile="0"} 0.000345049
+go_gc_duration_seconds{quantile="0.25"} 0.000345049
+go_gc_duration_seconds{quantile="0.5"} 0.000715679
+go_gc_duration_seconds{quantile="0.75"} 0.000715679
+go_gc_duration_seconds{quantile="1"} 0.000715679
+go_gc_duration_seconds_sum 0.001060728
+go_gc_duration_seconds_count 2
+# HELP go_gc_gogc_percent Heap size target percentage configured by the user, otherwise 100. This value is set by the GOGC environment variable, and the runtime/debug.SetGCPercent function. Sourced from /gc/gogc:percent.
+# TYPE go_gc_gogc_percent gauge
+go_gc_gogc_percent 100
+# HELP go_gc_gomemlimit_bytes Go runtime memory limit configured by the user, otherwise math.MaxInt64. This value is set by the GOMEMLIMIT environment variable, and the runtime/debug.SetMemoryLimit function. Sourced from /gc/gomemlimit:bytes.
+# TYPE go_gc_gomemlimit_bytes gauge
+go_gc_gomemlimit_bytes 9.223372036854776e+18
+# HELP go_goroutines Number of goroutines that currently exist.
+# TYPE go_goroutines gauge
+go_goroutines 57
+# HELP go_info Information about the Go environment.
+# TYPE go_info gauge
+go_info{version="go1.26.3-X:nodwarf5"} 1
+# HELP go_memstats_alloc_bytes Number of bytes allocated in heap and currently in use. Equals to /memory/classes/heap/objects:bytes.
+# TYPE go_memstats_alloc_bytes gauge
+go_memstats_alloc_bytes 3.888208e+06
+# HELP go_memstats_alloc_bytes_total Total number of bytes allocated in heap until now, even if released already. Equals to /gc/heap/allocs:bytes.
+# TYPE go_memstats_alloc_bytes_total counter
+go_memstats_alloc_bytes_total 5.96036e+06
+# HELP go_memstats_buck_hash_sys_bytes Number of bytes used by the profiling bucket hash table. Equals to /memory/classes/profiling/buckets:bytes.
+# TYPE go_memstats_buck_hash_sys_bytes gauge
+go_memstats_buck_hash_sys_bytes 1.44517e+06
+# HELP go_memstats_frees_total Total number of heap objects frees. Equals to /gc/heap/frees:objects + /gc/heap/tiny/allocs:objects.
+# TYPE go_memstats_frees_total counter
+go_memstats_frees_total 3596
+# HELP go_memstats_gc_sys_bytes Number of bytes used for garbage collection system metadata. Equals to /memory/classes/metadata/other:bytes.
+# TYPE go_memstats_gc_sys_bytes gauge
+go_memstats_gc_sys_bytes 3.300592e+06
+# HELP go_memstats_heap_alloc_bytes Number of heap bytes allocated and currently in use, same as go_memstats_alloc_bytes. Equals to /memory/classes/heap/objects:bytes.
+# TYPE go_memstats_heap_alloc_bytes gauge
+go_memstats_heap_alloc_bytes 3.888208e+06
+# HELP go_memstats_heap_idle_bytes Number of heap bytes waiting to be used. Equals to /memory/classes/heap/released:bytes + /memory/classes/heap/free:bytes.
+# TYPE go_memstats_heap_idle_bytes gauge
+go_memstats_heap_idle_bytes 9.158656e+06
+# HELP go_memstats_heap_inuse_bytes Number of heap bytes that are in use. Equals to /memory/classes/heap/objects:bytes + /memory/classes/heap/unused:bytes
+# TYPE go_memstats_heap_inuse_bytes gauge
+go_memstats_heap_inuse_bytes 6.30784e+06
+# HELP go_memstats_heap_objects Number of currently allocated objects. Equals to /gc/heap/objects:objects.
+# TYPE go_memstats_heap_objects gauge
+go_memstats_heap_objects 6283
+# HELP go_memstats_heap_released_bytes Number of heap bytes released to OS. Equals to /memory/classes/heap/released:bytes.
+# TYPE go_memstats_heap_released_bytes gauge
+go_memstats_heap_released_bytes 7.847936e+06
+# HELP go_memstats_heap_sys_bytes Number of heap bytes obtained from system. Equals to /memory/classes/heap/objects:bytes + /memory/classes/heap/unused:bytes + /memory/classes/heap/released:bytes + /memory/classes/heap/free:bytes.
+# TYPE go_memstats_heap_sys_bytes gauge
+go_memstats_heap_sys_bytes 1.5466496e+07
+# HELP go_memstats_last_gc_time_seconds Number of seconds since 1970 of last garbage collection.
+# TYPE go_memstats_last_gc_time_seconds gauge
+go_memstats_last_gc_time_seconds 1.786471044706913e+09
+# HELP go_memstats_mallocs_total Total number of heap objects allocated, both live and gc-ed. Semantically a counter version for go_memstats_heap_objects gauge. Equals to /gc/heap/allocs:objects + /gc/heap/tiny/allocs:objects.
+# TYPE go_memstats_mallocs_total counter
+go_memstats_mallocs_total 9879
+# HELP go_memstats_mcache_inuse_bytes Number of bytes in use by mcache structures. Equals to /memory/classes/metadata/mcache/inuse:bytes.
+# TYPE go_memstats_mcache_inuse_bytes gauge
+go_memstats_mcache_inuse_bytes 73472
+# HELP go_memstats_mcache_sys_bytes Number of bytes used for mcache structures obtained from system. Equals to /memory/classes/metadata/mcache/inuse:bytes + /memory/classes/metadata/mcache/free:bytes.
+# TYPE go_memstats_mcache_sys_bytes gauge
+go_memstats_mcache_sys_bytes 80360
+# HELP go_memstats_mspan_inuse_bytes Number of bytes in use by mspan structures. Equals to /memory/classes/metadata/mspan/inuse:bytes.
+# TYPE go_memstats_mspan_inuse_bytes gauge
+go_memstats_mspan_inuse_bytes 162080
+# HELP go_memstats_mspan_sys_bytes Number of bytes used for mspan structures obtained from system. Equals to /memory/classes/metadata/mspan/inuse:bytes + /memory/classes/metadata/mspan/free:bytes.
+# TYPE go_memstats_mspan_sys_bytes gauge
+go_memstats_mspan_sys_bytes 163200
+# HELP go_memstats_next_gc_bytes Number of heap bytes when next garbage collection will take place. Equals to /gc/heap/goal:bytes.
+# TYPE go_memstats_next_gc_bytes gauge
+go_memstats_next_gc_bytes 7.051594e+06
+# HELP go_memstats_other_sys_bytes Number of bytes used for other system allocations. Equals to /memory/classes/other:bytes.
+# TYPE go_memstats_other_sys_bytes gauge
+go_memstats_other_sys_bytes 2.193278e+06
+# HELP go_memstats_stack_inuse_bytes Number of bytes obtained from system for stack allocator in non-CGO environments. Equals to /memory/classes/heap/stacks:bytes.
+# TYPE go_memstats_stack_inuse_bytes gauge
+go_memstats_stack_inuse_bytes 1.31072e+06
+# HELP go_memstats_stack_sys_bytes Number of bytes obtained from system for stack allocator. Equals to /memory/classes/heap/stacks:bytes + /memory/classes/os-stacks:bytes.
+# TYPE go_memstats_stack_sys_bytes gauge
+go_memstats_stack_sys_bytes 1.31072e+06
+# HELP go_memstats_sys_bytes Number of bytes obtained from system. Equals to /memory/classes/total:byte.
+# TYPE go_memstats_sys_bytes gauge
+go_memstats_sys_bytes 2.3959816e+07
+# HELP go_sched_gomaxprocs_threads The current runtime.GOMAXPROCS setting, or the number of operating system threads that can execute user-level Go code simultaneously. Sourced from /sched/gomaxprocs:threads.
+# TYPE go_sched_gomaxprocs_threads gauge
+go_sched_gomaxprocs_threads 32
+# HELP go_threads Number of OS threads created.
+# TYPE go_threads gauge
+go_threads 16
+# HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.
+# TYPE process_cpu_seconds_total counter
+process_cpu_seconds_total 0.03
+# HELP process_max_fds Maximum number of open file descriptors.
+# TYPE process_max_fds gauge
+process_max_fds 524287
+# HELP process_network_receive_bytes_total Number of bytes received by the process over the network.
+# TYPE process_network_receive_bytes_total counter
+process_network_receive_bytes_total 4.4909009464e+11
+# HELP process_network_transmit_bytes_total Number of bytes sent by the process over the network.
+# TYPE process_network_transmit_bytes_total counter
+process_network_transmit_bytes_total 7.13335057373e+11
+# HELP process_open_fds Number of open file descriptors.
+# TYPE process_open_fds gauge
+process_open_fds 16
+# HELP process_resident_memory_bytes Resident memory size in bytes.
+# TYPE process_resident_memory_bytes gauge
+process_resident_memory_bytes 2.6226688e+07
+# HELP process_start_time_seconds Start time of the process since unix epoch in seconds.
+# TYPE process_start_time_seconds gauge
+process_start_time_seconds 1.78647104417e+09
+# HELP process_virtual_memory_bytes Virtual memory size in bytes.
+# TYPE process_virtual_memory_bytes gauge
+process_virtual_memory_bytes 1.316818944e+09
+# HELP process_virtual_memory_max_bytes Maximum amount of virtual memory available in bytes.
+# TYPE process_virtual_memory_max_bytes gauge
+process_virtual_memory_max_bytes 1.8446744073709552e+19
+# HELP subscription_cleanup_actor_scan_total Legacy connection cleanup invocations that scan every active FarmActor; exact disconnect cleanup must keep this at zero.
+# TYPE subscription_cleanup_actor_scan_total counter
+subscription_cleanup_actor_scan_total 0

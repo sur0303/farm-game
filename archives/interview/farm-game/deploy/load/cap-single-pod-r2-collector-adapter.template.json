@@ -1,0 +1,26 @@
+{
+  "schema_version": "cap-single-pod-l2.collector-adapter.v0.1",
+  "listen": "127.0.0.1:19091",
+  "snapshot_path": "/snapshot",
+  "allowed_cgroup_root": "${ALLOWED_CGROUP_ROOT}",
+  "sources": [
+    {"name": "farm-worker", "url": "http://127.0.0.1:19082/metrics"},
+    {"name": "measured-service", "url": "http://127.0.0.1:19080/metrics"}
+  ],
+  "mappings": [
+    {"logical_name": "support_service_primary_queue_items", "source": "farm-worker", "metric": "farm_workflow_backlog", "value": "value", "aggregate": "SINGLE"},
+    {"logical_name": "service_process_open_fds", "source": "measured-service", "metric": "process_open_fds", "value": "value", "aggregate": "SINGLE"},
+    {"logical_name": "service_process_max_fds", "source": "measured-service", "metric": "process_max_fds", "value": "value", "aggregate": "SINGLE"},
+    {"logical_name": "service_process_start_time_seconds", "source": "measured-service", "metric": "process_start_time_seconds", "value": "value", "aggregate": "SINGLE"},
+    {"logical_name": "dependency_error_percent", "source": "measured-service", "metric": "farm_redis_dependency_error_percent", "value": "value", "aggregate": "MAX"}
+  ],
+  "measured_service": "${MEASURED_SERVICE_CGROUP}",
+  "driver": "${DRIVER_CGROUP}",
+  "observer": "${OBSERVER_CGROUP}",
+  "dependencies": "${DEPENDENCY_CGROUPS}",
+  "identity_files": "${IDENTITY_FILES}",
+  "primary_queue_metric": "${PRIMARY_QUEUE_METRIC}",
+  "primary_queue_bytes_metric": "${PRIMARY_QUEUE_BYTES_METRIC}",
+  "primary_queue_age_metric": "${PRIMARY_QUEUE_AGE_METRIC}",
+  "redis_pool_wait_metric": "redis_pool_wait_seconds"
+}

@@ -1,0 +1,234 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "StatefulSet",
+  "metadata": {
+    "name": "player-svr",
+    "labels": {
+      "app.kubernetes.io/name": "player-svr",
+      "app.kubernetes.io/component": "player-holder",
+      "app.kubernetes.io/part-of": "farm-game",
+      "farm.io/holder-kind": "fixed"
+    }
+  },
+  "spec": {
+    "serviceName": "player-svr-headless",
+    "replicas": 2,
+    "podManagementPolicy": "Parallel",
+    "updateStrategy": {
+      "type": "RollingUpdate",
+      "rollingUpdate": {
+        "partition": 0
+      }
+    },
+    "selector": {
+      "matchLabels": {
+        "app.kubernetes.io/name": "player-svr"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app.kubernetes.io/name": "player-svr",
+          "app.kubernetes.io/component": "player-holder",
+          "app.kubernetes.io/part-of": "farm-game",
+          "farm.io/holder-kind": "fixed",
+          "farm.io/redis-client": "true"
+        }
+      },
+      "spec": {
+        "terminationGracePeriodSeconds": 60,
+        "securityContext": {
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        },
+        "topologySpreadConstraints": [
+          {
+            "maxSkew": 1,
+            "topologyKey": "topology.kubernetes.io/zone",
+            "whenUnsatisfiable": "ScheduleAnyway",
+            "labelSelector": {
+              "matchLabels": {
+                "app.kubernetes.io/name": "player-svr"
+              }
+            }
+          },
+          {
+            "maxSkew": 1,
+            "topologyKey": "kubernetes.io/hostname",
+            "whenUnsatisfiable": "DoNotSchedule",
+            "labelSelector": {
+              "matchLabels": {
+                "app.kubernetes.io/name": "player-svr"
+              }
+            }
+          }
+        ],
+        "affinity": {
+          "podAntiAffinity": {
+            "requiredDuringSchedulingIgnoredDuringExecution": [
+              {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app.kubernetes.io/name": "player-svr"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              }
+            ]
+          }
+        },
+        "containers": [
+          {
+            "name": "player-svr",
+            "image": "registry.example.invalid/farm-game-runtime:static-staging-candidate",
+            "imagePullPolicy": "IfNotPresent",
+            "envFrom": [
+              {
+                "configMapRef": {
+                  "name": "farm-staging-platform"
+                }
+              }
+            ],
+            "env": [
+              {
+                "name": "FARM_SERVICE",
+                "value": "player-svr"
+              },
+              {
+                "name": "PLAYER_LISTEN",
+                "value": ":9100"
+              },
+              {
+                "name": "PLAYER_HEALTH_LISTEN",
+                "value": ":9101"
+              },
+              {
+                "name": "POD_NAME",
+                "valueFrom": {
+                  "fieldRef": {
+                    "fieldPath": "metadata.name"
+                  }
+                }
+              },
+              {
+                "name": "ACTOR_HOLDER_POD",
+                "valueFrom": {
+                  "fieldRef": {
+                    "fieldPath": "metadata.name"
+                  }
+                }
+              },
+              {
+                "name": "ACTOR_HOLDER_BOOT_ID",
+                "value": "$(POD_NAME)-static-route-v1"
+              },
+              {
+                "name": "FARM_REDIS_URL",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "farm-staging-secrets",
+                    "key": "redis-url"
+                  }
+                }
+              },
+              {
+                "name": "FARM_REDIS_CLUSTER_URLS",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "farm-staging-secrets",
+                    "key": "redis-cluster-urls",
+                    "optional": true
+                  }
+                }
+              }
+            ],
+            "ports": [
+              {
+                "name": "grpc",
+                "containerPort": 9100,
+                "protocol": "TCP"
+              },
+              {
+                "name": "health",
+                "containerPort": 9101,
+                "protocol": "TCP"
+              }
+            ],
+            "startupProbe": {
+              "httpGet": {
+                "path": "/healthz",
+                "port": "health"
+              },
+              "periodSeconds": 5,
+              "timeoutSeconds": 2,
+              "failureThreshold": 36
+            },
+            "readinessProbe": {
+              "httpGet": {
+                "path": "/readyz",
+                "port": "health"
+              },
+              "periodSeconds": 2,
+              "timeoutSeconds": 2,
+              "failureThreshold": 2
+            },
+            "livenessProbe": {
+              "httpGet": {
+                "path": "/healthz",
+                "port": "health"
+              },
+              "periodSeconds": 10,
+              "timeoutSeconds": 2,
+              "failureThreshold": 3
+            },
+            "lifecycle": {
+              "preStop": {
+                "exec": {
+                  "command": [
+                    "/bin/sh",
+                    "-c",
+                    "kill -TERM 1"
+                  ]
+                }
+              }
+            },
+            "volumeMounts": [
+              {
+                "name": "farm-static-route",
+                "mountPath": "/etc/farm/routes",
+                "readOnly": true
+              }
+            ],
+            "resources": {
+              "requests": {
+                "cpu": "300m",
+                "memory": "512Mi"
+              },
+              "limits": {
+                "cpu": "2",
+                "memory": "2Gi"
+              }
+            }
+          }
+        ],
+        "volumes": [
+          {
+            "name": "farm-static-route",
+            "configMap": {
+              "name": "farm-static-route",
+              "items": [
+                {
+                  "key": "route-snapshot.json",
+                  "path": "route-snapshot.json",
+                  "mode": 420
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

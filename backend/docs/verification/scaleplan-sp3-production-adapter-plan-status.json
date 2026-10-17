@@ -1,0 +1,1743 @@
+{
+  "schema_version": "scaleplan-sp3-production-adapter-plan-status-v1",
+  "checkpoint": "CP-SCALEPLAN-SP3-ADAPTER-PLAN",
+  "worktree": "farm-game-scaleplan-a0-5-20260813",
+  "branch": "codex/scaleplan-a0-5-20260813",
+  "base_commit": "0036d17b6d4add1b1a3092e3e5e0051f75bb5fd4",
+  "reviewed_protocol_code_identity": "c06ae6a552bfb3c27f8d5283dc3ae7111c1799f4",
+  "protocol_status_docs_tip": "5082719feed98a6b107da52a65e9b81aec00ceb8",
+  "g21_runtime_identity": "2f16f7c6db3f6e9d8ecb76513cbdf3bd27724361",
+  "sp3_0_marker": "SP3_0_PASS_READY_TO_PLAN_ADAPTERS",
+  "stage": "A0_5_SEAM_COMPLETE_PENDING_REVIEW",
+  "status": "A0_5_GATE_20_OF_21_PENDING_INDEPENDENT_REVIEW",
+  "updated_at_utc": "2026-08-13T11:30:00Z",
+  "authorization": {
+    "adapter_planning_authorized": true,
+    "a0_5_implementation_authorized": true,
+    "a1_implementation_authorized": false,
+    "a1r_implementation_authorized": false,
+    "a2_implementation_authorized": false,
+    "a3_implementation_authorized": false,
+    "a4_implementation_authorized": false,
+    "a5_real_environment_authorized": false,
+    "a6_performance_authorized": false,
+    "adapter_implementation_authorized": false,
+    "deployment_authorized": false,
+    "runtime_activation_authorized": false,
+    "performance_sampling_authorized": false,
+    "a0_5_authorization_record": {
+      "granted_at_utc": "2026-08-13T06:35:00Z",
+      "granted_by": "user",
+      "granted_after": "cf1_preflight_run reported: 8 packages / 20 files measured, 4 discrepancies against the S5 prior table, 2 method defects found",
+      "scope_exact": [
+        "A0.5 stage only",
+        "the exact Owned Write Set enumerated in section 8.1",
+        "the S5 conformance edit right over the A1R files it names"
+      ],
+      "scope_excluded": [
+        "A1",
+        "A1R",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "any real Redis",
+        "any real Kubernetes",
+        "any StatefulSet replica mutation",
+        "any deployment or runtime activation"
+      ],
+      "mandatory_first_action": "CF-1 compile-edge measurement, iterated to a fixed point across all three contract groups, before any implementation edit",
+      "stop_condition": "if the measured true set exits the section 8.1 write set, stop and report; do not widen the write set unilaterally"
+    }
+  },
+  "scope": {
+    "allowed_writes": [
+      "docs/verification/scaleplan-sp3-production-adapter-implementation-plan.md",
+      "docs/verification/scaleplan-sp3-production-adapter-plan-status.json"
+    ],
+    "files_changed": [
+      "docs/verification/scaleplan-sp3-production-adapter-implementation-plan.md",
+      "docs/verification/scaleplan-sp3-production-adapter-plan-status.json"
+    ],
+    "code_changed": false,
+    "proto_changed": false,
+    "lua_changed": false,
+    "deployment_changed": false,
+    "runtime_touched": false,
+    "external_redis_touched": false,
+    "kubernetes_touched": false,
+    "performance_touched": false,
+    "source_read_only_audit_performed": true
+  },
+  "review_history": [
+    {
+      "round": 1,
+      "verdict": "FAIL",
+      "p0": 1,
+      "p1": 8,
+      "p2": 2,
+      "marker": "CP_SCALEPLAN_SP3_ADAPTER_PLAN_FAIL",
+      "reviewed_plan_sha256": "7431fd1db36bfef0591e8d531d8847749bea20d0c032f464136bbeafce146a2c",
+      "reviewed_status_sha256": "98eed12057c50830baaedb69259a377158f00f7b7e8b7ee6360a08c27369853c"
+    },
+    {
+      "round": 2,
+      "verdict": "FAIL",
+      "p0": 1,
+      "p1": 4,
+      "p2": 1,
+      "marker": "CP_SCALEPLAN_SP3_ADAPTER_PLAN_FAIL",
+      "reviewed_plan_sha256": "e1691527c6199daed4aeaae49696a3558230e70c31f0de52c945d95de88d25d6",
+      "reviewed_status_sha256": "56e51623e323a36f3122104cb0519baa42daef3cd7eec62b44b7c51eb5b85ee9",
+      "declared_bundle_sha256": "386c8d821e24bb234e99e9fe3757823a01e103fecf88df8c6a2efcad7e90c6a3",
+      "findings": [
+        "P0_KUBERNETES_DELAYED_SCALE_REQUEST_CAN_OUTLIVE_RECOVERY_AND_TERMINAL_RELEASE",
+        "P1_NO_STAGE_OWNS_REDIS_ROUTEPLAN_DURABLE_STOP",
+        "P1_INDEX_CHECKSUM_AND_DURABLE_CORRUPTION_LATCH_INCOMPLETE",
+        "P1_POD_IDENTITY_BOOTSTRAP_INCOMPATIBLE_WITH_STATEFULSET",
+        "P1_REAL_AUTHORITY_WRITERS_AND_SNAPSHOT_BOOTSTRAP_OMITTED",
+        "P2_PLAN_REVISION_LUA_ARITHMETIC_NOT_FROZEN"
+      ]
+    },
+    {
+      "round": 3,
+      "verdict": "FAIL",
+      "p0": 1,
+      "p1": 14,
+      "p2": 5,
+      "marker": "CP_SCALEPLAN_SP3_ADAPTER_PLAN_FAIL",
+      "reviewed_plan_sha256": "cf66ea44a7eecde073ab8e1d780e773a83c1a1b24f543a956517fd3e85f45b09",
+      "reviewed_status_sha256": "10f532bc9f0096436cfdf2085e48f5f81946c3e368d70e7a3155ff25a665b8f1",
+      "reviewed_head": "0036d17b6d4add1b1a3092e3e5e0051f75bb5fd4",
+      "findings": [
+        "P0_1_RV_BARRIER_DOES_NOT_VERIFY_THAT_RESOURCE_VERSION_ADVANCED",
+        "P1_1_HOLDER_REGISTRY_IS_THE_ONLY_PLACEMENT_EXCLUSION_CONTROLLER_AND_IS_UNOWNED",
+        "P1_2_CAP_STATIC_ROUTE_INIT_IS_A_SECOND_UNFENCED_SNAPSHOT_BOOTSTRAP_WRITER",
+        "P1_3_SECTION_5_3_SOURCE_PREMISE_FALSE_NO_EXISTING_EXECUTOR_MUTATION_BARRIER",
+        "P1_4_MANAGER_RENEW_MISCLASSIFIED_AND_RENEW_CALL_SITE_ENUMERATION_INCOMPLETE",
+        "P1_5_OBSERVE_TRANSITION_CANNOT_PROVE_UNIVERSAL_QUIESCENCE",
+        "P1_6_BARRIER_WRITE_AND_CLOSING_GATE_ARE_MUTUALLY_EXCLUSIVE",
+        "P1_7_EXCLUSION_RELEASE_NOT_ORDERED_AGAINST_PENDING_SCALE_OUTCOME",
+        "P1_8_BOOT_DRIFT_ALLOWS_OWNER_HIJACK_AND_MAKES_RELEASE_UNREACHABLE",
+        "P1_9_PRUNE_CRITERIA_MAKE_RELEASED_RECORDS_UNRECLAIMABLE_AND_STARVE_BOUNDED_SCAN",
+        "P1_10_ADDING_CREATED_AT_MS_BREAKS_LIVE_LUA_SHAPE_CHECK_ADDITIVE_ONLY_FALSE",
+        "P1_11_PREEXISTING_EXCLUSION_COUNT_ZERO_UNPROVABLE_UNDER_SCAN_KEYS_BAN",
+        "P1_12_CORRUPT_LATCH_WRITE_AUTHORIZATION_UNDEFINED",
+        "P1_13_STALE_CONTROLLER_RESIDUAL_WINDOW_MISCHARACTERIZED",
+        "P1_14_OFF_MODE_AND_TOKEN_ENFORCEMENT_MUTUALLY_EXCLUSIVE_NIL_COORDINATOR_UNDEFINED",
+        "P2_1_EXCLUSION_UNBOUNDED_GROWTH_CLAIM_CONTRADICTS_KEY_STRUCTURE",
+        "P2_2_DOMAIN_BOUND_EDGE_CASE_AND_FIELD_ANNOTATION_CONFLICT",
+        "P2_3_RESOURCE_VERSION_USED_WITH_ORDER_RELATION",
+        "P2_4_SECTION_8_1_EXACT_LIST_STALE_AND_METHOD_NAMES_WRONG",
+        "P2_5_STATEFULSETS_PATCH_PRIVILEGE_SURFACE_UNDERSTATED"
+      ],
+      "confirmed_closed": [
+        "P1_POD_IDENTITY_BOOTSTRAP_INCOMPATIBLE_WITH_STATEFULSET",
+        "P2_PLAN_REVISION_LUA_ARITHMETIC_NOT_FROZEN",
+        "P1_INDEX_CHECKSUM_AND_DURABLE_CORRUPTION_LATCH_INCOMPLETE_EXCEPT_LATCH_AUTHORIZATION"
+      ],
+      "reviewer_attempted_and_failed_to_break": [
+        "F66 holder-side same-generation renew immunity of the capture token; MemoryStore.RenewShardAuthority only advances LeaseUntilMs when requestedExpiry is greater, and Redis RenewShardAuthorityV2 only HSETs lease_expire_at_ms, leaving writer_epoch, lease_epoch and assignment_revision untouched"
+      ],
+      "retracted_by_round4": [
+        "P1_3_SECTION_5_3_SOURCE_PREMISE_FALSE_NO_EXISTING_EXECUTOR_MUTATION_BARRIER is itself false; the round-3 search rg 'enterPlanMutation' was case sensitive and missed the exported wrapper EnterPlanMutation, which all six direct executor entry points call and which OperatorFailBlocked reaches through TerminalizeBlocked"
+      ]
+    },
+    {
+      "round": 4,
+      "verdict": "FAIL",
+      "p0": 1,
+      "p1": 7,
+      "p2": 3,
+      "marker": "CP_SCALEPLAN_SP3_ADAPTER_PLAN_FAIL",
+      "reviewed_plan_sha256": "196f0c89ecc8df0e35838be2fe1d2910413e4b0a865afcc3d2bea0ce84c67c81",
+      "reviewed_status_sha256": "05435c742f74e5f936fe94f189e81d0fe04c16dc3f3b11088cb09974338a1c35",
+      "reviewed_head": "0036d17b6d4add1b1a3092e3e5e0051f75bb5fd4",
+      "reviewed_plan_lines": 2636,
+      "findings": [
+        "R4_01_P0_HOLDER_RECORD_TTL_LAPSE_MISREAD_AS_VICTIM_GONE_SKIPS_MANDATORY_RELEASE",
+        "R4_02_P1_SECTION_5_3_CORRECTED_PREMISE_IS_ITSELF_FALSE_ALL_SEVEN_ENTRYPOINTS_DO_ENTER_THE_BARRIER",
+        "R4_03_P1_WRITE_SET_GAP_SEVEN_UNOWNED_NON_TEST_IMPLEMENTER_OF_PLACEMENT_EXCLUSION_CONTROLLER",
+        "R4_04_P1_TRANSITION_STORE_IS_THE_FROZEN_QUIESCENCE_EVIDENCE_SOURCE_BUT_BELONGS_TO_NO_STAGE",
+        "R4_05_P1_BARRIER_SUCCESS_CLOSES_OPERATION_AS_NOT_COMMITTED_WITHOUT_REPLICAS_RECHECK_AND_THE_PATCH_PRECONDITION_FACT_IS_UNREGISTERED",
+        "R4_06_P1_RESOLUTION_ONLY_OPERATION_HAS_NO_DEFINED_RESOLUTION_PATH_FOR_ITSELF",
+        "R4_07_P1_REQUIRING_A_MUTATION_LEASE_TO_LATCH_MAKES_AUDIT_DETECTED_CORRUPTION_FAIL_OPEN",
+        "R4_08_P1_SECTION_12_7_STILL_REGISTERS_ONLY_POSITIVE_PLATFORM_FACTS_FOR_TWO_SAFETY_CRITICAL_GATES",
+        "R4_P2_1_STALE_CALL_SITE_COUNT_IN_C14",
+        "R4_P2_2_DUPLICATED_PARAGRAPH_IN_11_3",
+        "R4_P2_3_A0_5_EXACT_LIST_OMITS_A_SECOND_CONTROLLER_IMPLEMENTER_TEST"
+      ],
+      "round3_disposition_by_reviewer": {
+        "genuinely_closed": 11,
+        "partially_closed": 7,
+        "not_closed": 2,
+        "note": "P1-3 was judged not closed and actively worsened, because the round-3 finding itself was false and the document froze the false conclusion"
+      },
+      "confirmed_closed": [
+        "P1_2_CAP_STATIC_ROUTE_INIT_IS_A_SECOND_UNFENCED_SNAPSHOT_BOOTSTRAP_WRITER",
+        "P1_7_EXCLUSION_RELEASE_NOT_ORDERED_AGAINST_PENDING_SCALE_OUTCOME",
+        "P1_9_P1_10_P1_11_P2_1_EXCLUSION_RETENTION_MECHANISM_DELETION",
+        "P1_13_STALE_CONTROLLER_RESIDUAL_WINDOW_MISCHARACTERIZED",
+        "P1_14_OFF_MODE_AND_TOKEN_ENFORCEMENT_MUTUALLY_EXCLUSIVE_NIL_COORDINATOR_UNDEFINED",
+        "P2_2_DOMAIN_BOUND_EDGE_CASE_AND_FIELD_ANNOTATION_CONFLICT",
+        "P2_3_RESOURCE_VERSION_USED_WITH_ORDER_RELATION",
+        "P2_5_STATEFULSETS_PATCH_PRIVILEGE_SURFACE_UNDERSTATED"
+      ],
+      "reviewer_attempted_and_failed_to_break": [
+        "the wholesale deletion of the exclusion retention mechanism; the reviewer independently verified the key structure at holder_store.go:219-227, the in-place HSET overwrite at holder_scripts.go:1195-1199, and that holderID is the Pod name on the production path, so the record count is bounded by the number of distinct ordinals rather than growing per scaling round",
+        "the core logic of the RV barrier, attacked from four directions: nonce uniqueness across retries, the crash window before nonce persistence, misreading the RV equals V0 branch, and a third party reconciler advancing RV between GET and patch"
+      ],
+      "source_audit_result": "15 of 17 contracts reproduced exactly on independent recomputation; all Lua line references in section 8.3 verified with no drift; the two divergences were both in interface implementer enumeration"
+    },
+    {
+      "round": 5,
+      "verdict": "FAIL",
+      "p0": 0,
+      "p1": 8,
+      "p2": 6,
+      "marker": "CP_SCALEPLAN_SP3_ADAPTER_PLAN_FAIL",
+      "reviewed_plan_sha256": "e99183d649221170c2e302d36ddb7235ccc5006ba76fafbc759d1d624d81fbd6",
+      "reviewed_status_sha256": "691ecb087429902155fc882e7f7bb7731b4ca9c1657158cdd688a87ac9f5482f",
+      "reviewed_head": "0036d17b6d4add1b1a3092e3e5e0051f75bb5fd4",
+      "reviewed_plan_lines": 2940,
+      "milestone": "FIRST_ROUND_WITH_ZERO_P0",
+      "findings": [
+        "R5_01_P1_UNOWNED_WRITE_PATH_MEMORY_REPOSITORY",
+        "R5_02_P1_UNOWNED_WRITE_PATH_TRANSPORT_TEST_DOUBLE",
+        "R5_03_P1_CROSS_STAGE_COMPILE_DEPENDENCY_IS_NOT_EXECUTABLE",
+        "R5_04_P1_BARRIER_STEP_4C_OVERCLASSIFIES_THIRD_PARTY_MUTATION_AS_COMMITTED",
+        "R5_05_P1_F58C_THIRD_BRANCH_LEAVES_THE_BARRIER_OPERATION_UNRESOLVED",
+        "R5_06_P1_CHANNEL_B_LATCH_IS_STRUCTURALLY_UNCLEARABLE",
+        "R5_07_P1_F61E_LIVENESS_EXIT_CLAIM_IS_FALSE_AND_HAS_NO_OPERATOR_ESCAPE",
+        "R5_08_P1_P0_FIX_NOT_PROPAGATED_TO_TEST_STRATEGY_AND_STOP_CONDITIONS",
+        "R5_P2_1_CAPTURE_OUTCOME_SET_IS_NOT_EXHAUSTIVE",
+        "R5_P2_2_DISPROVEN_INFERENCE_SURVIVES_IN_THE_RELEASE_TIMING_TABLE",
+        "R5_P2_3_BLIND_WINDOW_GATE_OMITS_THE_NIL_STORE_BRANCH",
+        "R5_P2_4_STALE_ROUND_LABELS_AND_STRUCTURAL_CHANGE_COUNT",
+        "R5_P2_5_GATE_COUNT_DISAGREES_WITH_THE_GATES_ADDED",
+        "R5_P2_6_FROZEN_SEAM_SHAPE_CONTRADICTS_THE_EXPORT_TIGHTENING_REQUIREMENT"
+      ],
+      "round4_disposition_by_reviewer": {
+        "closed": 5,
+        "partially_closed": 4,
+        "not_closed": 1,
+        "note": "R4-03 write-set gap judged not closed because two new unowned paths appeared this round; the section 11.1 method fix was adopted in words but not re-run over C07 or over the restored section 5.3 seam work"
+      },
+      "confirmed_closed": [
+        "R4_02_EXCLUSION_RETENTION_MECHANISM_DELETION",
+        "R4_04_P1_3_REMEDIATION_RETRACTION_ALL_SEVEN_ENTRYPOINTS_VERIFIED_INDEPENDENTLY",
+        "R4_07_C14_EIGHT_CALL_SITES_SIX_FILES",
+        "R4_P2_1_C14_COUNT",
+        "R4_P2_2_DUPLICATED_PARAGRAPH",
+        "R4_P2_3_AUTHORITY_GLOB"
+      ],
+      "reviewer_attempted_and_failed_to_break": [
+        "the section 8.3 P0 fix itself, attacked from three directions: the three minute holder record TTL, the fact that expire_keys is never invoked on the exclusion record, and the registration path that allows the same BootID to re-register after TTL lapse",
+        "the section 5.3 retraction, independently re-derived with a case insensitive enumeration confirming all seven Executor entry points enter the barrier",
+        "the four restored realm-global justifications, all of which hold against source because the mutation channel is process global",
+        "the A0.5 re-estimate as adapting an existing seam rather than introducing a new one",
+        "the section 11.2 partition on sixteen of eighteen contracts",
+        "whether cmd/cap-redis/*_test.go in A0.5 collides with A1R ownership; it does not because A1R owns the non-test sources",
+        "the section 6.13 integer domain bounds and the LUA_INTEGER_DOMAIN gate",
+        "the two Bootstrap writers and the identification of cap-static-route-init as the only external caller",
+        "the A1R additive-only claim, subject only to the ordering problem in R5-03",
+        "the off-mode tristate, with no fourth state and no path treating an unset value as off",
+        "every sampled Lua line-number citation in section 8.3, with no drift"
+      ],
+      "source_audit_result": "16 of 18 contracts reproduced exactly on independent recomputation by method set; the two divergences were both unowned write paths, making a ninth and tenth cumulative gap"
+    },
+    {
+      "round": 6,
+      "verdict": "FAIL",
+      "p0": 0,
+      "p1": 5,
+      "p2": 5,
+      "marker": "CP_SCALEPLAN_SP3_ADAPTER_PLAN_FAIL",
+      "reviewed_plan_sha256": "5ccd07905ca986390957446cbecf5bf29048fc5a0a126f5a586b478a97476ee9",
+      "reviewed_status_sha256": "05435c742f74e5f936fe94f189e81d0fe04c16dc3f3b11088cb09974338a1c35",
+      "reviewed_head": "0036d17b6d4add1b1a3092e3e5e0051f75bb5fd4",
+      "reviewed_plan_lines": 3266,
+      "milestone": "SECOND_CONSECUTIVE_ROUND_WITH_ZERO_P0",
+      "decisive_observation": "all five P1 findings were introduced by the round-5 remediation itself; none were pre-existing. Each is a documentation-to-code alignment error rather than a design defect, and each is falsifiable by the implementation stage within minutes. This is the evidence base for the S6 criterion split and for relaxing the A0 exit gate",
+      "findings": [
+        "R6_01_P1_S5_COMPILE_EDGE_ENUMERATION_COUNTS_FILES_NOT_COMPILATION_UNITS",
+        "R6_02_P1_DEGRADED_STATE_PERSISTENCE_HAS_NO_OWNING_WRITE_SET",
+        "R6_03_P1_SECTION_16_EXCLUSION_TABLE_HAS_FOUR_ROWS_WHILE_CLAIMING_VERBATIM_PARITY_WITH_SEVEN",
+        "R6_04_P1_F58C_OWNERSHIP_COLUMN_RELEASES_ON_ROWS_THAT_LEAVE_THE_SCALE_OPERATION_PENDING",
+        "R6_05_P1_CHANNEL_B_REVOCATION_SET_HAS_NO_KEY_NO_OWNER_AND_NO_ISSUANCE_CHECK",
+        "R6_06_P2_STOP_CONDITION_STILL_NAMES_A_FIFTH_CAPTURE_OUTCOME",
+        "R6_07_P2_THE_C3_SENTINEL_CANNOT_BE_DECLARED_UNDER_C1",
+        "R6_08_P2_NO_READ_ONLY_AUDITOR_PRINCIPAL_EXISTS_IN_THE_FROZEN_ACL",
+        "R6_09_P2_STEP_4C_MUTUAL_EXCLUSIVITY_IS_ASSERTED_UNCONDITIONALLY",
+        "R6_10_P2_SECTION_8_3_CITES_LINE_1169_FOR_A_RETURN_ON_LINE_1168"
+      ],
+      "self_inflicted_ratio": "5 of 5 P1, 4 of 5 P2"
+    }
+  ],
+  "round3_remediation": {
+    "all_round3_findings_addressed": true,
+    "guiding_principle": "S3 subtraction first: the largest single change this round is a deletion, not an addition",
+    "finding_origin_analysis": {
+      "introduced_by_round2_remediation": 8,
+      "preexisting_but_undiscovered": 5,
+      "factual_corrections_to_remediation": 2,
+      "note": "roughly half of the round-3 findings were produced by the round-2 remediation itself, which is why S3 was added"
+    },
+    "items": [
+      {
+        "finding": "P0_1_RV_BARRIER_DOES_NOT_VERIFY_THAT_RESOURCE_VERSION_ADVANCED",
+        "resolution": "UNIQUE_BARRIER_NONCE_PLUS_MANDATORY_EXACT_RV_NOT_EQUAL_V0_CHECK",
+        "sections": [
+          "7.2",
+          "10:F57",
+          "10:F58a",
+          "10:F58b",
+          "12.7",
+          "17"
+        ],
+        "detail": "barrier payload gains a per-attempt nonce persisted into the durable operation record before the write; a 200 response is only accepted as a barrier when the returned resourceVersion differs from V0; equality is classified as unknown outcome and the operation stays pending. Kubernetes skips the etcd write and does not increment resourceVersion when the resulting object is byte-identical, and the previous payload of deterministic operation id plus fence epoch was fully replayable",
+        "new_preflight_gate": "K8S_NOOP_WRITE_DOES_NOT_ADVANCE_RV",
+        "note": "the RV check is unconditional and is not made optional by nonce uniqueness; uniqueness makes advancement expected, the check makes it proven"
+      },
+      {
+        "finding": "P1_1_HOLDER_REGISTRY_IS_THE_ONLY_PLACEMENT_EXCLUSION_CONTROLLER_AND_IS_UNOWNED",
+        "resolution": "ASSIGNED_TO_C09_A0_5",
+        "sections": [
+          "8.1",
+          "11.2:C09",
+          "11.3"
+        ],
+        "detail": "internal/routecontrol/holder_registry.go at 593, 622 and 664 is the only implementer of PlacementExclusionController declared at placement_exclusion.go:55 and consumed at manager.go:121; A3 remains globally forbidden from internal/routecontrol/** while A0.5 owns the exact files, which is not a conflict"
+      },
+      {
+        "finding": "P1_2_CAP_STATIC_ROUTE_INIT_IS_A_SECOND_UNFENCED_SNAPSHOT_BOOTSTRAP_WRITER",
+        "resolution": "NEW_CONTRACT_C17_ASSIGNED_TO_A1R_PLUS_EXPLICIT_ISOLATION_CONSTRAINT",
+        "sections": [
+          "4.4",
+          "8.6",
+          "11.2:C17",
+          "17"
+        ],
+        "detail": "cmd/cap-static-route-init/main.go at 245, 269 and 271 constructs its own SnapshotStore and calls CompareAndSwap and Bootstrap directly; the single-writer premise in 4.4 previously covered only the Kubernetes scale subresource and never the route snapshot writer set"
+      },
+      {
+        "finding": "P1_3_SECTION_5_3_SOURCE_PREMISE_FALSE_NO_EXISTING_EXECUTOR_MUTATION_BARRIER",
+        "resolution": "RETRACTED_IN_ROUND4_THE_FINDING_ITSELF_WAS_FALSE",
+        "sections": [
+          "5.3",
+          "8.1",
+          "8.8",
+          "11.1",
+          "12.2"
+        ],
+        "detail": "SUPERSEDED. The round-3 claim rested on a case sensitive search for the unexported enterPlanMutation, which does have exactly one caller; the executor calls the exported wrapper EnterPlanMutation at executor.go 56, 98, 165, 960, 989 and 1026, and OperatorFailBlocked reaches it through TerminalizeBlocked at blocked_termination.go:74. All seven entry points were already inside the barrier, so the round-3 remediation made section 5.3 wrong. Round-4 restores the round-2 description, reinstates the discarded realm-global justification, and re-estimates A0.5 as adapting an existing seam"
+      },
+      {
+        "finding": "P1_4_MANAGER_RENEW_MISCLASSIFIED_AND_RENEW_CALL_SITE_ENUMERATION_INCOMPLETE",
+        "resolution": "MANAGER_RENEW_MOVED_TO_LIVENESS_EXEMPTION_PLUS_TWO_ADDITIONAL_CALL_SITES",
+        "sections": [
+          "8.6",
+          "11.1",
+          "11.4"
+        ],
+        "detail": "manager.go:1513-1519 enforces ErrHolderRenewOnly, so Manager.Renew can only ever be holder-side same-generation renewal; the audit commands were scoped to internal/ which hid cmd/cap-redis/scenarios_runtime.go:175 and internal/testkit/capstaticroute/initializer.go:111"
+      },
+      {
+        "finding": "P1_5_OBSERVE_TRANSITION_CANNOT_PROVE_UNIVERSAL_QUIESCENCE",
+        "resolution": "UNIVERSAL_EVIDENCE_VIA_ENUMERATION_PLUS_CARDINALITY_PLUS_END_REVALIDATE",
+        "sections": [
+          "8.5",
+          "8.6",
+          "12.7"
+        ],
+        "detail": "ObserveTransition takes a single transition id and answers only whether that one transition finished; enumeration primitives LoadTransitionRecoveries and LoadTransitionTombstones already exist and now carry the universal claim",
+        "new_preflight_gate": "TRANSITION_QUIESCENCE_ENUMERATION"
+      },
+      {
+        "finding": "P1_6_BARRIER_WRITE_AND_CLOSING_GATE_ARE_MUTUALLY_EXCLUSIVE",
+        "resolution": "RESOLUTION_ONLY_OPERATION_CLASS_FROZEN",
+        "sections": [
+          "7.2",
+          "8.6"
+        ],
+        "detail": "only the gate owner may register a resolution-only operation while CLOSING, it must be counted in the active set, it must be exactly resolved before EXCLUSIVE, and the active-set-empty precondition remains strict"
+      },
+      {
+        "finding": "P1_7_EXCLUSION_RELEASE_NOT_ORDERED_AGAINST_PENDING_SCALE_OUTCOME",
+        "resolution": "RELEASE_REQUIRES_EXACT_NOT_COMMITTED_SCALE_OUTCOME_FIRST",
+        "sections": [
+          "1.2",
+          "8.3",
+          "10:F61c"
+        ],
+        "detail": "victim Pod existence is not a stable predicate while the scale write is pending; releasing early can route a shard into a Pod Kubernetes is about to delete"
+      },
+      {
+        "finding": "P1_8_BOOT_DRIFT_ALLOWS_OWNER_HIJACK_AND_MAKES_RELEASE_UNREACHABLE",
+        "resolution": "OWNER_EXCLUSIVITY_SCOPED_TO_ONE_BOOT_GENERATION_PLUS_ONE_INERT_TERMINAL_BRANCH",
+        "sections": [
+          "8.3",
+          "10:F61a",
+          "10:F61b",
+          "10:F61d",
+          "10:F61e",
+          "12.7"
+        ],
+        "detail": "holder_store.go:219-227 keys the record by domain and holderID only; holder_scripts.go:1119-1128 rejects before the record is reached when the holder is absent or the boot differs, and 1144-1147 synthesizes an unexcluded baseline on boot drift. Release therefore distinguishes cannot-release from need-not-release. PARTIALLY SUPERSEDED BY ROUND4: only RELEASED_BY_BOOT_ROLLOVER survives as an inert terminal branch; RELEASED_BY_HOLDER_ABSENT was deleted because a missing holder record is reversible evidence absence rather than proof that the victim is gone",
+        "new_preflight_gate": "EXCLUSION_RECORD_REACHABILITY"
+      },
+      {
+        "finding": "P1_9_PRUNE_CRITERIA_MAKE_RELEASED_RECORDS_UNRECLAIMABLE_AND_STARVE_BOUNDED_SCAN",
+        "resolution": "MECHANISM_DELETED",
+        "sections": [
+          "8.3",
+          "12.3R"
+        ],
+        "detail": "closed by deleting the retention mechanism rather than repairing its criteria"
+      },
+      {
+        "finding": "P1_10_ADDING_CREATED_AT_MS_BREAKS_LIVE_LUA_SHAPE_CHECK_ADDITIVE_ONLY_FALSE",
+        "resolution": "MECHANISM_DELETED_ADDITIVE_ONLY_RESTORED",
+        "sections": [
+          "8.3",
+          "12.3R",
+          "16"
+        ],
+        "detail": "holder_scripts.go:1101-1104 fixes the record at exactly eight fields, 1134 rejects any other HLEN as MALFORMED, and 1141 computes integrity over six fields; no field is added, so rolling deploy and rollback stay safe and A1R remains additive-only"
+      },
+      {
+        "finding": "P1_11_PREEXISTING_EXCLUSION_COUNT_ZERO_UNPROVABLE_UNDER_SCAN_KEYS_BAN",
+        "resolution": "GATE_DELETED",
+        "sections": [
+          "8.3",
+          "12.7"
+        ],
+        "detail": "the gate existed only to enable the deleted retention index"
+      },
+      {
+        "finding": "P1_12_CORRUPT_LATCH_WRITE_AUTHORIZATION_UNDEFINED",
+        "resolution": "LATCH_WRITE_REQUIRES_AUTHORIZATION_PLUS_APPEAL_PATH",
+        "sections": [
+          "6.4",
+          "6.10",
+          "10:F62a",
+          "10:F62b"
+        ],
+        "detail": "a latch write is a durable write and must be authorized; a stale-fence negative test is required, and clearing requires offline verification of detection epoch, detector identity and evidence digest. PARTIALLY SUPERSEDED BY ROUND4: the round-3 rule that read-only detectors may only report and never latch was fail open, because AuditPage exists precisely to cover the depth that per-operation bounded validation cannot see, so corruption found outside the touched-key set would never be latched. Authorization is now two-channel: a valid mutation lease, or a one-time audit capability bound to detector identity, the pinned store_epoch and an evidence digest"
+      },
+      {
+        "finding": "P1_13_STALE_CONTROLLER_RESIDUAL_WINDOW_MISCHARACTERIZED",
+        "resolution": "WINDOW_RESTATED_AS_LEASE_DETECTION_DELAY_PLUS_APISERVER_REQUEST_LIFETIME",
+        "sections": [
+          "7.2"
+        ],
+        "detail": "the previous framing bounded the window by the 5s proof safety margin, which cannot constrain an unbounded apiserver queue; two concrete mechanisms that can bound it are now specified and A5 must measure the correct quantity"
+      },
+      {
+        "finding": "P1_14_OFF_MODE_AND_TOKEN_ENFORCEMENT_MUTUALLY_EXCLUSIVE_NIL_COORDINATOR_UNDEFINED",
+        "resolution": "EXPLICIT_TRISTATE_ENFORCED_AT_STARTUP",
+        "sections": [
+          "8.6",
+          "9.2",
+          "12.2",
+          "12.6"
+        ],
+        "detail": "coordinator absent is legal only with SCALEPLAN_MODE=off; any other combination fails at process startup. The default for a missing token is never allow, it is that the process must not be in that state, and the decision is made once at startup rather than per mutation"
+      },
+      {
+        "finding": "P2_1_EXCLUSION_UNBOUNDED_GROWTH_CLAIM_CONTRADICTS_KEY_STRUCTURE",
+        "resolution": "CLAIM_RETRACTED_AND_DEPENDENT_MECHANISM_DELETED",
+        "sections": [
+          "8.3",
+          "20.5",
+          "20.6"
+        ],
+        "detail": "the record count is bounded by the number of distinct holder ids because the key omits bootID and later excludes overwrite in place; this false claim was the sole motivation for the retention mechanism behind P1-9, P1-10 and P1-11"
+      },
+      {
+        "finding": "P2_2_DOMAIN_BOUND_EDGE_CASE_AND_FIELD_ANNOTATION_CONFLICT",
+        "resolution": "EDGE_CASE_CORRECTED_AND_EXCLUSION_REVISION_EXCLUDED_FROM_SECTION_6_13",
+        "sections": [
+          "6.10",
+          "6.13"
+        ],
+        "detail": "bound plus one is a numeric rejection rather than a syntax rejection; placement exclusion revision belongs to the live G21 record, is formatted by live Lua using tostring, and cannot follow 6.13 while A1R stays additive-only"
+      },
+      {
+        "finding": "P2_3_RESOURCE_VERSION_USED_WITH_ORDER_RELATION",
+        "resolution": "ALL_COMPARISONS_REDUCED_TO_EQUALITY",
+        "sections": [
+          "7.2",
+          "6.13"
+        ],
+        "detail": "adopted classification now rests on generation monotonicity; resourceVersion is only ever compared for equality with V0"
+      },
+      {
+        "finding": "P2_4_SECTION_8_1_EXACT_LIST_STALE_AND_METHOD_NAMES_WRONG",
+        "resolution": "LIST_COMPLETED_AND_NAMES_CORRECTED",
+        "sections": [
+          "5.3",
+          "8.1",
+          "11.2:C15"
+        ],
+        "detail": "snapshot_store.go, placement_exclusion.go and holder_registry.go added; ReconcileBlocked and OperatorFailBlocked replace Reconcile and Terminate; cmd/route-controller contains six files not four"
+      },
+      {
+        "finding": "P2_5_STATEFULSETS_PATCH_PRIVILEGE_SURFACE_UNDERSTATED",
+        "resolution": "RESTATED_AS_NAMESPACE_PRIVILEGE_ESCALATION_PLUS_FULL_ROLLING_RESTART",
+        "sections": [
+          "4.4",
+          "7.2",
+          "12.7"
+        ],
+        "detail": "patch permits changing spec.template.spec.serviceAccountName and volumes, so the risk is running the workload as any ServiceAccount in the namespace plus a full rollout, which requires informed written acceptance rather than an after-the-fact audit claim"
+      }
+    ]
+  },
+  "round4_remediation": {
+    "all_round4_findings_addressed": true,
+    "guiding_principle": "S4 scope narrowing plus continued S3 subtraction: the P0 fix is a deletion, the largest P1 fix is a retraction, and the two mechanisms that produced a P0 in three consecutive rounds are demoted from frozen algorithm to frozen safety property",
+    "finding_origin_analysis": {
+      "introduced_by_round3_remediation": 5,
+      "preexisting_but_undiscovered": 3,
+      "factual_corrections_to_remediation": 3,
+      "p0_source_by_round": {
+        "round1": "original draft",
+        "round2": "original draft",
+        "round3": "round-2 remediation",
+        "round4": "round-3 remediation"
+      },
+      "note": "P0 has been exactly 1 in all four rounds and the last two were introduced by the preceding remediation; both were facts a twenty-line test would settle in minutes, which is the direct justification for S4"
+    },
+    "items": [
+      {
+        "finding": "R4_01_P0_HOLDER_RECORD_TTL_LAPSE_MISREAD_AS_VICTIM_GONE_SKIPS_MANDATORY_RELEASE",
+        "resolution": "BRANCH_DELETED_ONLY_BOOT_MISMATCH_REMAINS_INERT",
+        "sections": [
+          "1.2",
+          "8.3",
+          "10:F61b",
+          "10:F61e",
+          "12.7"
+        ],
+        "detail": "holder_store.go:26 sets a three minute TTL on the holder record while the exclusion record has none, because holder_scripts.go:675 expire_keys is called only at 968 and 1094 in the holder record scripts and never in the exclusion scripts. A heartbeat gap longer than the TTL removes the holder record without changing BootID, and the registration script at 911 falls through to the unconditional HSET at 956 when the record is absent, so the same boot re-registers and load_placement at 1144 resumes returning the real excluded state with an owner that no longer exists. The record is then neither releasable nor re-excludable. NOT_FOUND now keeps the plan BLOCKED with backoff retry; only BOOT_MISMATCH is inert because only it positively proves a new generation took over",
+        "liveness_argument": "under StatefulSet semantics the Pod always returns; same boot moves capture to OK and takes the normal CAS release, a new boot moves it to BOOT_MISMATCH. The only stuck case would be a Pod gone forever, which contradicts this branch's own precondition that spec.replicas equals expected",
+        "new_preflight_gate": "EXCLUSION_RECORD_UNREACHABILITY_IS_NOT_TERMINAL",
+        "scope_narrowing": "section 8.3 now freezes SP-EXCL-1 through SP-EXCL-5 as safety properties; retry cadence, BLOCKED dwell bounds and any second positive proof are deferred to stages where a test can falsify them, and adding a second positive proof requires an A0 amendment because it relaxes SP-EXCL-1"
+      },
+      {
+        "finding": "R4_02_P1_SECTION_5_3_CORRECTED_PREMISE_IS_ITSELF_FALSE_ALL_SEVEN_ENTRYPOINTS_DO_ENTER_THE_BARRIER",
+        "resolution": "ROUND3_REMEDIATION_RETRACTED_IN_FULL",
+        "sections": [
+          "5.3",
+          "8.1",
+          "8.8",
+          "11.1",
+          "12.2",
+          "20.6"
+        ],
+        "detail": "six executor entry points call the exported EnterPlanMutation directly and OperatorFailBlocked reaches it through TerminalizeBlocked, so the barrier already exists and is already realm-global: memory_repository.go:49 is a single global channel and the repository method has no scope parameter at all. Submit enters at executor.go:56 with an empty scope before BuildInitialPlan at 67, which restores the round-2 justification that round-3 discarded. Two previously unidentified pieces of A0.5 work are added: making the currently discarded scope parameter meaningful, and tightening the exported surface of EnterPlanMutation against the section 5.2 encapsulation intent"
+      },
+      {
+        "finding": "R4_03_P1_WRITE_SET_GAP_SEVEN_UNOWNED_NON_TEST_IMPLEMENTER_OF_PLACEMENT_EXCLUSION_CONTROLLER",
+        "resolution": "C09_IMPLEMENTER_TABLE_RECOMPUTED_BY_METHOD_SET_AND_ASSERTIONS_MADE_EXECUTABLE",
+        "sections": [
+          "8.1",
+          "11.1",
+          "11.2:C09",
+          "11.2:C14",
+          "11.3",
+          "11.4"
+        ],
+        "detail": "internal/testkit/capstaticroute/placement_permit.go implements all three controller methods and never mentions the interface name, which is why searching by interface name could not find it. Eight implementers are now enumerated; the only-implementer claim is deleted. Separately the two section 11.4 entries named A0.5 tests as their assertion method while no path under those packages belonged to any stage, so the test file locations are now inside C14's A0.5 write set"
+      },
+      {
+        "finding": "R4_04_P1_TRANSITION_STORE_IS_THE_FROZEN_QUIESCENCE_EVIDENCE_SOURCE_BUT_BELONGS_TO_NO_STAGE",
+        "resolution": "NEW_CONTRACT_C18_PLUS_MANDATORY_CONTEXT_PARAMETER",
+        "sections": [
+          "8.1",
+          "8.6",
+          "11.2:C18",
+          "11.3",
+          "12.2"
+        ],
+        "detail": "the interface side goes to A0.5 and the Redis implementation to A1R. The two enumeration primitives currently take no context.Context and use the store's own operationContext, which structurally prevents the quiescence evidence read from honouring guard.Context() as section 5.3 requires; a controller that has already lost its mutation lease could still read an empty set and enter EXCLUSIVE. A0.5 must add the ctx parameter rather than exempt this path"
+      },
+      {
+        "finding": "R4_05_P1_BARRIER_SUCCESS_CLOSES_OPERATION_AS_NOT_COMMITTED_WITHOUT_REPLICAS_RECHECK_AND_THE_PATCH_PRECONDITION_FACT_IS_UNREGISTERED",
+        "resolution": "THREE_WAY_EXACT_CHECK_PLUS_NEW_NEGATIVE_GATE",
+        "sections": [
+          "7.2",
+          "10:F58d",
+          "10:F58e",
+          "12.7"
+        ],
+        "detail": "step 4 now requires resourceVersion not equal to V0, unchanged UID, and spec.replicas equal to expected, with any failure treated as unknown or as adopted committed. If a patch type does not enforce the resourceVersion precondition, an in-flight UpdateScale can commit first and the barrier patch can still return a different RV, which would previously have been declared NOT_COMMITTED and would have let section 8.3 release the exclusion into a Pod being deleted",
+        "new_preflight_gate": "K8S_ANNOTATION_PATCH_HONORS_RV_PRECONDITION",
+        "rule_derived": "SP-BAR-3 makes the two extra comparisons unconditional and explicitly not waivable by any passing gate, because the response body already contains the full object and a cheap fallback beats a precise assumption"
+      },
+      {
+        "finding": "R4_06_P1_RESOLUTION_ONLY_OPERATION_HAS_NO_DEFINED_RESOLUTION_PATH_FOR_ITSELF",
+        "resolution": "READ_ONLY_TERMINATING_RESOLUTION_CRITERION_FROZEN_AS_F58C",
+        "sections": [
+          "7.2",
+          "10:F58c"
+        ],
+        "detail": "the barrier operation is closed by an exact GET comparing the annotation nonce with the nonce persisted in the operation record; equal means committed, unequal with RV equal to V0 means not committed and a new nonce is used, and only a failed read is unknown. This terminates because the barrier effect is idempotent and observable, so no further write is needed. Any implementation that resolves a barrier operation by issuing another write is a section 17 stop condition, since the active set would never empty and EXCLUSIVE would livelock"
+      },
+      {
+        "finding": "R4_07_P1_REQUIRING_A_MUTATION_LEASE_TO_LATCH_MAKES_AUDIT_DETECTED_CORRUPTION_FAIL_OPEN",
+        "resolution": "TWO_CHANNEL_LATCH_AUTHORIZATION",
+        "sections": [
+          "6.4",
+          "6.10",
+          "10:F62a",
+          "10:F62b"
+        ],
+        "detail": "the discriminator is no longer whether the writer holds a lease but whether it can prove it is looking at current state. Channel A is a valid mutation lease; channel B is a one-time audit capability binding detector identity, the store_epoch pinned at the start of the AuditPage run and an evidence digest, CAS'd on that epoch. A stale-fence controller fails both because its epoch is behind. The section 6.10 negative case subject is narrowed from any lease-less writer to a stale fence controller, and a positive case plus an epoch-drift negative case are added"
+      },
+      {
+        "finding": "R4_08_P1_SECTION_12_7_STILL_REGISTERS_ONLY_POSITIVE_PLATFORM_FACTS_FOR_TWO_SAFETY_CRITICAL_GATES",
+        "resolution": "NEGATIVE_COUNTERPARTS_REGISTERED",
+        "sections": [
+          "8.3",
+          "8.6",
+          "12.7"
+        ],
+        "detail": "EXCLUSION_RECORD_UNREACHABILITY_IS_NOT_TERMINAL states that a current_holder rejection does not imply the record can never become readable again, with an A1R Miniredis test that expires the holder record, re-registers with the same boot and asserts the exclusion returns. TRANSITION_ENUMERATION_BLIND_WINDOW states the window in which a transition is in flight but not yet enumerable, currently judged empty because reserveRecoveryLocked and markAuthorityAttemptedLocked are write-ahead intents placed before the only AuthorityStore mutation, and notes that section 8.6 end revalidate covers transitions started after enumeration but not ones invisible before it"
+      },
+      {
+        "finding": "R4_P2_1_STALE_CALL_SITE_COUNT_IN_C14",
+        "resolution": "CORRECTED_TO_EIGHT_CALL_SITES_IN_SIX_FILES",
+        "sections": [
+          "11.2:C14"
+        ]
+      },
+      {
+        "finding": "R4_P2_2_DUPLICATED_PARAGRAPH_IN_11_3",
+        "resolution": "DUPLICATE_REMOVED",
+        "sections": [
+          "11.3"
+        ]
+      },
+      {
+        "finding": "R4_P2_3_A0_5_EXACT_LIST_OMITS_A_SECOND_CONTROLLER_IMPLEMENTER_TEST",
+        "resolution": "AUTHORITY_DIRECTORY_SWITCHED_FROM_NAMED_FILES_TO_TEST_GLOB",
+        "sections": [
+          "8.1"
+        ],
+        "detail": "internal/actorrouting/authority was the only directory of its kind listed by named file rather than by *_test.go glob, which is exactly why placement_permit_test.go was missed"
+      }
+    ]
+  },
+  "round2_5_source_audit": {
+    "method": "read-only ripgrep over actual mutation entry points; no code, proto, lua or deployment file modified",
+    "self_found_findings": [
+      {
+        "id": "X1",
+        "severity_equivalent": "P1",
+        "title": "PLACEMENT_EXCLUSION_HAS_NO_RELEASE_PATH",
+        "evidence": [
+          "internal/routecontrol/placement_exclusion.go:47-59 store and controller interfaces expose only Get, Exclude and ValidateTarget",
+          "internal/routecontrol/placement_exclusion.go:88-96 precondition validation rejects ExpectedExcluded=true, error text 'only exact unexcluded CAS is supported'",
+          "internal/routecontrol/placement_exclusion.go:78-85 excluded state requires an owner, unexcluded state must have none"
+        ],
+        "impact": "an aborted or blocked scale-in leaves the surviving victim permanently placement-ineligible and permanently blocks retry against the same holder boot",
+        "conflicts_with": "section 1.4 fail-closed definition, which forbids producing new unsafe side effects",
+        "resolution": "owner-scoped ReleasePlacementExclusionForOwner with exactly one inert terminal branch (BOOT_MISMATCH); NOT_FOUND, malformed records and transport failures all stay BLOCKED with bounded retry then operator escalation; no retention mechanism",
+        "retracted_claim": "the original third consequence, unbounded growth of exclusion records, was refuted by round-3 P2-1 and the retention mechanism it motivated has been deleted",
+        "sections": [
+          "1.2",
+          "8.3",
+          "10:F59",
+          "10:F60",
+          "10:F61",
+          "10:F61a",
+          "10:F61b",
+          "10:F61c",
+          "10:F61d",
+          "11.2:C09",
+          "11.2:C10"
+        ]
+      },
+      {
+        "id": "X2",
+        "severity_equivalent": "P1",
+        "title": "WRITE_SET_GAPS_BEYOND_ROUTEPLAN_STORE",
+        "unowned_paths_found": [
+          "internal/storage/redis/routeplan/**",
+          "internal/storage/redis/routecontrol/snapshot_store.go",
+          "internal/storage/redis/routecontrol/holder_store.go",
+          "internal/routecontrol/snapshot_store.go"
+        ],
+        "note": "the last entry shows the gap is not limited to the Redis layer; the A0.5 shared file list itself named durable_publisher.go but omitted snapshot_store.go, which defines RouteSnapshotBootstrapper and must change when Bootstrap gains a fence parameter",
+        "incomplete": "round-3 found a fifth and sixth gap, internal/routecontrol/holder_registry.go and cmd/cap-static-route-init/main.go; the root cause was two defects in the S1 method itself, now corrected in section 11.1",
+        "resolution": "assigned in the section 11.2 audit table",
+        "sections": [
+          "11.2",
+          "11.3"
+        ]
+      }
+    ]
+  },
+  "structural_changes": {
+    "s1_write_set_audit": {
+      "applied": true,
+      "sections": [
+        "11.1",
+        "11.2",
+        "11.3",
+        "11.4"
+      ],
+      "partition_complete": true,
+      "partition_disjoint": true,
+      "contracts_enumerated": 18,
+      "unowned_paths_closed_round2_5": 4,
+      "unowned_paths_closed_round3": 2,
+      "unowned_paths_closed_round4": 2,
+      "unowned_paths_closed_total": 8,
+      "unmodified_paths_promoted_to_writeset_round4": 2,
+      "single_undecided_entry": "C13 AUTHORITY_CAPTURE_READ_SURFACE, explicitly a preflight rather than a blank",
+      "round3_method_defects_corrected": [
+        "the audit matched interface and method names but never enumerated the implementers of those interfaces",
+        "every search was scoped to internal/, excluding cmd/ and non-test testkit entirely",
+        "no search covered internal/scaleplan/, which let the false section 5.3 premise survive three rounds"
+      ],
+      "round4_method_defects_corrected": [
+        "implementer enumeration searched the interface name, which cannot work in Go because interface satisfaction is implicit and an implementer file may never mention the interface; enumeration must now walk the interface method set and find same-signature receivers repository-wide",
+        "caller enumeration was case sensitive and stopped at the first hop, so it missed exported wrappers and forwarding layers; it must now be case insensitive or list both spellings and must follow forwarding chains upward",
+        "_test.go files were excluded from implementer enumeration even though adding a method to an interface breaks test implementers too",
+        "a section 11.4 entry may not name a stage test as its assertion method unless that test file path is actually inside that stage's write set"
+      ]
+    },
+    "s2_preflight_registry": {
+      "applied": true,
+      "section": "12.7",
+      "gates_registered": 20,
+      "negative_fact_gates": 3,
+      "rule": "A0 is accountable for the completeness of the registry, never for the outcome of any entry",
+      "round3_rule_addition": "when a mechanism's safety depends on an operation always producing an effect, the conditions under which it does not produce that effect must be registered as well; registering only the positive case counts as not registered",
+      "round4_gates_added": [
+        "K8S_ANNOTATION_PATCH_HONORS_RV_PRECONDITION",
+        "EXCLUSION_RECORD_UNREACHABILITY_IS_NOT_TERMINAL",
+        "TRANSITION_ENUMERATION_BLIND_WINDOW"
+      ]
+    },
+    "s3_subtraction_first": {
+      "applied": true,
+      "scope": "whole document",
+      "rule": "before freezing a new mechanism, state concretely what breaks without it; self-found findings need source verification exactly as much as reviewer findings do",
+      "largest_change_round3": "deletion of the entire exclusion retention mechanism, closing P1-9, P1-10, P1-11 and P2-1 at once and restoring the A1R additive-only claim",
+      "largest_change_round4": "deletion of the RELEASED_BY_HOLDER_ABSENT inert branch, which was the source of the round-4 P0, plus full retraction of the round-3 P1-3 remediation",
+      "round4_rule_addition": "reviewer findings must be verified against source exactly as self-found ones are, and verifying that a finding's cited evidence is true is not the same as verifying that its conclusion is true; round-3 P1-3 cited a completely accurate rg output and drew a conclusion contradicted by the source"
+    },
+    "s4_scope_narrowing": {
+      "applied": true,
+      "sections": [
+        "7.2",
+        "8.3"
+      ],
+      "rule": "for a mechanism whose correctness depends entirely on precise platform or storage behaviour, A0 freezes only the safety properties and the fail-closed default; the algorithm is deferred to a stage where a test can falsify it",
+      "evidence": "sections 7.2 and 8.3 each produced a P0 or P1 in three consecutive rounds, and each remediation added a branch or constraint that became the next round's defect. Both P0s were facts a twenty-line test settles in minutes, yet each survived a full round of document-level adversarial review",
+      "frozen_properties": {
+        "section_7_2": [
+          "SP-BAR-1",
+          "SP-BAR-2",
+          "SP-BAR-3",
+          "SP-BAR-4",
+          "SP-BAR-5"
+        ],
+        "section_8_3": [
+          "SP-EXCL-1",
+          "SP-EXCL-2",
+          "SP-EXCL-3",
+          "SP-EXCL-4",
+          "SP-EXCL-5",
+          "SP-EXCL-6"
+        ]
+      },
+      "corollary": "a cheap unconditional fallback beats a precise platform assumption; SP-BAR-3 converts a check that was previously guaranteed by a preflight gate into an unconditional one",
+      "not_a_relaxation": "narrowing reduced the relaxable surface and increased the number of unconditional checks; any second positive proof under SP-EXCL-2 or any change to the SP-BAR-2 triple requires an A0 amendment",
+      "round5_amendment": "scope narrowing waives the obligation to freeze an algorithm, not the obligation to propagate. R5-08 showed a correct safety fix that never reached section 16, the section A1R implements against, which is equivalent to not having fixed it. Any P0-grade remediation must now grep the whole document and this JSON for every count and every enumeration of the affected mechanism and update each one"
+    },
+    "s5_cross_stage_compile_dependency": {
+      "applied": true,
+      "sections": [
+        "8.1",
+        "11.5",
+        "11.6",
+        "12.2",
+        "12.3R"
+      ],
+      "rule": "compile edges between an interface change and every one of its implementers must be enumerated exhaustively; the interrupted implementation files are covered by a restricted, temporary, mechanically checkable conformance edit right held by A0.5 and transferred to A1R at the seam commit",
+      "evidence": "round 4 dismissed the C18 edge with a sentence about co-landing that is unexecutable under three of the document own rules, and the enumeration was incomplete: there are four edges across three contracts, not one",
+      "conformance_edit_definition": [
+        "C1 only change an existing signature to match the new interface, or add a method the new interface requires",
+        "C2 byte-for-byte behaviour equivalence on every existing call path; a newly added parameter such as ctx is accepted and ignored at A0.5 and made effective by A1R",
+        "C3 a newly added method body may only be the fail-closed ErrNotImplementedUntilA1R sentinel",
+        "C4 no Lua script, key or schema changes"
+      ],
+      "ownership_model": "sequential handover rather than concurrent sharing; section 11.6 now clarifies that the non-overlap rule constrains two writers at the same instant, not one file across the project lifetime",
+      "corollary": "a cross-stage compile edge is something go build surfaces in five minutes yet survived five rounds of document-level review, which is itself evidence that some classes of defect can only be falsified by an implementation stage",
+      "round6_revision": {
+        "unit_correction": "the enumeration unit is the compilation unit, not the file. Go compiles a package together with its _test.go files, so go build cannot see those edges but go test must, and the A0.5 gate requires go test to pass",
+        "method_correction": "manual enumeration abandoned after two consecutive incomplete rounds. The true edge set is measured from the deduplicated error package paths of go build, go vet and go test; the seven-row table now only scopes the work and exposes ownership gaps",
+        "known_edges": 7,
+        "edges_added_this_round": [
+          "cmd/routectl/main_test.go:342 (owned by A4, outside the A0.5 conformance right until extended)",
+          "internal/storage/redis/routecontrol/routecontrol_test.go, six Bootstrap call sites (A1R, inside the conformance right)",
+          "internal/testkit/capstaticroute/liveness_integration_test.go:27 (previously owned by nobody, the eleventh write-set gap)"
+        ],
+        "sentinel_declaration_site": "not a conformance edit; declared once in A0.5's own write set, default internal/routecontrol/conformance.go"
+      }
+    },
+    "s6_criterion_split": {
+      "added_in_round": 6,
+      "statement": "separate what must be proven by the document from what can only be falsified by the implementation. A0 exit becomes P0 = 0 plus a complete carry-forward list plus zero safety-class items",
+      "dividing_line": "the safety-class test, not difficulty or effort",
+      "evidence": {
+        "finding_totals_by_round": [
+          11,
+          6,
+          20,
+          11,
+          14,
+          10
+        ],
+        "p0_by_round": [
+          1,
+          1,
+          1,
+          1,
+          0,
+          0
+        ],
+        "observation": "P0 converged and has survived independent attack by two different reviewers. P1 never converged, oscillating between 6 and 20, because each closure freezes new specification surface written against unverified source",
+        "round6_self_inflicted": "5 of 5 P1"
+      },
+      "cost_accepted": "compile-edge completeness, DEGRADED persistability and the channel B substrate move from external-review assurance to implementation discipline. The only compensating control is that each binds a boolean gate whose failure rolls the stage back",
+      "landing": [
+        "0",
+        "12.1",
+        "12.8",
+        "20.8",
+        "20.9"
+      ]
+    }
+  },
+  "plan_contracts": {
+    "threat_model": "DEFINED_ROUND5_CANDIDATE",
+    "a0_5_sealed_extension_seam": "DEFINED_ROUND5_CANDIDATE",
+    "a0_5_mutation_barrier_is_existing_seam": "DEFINED_SEVEN_ENTRYPOINTS_ALREADY_IN_BARRIER_UNEXPORT_OWNER_METHOD_KEEP_RUNTIME_FACADE_EXPORTED",
+    "a0_5_reference_adapter_gate": "DEFINED",
+    "durable_repository": "DEFINED",
+    "redis_keyspace_same_slot": "DEFINED",
+    "redis_authoritative_time": "DEFINED",
+    "redis_schema_and_retention": "DEFINED",
+    "redis_atomic_lua": "DEFINED",
+    "redis_integer_domain_bound": "DEFINED_SCALEPLAN_KEYSPACE_ONLY",
+    "redis_corruption_latch": "DEFINED_WITH_TWO_CHANNEL_AUTHORIZATION_AND_PER_CHANNEL_APPEAL_PATHS_AND_CAPABILITY_LIFECYCLE",
+    "redis_acl": "DEFINED",
+    "schema_migration": "DEFINED",
+    "kubernetes_cas": "DEFINED",
+    "kubernetes_rv_cancellation_barrier": "DEFINED_PROPERTY_ONLY_SP_BAR_1_TO_5_WITH_ORDERED_THREE_WAY_CHECK_AND_THREE_WAY_REPLICAS_SPLIT",
+    "kubernetes_resolution_only_operation": "DEFINED_WITH_F58C_FOUR_ROW_RESOLUTION_DISPOSING_BOTH_OPERATIONS_AND_AN_EXPLICIT_DECREASING_MEASURE",
+    "kubernetes_fake_semantics": "DEFINED",
+    "trusted_identity_join": "DEFINED",
+    "placement_complete_snapshot": "DEFINED",
+    "placement_exclusion_lifecycle": "DEFINED_PROPERTY_ONLY_SP_EXCL_1_TO_6_NO_RETENTION_MECHANISM_SINGLE_INERT_BRANCH_SEVEN_OUTCOME_ENUMERATION_BOUNDED_ESCALATION",
+    "transition_quiescence_universal_evidence": "DEFINED_ENUMERATION_PLUS_CARDINALITY_PLUS_END_REVALIDATE_WITH_NIL_STORE_FAIL_CLOSED_MARKER",
+    "routeplan_durable_stop": "DEFINED_STAGE_A1R_OWNED",
+    "distributed_quiescence_fence": "DEFINED",
+    "holder_renew_liveness_exemption": "DEFINED_WITH_PROOF_OBLIGATIONS",
+    "snapshot_bootstrap_fence": "DEFINED_TWO_WRITERS_ENUMERATED",
+    "controller_composition_off_default": "DEFINED_TRISTATE_ENFORCED_AT_STARTUP",
+    "failure_matrix": "DEFINED_F01_F66_PLUS_F58A_TO_F58G_F61A_TO_F61G_F62A_TO_F62D",
+    "writer_and_write_set_partition": "DEFINED_AUDITED_WITH_S5_CONFORMANCE_EDIT_RIGHT_OVER_FOUR_ENUMERATED_CROSS_STAGE_COMPILE_EDGES",
+    "preflight_gate_registry": "DEFINED",
+    "formal_perf_lock": "DEFINED",
+    "k3s_runtime_mutation_lock": "DEFINED",
+    "a5_isolation": "DEFINED_NOT_AUTHORIZED",
+    "a6a_execution_capacity": "DEFINED_NOT_AUTHORIZED",
+    "a6b_autoscaling_policy": "SEPARATED_NOT_AUTHORIZED"
+  },
+  "independent_review": {
+    "verdict": "A0_EXIT_PENDING_USER_AUTHORIZATION",
+    "rounds_completed": 6,
+    "p0_status": "ZERO_FOR_TWO_CONSECUTIVE_ROUNDS",
+    "exit_criterion": {
+      "changed_in_round": 6,
+      "previous": "0/0/0",
+      "current": "P0 = 0, every unclosed P1/P2 in the carry_forward list with an owner stage, a criterion and a mechanical action, and zero safety-class items",
+      "p0_relaxed": false,
+      "rationale_section": "0 and 20.9"
+    },
+    "open_findings": [],
+    "carried_forward": [
+      "CF-1",
+      "CF-2",
+      "CF-3"
+    ],
+    "authorization_requested": {
+      "stage": "A0.5",
+      "scope": "the exact Owned Write Set in 8.1 plus the S5 conformance edit right",
+      "not_requested": [
+        "A1",
+        "A1R",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "real Redis or Kubernetes connections",
+        "runtime mutation",
+        "performance sampling"
+      ],
+      "mandatory_first_action": "CF-1, measure the compile-edge set before any design work",
+      "exit_gate": "12.2, including the four gates added or rewritten this round",
+      "rollback": "any failing gate rolls the whole stage back; carrying unresolved items into A1 is not permitted"
+    },
+    "if_user_prefers_another_review_round": {
+      "focus": [
+        "whether the three-part safety-class definition is exhaustive, and whether classifying R6-05 and R6-08 as non-safety-class holds",
+        "whether the CF-1 commands really surface every edge, including cgo, build tags, //go:build ignore and generated code",
+        "whether the CF-2 candidate shapes are exhaustive and whether shape three's 'affects no criterion' claim is true",
+        "whether CF-3's default-to-delete could quietly become default-to-keep during implementation"
+      ],
+      "do_not_relitigate": "the safety properties attacked across six rounds, in particular the 8.3 P0 fix which two independent reviewers failed to break"
+    }
+  },
+  "checks": {
+    "formal_perf_lock": "ABSENT",
+    "json_parse": "PASS",
+    "json_duplicate_keys": "PASS",
+    "git_diff_check": "PASS",
+    "only_allowed_files_changed": "PASS",
+    "source_audit_commands_reproducible": "PASS",
+    "go_test": "NOT_RUN_A0_DOCS_ONLY",
+    "race": "NOT_RUN_A0_DOCS_ONLY",
+    "vet": "NOT_RUN_A0_DOCS_ONLY",
+    "build": "NOT_RUN_A0_DOCS_ONLY",
+    "external_runtime": "NOT_TOUCHED"
+  },
+  "readiness": {
+    "a0_pass": false,
+    "ready_to_request_a0_5_a1_a4_authorization": false,
+    "ready_for_adapter_implementation": false,
+    "ready_for_deployment": false,
+    "ready_for_a5": false,
+    "ready_for_a6": false,
+    "ready_for_sp3": false,
+    "supports_30m_dau": false
+  },
+  "repository_actions": {
+    "push": "NOT_PERFORMED",
+    "merge": "NOT_PERFORMED",
+    "rebase_integration": "NOT_PERFORMED",
+    "tag": "NOT_PERFORMED"
+  },
+  "round5_remediation": {
+    "all_round5_findings_addressed": true,
+    "guiding_principle": "seven of the eight P1 findings were local omissions or self-contradictions and were fixed in place; the eighth, R5-03, was the only structural one and produced S5. The round also added a propagation discipline to S4, because R5-08 showed that fixing a safety property without updating the section that the implementing stage reads is equivalent to not fixing it",
+    "finding_origin_analysis": {
+      "introduced_by_round4_remediation": 5,
+      "preexisting_but_undiscovered": 2,
+      "propagation_failures": 1,
+      "p0_source_by_round": {
+        "round1": "original draft",
+        "round2": "original draft",
+        "round3": "round-2 remediation",
+        "round4": "round-3 remediation",
+        "round5": "none; first round with zero P0"
+      },
+      "note": "P0 reached zero for the first time and the round-4 P0 fix survived direct attack from three directions. The residual risk moved from safety properties to propagation and to the staging model itself"
+    },
+    "items": [
+      {
+        "finding": "R5_08_P1_P0_FIX_NOT_PROPAGATED_TO_TEST_STRATEGY_AND_STOP_CONDITIONS",
+        "resolution": "PROPAGATED_TO_SECTION_16_SECTION_17_AND_THIS_JSON",
+        "sections": [
+          "16",
+          "17"
+        ],
+        "severity_note": "highest consequence finding of the round: section 16 is what A1R implements against, and following it verbatim would have rebuilt the deleted round-4 P0",
+        "detail": "section 16 replaced the one-line A1R instruction with a per-outcome assertion table that mirrors the section 8.3 table row for row, and now mandates a counter-example test that drives the TTL-lapse then same-boot re-registration sequence and asserts the plan does not terminalize. Section 17 now names BOOT_MISMATCH as the sole inert branch and adds a stop condition for any fifth capture outcome. Section 16 also gained a per-branch table for the barrier so the same propagation gap cannot recur there"
+      },
+      {
+        "finding": "R5_01_P1_UNOWNED_WRITE_PATH_MEMORY_REPOSITORY",
+        "resolution": "ASSIGNED_TO_A0_5_UNDER_C01_AND_C02",
+        "sections": [
+          "8.1",
+          "11.2:C01",
+          "11.2:C02"
+        ],
+        "detail": "internal/scaleplan/memory_repository.go is the sole implementer of both ScalePlanRepository at repository.go:49 and blockedTerminationRepository at blocked_termination.go:25, providing repositoryIdentity:52, enterPlanMutation:54, commitBlockedTermination:150 and ListRecoverable:211. The section 5.3 seam change requires editing it",
+        "method_lesson": "this round cited the file three times as evidence in section 5.3 and still did not ask who owns it; citing a file is not the same as enumerating it"
+      },
+      {
+        "finding": "R5_02_P1_UNOWNED_WRITE_PATH_TRANSPORT_TEST_DOUBLE",
+        "resolution": "ASSIGNED_TO_A0_5_UNDER_C07_PLUS_GLOB_NON_RECURSION_MADE_EXPLICIT",
+        "sections": [
+          "8.1",
+          "11.2:C07"
+        ],
+        "detail": "handshakeRaceStore in internal/routecontrol/transport/watch_handshake_test.go implements core.RouteSnapshotStore through LoadCurrent:164 and CompareAndSwap:174 without ever naming the interface, and the internal/routecontrol/*_test.go glob does not recurse into transport/. Section 8.1 now states glob non-recursion as a hard convention",
+        "method_lesson": "section 11.1 defect 3 was written to catch exactly this shape and was adopted in words this round, but was not re-run over C07"
+      },
+      {
+        "finding": "R5_03_P1_CROSS_STAGE_COMPILE_DEPENDENCY_IS_NOT_EXECUTABLE",
+        "resolution": "NEW_STRUCTURAL_CHANGE_S5_CONFORMANCE_EDIT_RIGHT",
+        "sections": [
+          "8.1",
+          "11.5",
+          "11.6",
+          "12.2",
+          "12.3R",
+          "20.8"
+        ],
+        "only_structural_finding_of_the_round": true,
+        "detail": "three of the document own rules formed a cycle: the A0.5 gate requires the repository to compile, compiling requires the A1R half, and A1R may not start before a reviewed A0.5 with non-overlapping write sets. Round 4 dismissed this with a sentence about co-landing, which is not executable, and it covered only C18 when there are four edges: two from C07/C08 through the interface assertions at redis snapshot_store.go:30-31 and the direct calls in cap-static-route-init/main.go:245,269,271, one from C09/C10 through holder_store.go:275, and one from C18 through transition_store.go:38-40",
+        "mechanism": "A0.5 holds a restricted, temporary, mechanically checkable conformance edit right over the four files: only signature changes or added methods, byte-for-byte behaviour preservation on all existing call paths, new method bodies restricted to the fail-closed ErrNotImplementedUntilA1R sentinel, and no Lua, key or schema changes. Ownership transfers to A1R at the seam commit, so only one writer exists at any instant",
+        "new_gates": [
+          "conformance_edits_are_behavior_preserving",
+          "cross_stage_compile_edges_enumerated",
+          "no_conformance_sentinel_remains"
+        ],
+        "superseded_in_round_6": "cross_stage_compile_edges_enumerated was replaced by compile_edge_set_measured_not_enumerated. The round-5 count of four edges was wrong because the enumeration unit was the file rather than the compilation unit; three test-side edges were missing. See round6_remediation and structural_changes.s5_cross_stage_compile_dependency.round6_revision"
+      },
+      {
+        "finding": "R5_04_P1_BARRIER_STEP_4C_OVERCLASSIFIES_THIRD_PARTY_MUTATION_AS_COMMITTED",
+        "resolution": "HEADER_RECONCILED_AND_BRANCH_C_SPLIT_THREE_WAYS",
+        "sections": [
+          "7.2",
+          "10:F58d",
+          "10:F58e",
+          "10:F58f"
+        ],
+        "detail": "the header said any missing check means unknown while the three branches assigned three different non-unknown outcomes, so neither could be followed. The header now says classify by the table and fixes the evaluation order as (b) then (a) then (c). Branch (c) was a two-way split on spec.replicas but the threat model has three value classes, so a third-party value modelled by F43 was being classified as adopted committed, which routes to the section 8.3 COMMITTED row and leaves a live same-boot victim with a permanently unreleasable exclusion. It is now a three-way split with the third value going to unknown",
+        "new_failure_matrix_rows": [
+          "F58f"
+        ]
+      },
+      {
+        "finding": "R5_05_P1_F58C_THIRD_BRANCH_LEAVES_THE_BARRIER_OPERATION_UNRESOLVED",
+        "resolution": "EVERY_BRANCH_DISPOSES_BOTH_OPERATIONS_PLUS_AN_EXPLICIT_DECREASING_MEASURE",
+        "sections": [
+          "7.2",
+          "10:F58c",
+          "10:F58g"
+        ],
+        "detail": "F58c is the one branch added to prove termination and its third case handed control to step 5 for the scale operation without saying what happens to the barrier operation, leaving it in the active set forever. It is now a four-row table where every row disposes of both operations, with the third row closing the barrier as SUPERSEDED because the safety property depends only on RV differing from V0 and not on who advanced it. The claim of necessary termination was replaced by an explicit decreasing measure, namely that the active set contracts monotonically because no branch emits a write, and sustained GET failure now escalates to a non-terminal operator-visible degraded state rather than being asserted away",
+        "new_failure_matrix_rows": [
+          "F58g"
+        ]
+      },
+      {
+        "finding": "R5_06_P1_CHANNEL_B_LATCH_IS_STRUCTURALLY_UNCLEARABLE",
+        "resolution": "APPEAL_PATH_FORKS_BY_CHANNEL_PLUS_CAPABILITY_LIFECYCLE_DEFINED",
+        "sections": [
+          "6.4",
+          "6.10",
+          "10:F62b",
+          "10:F62c",
+          "10:F62d"
+        ],
+        "detail": "the clearing procedure required proof that the detector held a valid fence at detection time, which a channel B detector never holds by construction, so a channel B latch could never be cleared and the realm was permanently locked. Clearing now forks on detector_identity: channel A proves a fence, channel B proves the capability was issued, unrevoked and bound to the same store_epoch as store_epoch_at_detection, which is the equivalent strength proof of having observed current state. The capability now has a named issuer tied to the coordinator trust root, a TTL, one-time consumption, revocation and rate limiting",
+        "equivalence_claim_corrected": "a pinned store_epoch equals a mutation lease only on the staleness dimension; on the concurrency dimension it is strictly weaker because two concurrent same-epoch detectors are not mutually excluded, which is harmless for a latch but does not exclude a buggy concurrent detector",
+        "dos_surface": "acknowledged as intended rather than defended away: any holder of a valid audit capability can permanently fail-close a realm, because that is precisely the value of a latch. Mitigation lives in issuance, revocation and rate limiting, not in weakening the ability to set it",
+        "new_failure_matrix_rows": [
+          "F62c",
+          "F62d"
+        ]
+      },
+      {
+        "finding": "R5_07_P1_F61E_LIVENESS_EXIT_CLAIM_IS_FALSE_AND_HAS_NO_OPERATOR_ESCAPE",
+        "resolution": "CLAIM_DELETED_AND_REPLACED_BY_BOUNDED_ESCALATION_TO_A_NON_TERMINAL_DEGRADED_STATE",
+        "sections": [
+          "8.3",
+          "10:F61e",
+          "10:F61f"
+        ],
+        "detail": "StatefulSet semantics guarantee the Pod object is recreated, not that the Holder process registers, and only registration creates the record current_holder reads. CrashLoopBackOff, ImagePullBackOff, unschedulable, unbound PVC and a NotReady node all leave the Pod indefinitely unregistered, and the section 14.1 requirement to apply a ResourceQuota and a low priority PriorityClass makes an indefinitely Pending Pod more likely rather than less",
+        "harm_decomposition": "the exclusion record itself is harmless while NOT_FOUND persists, because with no holder record current_holder rejects before load_placement is reached and nothing can be placed on that holderID anyway. What is actually accruing is the BLOCKED plan retaining workload ownership, which is a liveness cost and not a safety one, so the exit only needs to address that",
+        "new_property": "SP-EXCL-6 requires bounded escalation to an operator-visible degraded state that changes visibility only and may not alter any SP-EXCL-1 through SP-EXCL-3 criterion or add a terminal branch",
+        "operator_dispositions": [
+          "fix the root cause preventing the Pod from running so registration moves capture to OK or BOOT_MISMATCH",
+          "delete the victim Pod so that if it returns it necessarily carries a new BootID and reaches BOOT_MISMATCH",
+          "for a permanently unrunnable Pod, the already registered second positive proof from the Kubernetes side, which requires an A0 amendment and is not enabled in this version"
+        ],
+        "not_an_escape_hatch": "TerminateBlockedScalePlan from section 9.4 remains forbidden for this state, because a manual button that terminalizes would restore the round-4 P0 with a human in the loop",
+        "new_failure_matrix_rows": [
+          "F61f"
+        ]
+      },
+      {
+        "finding": "R5_P2_1_CAPTURE_OUTCOME_SET_IS_NOT_EXHAUSTIVE",
+        "resolution": "ENUMERATED_BY_ACTUAL_SCRIPT_RETURN_CODES_SEVEN_ROWS",
+        "sections": [
+          "8.3",
+          "12.7",
+          "10:F61g"
+        ],
+        "detail": "the table now enumerates what getPlacementExclusionScript can actually return rather than what the design anticipated: FOUND, BOOT_MISMATCH, NOT_FOUND, MALFORMED, CROSS_SLOT, REVISION_EXHAUSTED and transport failure. Only FOUND with a successful CAS and BOOT_MISMATCH permit terminal. REVISION_EXHAUSTED is listed with a proof that it is unreachable on the release path, because release always captures with the bootID it excluded and any boot rollover short-circuits at current_holder before load_placement, so observing it is a REQUIRED_FINDING",
+        "new_failure_matrix_rows": [
+          "F61g"
+        ]
+      },
+      {
+        "finding": "R5_P2_2_DISPROVEN_INFERENCE_SURVIVES_IN_THE_RELEASE_TIMING_TABLE",
+        "resolution": "JUSTIFICATION_RESTATED_AS_BOOT_ROLLOVER",
+        "sections": [
+          "8.3"
+        ],
+        "detail": "the COMMITTED row justified not releasing by the record becoming inert as the holder disappears, which is the inference this round deleted. The ground is boot rollover: the ordinal returns with a new BootID and load_placement synthesizes an unexcluded baseline, matching section 1.2 and F61b"
+      },
+      {
+        "finding": "R5_P2_3_BLIND_WINDOW_GATE_OMITS_THE_NIL_STORE_BRANCH",
+        "resolution": "PRECONDITION_STATED_PLUS_FAIL_CLOSED_MARKER",
+        "sections": [
+          "12.7"
+        ],
+        "detail": "recoveryStoreLocked at manager.go:2628-2634 returns nil both when tombstones is nil and when the type assertion fails, and in that case reserveRecoveryLocked and markAuthorityAttemptedLocked write nothing durable. The nil branch of markAuthorityAttemptedLocked at :2670 sets the in-memory memo flag and returns, so an in-process observer cannot distinguish recorded from not recorded. The gate now states the construction precondition and requires the quiescence read path to check for a nil store explicitly rather than treating its empty return as an empty set"
+      },
+      {
+        "finding": "R5_P2_4_STALE_ROUND_LABELS_AND_STRUCTURAL_CHANGE_COUNT",
+        "resolution": "LABELS_AND_COUNT_UPDATED",
+        "sections": [
+          "0"
+        ],
+        "detail": "the A0 gate now records round 4 and round 5 verdicts and round 6 as pending, the candidate heading reads round-6, and the structural change summary in section 0 lists all five including S4 and the new S5"
+      },
+      {
+        "finding": "R5_P2_5_GATE_COUNT_DISAGREES_WITH_THE_GATES_ADDED",
+        "resolution": "COUNT_CORRECTED",
+        "sections": [
+          "20.9"
+        ],
+        "detail": "the section 12.7 registry holds 20 gates. The round-5 candidate added three of which two were counter-examples, not four with three. This round adds none and revises two"
+      },
+      {
+        "finding": "R5_P2_6_FROZEN_SEAM_SHAPE_CONTRADICTS_THE_EXPORT_TIGHTENING_REQUIREMENT",
+        "resolution": "DECIDED_SEPARATELY_FOR_THE_TWO_DISTINCT_METHODS",
+        "sections": [
+          "5.3",
+          "12.2"
+        ],
+        "detail": "these are two methods on two types pointing in opposite directions. BlockedTerminationOwner.EnterPlanMutation becomes unexported, which is what the section 5.2 encapsulation intent actually targets and which breaks nothing because all seven callers are in-package. ProductionRuntime.EnterPlanMutation stays exported because the reference_adapter_exercises_every_seam gate requires the cross-package reference adapter in internal/testkit/scaleplan to obtain a guard and exercise guard context cancellation"
+      }
+    ]
+  },
+  "round6_remediation": {
+    "policy": "close what a reviewer must confirm; carry forward what a compiler can settle",
+    "closed_in_document": {
+      "R6_04": {
+        "severity": "P1",
+        "safety_class": true,
+        "resolution": "F58c split into F58c.1 through F58c.4, each carrying its own ownership verdict. Only row 1, and only when step 4 avoids F58d/F58e/F58f, permits release; rows 2 and 3 leave the scale operation pending so ownership is retained. Row 2 registers a fresh barrier operation in the same step it closes the old one, so the active set does not contract at all",
+        "secondary_correction": "the decreasing-measure claim was scoped to rows 1 and 3. Rows 2 and 4 are bounded by barrier_resolve_escalation_attempts instead. What is guaranteed is the absence of a silent infinite loop, not termination",
+        "landing": [
+          "7.2",
+          "F58c.1-F58c.4",
+          "16"
+        ]
+      },
+      "R6_03": {
+        "severity": "P1",
+        "resolution": "section 16 row keys are now defined as a verbatim copy of the section 8.3 first column, and a new A1R gate exclusion_outcome_rows_match_section_8_3 compares the two key sequences mechanically in both directions",
+        "note": "this is R5-08 recurring verbatim, and it occurred inside the same revision that wrote the S4 propagation discipline. Human synchronisation of duplicated tables is therefore no longer accepted as a control",
+        "landing": [
+          "16",
+          "12.3R"
+        ]
+      },
+      "R6_01_part": {
+        "severity": "P1",
+        "resolution": "enumeration unit corrected from file to compilation unit. Three test-side edges added: cmd/routectl/main_test.go, internal/storage/redis/routecontrol/routecontrol_test.go, internal/testkit/capstaticroute/liveness_integration_test.go. The capstaticroute directory switched from named files to globs, closing the eleventh write-set gap",
+        "note": "the gap arose because the same revision that froze the no-recursion rule for globs used named files one directory over",
+        "retracted": "the stop condition 'a fifth compile edge means the method is wrong' was withdrawn. It mistook incomplete manual enumeration for a design defect",
+        "landing": [
+          "8.1 S5",
+          "11.2 C09/C14"
+        ]
+      },
+      "R6_06": {
+        "severity": "P2",
+        "resolution": "stop condition reworded to 'a return value outside the seven-row table', with the table's provenance stated",
+        "landing": [
+          "17"
+        ]
+      },
+      "R6_07": {
+        "severity": "P2",
+        "resolution": "the sentinel declaration is explicitly not a conformance edit; it lands in A0.5's own write set, default internal/routecontrol/conformance.go, relocated to a leaf package if go build reports an import cycle. A1R must clear both declaration and call sites",
+        "landing": [
+          "8.1 S5",
+          "12.3R"
+        ]
+      },
+      "R6_09": {
+        "severity": "P2",
+        "resolution": "desired == R makes the first two sub-branches of step 4(c) fire simultaneously with opposite dispositions. Rather than fixing an evaluation order, such submissions are rejected before any operation is registered, enforced by section 6.2 validation with an A2 assertion",
+        "landing": [
+          "7.2",
+          "16"
+        ]
+      },
+      "R6_10": {
+        "severity": "P2",
+        "resolution": "line reference corrected from 1169 to 1168",
+        "landing": [
+          "8.3"
+        ]
+      }
+    },
+    "carried_forward": [
+      "CF-1",
+      "CF-2",
+      "CF-3"
+    ]
+  },
+  "carry_forward": {
+    "definition": "the sole settlement of the section 0 gate relaxation. A finding not listed here is not relaxed and still blocks A0 exit",
+    "safety_class_test": [
+      "would let a Plan terminalize in an unsafe state",
+      "would invalidate a fence, exclusion or barrier safety property",
+      "would degrade fail-closed into fail-open"
+    ],
+    "safety_class_count": 0,
+    "items": [
+      {
+        "id": "CF-1",
+        "source": "R6-01",
+        "severity": "P1",
+        "safety_class": false,
+        "problem": "the true set of cross-stage compile edges has never been measured. The seven-row table is a manual artefact that has been proven incomplete in two consecutive rounds",
+        "owner_stage": "A0.5",
+        "ordering": "MUST_BE_THE_FIRST_ACTION",
+        "mechanical_action": "go build ./..., go vet ./..., go test ./... with a non-matching -run, then deduplicate the error package paths and diff against the seven-row prior table",
+        "bound_gate": "compile_edge_set_measured_not_enumerated",
+        "if_skipped": "A0.5 would claim the seam commit compiles without ever having built the test units; A1R would discover unowned interrupted packages and the round-5 loop would restart",
+        "status": "CLOSED",
+        "preflight_result": "true set measured at 8 packages and 20 files; four differences against the prior table, two of them new, all closed in section 8.1. Two method defects found and corrected in S5. C09/C10 empirically closed; C07/C08 and C18 still need the same add-iterate-revert loop",
+        "bound_gate_additions": [
+          "break set and edit set recorded separately",
+          "prior table and write set produced by one mechanical action"
+        ],
+        "closure": "driven to a fixed point at 17 rounds. Findings CF1-F1..F6 recorded; F6 (name-based patching cannot separate unrelated interfaces that share a method name) changed the method, not just the result"
+      },
+      {
+        "id": "CF-2",
+        "source": "R6-02",
+        "severity": "P1",
+        "safety_class": false,
+        "problem": "DEGRADED_EXCLUSION_UNRELEASED and DEGRADED_BARRIER_UNRESOLVED require persisting an attempt count and a first-entry timestamp, but Plan has no counter field (model.go:365-395) and state_machine.go:87-91 forbids changing BlockedReason while BLOCKED except for one whitelisted edge. Both files are A1-forbidden and owned by no stage",
+        "not_an_oversight": "the design conflicts with an existing freeze. The current state machine models BLOCKED as 'reason fixed once set'; the single whitelisted exception shows the shape a fix would take",
+        "owner_stage": "A0.5 decides shape and ownership, A1 lands the codec",
+        "candidate_shapes": [
+          "add two counter fields to Plan, which changes the record shape and drags in section 6.2 and the A1 codec goldens",
+          "extend the blockedExpired whitelist so DEGRADED is a legal BlockedReason transition, which needs a separate counter carrier",
+          "do not persist at all; keep the count in Controller memory and expose DEGRADED only as a metric. Cheapest, lost on restart, and probably acceptable because DEGRADED participates in no safety criterion"
+        ],
+        "bound_gate": "degraded_state_persistence_owner_assigned",
+        "if_skipped": "A1R has nowhere to write the count and either edits A1-forbidden files, hitting a section 17 stop condition, or silently drops DEGRADED, voiding the bounded-escalation arguments in 7.2 and 8.3",
+        "status": "CLOSED",
+        "decision": "shape (c): the DEGRADED escalation counters stay in controller memory and are not persisted in the Plan record",
+        "justification": "DEGRADED feeds no safety decision. Every DEGRADED path leaves the plan BLOCKED, which is already fail-closed, so a count lost to a restart buys extra retries rather than an unsafe action. Shapes (a) and (b) both require editing model.go or state_machine.go, which are A1-forbidden, and (b) would add a second BlockedReason mutation path to a state machine whose whole design is that the reason is fixed once determined",
+        "accepted_cost": "after a controller restart the operator-visible DEGRADED signal resets, so a plan that keeps failing across restarts may never surface it. This is a monitoring gap, not a correctness one, and it is the reason the decision is recorded rather than assumed",
+        "guard": "TestBlockedReasonHasExactlyOneWhitelistedTransition pins the single whitelisted transition, so adding a DEGRADED edge reopens CF-2 instead of silently outgrowing it",
+        "model_and_state_machine_owner": "A0.5, which chose not to modify either file. Any later need to modify them is an A0 amendment, not a stage decision"
+      },
+      {
+        "id": "CF-3",
+        "source": "R6-05 and R6-08",
+        "severity": "P1 and P2",
+        "safety_class": false,
+        "safety_class_rationale": "channel A stands independently and is not weakened. A missing channel B removes one detection path; it does not invalidate an existing property",
+        "problem": "the one-time audit capability needs an issued-and-unrevoked set, but the frozen keyspace has no key for it, no contract owns it, no retention or cap is defined, and the script checks only revocation. Checking revocation alone accepts capabilities that were never issued. The frozen ACL in 6.12 also has no read-only auditor principal, while channel B's premise is a read-only auditor performing one write",
+        "owner_stage": "A1 for keyspace and script, A0.5 for the 6.12 ACL principal",
+        "default_disposition": "DELETE_CHANNEL_B",
+        "default_rationale": "one usable channel beats claiming two",
+        "bound_gate": "channel_b_has_substrate_or_is_removed",
+        "if_skipped": "the only fail-open-flavoured item on the list. Operators would expect an auditor to be able to block writes when in fact it cannot",
+        "status": "CLOSED_AND_EXECUTED",
+        "decision": "delete channel B rather than complete it. Executed in the document, not merely recorded",
+        "justification": "the gap is real but currently inert. There is no auditor role in the system, AuditPage has no caller, and the ACL has no read-only audit principal. A gap on a path nobody walks carries no live risk",
+        "correction_to_first_draft": "the first draft justified this as removing redundancy nobody asked for. That was wrong in the place it mattered. Channel B is not redundant: per-operation validation has a bounded scope and never scans the realm, AuditPage exists precisely to cover the depth it cannot see, so channel B was the only path by which deep corruption could stop further writes",
+        "accepted_cost": "corruption found by AuditPage outside the touched-key set can only produce a read-only report. It cannot latch, and later mutations will not rediscover it because their validation scope is bounded. A realm known to be corrupt keeps being written to until a human reads the report",
+        "cost_of_building_it_instead": "a coordinator-issued short-lived capability plus issuance, revocation and rate-limiting; a Lua-side CAS against the issued-and-not-revoked set, since checking only revocation accepts credentials that were never issued; and a separate appeal path for clearing a mis-set latch. Section 6.5 has no key for it and section 11.2 has no contract owning it",
+        "reopen_trigger": "AuditPage acquires its first real runner. Before that the gap is inert; after it, the gap is fail-open",
+        "execution": {
+          "section_6_4_authorization": "two channels reduced to one; the gap shape kept in full",
+          "section_6_4_appeal": "detector_identity fork removed; the reason the fork existed kept, so a future non-lease channel cannot recreate the permanent deadlock",
+          "section_16_cases": "five channel B cases deleted; the negative case subject widened to any holder without a valid lease; one new case asserts the gap itself",
+          "F62a": "verdict inverted from must-latch to report-only, marked accepted gap",
+          "F62b": "subject widened",
+          "F62c_F62d": "deleted",
+          "section_4_4": "accepted-gap section added with cost, build cost and reopen trigger",
+          "gate_lines": "channel_b_has_substrate_or_is_removed and auditor_principal_decided both marked satisfied",
+          "superseded_markers": "round-3 P1-12, round-4 R4-07 and round-5 R5-06 rows marked superseded so history is not read as current state"
+        },
+        "kept_as_history": "section 0 round-6 classification, section 12.8 CF-3 entry, and the round-4/5/6 closure tables. They record why it was judged that way at the time"
+      }
+    ],
+    "discipline": [
+      "the list only shrinks. New same-class problems found during A0.5 go back to review via the section 17 stop condition rather than being appended",
+      "every item binds a boolean on its owner stage's gate, not a prose acknowledgement",
+      "CF-1 must complete first because CF-2 and CF-3 ownership decisions depend on its output"
+    ],
+    "cf1": {
+      "state": "CLOSED_FIXED_POINT_REACHED"
+    }
+  },
+  "cf1_preflight_run": {
+    "authorized_scope": "CF-1 only: interface signature and method-set changes, compile measurement, no implementations, fully reverted",
+    "baseline": {
+      "head": "0036d17b6d4add1b1a3092e3e5e0051f75bb5fd4",
+      "go_build": "exit 0",
+      "go_vet": "exit 0",
+      "test_units_compiling": 159,
+      "perf_lock": "ABSENT"
+    },
+    "post_run_state": {
+      "git_status": "the two authorized docs untracked, nothing else",
+      "go_build": "exit 0",
+      "go_vet": "exit 0",
+      "test_units_compiling": 159,
+      "probe_residue": "none"
+    },
+    "method_defects_found": [
+      {
+        "id": "CASCADE_MASKING",
+        "detail": "a failing package hides its entire dependency cone. With only the C07/C08 fence parameter applied, go build ./... reported internal/routecontrol alone; building the known downstream internal/storage/redis/routecontrol returned the upstream error, meaning it was never type-checked. The round-6 wording, deduplicate the error package paths in one shot, is therefore wrong and was replaced by iteration to a fixed point"
+      },
+      {
+        "id": "BUILDVCS_SUPPRESSION",
+        "detail": "without -buildvcs=false every cmd/** .test synthetic package fails VCS stamping in this worktree, exit status 128, so 120 packages go untyped. That alone hid internal/testkit/capstaticroute/placement_permit.go and internal/routeplan/placement_permit_test.go from the first measurement"
+      },
+      {
+        "id": "BREAK_SET_IS_NOT_EDIT_SET",
+        "detail": "the compiler reports use sites while the fix belongs at the type declaration. initializer.go:59 is in the break set but must not enter the write set, since it is a section 11.4 explicitly-unchanged entry. placement_exclusion.go is in the edit set but never appears in the break set. Both sets must be recorded separately"
+      }
+    ],
+    "measured_true_set": {
+      "packages": 8,
+      "files": 20,
+      "by_contract": {
+        "C07/C08": {
+          "packages": 7,
+          "files": 18
+        },
+        "C09/C10": {
+          "packages": 6,
+          "files": 9
+        },
+        "C18": {
+          "packages": 2,
+          "files": 4
+        }
+      },
+      "test_only_packages": [
+        "farmgame/cmd/routectl",
+        "farmgame/internal/routecontrol/transport",
+        "farmgame/internal/testkit/capstaticroute"
+      ]
+    },
+    "empirical_closure": {
+      "contract": "C09/C10",
+      "iterations_to_fixed_point": 2,
+      "result": "the compiler-derived edit set matched the type-probe prediction file for file; the eight implementers matched the section 11.2 C09 table",
+      "not_closed": "C07/C08 and C18 edit sets come from the type probe only; no add-iterate-revert loop was run for them"
+    },
+    "gaps_found": {
+      "new": [
+        "internal/routecontrol/watch_hub.go (twelfth write-set gap)",
+        "internal/routeplan/service.go (thirteenth write-set gap)"
+      ],
+      "listed_in_s5_table_but_absent_from_the_8_1_write_set": [
+        "cmd/routectl/main_test.go",
+        "internal/storage/redis/routecontrol/routecontrol_test.go",
+        "internal/storage/redis/routecontrol/holder_store_test.go"
+      ],
+      "failure_mode": "the second group is the table-changed-list-did-not third occurrence, after R5-08 and R6-03. The bound gate now requires the prior table and the write set to be produced by one mechanical action rather than transcribed"
+    },
+    "all_gaps_closed_in_this_revision": true
+  },
+  "a0_5_execution": {
+    "worktree": "farm-game-scaleplan-a0-5-20260813",
+    "branch": "codex/scaleplan-a0-5-20260813",
+    "base_commit": "0036d17b6d4add1b1a3092e3e5e0051f75bb5fd4",
+    "contract_docs_frozen_into_worktree": [
+      "docs/verification/scaleplan-sp3-production-adapter-implementation-plan.md",
+      "docs/verification/scaleplan-sp3-production-adapter-plan-status.json"
+    ],
+    "single_writer": true,
+    "push_or_merge_by_agent": false,
+    "commits": [
+      {
+        "sha": "c3752fa",
+        "subject": "A0.5 seam base: CF-1 compile-edge measurement to fixed point"
+      },
+      {
+        "sha": "ce06d5c",
+        "subject": "A0.5 seam: sealed production runtime, mutation guard, durable stop, exclusion release"
+      },
+      {
+        "sha": "2c093c5",
+        "subject": "gofmt mutation_lease.go"
+      },
+      {
+        "sha": "8c0807c",
+        "subject": "A0.5 reference adapter: exercise all six seams from a second package"
+      }
+    ]
+  },
+  "cf1_run": {
+    "authorized_as": "A0.5 mandatory first action, section 12.8 CF-1",
+    "worktree": "farm-game-scaleplan-a0-5-20260813",
+    "branch": "codex/scaleplan-a0-5-20260813",
+    "base_commit": "0036d17b6d4add1b1a3092e3e5e0051f75bb5fd4",
+    "baseline_verified": {
+      "go_build": "clean",
+      "go_vet": "clean",
+      "perf_lock_present": false
+    },
+    "method": "iterative loop from section 8.1 S5: signature-only changes, then build/vet/test-compile to a fixed point, recording break set and edit set separately",
+    "reached_fixed_point": true,
+    "halted_on": "halted at round 8 on the section 12.8 stop condition; the user resolved it by authorizing a leaf package, and the loop then ran to a fixed point at round 17",
+    "rounds": 17,
+    "break_set_files_per_round": [
+      1,
+      5,
+      6,
+      2,
+      10,
+      8,
+      2,
+      8,
+      13,
+      3,
+      2,
+      5,
+      4,
+      2,
+      1,
+      1,
+      0
+    ],
+    "break_set_is_not_monotonic": "round 4 fell to 2 and round 5 rose to 10; each repaired package lets the compiler start type-checking its dependency cone. Reading only round 1 understates the true set as 1 of 23.",
+    "measured_true_set": {
+      "files": 34,
+      "packages": 11,
+      "inside_owned_write_set": 19,
+      "inside_conformance_right": 8,
+      "outside_both": 7,
+      "new_packages": 1
+    },
+    "findings": [
+      {
+        "id": "CF1-F1",
+        "severity": "BLOCKER",
+        "title": "authority.SnapshotPublisher is a fourth, never-enumerated interface, and the token's home package creates a proven import cycle",
+        "detail": "Changing DurableSnapshotPublisher.Publish breaks internal/actorrouting/authority/manager.go:57 SnapshotPublisher, which binds structurally with no explicit assertion, so no name-based search finds it. Its implementer internal/actorrouting/provider.go DynamicAssignmentPublisher is in no stage's write set. Threading the token there is refused by the compiler: actorrouting -> routecontrol -> actorrouting.",
+        "consequence": "NestedControlOperationToken cannot live in internal/routecontrol. Section 8.1 S5 reserved a leaf-package fallback for the SENTINEL only; the token carries a stronger constraint because it appears in every changed signature.",
+        "needs": "write-set amendment, outside A0.5 authorization"
+      },
+      {
+        "id": "CF1-F2",
+        "severity": "P1",
+        "title": "seven of ten C18 call sites have no context in scope",
+        "detail": "NewRouteAssignmentManager plus five *Locked helpers. Only RecoverPendingProjections has a real context. Giving the constructor one is a 41-call-site change across 6 files and 4 packages, reaching internal/testkit/capstaticroute/initializer.go:59, which section 11.4 freezes as explicitly not modified.",
+        "disposition": "CF-1 records rather than decides: 8 sites use the greppable transitionStoreStartupContext() placeholder; A1R resolves."
+      },
+      {
+        "id": "CF1-F3",
+        "severity": "P2",
+        "title": "the preflight type-probe produced two false positives",
+        "detail": "watch_hub.go and routeplan/service.go were recorded as write-set gaps 12 and 13. Across 8 rounds neither ever entered the break set: both only hold RouteSnapshotStore as a field type and never call a changed method. Holding an interface type is not a compile edge.",
+        "lesson": "a type probe is still enumeration; only the compiler is mechanical",
+        "disposition": "both findings retracted; the write-set entries are harmless and stay"
+      },
+      {
+        "id": "CF1-F4",
+        "severity": "INFO",
+        "title": "section 11.4's explicitly-not-modified assertion is empirically confirmed",
+        "detail": "initializer.go broke in round 5 and left the break set in round 6 once placement_permit.go gained the method. It was never edited."
+      },
+      {
+        "id": "CF1-F5",
+        "severity": "INFO",
+        "title": "MemoryRouteSnapshotStore had no compile-time interface assertion",
+        "detail": "so it broke at its use sites rather than its declaration -- the mechanism behind break set and edit set not containing each other. A0.5 added both assertions so future signature drift surfaces at the declaration."
+      },
+      {
+        "id": "CF1-F6",
+        "severity": "P1",
+        "title": "patching by method name cannot separate two unrelated interfaces",
+        "detail": "CompareAndSwap belongs to both the snapshot store and the RoutePlan store; Publish-shaped literals belong to AuthorityReaderFunc, PendingProjectionTargetValidator, PendingDrainControllerFactory and a local newOptions helper. The bulk regex hit all five and the type checker caught each one.",
+        "implication": "direct counter-evidence for the section 11.1 audit method, which enumerates implementers and call sites by name and cannot separate the same cases"
+      }
+    ],
+    "prior_table_verdict": {
+      "edge_1_redis_snapshot_store": "confirmed",
+      "edge_2_cap_static_route_init": "not reached before halt",
+      "edge_3_redis_holder_store": "confirmed",
+      "edge_4_redis_transition_store": "confirmed",
+      "edge_5_routectl_main_test": "confirmed",
+      "edge_6_redis_routecontrol_test": "confirmed as break, edit not reached",
+      "edge_6b_redis_holder_store_test": "not reached before halt",
+      "edge_7_liveness_integration_test": "confirmed",
+      "preflight_watch_hub": "FALSE POSITIVE, retracted",
+      "preflight_routeplan_service": "FALSE POSITIVE, retracted",
+      "new_authority_snapshot_publisher": "blocker, see CF1-F1",
+      "new_gateverification_test": "break set round 8, edit not reached"
+    },
+    "c09_c10_empirical_closure": {
+      "implementers_found": 8,
+      "matches_section_11_2_table": true,
+      "note": "all eight gained the sentinel method; initializer.go left the break set without being edited, exactly as the break/edit split predicts"
+    },
+    "decision_required_from_user": [
+      "where NestedControlOperationToken lives, given the proven cycle",
+      "whether internal/actorrouting/provider.go joins the A0.5 write set",
+      "whether authority.SnapshotPublisher carries the token at all, or section 8.6 drops snapshot publication as a fence check point"
+    ],
+    "terminal_state": {
+      "go_build": "clean",
+      "go_vet": "clean",
+      "test_units_compiling": 160,
+      "test_units_baseline": 159,
+      "build_failed_packages": 0,
+      "gofmt_clean": true
+    },
+    "token_home_decision": {
+      "decided_by": "user",
+      "decision": "new leaf package internal/controlfence",
+      "mechanism": "internal/routecontrol keeps a type ALIAS, not a new type, so call sites already written against routecontrol.NestedControlOperationToken did not need reworking",
+      "rejected": [
+        "internal/actorrouting: no cycle, but puts a control-plane concept in a data-plane package",
+        "drop the token on snapshot publication: smallest diff, but publication is exactly where two controllers collide, which is why section 8.6 lists it as a fence check point"
+      ]
+    },
+    "write_set_amendment_w1": {
+      "state": "APPROVED",
+      "entries": [
+        {
+          "path": "internal/controlfence/**",
+          "reason": "token home",
+          "conflict": null
+        },
+        {
+          "path": "internal/actorrouting/provider.go",
+          "reason": "SnapshotPublisher edge",
+          "conflict": "internal/actorrouting/** is A1-forbidden per section 6.1",
+          "disposition": "treat as conformance edit, not owned: signature only, right ends at the seam commit"
+        },
+        {
+          "path": "internal/actorrouting/provider_test.go",
+          "reason": "same package"
+        },
+        {
+          "path": "internal/actorrouting/redirect_test.go",
+          "reason": "same package"
+        },
+        {
+          "path": "internal/authoritycomposition/composition_test.go",
+          "reason": "SnapshotPublisher edge",
+          "conflict": "never appeared in six rounds"
+        },
+        {
+          "path": "internal/authoritycomposition/endpoint_pool_test.go",
+          "reason": "same"
+        },
+        {
+          "path": "internal/authoritycomposition/runtime_membership_test.go",
+          "reason": "same"
+        },
+        {
+          "path": "internal/routecontrol/gateverification/verification_test.go",
+          "reason": "C18 context edge"
+        }
+      ],
+      "note": "seven of the eight trace to one never-enumerated interface edge. The cost of missing an edge is not three extra files; it is landing at another stage's forbidden list.",
+      "approved_at_utc": "2026-08-13T08:20:00Z",
+      "approved_by": "user",
+      "disposition": {
+        "owned": [
+          "internal/controlfence/**",
+          "internal/routecontrol/gateverification/verification_test.go"
+        ],
+        "conformance_edit_right_only": [
+          "internal/actorrouting/provider.go",
+          "internal/actorrouting/provider_test.go",
+          "internal/actorrouting/redirect_test.go",
+          "internal/authoritycomposition/composition_test.go",
+          "internal/authoritycomposition/endpoint_pool_test.go",
+          "internal/authoritycomposition/runtime_membership_test.go"
+        ],
+        "rationale": "section 6.1 forbids A1 from touching internal/actorrouting/**. The letter does not bind A0.5, but the intent does, so those files are demoted from owned to conformance: signature only, right ends at the seam commit."
+      },
+      "conformance_verification": {
+        "method": "every added line in the six files must mention the token or the controlfence import",
+        "added_lines": 36,
+        "lines_not_token_related": 0,
+        "verdict": "behavior preserving"
+      }
+    },
+    "conformance_discipline_verified": {
+      "no_lua_or_key_constants_in_a1r_diffs": true,
+      "sentinel_call_sites": 8,
+      "sentinel_declarations": 1,
+      "a1r_must_clear": 9
+    }
+  },
+  "a0_5_exit_gate": {
+    "run_at_utc": "2026-08-13T07:22:50Z",
+    "items": [
+      {
+        "gate": "compile_edge_set_measured_not_enumerated",
+        "result": "PASS",
+        "evidence": "CF-1 driven to a fixed point at 17 rounds; write set amended by W1 and approved"
+      },
+      {
+        "gate": "sealed_terminal_unforgeable_outside_package",
+        "result": "PASS",
+        "evidence": "TestReferenceBackendReceivesSealItCannotMint, in package scaleplan_test from internal/testkit/scaleplan, so unexported fields are genuinely out of reach. Zero-value seal reports unauthorized and is refused before any store access"
+      },
+      {
+        "gate": "mutation_guard_cancels_on_lease_loss",
+        "result": "PASS",
+        "evidence": "TestGuardContextIsCancelledWhenRenewalStops drives a real renewal failure through the backend and observes guard context cancellation, then a release that still reaches the store"
+      },
+      {
+        "gate": "no_durable_write_outside_the_barrier",
+        "result": "PASS",
+        "evidence": "TestWritesOutsideTheBarrierAreRefused; the facade holds no lease until a guard is open"
+      },
+      {
+        "gate": "scope_parameter_is_load_bearing",
+        "result": "PASS",
+        "evidence": "TestGuardRefusesScopeOutsideTheFacadeRealm plus the executor-side realm check on Submit"
+      },
+      {
+        "gate": "nested_token_inherited_not_reacquired",
+        "result": "PASS",
+        "evidence": "TestNestedTokenIsInheritedNotReacquired: zero token is never a credential, a foreign issuer rejects the token, an anonymous operation is not issuable"
+      },
+      {
+        "gate": "coordinator_presence_bound_to_mode",
+        "result": "PASS",
+        "evidence": "TestCoordinatorPresenceIsBoundToModeAtStartup covers all five rows including both mismatch directions and an unknown mode"
+      },
+      {
+        "gate": "durable_stop_derived_from_record",
+        "result": "PASS",
+        "evidence": "TestDurableStopIsDerivedFromTheStoredRecord; DurablyStopped is a conclusion from the stored record, and an unissued fence token is refused"
+      },
+      {
+        "gate": "exclusion_release_seven_rows_fail_closed",
+        "result": "PASS",
+        "evidence": "TestOnlyThreeReleaseOutcomesPermitTermination pins the row count at seven and refuses termination on an unenumerated outcome"
+      },
+      {
+        "gate": "bootstrap_fence_enforced",
+        "result": "PASS",
+        "evidence": "TestBootstrapFenceIsEnforcedOnlyWhenGated. The token was inert before this change: threaded by CF-1, accepted and ignored"
+      },
+      {
+        "gate": "reference_adapter_exercises_every_seam",
+        "result": "PASS",
+        "evidence": "internal/testkit/scaleplan/reference_backend.go implements DurableRepositoryBackend and drives all six seams; 10 tests"
+      },
+      {
+        "gate": "repository_identity_binding",
+        "result": "PASS",
+        "evidence": "BackendMutationLease carries a validated RepositoryID in addition to scope/owner/fence. TestSealedBlockedTerminationBindsRepositoryAndStableWriteAuthority rejects foreign repository/fence while accepting a deadline-only renewal; TestSealMintedForOneRepositoryIsRejectedByAnotherBeforeStoreAccess drives a genuine production seal into a second backend whose remaining lease tuple deliberately collides and observes pre-store rejection"
+      },
+      {
+        "gate": "renew_liveness_exemption_proven",
+        "result": "PASS",
+        "evidence": "TestSameGenerationRenewMovesOnlyTheDeadline, TestCaptureSurvivesContinuousRenew, TestCaptureFailsOnRealPlacementChange and TestRenewCannotReachGenerationOrPlacement discharge all four section 8.6 obligations"
+      },
+      {
+        "gate": "capture_token_excludes_lease_deadline",
+        "result": "PASS",
+        "evidence": "TestCaptureTokenCannotCarryAClockReading uses reflection to reject clock/deadline/ttl fields while requiring LeaseEpochDigest, AssignmentRevision and ActiveCardinality"
+      },
+      {
+        "gate": "authority_capture_read_surface_decided",
+        "result": "PASS",
+        "evidence": "Decision SUFFICIENT with no A1R read-surface delta: two non-overlapping full reads bracket per-shard monotonic assignment/writer/lease epochs plus active cardinality; TestAuthorityReadSurfaceExposesTheComparedQuantities and TestAuthorityEpochsAreMonotonicAcrossUnassign pin the premises"
+      },
+      {
+        "gate": "transition_quiescence_universal_evidence",
+        "result": "PASS",
+        "evidence": "ManagerQuiescenceEnumeration plus cardinality and revision/time anchors are mandatory; TestBlockedTerminationManifestRejectsIncompleteTopologyAndManagerJoin covers missing enumeration, unfinished recovery/tombstone, wrong domain and missing anchors"
+      },
+      {
+        "gate": "focused_50x",
+        "result": "PASS",
+        "evidence": "go test -count=50 over internal/scaleplan, internal/testkit/scaleplan, internal/routeplan: clean"
+      },
+      {
+        "gate": "race_whole_tree",
+        "result": "PASS",
+        "evidence": "go test -race -count=1 ./... clean. One earlier failure in internal/workflow reproduced only under whole-tree load, is absent from the clean rerun, and lies in a package this branch does not touch"
+      },
+      {
+        "gate": "vet_and_gofmt_on_owned_files",
+        "result": "PASS",
+        "evidence": "go vet clean tree-wide; gofmt clean on every owned file. The unformatted files that remain predate this branch"
+      }
+    ],
+    "correction": "the first backfill scored 14 gate items that this agent had written itself, not the 21 items frozen in section 12.2 plus the review line. Six frozen items had never been checked at all. Scoring against a self-authored list is the same defect the plan has hit repeatedly: the artefact looks complete because the checklist was drawn to match the work",
+    "source_of_truth": "section 12.2, verbatim. Do not re-derive this list",
+    "verified": [
+      "production_seam_compiles",
+      "zero_value_sealed_command_rejected",
+      "external_backend_cannot_mint_terminal",
+      "distributed_lease_contract",
+      "reference_adapter_exercises_every_seam",
+      "executor_seven_entrypoints_lease_bound",
+      "mutation_scope_param_is_meaningful",
+      "enter_plan_mutation_export_surface_tightened",
+      "transition_enumeration_accepts_guard_context",
+      "coordinator_mode_binding_enforced_at_startup",
+      "compile_edge_set_measured_not_enumerated",
+      "conformance_edits_are_behavior_preserving",
+      "degraded_state_persistence_owner_assigned",
+      "auditor_principal_decided",
+      "focused_50x/race/vet",
+      "repository_identity_binding",
+      "renew_liveness_exemption_proven",
+      "capture_token_excludes_lease_deadline",
+      "authority_capture_read_surface_decided",
+      "transition_quiescence_universal_evidence"
+    ],
+    "not_yet_verified": [
+      {
+        "item": "shared_writer_seams_frozen",
+        "why": "mechanical diff from d4d808b finds no post-freeze changes to Manager, RoutePlan, Publisher, Kubernetes scale or Placement writer seams; final PASS remains reserved for the independent review because the current candidate also tightens the ScalePlan lease contract"
+      },
+      {
+        "item": "review",
+        "why": "requirement is P0=0 with every unclosed item landing in carry-forward. No independent review has run"
+      }
+    ],
+    "evidence_detail": {
+      "executor_seven_entrypoints_lease_bound": "six call e.enterPlanMutation directly; the seventh, OperatorFailBlocked, is bound through BlockedTerminationOwner.TerminalizeBlocked which enters the barrier, defers releaseGuard and derives ctx from the guard",
+      "transition_enumeration_accepts_guard_context": "both primitives take context.Context first. Note the A1R-owned Redis stores currently bind it as _, so the parameter is accepted and ignored. Honouring it is A1R work, but the gate reason -- letting a lost lease cancel the evidence read -- is not achieved until then",
+      "conformance_edits_are_behavior_preserving": "diff of internal/storage/redis over the whole branch contains no Lua script strings, no EVAL, no KEYS/ARGV and no new rediskey constants",
+      "repository_identity_binding": "RepositoryID is stable repository/keyspace identity, not a secret. BoundTo compares RepositoryID+Scope+Owner+Fence and excludes ExpiresAtMs so same-authority renewal remains legal. A1 must derive or persist one stable ID per Redis repository identity and reject leases carrying another ID.",
+      "shared_writer_seams_frozen_pre_review": "git diff d4d808b..candidate changes no Manager, RoutePlan, Publisher, Kubernetes scale or Placement exclusion writer seam; only Capture/Quiescence evidence and ScalePlan Seal/Lease contracts changed. Independent review owns the final verdict."
+    },
+    "inert_parameter_pattern": "three separate seams in this stage were threaded and then left inert: the MutationScope parameter was discarded, the control token was accepted and ignored by the publisher, and the guard context is still ignored by the transition stores. Two were caught and fixed here. This is a pattern rather than three coincidences: adding a parameter satisfies a compile-edge check and a reviewer reading signatures, while doing nothing. Any future gate phrased as accepts_X should be read as requiring a test that X changes behaviour"
+  },
+  "a5_preconditions": {
+    "channel_b_gap_in_runbook": {
+      "requirement": "the A5 pre-brief and the operations runbook must both carry the section 4.4 accepted gap verbatim",
+      "reason": "the gap is only acceptable while nobody audits. An operator who starts running AuditPage without reading this would believe a clean report means the realm is safe to keep writing",
+      "status": "PENDING"
+    }
+  }
+}

@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "farmgame/api/gen/common;commonpb";
+
+// CommandStatus 是所有命令结果的统一状态机(见交接文档 §4.5)。
+enum CommandStatus {
+  COMMAND_STATUS_UNSPECIFIED = 0;
+  // 权威成功合同已经提交(TcaplusDB 条件写已确认持久)。
+  SUCCEEDED = 1;
+  // 业务意图与可恢复进度已持久化,跨 Owner 流程仍在推进(如偷菜目标已扣减、访客未到账)。
+  PROCESSING = 2;
+  // 请求合法,但目标事实已经是所需状态(幂等重复的自然结果)。
+  NO_CHANGE = 3;
+  // 权限、资源、版本或业务条件不成立。
+  REJECTED = 4;
+  // 当前不能确认是否受理,必须用同一 operation_id 查询或重试。
+  UNAVAILABLE = 5;
+  ACCEPTED = 6;
+}
+
+// ErrorCode 是领域错误到协议错误码的统一映射(D2 §错误码表)。
+// 分段:1xxx 协议/帧;2xxx 会话/鉴权;3xxx 好友/权限;4xxx 经济;5xxx 农场/种植;
+//       6xxx 实时/在场;7xxx 偷菜/结算;9xxx 系统/存储。
+enum ErrorCode {
+  ERROR_CODE_UNSPECIFIED = 0;
+  OK = 1;
+
+  // 1xxx 协议 / 帧
+  ERR_BAD_FRAME = 1001;             // 帧头/长度非法
+  ERR_DECODE = 1002;                // Protobuf 解码失败
+  ERR_UNSUPPORTED_VERSION = 1003;   // protocol_version 不支持
+  ERR_MESSAGE_TOO_LARGE = 1004;     // 超过帧大小上限
+  ERR_UNKNOWN_COMMAND = 1005;       // 未知 command_type
+  ERR_RATE_LIMITED = 1006;          // 限流
+  ERR_COMMAND_UNIMPLEMENTED = 1007; // 命令已注册合同但业务 Handler 尚未接线(feature-disabled)
+
+  // 2xxx 会话 / 鉴权
+  ERR_UNAUTHENTICATED = 2001;       // 未认证
+  ERR_SESSION_EXPIRED = 2002;       // 会话代次过期(顶号)
+  ERR_SESSION_PERMIT_INVALID = 2003;// SessionPermit 无效
+  ERR_LOGIN_ELSEWHERE = 2004;       // 已在别处登录,当前连接被顶
+  ERR_CONNECTION_TICKET_INVALID = 2005; // ticket 不存在、过期、已核销或代次不匹配
+  ERR_RECOVERY_INCOMPLETE = 2006;   // 客户端恢复屏障尚未完成，写命令未准入
+
+  // 3xxx 好友 / 权限
+  ERR_NOT_FRIEND = 3001;            // 非好友,无权访问该农场
+  ERR_FRIEND_PERMIT_INVALID = 3002; // FriendPermit 无效或关系代次过期
+  ERR_FRIEND_LIMIT = 3003;          // 好友数量上限
+  ERR_SHARE_LINK_INVALID = 3004;    // 分享链接无效/过期
+  ERR_PERMISSION_DENIED = 3005;     // 通用权限不足(如好友试图播种/收获)
+
+  // 4xxx 经济
+  ERR_INSUFFICIENT_COIN = 4001;     // 金币不足
+  ERR_INSUFFICIENT_ITEM = 4002;     // 道具/种子不足
+  ERR_OFFER_NOT_FOUND = 4003;       // 商店 Offer 不存在
+  ERR_RULE_VERSION_MISMATCH = 4004; // 规则版本不一致
+  ERR_TASK_NOT_CLAIMABLE = 4005;    // 任务尚未达到领取条件
+  ERR_TASK_ALREADY_CLAIMED = 4006;  // 任务奖励已经领取
+  ERR_TASK_INSTANCE_EXPIRED = 4007; // 每日任务实例已跨期或领取期已过
+  ERR_TASK_INSTANCE_NOT_FOUND = 4008; // 实例不存在或不属于当前玩家
+  ERR_OFFER_PRICE_CHANGED = 4009;   // Offer 版本与期望不一致,旧价格页面需刷新
+  ERR_MAIL_NOT_FOUND = 4101;          // 邮件不存在、已删除或不属于当前玩家
+  ERR_MAIL_HAS_NO_ATTACHMENT = 4102;  // 邮件没有可领取附件
+  ERR_MAIL_CLAIM_EXPIRED = 4103;      // 邮件附件领取期已结束
+  ERR_MAIL_ALREADY_CLAIMED = 4104;    // 附件已经由本玩家领取
+  ERR_MAIL_HAS_UNCLAIMED_ATTACHMENT = 4105; // 未领取附件邮件不能删除
+  ERR_MAIL_CLAIM_MATERIAL_INVALID = 4106;   // 内部领取材料校验失败
+
+  ERR_PET_NOT_FOUND = 4201;
+  ERR_PET_NOT_UNLOCKED = 4202;
+  ERR_PET_NOT_AVAILABLE = 4203;
+  ERR_PET_ALREADY_UNLOCKED = 4204;
+  ERR_PET_ALREADY_ACTIVE = 4205;
+  ERR_PET_FEED_LIMIT_EXCEEDED = 4206;
+  ERR_PET_PRICE_CHANGED = 4207;
+  ERR_PET_CONFIG_VERSION_CHANGED = 4208;
+  ERR_PET_FEED_RULE_CHANGED = 4209;
+  ERR_PET_GUARD_RULE_CHANGED = 4210;
+
+  // 5xxx 农场 / 种植
+  ERR_PLOT_NOT_EMPTY = 5001;        // 地块非空,不能播种
+  ERR_PLOT_EMPTY = 5002;            // 地块为空,不能收获/浇水
+  ERR_CROP_NOT_MATURE = 5003;       // 作物未成熟
+  ERR_VERSION_CONFLICT = 5004;      // expected_* 版本与权威不符(旧页面误操作)
+  ERR_PLOT_NOT_FOUND = 5005;        // 地块不存在
+  ERR_CROP_ALREADY_MATURE = 5006;   // 作物已成熟，不能再护理
+  ERR_LEVEL_REQUIREMENT_NOT_MET = 5007; // 等级不足以购买目标土地
+  ERR_PLOT_LOCKED = 5008;           // 地块尚未购买解锁
+  ERR_PREVIOUS_PLOT_LOCKED = 5009;  // 固定顺序的前置地块尚未解锁
+
+  // 6xxx 实时 / 在场
+  ERR_FARM_FULL = 6001;             // 同场人数已达 200
+  ERR_NOT_IN_FARM = 6002;           // 当前不在该农场(无 Presence)
+  ERR_ACTOR_REDIRECT = 6003;        // Actor 不在本节点,需重定向/重试
+  ERR_DOWNLINK_OVERFLOW = 6004;     // 下行队列溢出,连接将被断开重连
+
+  // 7xxx 偷菜 / 结算
+  ERR_STEAL_ALREADY_DONE = 7001;    // 该好友对本茬已偷过
+  ERR_STEAL_QUOTA_EXHAUSTED = 7002; // 本茬可偷额度已耗尽
+  ERR_STEAL_BLOCKED_BY_PET = 7003;  // 被宠物拦截(消耗机会)
+  ERR_SETTLEMENT_NOT_FOUND = 7004;  // 结算记录不存在
+
+  // 9xxx 系统 / 存储
+  ERR_INTERNAL = 9001;              // 内部错误
+  ERR_STORE_CAS_CONFLICT = 9002;    // TcaplusDB 条件写版本冲突(应重试整个 turn)
+  ERR_STORE_UNAVAILABLE = 9003;     // 存储不可用
+  ERR_TIMEOUT = 9004;               // 超时(结果未知,需按 operation_id 查询)
+  ERR_IDEMPOTENCY_CONFLICT = 9005;  // 相同幂等键携带了不同业务载荷
+  ERR_SERVER_BUSY = 9006;           // Gate 后端有界槽位/排队预算已满
+}
+
+// MessageType 区分请求 / 响应 / 服务端推送。
+enum MessageType {
+  MESSAGE_TYPE_UNSPECIFIED = 0;
+  REQUEST = 1;
+  RESPONSE = 2;
+  NOTIFY = 3;
+}

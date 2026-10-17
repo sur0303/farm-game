@@ -1,0 +1,735 @@
+#!/usr/bin/env python3
+"""Fail-closed structural gate for the R2 P1-A/B static-route candidate.
+
+The repository deliberately keeps the manifests in JSON so this validator has
+no PyYAML dependency.  Kustomize is used when available for a render check;
+the same fixed resource graph is rendered deterministically in Python when it
+is not installed.  This validates a candidate only.  It never contacts a
+cluster and never turns a rendered manifest into a staging acceptance claim.
+"""
+
+from __future__ import annotations
+
+import argparse
+import copy
+import hashlib
+import ipaddress
+import json
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+
+SCRIPT = Path(__file__).resolve()
+REPO = SCRIPT.parent.parent
+ROOT = REPO / "deploy" / "k8s" / "static-staging"
+BASE = ROOT / "base"
+RESOURCE_DIR = BASE / "resources"
+SECRET_TEMPLATE_DIR = ROOT / "secret-templates"
+NAMESPACE = "farm-staging-system"
+
+EXPECTED_COUNTS = {
+    "Namespace": 1,
+    "Deployment": 3,
+    "StatefulSet": 2,
+    "Service": 7,
+    "ConfigMap": 3,
+    "Secret": 2,
+    "PodDisruptionBudget": 5,
+    "Ingress": 1,
+    "NetworkPolicy": 7,
+    "ServiceMonitor": 4,
+}
+
+WORKLOADS = {
+    "farm-gate": {"kind": "Deployment", "replicas": 3, "probe_port": "http", "ready_path": "/readyz"},
+    "player-svr": {"kind": "StatefulSet", "replicas": 2, "probe_port": "health", "ready_path": "/readyz"},
+    "farm-svr": {"kind": "StatefulSet", "replicas": 2, "probe_port": "health", "ready_path": "/readyz"},
+    "farm-worker": {"kind": "Deployment", "replicas": 2, "probe_port": "health", "ready_path": "/readyz"},
+    "farm-h5": {"kind": "Deployment", "replicas": 2, "probe_port": "http", "ready_path": "/readyz"},
+}
+
+SERVICE_PORTS = {
+    "farm-gate": {"http": (8080, "http"), "downlink": (9092, "downlink"), "control": (9093, "control")},
+    "player-svr": {"grpc": (9100, "grpc")},
+    "player-svr-headless": {"grpc": (9100, "grpc")},
+    "farm-svr": {"grpc": (9090, "grpc")},
+    "farm-svr-headless": {"grpc": (9090, "grpc")},
+    "farm-worker": {"health": (9201, "health")},
+    "farm-h5": {"http": (80, "http")},
+}
+
+REQUIRED_SECRET_KEYS = {
+    "redis-url",
+    "permit-secret",
+    "http-session-cookie-keyring",
+    "web-login-rate-limit-secret",
+    "theft-prf-hmac-secret",
+    "load-test-token-secret",
+}
+
+FRIENDSHIP_MODES = {"local_gate", "remote_shadow", "remote_player"}
+SHADOW_EVIDENCE_SCOPE = "zero-unexplained-shadow-v1"
+WORKER_PRODUCT_CONFIG = {
+    "WORKER_READINESS_CONTRACT_VERSION": "worker-family-readiness-v1",
+    "WORKER_READINESS_MAX_SCAN_AGE_V1": "5s",
+    "WORKER_DUE_OBSERVE_LIMIT": "4096",
+    "GUARD_SYNC_WORKER_ENABLED": "false",
+    "MAIL_WORKER_ENABLED": "false",
+}
+
+
+def canonical(value: Any) -> bytes:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()
+
+
+def sha256_bytes(value: bytes) -> str:
+    return hashlib.sha256(value).hexdigest()
+
+
+def read_json(path: Path) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:  # pragma: no cover - exercised by a broken checkout
+        raise ValueError(f"{path}: invalid JSON: {exc}") from exc
+    if not isinstance(value, dict):
+        raise ValueError(f"{path}: top-level JSON value must be an object")
+    return value
+
+
+def resource_id(resource: dict[str, Any]) -> tuple[str, str]:
+    return str(resource.get("kind", "")), str(resource.get("metadata", {}).get("name", ""))
+
+
+def namespaced(resource: dict[str, Any]) -> bool:
+    return resource.get("kind") != "Namespace"
+
+
+def load_resources(issues: list[dict[str, str]], include_secret_templates: bool) -> list[dict[str, Any]]:
+    kustomization = (BASE / "kustomization.yaml").read_text(encoding="utf-8")
+    declared = set(re.findall(r"- (resources/[A-Za-z0-9_.-]+\.json)\s*$", kustomization, re.MULTILINE))
+    actual = {f"resources/{path.name}" for path in RESOURCE_DIR.glob("*.json")}
+    if declared != actual:
+        missing = sorted(actual - declared)
+        extra = sorted(declared - actual)
+        if missing:
+            issues.append({"check": "kustomization-resource-coverage", "message": f"unlisted resources: {missing}"})
+        if extra:
+            issues.append({"check": "kustomization-resource-coverage", "message": f"missing resource files: {extra}"})
+
+    resources: list[dict[str, Any]] = []
+    for path in sorted(RESOURCE_DIR.glob("*.json")):
+        try:
+            value = read_json(path)
+        except ValueError as exc:
+            issues.append({"check": "json-parse", "message": str(exc)})
+            continue
+        value.setdefault("metadata", {})["x-farm-source"] = str(path.relative_to(REPO))
+        resources.append(value)
+
+    if include_secret_templates:
+        expected_templates = {"staging-secrets-template.json", "tls-secret-template.json"}
+        actual_templates = {path.name for path in SECRET_TEMPLATE_DIR.glob("*.json")}
+        if actual_templates != expected_templates:
+            issues.append({"check": "secret-template-coverage", "message": f"expected secret templates {sorted(expected_templates)}, got {sorted(actual_templates)}"})
+        for path in sorted(SECRET_TEMPLATE_DIR.glob("*.json")):
+            try:
+                value = read_json(path)
+            except ValueError as exc:
+                issues.append({"check": "json-parse", "message": str(exc)})
+                continue
+            value.setdefault("metadata", {})["x-farm-source"] = str(path.relative_to(REPO))
+            resources.append(value)
+
+    route_path = BASE / "route-snapshot.v1.json"
+    try:
+        route_value = read_json(route_path)
+    except ValueError as exc:
+        issues.append({"check": "route-json-parse", "message": str(exc)})
+        route_value = {}
+    route_text = route_path.read_text(encoding="utf-8")
+    resources.append(
+        {
+            "apiVersion": "v1",
+            "kind": "ConfigMap",
+            "metadata": {
+                "name": "farm-static-route",
+                "labels": {"farm.io/config-role": "static-route"},
+                "x-farm-source": "configMapGenerator:route-snapshot.v1.json",
+            },
+            "data": {"route-snapshot.json": route_text},
+            "x-farm-route-value": route_value,
+        }
+    )
+    return resources
+
+
+def apply_release_image_overrides(resources: list[dict[str, Any]], issues: list[dict[str, str]]) -> dict[str, str]:
+    path = ROOT / "overlays" / "release" / "kustomization.yaml"
+    text = path.read_text(encoding="utf-8")
+    names = re.findall(r"^\s*- name:\s*(\S+)\s*$", text, re.MULTILINE)
+    new_names = re.findall(r"^\s*newName:\s*(\S+)\s*$", text, re.MULTILINE)
+    digests = re.findall(r"^\s*digest:\s*(\S+)\s*$", text, re.MULTILINE)
+    if names != ["registry.example.invalid/farm-game-runtime", "registry.example.invalid/classic-farm-h5"]:
+        issues.append({"check": "release-image-entries", "message": "release overlay must bind exactly the runtime and H5 image names"})
+    if len(new_names) != 2 or len(digests) != 2:
+        issues.append({"check": "release-image-entries", "message": "release overlay must provide two newName/digest pairs"})
+        return {}
+    overrides = dict(zip(names, zip(new_names, digests)))
+    for image_name, (new_name, digest) in overrides.items():
+        if not re.fullmatch(r"sha256:[0-9a-f]{64}", digest):
+            issues.append({"check": "release-image-digests", "message": f"{image_name} digest is not a bound sha256:64-hex digest: {digest}"})
+    for resource in resources:
+        if resource.get("kind") not in {"Deployment", "StatefulSet"}:
+            continue
+        for container in resource.get("spec", {}).get("template", {}).get("spec", {}).get("containers", []):
+            image = str(container.get("image", ""))
+            base = image.split("@", 1)[0].rsplit(":", 1)[0]
+            if base in overrides:
+                new_name, digest = overrides[base]
+                container["image"] = f"{new_name}@{digest}"
+    return {name: digest for name, (_new_name, digest) in overrides.items()}
+
+
+def merge_patch(target: dict[str, Any], patch: dict[str, Any]) -> None:
+    for key, value in patch.items():
+        if isinstance(value, dict) and isinstance(target.get(key), dict):
+            merge_patch(target[key], value)
+        elif isinstance(value, list) and isinstance(target.get(key), list) and all(isinstance(item, dict) and item.get("name") for item in value):
+            existing = {item.get("name"): item for item in target[key] if isinstance(item, dict) and item.get("name")}
+            for item in value:
+                name = item.get("name")
+                if name in existing:
+                    merge_patch(existing[name], item)
+                else:
+                    target[key].append(copy.deepcopy(item))
+        else:
+            target[key] = copy.deepcopy(value)
+
+
+def apply_release_patches(resources: list[dict[str, Any]], issues: list[dict[str, str]]) -> None:
+    patch_names = ("platform-release-patch.json", "ingress-release-patch.json", "redis-egress-release-patch.json")
+    for name in patch_names:
+        apply_overlay_patch(resources, ROOT / "overlays" / "release" / name, issues, "release")
+
+
+def apply_overlay_patch(resources: list[dict[str, Any]], path: Path, issues: list[dict[str, str]], label: str) -> None:
+    try:
+        patch = read_json(path)
+    except ValueError as exc:
+        issues.append({"check": f"{label}-patch-parse", "message": str(exc)})
+        return
+    index = {resource_id(resource): resource for resource in resources}
+    target = index.get(resource_id(patch))
+    if target is None:
+        issues.append({"check": f"{label}-patch-target", "message": f"{path.name} has no base target {resource_id(patch)}"})
+        return
+    merge_patch(target, patch)
+
+
+def env_map(resource: dict[str, Any], configmaps: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    pod_spec = resource.get("spec", {}).get("template", {}).get("spec", {})
+    for env_from in pod_spec.get("containers", [{}])[0].get("envFrom", []):
+        ref = env_from.get("configMapRef", {})
+        config = configmaps.get(ref.get("name"), {})
+        result.update(config.get("data", {}))
+    for container in pod_spec.get("containers", []):
+        for item in container.get("env", []):
+            name = item.get("name")
+            if not name:
+                continue
+            if "value" in item:
+                result[name] = item["value"]
+            elif "secretKeyRef" in item.get("valueFrom", {}):
+                result[name] = {"secretRef": item["valueFrom"]["secretKeyRef"]}
+            elif "configMapKeyRef" in item.get("valueFrom", {}):
+                ref = item["valueFrom"]["configMapKeyRef"]
+                result[name] = configmaps.get(ref.get("name"), {}).get("data", {}).get(ref.get("key"))
+    return result
+
+
+def all_strings(value: Any) -> list[str]:
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, dict):
+        result: list[str] = []
+        for key, item in value.items():
+            result.extend(all_strings(key))
+            result.extend(all_strings(item))
+        return result
+    if isinstance(value, list):
+        result = []
+        for item in value:
+            result.extend(all_strings(item))
+        return result
+    return []
+
+
+def find_workload(resources: list[dict[str, Any]], name: str) -> dict[str, Any] | None:
+    for resource in resources:
+        if resource_id(resource) == (WORKLOADS[name]["kind"], name):
+            return resource
+    return None
+
+
+def check_workloads(resources: list[dict[str, Any]], check: Any) -> None:
+    for name, expected in WORKLOADS.items():
+        workload = find_workload(resources, name)
+        check(f"workload:{name}:present", workload is not None, f"missing {expected['kind']}/{name}")
+        if workload is None:
+            continue
+        spec = workload.get("spec", {})
+        check(f"workload:{name}:replicas", spec.get("replicas") == expected["replicas"], f"replicas must be {expected['replicas']}")
+        selector = spec.get("selector", {}).get("matchLabels", {})
+        template = spec.get("template", {})
+        labels = template.get("metadata", {}).get("labels", {})
+        check(f"workload:{name}:selector", selector and all(labels.get(k) == v for k, v in selector.items()), "selector is not covered by pod labels")
+        pod_spec = template.get("spec", {})
+        check(f"workload:{name}:termination", isinstance(pod_spec.get("terminationGracePeriodSeconds"), int) and pod_spec["terminationGracePeriodSeconds"] > 0, "terminationGracePeriodSeconds is missing")
+        spread = pod_spec.get("topologySpreadConstraints", [])
+        check(f"workload:{name}:topology-spread", len(spread) >= 2 and all(c.get("topologyKey") for c in spread), "two topology spread constraints are required")
+        anti = pod_spec.get("affinity", {}).get("podAntiAffinity", {}).get("requiredDuringSchedulingIgnoredDuringExecution", [])
+        check(f"workload:{name}:anti-affinity", bool(anti), "required pod anti-affinity is missing")
+        containers = pod_spec.get("containers", [])
+        check(f"workload:{name}:containers", bool(containers), "no containers")
+        for container in containers:
+            cname = container.get("name", "unknown")
+            for probe_name in ("startupProbe", "readinessProbe", "livenessProbe"):
+                probe = container.get(probe_name, {})
+                check(f"workload:{name}:{cname}:{probe_name}", bool(probe.get("httpGet", {}).get("path")), "HTTP probe is missing")
+            check(f"workload:{name}:{cname}:prestop", bool(container.get("lifecycle", {}).get("preStop")), "preStop hook is missing")
+            if name != "farm-h5":
+                route_mount = next((item for item in container.get("volumeMounts", []) if item.get("name") == "farm-static-route"), {})
+                check(f"workload:{name}:{cname}:route-mount", route_mount.get("mountPath") == "/etc/farm/routes" and route_mount.get("readOnly") is True, "backend must mount the immutable static route snapshot")
+        if name != "farm-h5":
+            route_volume = next((item for item in pod_spec.get("volumes", []) if item.get("name") == "farm-static-route"), {})
+            route_config = route_volume.get("configMap", {})
+            route_items = route_config.get("items", [])
+            check(f"workload:{name}:route-volume", route_config.get("name") == "farm-static-route" and any(item.get("key") == "route-snapshot.json" for item in route_items), "backend must source its route volume from farm-static-route")
+        if name in {"player-svr", "farm-svr"}:
+            check(f"workload:{name}:fixed-holder", workload.get("kind") == "StatefulSet" and spec.get("serviceName") == f"{name}-headless", "Holder must be a StatefulSet using its headless identity service")
+
+
+def check_services(resources: list[dict[str, Any]], check: Any) -> None:
+    by_name = {r.get("metadata", {}).get("name"): r for r in resources if r.get("kind") == "Service"}
+    check("services:count", len(by_name) == len(SERVICE_PORTS), f"expected services {sorted(SERVICE_PORTS)}, got {sorted(by_name)}")
+    for name, expected_ports in SERVICE_PORTS.items():
+        service = by_name.get(name)
+        check(f"service:{name}:present", service is not None, "missing Service")
+        if service is None:
+            continue
+        spec = service.get("spec", {})
+        if name.endswith("-headless"):
+            check(f"service:{name}:headless", spec.get("clusterIP") == "None", "headless Service must pin clusterIP=None")
+        else:
+            check(f"service:{name}:clusterip", spec.get("type") == "ClusterIP", "internal Service must be ClusterIP")
+        ports = {str(p.get("name")): p for p in spec.get("ports", [])}
+        for port_name, (port, target) in expected_ports.items():
+            item = ports.get(port_name)
+            check(f"service:{name}:port:{port_name}", item is not None and item.get("port") == port and item.get("targetPort") == target, f"port must be {port}->{target}")
+        workload = find_workload(resources, name.removesuffix("-headless"))
+        if workload:
+            selector = spec.get("selector", {})
+            labels = workload.get("spec", {}).get("template", {}).get("metadata", {}).get("labels", {})
+            check(f"service:{name}:selector", selector and all(labels.get(k) == v for k, v in selector.items()), "selector does not select its workload")
+
+
+def check_probes(resources: list[dict[str, Any]], check: Any) -> None:
+    for name, expected in WORKLOADS.items():
+        workload = find_workload(resources, name)
+        if not workload:
+            continue
+        for container in workload.get("spec", {}).get("template", {}).get("spec", {}).get("containers", []):
+            cname = container.get("name", "unknown")
+            for probe_name in ("startupProbe", "readinessProbe", "livenessProbe"):
+                probe = container.get(probe_name, {})
+                http = probe.get("httpGet", {})
+                check(f"probe:{name}:{cname}:{probe_name}:path", http.get("path") in {"/healthz", "/readyz"}, "probe path must use /healthz or /readyz")
+                check(f"probe:{name}:{cname}:{probe_name}:port", http.get("port") == expected["probe_port"], f"probe must use named port {expected['probe_port']}")
+            ready = container.get("readinessProbe", {}).get("httpGet", {})
+            check(f"probe:{name}:{cname}:readiness-contract", ready.get("path") == expected["ready_path"], "readiness must use the product /readyz contract")
+
+
+def check_pdbs(resources: list[dict[str, Any]], check: Any) -> None:
+    pdbs = {r.get("metadata", {}).get("name"): r for r in resources if r.get("kind") == "PodDisruptionBudget"}
+    check("pdb:count", set(pdbs) == set(WORKLOADS), f"PDBs must cover {sorted(WORKLOADS)}, got {sorted(pdbs)}")
+    for name in WORKLOADS:
+        workload = find_workload(resources, name)
+        pdb = pdbs.get(name)
+        if not workload or not pdb:
+            continue
+        desired = workload.get("spec", {}).get("template", {}).get("metadata", {}).get("labels", {})
+        selector = pdb.get("spec", {}).get("selector", {}).get("matchLabels", {})
+        check(f"pdb:{name}:selector", selector and all(desired.get(k) == v for k, v in selector.items()), "PDB selector does not select workload pods")
+
+
+def check_routes(resources: list[dict[str, Any]], check: Any) -> str:
+    route_cm = next((r for r in resources if resource_id(r) == ("ConfigMap", "farm-static-route")), None)
+    route = route_cm.get("x-farm-route-value", {}) if route_cm else {}
+    check("route:configmap", route_cm is not None and "route-snapshot.json" in route_cm.get("data", {}), "generated static route ConfigMap is missing")
+    if not route:
+        return ""
+    holders = route.get("holders", [])
+    expected_holders = [
+        ("player-svr-0", "player-svr-headless", 9100),
+        ("player-svr-1", "player-svr-headless", 9100),
+        ("farm-svr-0", "farm-svr-headless", 9090),
+        ("farm-svr-1", "farm-svr-headless", 9090),
+    ]
+    check("route:holder-count", len(holders) == 4, "static route must contain exactly four fixed Holders")
+    for index, (holder_id, service, port) in enumerate(expected_holders):
+        item = holders[index] if index < len(holders) else {}
+        endpoint = f"{holder_id}.{service}.{NAMESPACE}.svc.cluster.local:{port}"
+        expected_boot = f"{holder_id}-static-route-v1"
+        check(f"route:holder:{holder_id}:identity", item.get("instance_id") == holder_id and item.get("boot_id") == expected_boot, "Holder ID/boot ID does not match StatefulSet ordinal strategy")
+        check(f"route:holder:{holder_id}:endpoint", item.get("endpoint") == endpoint, f"endpoint must be {endpoint}")
+        check(f"route:holder:{holder_id}:active", item.get("state") == "ACTIVE" and item.get("weight") == 1, "Holder must be ACTIVE with weight 1")
+    for domain in ("player", "farm"):
+        snapshot = route.get(domain, {})
+        routes = snapshot.get("routes", [])
+        check(f"route:{domain}:shard-count", snapshot.get("shard_count") == len(routes) and len(routes) == 4, "candidate must have four static shards")
+        for route_index, item in enumerate(routes):
+            check(f"route:{domain}:{route_index}:generation", item.get("state") == "ACTIVE" and item.get("expected_writer_epoch", 0) > 0 and item.get("expected_lease_epoch", 0) > 0 and item.get("lease_expire_at_ms", 0) > 0, "route generation is incomplete")
+            expected_range = range(0, 2) if domain == "player" else range(2, 4)
+            check(f"route:{domain}:{route_index}:holder-domain", item.get("holder_index") in expected_range, "route points at the wrong Holder domain")
+    check("route:static-realm", route.get("realm") == "classic-farm-staging", "route realm must be versioned staging")
+    return sha256_bytes((BASE / "route-snapshot.v1.json").read_bytes())
+
+
+def check_secrets_and_profiles(resources: list[dict[str, Any]], check: Any, profile: str) -> None:
+    configmaps = {r.get("metadata", {}).get("name"): r for r in resources if r.get("kind") == "ConfigMap"}
+    secrets = {r.get("metadata", {}).get("name"): r for r in resources if r.get("kind") == "Secret"}
+    if profile == "candidate":
+        secret = secrets.get("farm-staging-secrets", {})
+        keys = set(secret.get("stringData", {})) | set(secret.get("data", {}))
+        check("secrets:template", secret.get("metadata", {}).get("annotations", {}).get("farm.io/secret-template") == "external-secret-manager-required", "runtime Secret must be an external secret-manager template")
+        check("secrets:required-keys", REQUIRED_SECRET_KEYS <= keys, f"Secret template missing keys {sorted(REQUIRED_SECRET_KEYS - keys)}")
+        tls = secrets.get("farm-staging-tls", {})
+        check("secrets:tls-template", tls.get("type") == "kubernetes.io/tls" and set(tls.get("stringData", {})) == {"tls.crt", "tls.key"}, "TLS material must be a Secret template")
+    else:
+        check("secrets:release-external", not secrets, "release overlay must reference externally materialized Secrets and must not render templates")
+    config = configmaps.get("farm-staging-platform", {}).get("data", {})
+    expected = {
+        "FARM_APP_PROFILE": "showcase",
+        "SOCIAL_PRODUCT_PROFILE_VERSION": "social-product-profile-v1",
+        "FRIEND_LIMIT_PROFILE": "friend-limit-v1",
+        "SHARE_TOKEN_TTL_PROFILE": "share-token-ttl-v1",
+        "CAPACITY_PROFILE_VERSION": "r2-p1-a-static-candidate-v1",
+        "REDIS_PHYSICAL_PROFILE_VERSION": "redis-physical-probe-v1",
+        "REDIS_AUTHORITY_LAYOUT_VERSION": "v1",
+        "REDIS_WORKFLOW_LAYOUT_VERSION": "v1",
+        "REDIS_WORKFLOW_HASH_VERSION": "1",
+        "REDIS_WORKFLOW_BUCKET_COUNT": "256",
+        "ACTOR_AUTHORITY_MODE": "authority",
+        "AUTHORITY_MEMBERSHIP_MODE": "false",
+        "GATE_TRANSPORT": "websocket",
+        "HTTP_SESSION_COOKIE_SECURE": "1",
+        "FRIENDSHIP_RPC_TIMEOUT": "2s",
+    }
+    expected.update(WORKER_PRODUCT_CONFIG)
+    for key, value in expected.items():
+        check(f"profile:{key}", config.get(key) == value, f"{key} must be explicit as {value!r}")
+    friendship_mode = str(config.get("FRIENDSHIP_SERVICE_MODE", ""))
+    check("friendship:mode-known", friendship_mode in FRIENDSHIP_MODES, f"FRIENDSHIP_SERVICE_MODE must be one of {sorted(FRIENDSHIP_MODES)}")
+    intended_mode = "remote_player" if profile == "release" else "remote_shadow"
+    check(f"friendship:{profile}:intended-mode", friendship_mode == intended_mode, f"{profile} must use FRIENDSHIP_SERVICE_MODE={intended_mode}")
+    check("worker:no-stale-required-families", "WORKER_REQUIRED_FAMILIES" not in config, "WORKER_REQUIRED_FAMILIES is not part of the current Worker readiness contract")
+    check("profile:redis-namespace", config.get("REDIS_NAMESPACE_ENVIRONMENT") == "staging" and bool(config.get("REDIS_NAMESPACE_ZONE")), "Redis namespace must be explicit")
+    check("profile:wss-endpoint", str(config.get("WSS_ENDPOINT", "")).startswith("wss://"), "showcase requires an explicit wss:// endpoint")
+    ingress = next((r for r in resources if r.get("kind") == "Ingress"), {})
+    ingress_host = ingress.get("spec", {}).get("rules", [{}])[0].get("host")
+    check("profile:host-consistency", ingress_host == config.get("H5_PUBLIC_HOST"), "Ingress host and H5_PUBLIC_HOST must be the same explicit value")
+
+    forbidden_gate_names = re.compile(r"DEMO|LOAD_TEST|FAULT|PPROF|DEV_SESSION|MOCK|FAKE|STUB", re.IGNORECASE)
+    for name, expected_workload in WORKLOADS.items():
+        workload = find_workload(resources, name)
+        if not workload:
+            continue
+        for container in workload.get("spec", {}).get("template", {}).get("spec", {}).get("containers", []):
+            effective = env_map(workload, configmaps)
+            if name == "farm-gate":
+                check("gate:showcase-image", "tool" not in str(container.get("image", "")).lower() and "fault" not in str(container.get("image", "")).lower(), "Gate image cannot be a tool/fault image")
+                check("gate:no-demo-or-test-env", not any(forbidden_gate_names.search(str(key)) for key in effective), "showcase Gate contains Demo/load/fault/tool/test environment")
+                check("gate:showcase-profile", effective.get("FARM_APP_PROFILE") == "showcase", "Gate is not using showcase profile")
+                check("gate:no-gateproxy", str(effective.get("GATE_TRANSPORT", "")).lower() != "gateproxy", "showcase Gate cannot use gateproxy")
+    if profile == "release":
+        evidence_hash = str(config.get("FRIENDSHIP_SHADOW_EVIDENCE_SHA256", ""))
+        evidence_reviewed = str(config.get("FRIENDSHIP_SHADOW_EVIDENCE_REVIEWED", "")).lower() == "true"
+        evidence_scope = str(config.get("FRIENDSHIP_SHADOW_EVIDENCE_SCOPE", ""))
+        evidence_ref = str(config.get("FRIENDSHIP_SHADOW_EVIDENCE_REF", ""))
+        check("friendship:release-shadow-evidence-sha256", bool(re.fullmatch(r"[0-9a-fA-F]{64}", evidence_hash)), "remote_player requires a bound 64-hex zero-unexplained-shadow evidence SHA-256")
+        check("friendship:release-shadow-evidence-reviewed", evidence_reviewed, "remote_player requires explicit reviewed shadow evidence")
+        check("friendship:release-shadow-evidence-scope", evidence_scope == SHADOW_EVIDENCE_SCOPE, f"shadow evidence scope must be {SHADOW_EVIDENCE_SCOPE}")
+        check("friendship:release-shadow-evidence-ref", bool(evidence_ref) and not re.search(r"REPLACE_WITH|not-bound|UNBOUND", evidence_ref, re.IGNORECASE), "remote_player requires a reviewed, bound shadow evidence reference")
+        # Secret values remain templates by design; they are external bindings,
+        # not release values.  All non-secret placeholders must be replaced.
+        for resource in resources:
+            if resource.get("kind") == "Secret":
+                continue
+            for text in all_strings(resource):
+                lowered = text.lower()
+                if "replace_with" in lowered or "example.invalid" in lowered or "192.0.2.0/24" in lowered or "198.51.100.0/24" in lowered:
+                    check("release:no-unbound-placeholders", False, f"unbound release placeholder: {text}")
+                    break
+
+
+def check_secret_refs(resources: list[dict[str, Any]], check: Any) -> None:
+    required_refs = {
+        "farm-gate": {"FARM_REDIS_URL": "redis-url", "PERMIT_SECRET": "permit-secret", "HTTP_SESSION_COOKIE_KEYRING": "http-session-cookie-keyring", "WEB_LOGIN_RATE_LIMIT_SECRET": "web-login-rate-limit-secret"},
+        "player-svr": {"FARM_REDIS_URL": "redis-url"},
+        "farm-svr": {"FARM_REDIS_URL": "redis-url", "PERMIT_SECRET": "permit-secret", "THEFT_PRF_HMAC_SECRET": "theft-prf-hmac-secret"},
+        "farm-worker": {"FARM_REDIS_URL": "redis-url"},
+    }
+    for workload_name, refs in required_refs.items():
+        workload = find_workload(resources, workload_name)
+        actual: dict[str, dict[str, Any]] = {}
+        if workload:
+            for container in workload.get("spec", {}).get("template", {}).get("spec", {}).get("containers", []):
+                for item in container.get("env", []):
+                    ref = item.get("valueFrom", {}).get("secretKeyRef")
+                    if ref:
+                        actual[item.get("name", "")] = ref
+        for env_name, key in refs.items():
+            got = actual.get(env_name, {})
+            check(f"secret-ref:{workload_name}:{env_name}", got.get("name") == "farm-staging-secrets" and got.get("key") == key, f"{env_name} must be a Secret ref to {key}")
+
+
+def check_networking(resources: list[dict[str, Any]], check: Any, profile: str) -> None:
+    policies = {r.get("metadata", {}).get("name"): r for r in resources if r.get("kind") == "NetworkPolicy"}
+    required = {"default-deny-ingress-egress", "farm-gate-allow-required", "player-svr-allow-required", "farm-svr-allow-required", "farm-worker-allow-required", "farm-h5-allow-ingress-controller", "farm-redis-egress-controlled-cidr"}
+    check("networkpolicy:complete-set", set(policies) == required, f"required NetworkPolicies are {sorted(required)}")
+    deny = policies.get("default-deny-ingress-egress", {})
+    check("networkpolicy:default-deny", deny.get("spec", {}).get("podSelector") == {} and set(deny.get("spec", {}).get("policyTypes", [])) == {"Ingress", "Egress"}, "default deny must cover ingress and egress")
+    text = "\n".join(all_strings(resource) and json.dumps(resource, sort_keys=True) for resource in policies.values())
+    for port in (8080, 9090, 9091, 9092, 9100, 9201, 6379, 53):
+        check(f"networkpolicy:port:{port}", str(port) in text, f"required policy port {port} is absent")
+    gate = policies.get("farm-gate-allow-required", {})
+    player = policies.get("player-svr-allow-required", {})
+    gate_to_player = any(
+        any(item.get("podSelector") == {"matchLabels": {"app.kubernetes.io/name": "player-svr"}} for item in rule.get("to", []))
+        and any(item.get("protocol") == "TCP" and item.get("port") == 9100 for item in rule.get("ports", []))
+        for rule in gate.get("spec", {}).get("egress", [])
+    )
+    player_from_gate = any(
+        any(item.get("podSelector") == {"matchLabels": {"app.kubernetes.io/name": "farm-gate"}} for item in rule.get("from", []))
+        and any(item.get("protocol") == "TCP" and item.get("port") == 9100 for item in rule.get("ports", []))
+        for rule in player.get("spec", {}).get("ingress", [])
+    )
+    check("networking:gate-to-player-grpc-egress", gate_to_player, "Gate must be allowed to call player-svr on internal plaintext gRPC TCP/9100")
+    check("networking:player-grpc-from-gate", player_from_gate, "player-svr must allow Gate callers on internal plaintext gRPC TCP/9100")
+    redis = policies.get("farm-redis-egress-controlled-cidr", {})
+    redis_cidr = redis.get("spec", {}).get("egress", [{}])[0].get("to", [{}])[0].get("ipBlock", {}).get("cidr")
+    if profile in {"candidate", "w1"}:
+        redis_ok = redis_cidr == "192.0.2.0/24"
+    else:
+        try:
+            ipaddress.ip_network(str(redis_cidr), strict=False)
+            redis_ok = str(redis_cidr) not in {"192.0.2.0/24", "198.51.100.0/24"}
+        except ValueError:
+            redis_ok = False
+    check("networkpolicy:redis-cidr", redis_ok, "Redis egress must be a controlled, explicit CIDR (reserved candidate CIDR is not release-ready)")
+    for resource in resources:
+        if resource.get("kind") == "Service" and resource.get("metadata", {}).get("name") in {"player-svr", "player-svr-headless", "farm-svr", "farm-svr-headless"}:
+            check(f"networking:internal-service:{resource['metadata']['name']}", resource.get("spec", {}).get("type", "ClusterIP") == "ClusterIP", "internal gRPC Service cannot be external")
+    ingress = next((r for r in resources if r.get("kind") == "Ingress"), None)
+    if ingress:
+        backend_names = []
+        for rule in ingress.get("spec", {}).get("rules", []):
+            for path in rule.get("http", {}).get("paths", []):
+                backend_names.append(path.get("backend", {}).get("service", {}).get("name"))
+        check("networking:ingress-h5-only", set(backend_names) == {"farm-h5"}, "public Ingress may target H5 only; internal gRPC must not be public")
+        check("networking:ingress-tls-ref", ingress.get("spec", {}).get("tls", [{}])[0].get("secretName") == "farm-staging-tls", "Ingress must reference TLS Secret material")
+
+
+def check_monitoring(resources: list[dict[str, Any]], check: Any) -> None:
+    monitors = {r.get("metadata", {}).get("name"): r for r in resources if r.get("kind") == "ServiceMonitor"}
+    monitored_workloads = set(WORKLOADS) - {"farm-h5"}
+    check("monitoring:complete-set", set(monitors) == monitored_workloads, "one ServiceMonitor is required for each backend process")
+    for name in monitored_workloads:
+        monitor = monitors.get(name)
+        if not monitor:
+            continue
+        selector = monitor.get("spec", {}).get("selector", {}).get("matchLabels", {})
+        check(f"monitoring:{name}:selector", selector.get("app.kubernetes.io/name") == name, "ServiceMonitor selector must select the workload Service")
+        endpoint = monitor.get("spec", {}).get("endpoints", [{}])[0]
+        check(f"monitoring:{name}:endpoint", endpoint.get("path", "").startswith("/") and endpoint.get("interval") and endpoint.get("scrapeTimeout"), "ServiceMonitor endpoint is incomplete")
+
+
+def check_images_and_hpa(resources: list[dict[str, Any]], check: Any, profile: str) -> None:
+    hpas = [r for r in resources if r.get("kind") == "HorizontalPodAutoscaler"]
+    check("scaling:no-hpa", not hpas, "Holder or Worker HPA is forbidden in R2")
+    for resource in resources:
+        if resource.get("kind") not in {"Deployment", "StatefulSet"}:
+            continue
+        for container in resource.get("spec", {}).get("template", {}).get("spec", {}).get("containers", []):
+            image = str(container.get("image", ""))
+            check(f"image:{resource['metadata']['name']}:{container.get('name')}:no-latest", ":latest" not in image and not image.endswith(":latest"), "floating latest image tag is forbidden")
+            if profile == "release":
+                check(f"image:{resource['metadata']['name']}:{container.get('name')}:digest", bool(re.search(r"@sha256:[0-9a-f]{64}$", image)), "release image must be bound by a 64-hex digest")
+
+
+def run_render(profile: str, issues: list[dict[str, str]]) -> dict[str, Any]:
+    targets = {
+        "candidate": ROOT,
+        "release": ROOT / "overlays" / "release",
+        "w1": ROOT / "overlays" / "w1-readiness",
+    }
+    target = targets[profile]
+    commands: list[tuple[str, list[str]]] = []
+    if shutil.which("kubectl"):
+        commands.append(("kubectl kustomize", ["kubectl", "kustomize", str(target)]))
+    if shutil.which("kustomize"):
+        commands.append(("kustomize build", ["kustomize", "build", str(target)]))
+    if not commands:
+        return {"available": False, "tool": None, "ok": True, "mode": "repository-local-structural-render"}
+    label, command = commands[0]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=45, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        issues.append({"check": "kustomize-render", "message": f"{label} could not run: {exc}"})
+        return {"available": True, "tool": label, "ok": False}
+    if result.returncode != 0 or not result.stdout.strip():
+        detail = (result.stderr or result.stdout).strip().replace("\n", " ")
+        issues.append({"check": "kustomize-render", "message": f"{label} failed: {detail[:400]}"})
+        return {"available": True, "tool": label, "ok": False}
+    return {"available": True, "tool": label, "ok": True, "bytes": len(result.stdout.encode()), "rendered_sha256": sha256_bytes(result.stdout.encode())}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--profile", choices=("candidate", "release", "w1"), default="candidate")
+    args = parser.parse_args()
+    issues: list[dict[str, str]] = []
+    checks: list[dict[str, str]] = []
+
+    def check(name: str, passed: bool, message: str) -> None:
+        checks.append({"name": name, "status": "PASS" if passed else "FAIL", "message": message if not passed else ""})
+        if not passed:
+            issues.append({"check": name, "message": message})
+
+    resources = load_resources(issues, args.profile == "candidate")
+    if args.profile == "release":
+        release_digests = apply_release_image_overrides(resources, issues)
+        apply_release_patches(resources, issues)
+    elif args.profile == "w1":
+        release_digests = {}
+        apply_overlay_patch(resources, ROOT / "overlays" / "w1-readiness" / "worker-readiness-hook.json", issues, "w1")
+    else:
+        release_digests = {}
+
+    counts: dict[str, int] = {}
+    for resource in resources:
+        kind = str(resource.get("kind", ""))
+        counts[kind] = counts.get(kind, 0) + 1
+        metadata = resource.setdefault("metadata", {})
+        if namespaced(resource):
+            metadata.setdefault("namespace", NAMESPACE)
+        check(f"object:{kind}/{metadata.get('name')}:identity", bool(resource.get("apiVersion")) and bool(kind) and bool(metadata.get("name")), "apiVersion/kind/metadata.name are required")
+        if namespaced(resource):
+            check(f"object:{kind}/{metadata.get('name')}:namespace", metadata.get("namespace") == NAMESPACE, f"namespaced object must target {NAMESPACE}")
+    expected_counts = dict(EXPECTED_COUNTS)
+    if args.profile in {"release", "w1"}:
+        expected_counts["Secret"] = 0
+    for kind, expected in expected_counts.items():
+        check(f"object-count:{kind}", counts.get(kind, 0) == expected, f"expected {expected}, got {counts.get(kind, 0)}")
+    for kind in set(counts) - set(EXPECTED_COUNTS):
+        check(f"object-kind:{kind}:allowed", False, f"unexpected object kind {kind}")
+
+    index = {resource_id(resource): resource for resource in resources}
+    check("object-identity:unique", len(index) == len(resources), "duplicate kind/name object identity")
+    check_workloads(resources, check)
+    check_services(resources, check)
+    check_probes(resources, check)
+    check_pdbs(resources, check)
+    route_hash = check_routes(resources, check)
+    check_secrets_and_profiles(resources, check, args.profile)
+    check_secret_refs(resources, check)
+    check_networking(resources, check, args.profile)
+    check_monitoring(resources, check)
+    check_images_and_hpa(resources, check, args.profile)
+
+    # Dynamic route control, public tool/fault image names and literal secret
+    # values are rejected from the resource graph.  The only allowed secret
+    # placeholders are inside explicitly annotated Secret templates.
+    dynamic_pattern = re.compile(r"(dynamic.?watch|route.?transfer|takeover|horizontalpodautoscaler)", re.IGNORECASE)
+    for resource in resources:
+        if resource.get("kind") == "Secret":
+            continue
+        for text in all_strings(resource):
+            if dynamic_pattern.search(text):
+                check("static-route:no-dynamic-settings", False, f"dynamic route/autoscaling setting found: {text}")
+                break
+    for resource in resources:
+        for text in all_strings(resource):
+            if text in {"demo-platform-token", "farmgame-explicit-test-demo-theft-prf-v1"}:
+                check("public-profile:no-known-demo-values", False, f"known Demo/test value found: {text}")
+                break
+
+    render = run_render(args.profile, issues)
+    if render.get("available") and not render.get("ok"):
+        # run_render already recorded the specific failure; keep a structured
+        # check entry so callers can distinguish a tool failure from a skipped
+        # optional tool.
+        checks.append({"name": "render:kustomize", "status": "FAIL", "message": "available renderer failed"})
+    elif render.get("available"):
+        checks.append({"name": "render:kustomize", "status": "PASS", "message": render.get("tool", "renderer")})
+    else:
+        checks.append({"name": "render:kustomize", "status": "SKIP", "message": "kubectl/kustomize unavailable; deterministic structural render used"})
+
+    render_resources = sorted(resources, key=lambda item: resource_id(item))
+    manifest_hash = sha256_bytes(canonical(render_resources))
+    platform = next((r for r in resources if resource_id(r) == ("ConfigMap", "farm-staging-platform")), {})
+    nginx = next((r for r in resources if resource_id(r) == ("ConfigMap", "farm-h5-nginx")), {})
+    config_hash = sha256_bytes(canonical({"platform": platform.get("data", {}), "nginx": nginx.get("data", {}), "route_sha256": route_hash}))
+    status = "REJECTED"
+    if not issues:
+        status = "CANDIDATE_RENDERED_NOT_DEPLOYED" if args.profile in {"candidate", "w1"} else "RELEASE_RENDERED_NOT_DEPLOYED"
+    verdict = {
+        "schema": "farm.k8s.static-staging.validation/v1",
+        "profile": args.profile,
+        "status": status,
+        "namespace": NAMESPACE,
+        "topology": {
+            "farm-gate": "Deployment x3",
+            "player-svr": "fixed StatefulSet Holder x2",
+            "farm-svr": "fixed StatefulSet Holder x2",
+            "farm-worker": "Deployment x2",
+            "farm-h5": "Nginx Deployment x2",
+            "redis": "external controlled Secret URI",
+            "route": "static assignment snapshot",
+        },
+        "object_counts": counts,
+        "hashes": {
+            "manifest_sha256": manifest_hash,
+            "config_sha256": config_hash,
+            "route_snapshot_sha256": route_hash,
+            "release_image_digests": release_digests,
+            "rendered_sha256": render.get("rendered_sha256"),
+        },
+        "render": render,
+        "cluster": {
+            "checked": False,
+            "cluster_identity": None,
+            "official_url": None,
+            "reason": "No cluster credentials or formal URL were supplied; rendering is not deployment acceptance.",
+        },
+        "checks": checks,
+        "issues": issues,
+        "acceptance_blockers": [
+            "cluster credentials and cluster identity",
+            "registry image digests for backend runtime and H5 showcase image",
+            "controlled Redis URI/ACL/persistence prerequisites",
+            "external TLS Secret and formal staging host/URL",
+            "Gate RollingUpdate/Drain, Worker kill, and same-Holder restart evidence",
+        ],
+    }
+    print(json.dumps(verdict, sort_keys=True, indent=2))
+    return 0 if not issues else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

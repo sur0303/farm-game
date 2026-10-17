@@ -1,0 +1,27 @@
+name: farm-game-s2
+
+services:
+  farm-gate:
+    environment:
+      FARM_APP_PROFILE: "${FARM_APP_PROFILE:-showcase}"
+      # Null numeric values only forward an explicit host override; farm-gate derives absent values from the profile.
+      SHARE_TOKEN_TTL_PROFILE: "${SHARE_TOKEN_TTL_PROFILE:-share-token-ttl-v1}"
+      SHARE_TOKEN_TTL:
+      FRIEND_LIMIT_PROFILE: "${FRIEND_LIMIT_PROFILE:-friend-limit-v1}"
+      FRIEND_LIMIT:
+      GATE_TRANSPORT: "websocket"
+      GATE_WS_PATH: "/ws"
+      WSS_ENDPOINT: "${WSS_ENDPOINT:?Set the public staging wss_endpoint}"
+      GATE_WS_ALLOWED_ORIGINS: "${GATE_WS_ALLOWED_ORIGINS:?Set the staging H5 origins}"
+      GATE_WS_TRUSTED_PROXIES: "${GATE_WS_TRUSTED_PROXIES:?Set the CLB/Ingress CIDRs}"
+      GATE_PREAUTH_MAX_CONNECTIONS: "${GATE_PREAUTH_MAX_CONNECTIONS:-4096}"
+      GATE_PREAUTH_MAX_CONNECTIONS_PER_IP: "${GATE_PREAUTH_MAX_CONNECTIONS_PER_IP:-64}"
+      GATE_PREAUTH_MAX_FRAMES_PER_CONNECTION: "1"
+      GATE_PREAUTH_MAX_BYTES_PER_CONNECTION: "${GATE_PREAUTH_MAX_BYTES_PER_CONNECTION:-65536}"
+      GATE_PREAUTH_MAX_BYTES_PER_IP: "${GATE_PREAUTH_MAX_BYTES_PER_IP:-1048576}"
+      GATE_PREAUTH_MAX_BYTES_POD: "${GATE_PREAUTH_MAX_BYTES_POD:-67108864}"
+      GATE_PREAUTH_HELLO_TIMEOUT: "${GATE_PREAUTH_HELLO_TIMEOUT:-10s}"
+
+  # The current three-loop staging baseline uses namespaced Redis development
+  # adapters. Production cutover replaces Player/Farm/Friend repositories with
+  # their dedicated Tcaplus tables; OwnerCoreRecord is not expanded.

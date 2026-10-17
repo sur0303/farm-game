@@ -1,0 +1,44 @@
+File: farm-svr
+Build ID: ffca9b336f4ed02ff98b4a0969503ed0381e1583
+Type: cpu
+Time: 2026-08-18 12:11:00 CST
+Duration: 60s, Total samples = 10.76s (17.93%)
+Showing nodes accounting for 5.22s, 48.51% of 10.76s total
+Dropped 647 nodes (cum <= 0.05s)
+Showing top 35 nodes out of 361
+      flat  flat%   sum%        cum   cum%
+     1.56s 14.50% 14.50%      1.56s 14.50%  internal/runtime/syscall/linux.Syscall6
+     0.51s  4.74% 19.24%      0.51s  4.74%  runtime.futex
+     0.24s  2.23% 21.47%      0.24s  2.23%  runtime.nextFreeFast (inline)
+     0.19s  1.77% 23.23%      0.19s  1.77%  internal/runtime/maps.ctrlGroup.matchH2
+     0.19s  1.77% 25.00%      0.49s  4.55%  runtime.selectgo
+     0.15s  1.39% 26.39%      0.15s  1.39%  runtime.memclrNoHeapPointers
+     0.15s  1.39% 27.79%      0.18s  1.67%  runtime.step
+     0.11s  1.02% 28.81%      0.12s  1.12%  runtime.(*mspan).writeHeapBitsSmall
+     0.11s  1.02% 29.83%      0.27s  2.51%  runtime.(*unwinder).resolveInternal
+     0.11s  1.02% 30.86%      0.11s  1.02%  runtime.nanotime (inline)
+     0.10s  0.93% 31.78%      0.10s  0.93%  aeshashbody
+     0.10s  0.93% 32.71%      0.26s  2.42%  runtime.(*stkframe).getStackMap
+     0.10s  0.93% 33.64%      0.10s  0.93%  runtime.memmove
+     0.10s  0.93% 34.57%      0.10s  0.93%  runtime.spanClass.sizeclass (inline)
+     0.09s  0.84% 35.41%      0.11s  1.02%  runtime.(*waitq).dequeue (inline)
+     0.09s  0.84% 36.25%      0.70s  6.51%  runtime.newobject
+     0.09s  0.84% 37.08%      0.20s  1.86%  runtime.scanObject
+     0.09s  0.84% 37.92%      0.09s  0.84%  time.runtimeNow
+     0.08s  0.74% 38.66%      0.25s  2.32%  google.golang.org/protobuf/internal/impl.(*MessageInfo).marshalAppendPointer
+     0.08s  0.74% 39.41%      0.10s  0.93%  runtime.(*spanSet).push
+     0.08s  0.74% 40.15%      0.09s  0.84%  runtime.gopark
+     0.08s  0.74% 40.89%      1.18s 10.97%  runtime.mallocgc
+     0.08s  0.74% 41.64%      0.29s  2.70%  runtime.pcvalue
+     0.07s  0.65% 42.29%      0.10s  0.93%  internal/sync.(*Mutex).Lock
+     0.07s  0.65% 42.94%      0.36s  3.35%  runtime.adjustframe
+     0.07s  0.65% 43.59%      0.65s  6.04%  runtime.findRunnable
+     0.07s  0.65% 44.24%      0.07s  0.65%  runtime.findfunc
+     0.06s  0.56% 44.80%      0.20s  1.86%  google.golang.org/protobuf/internal/impl.(*MessageInfo).sizePointerSlow
+     0.06s  0.56% 45.35%      0.06s  0.56%  internal/runtime/atomic.(*Uint32).CompareAndSwap (inline)
+     0.06s  0.56% 45.91%      0.06s  0.56%  runtime.(*moduledata).textAddr
+     0.06s  0.56% 46.47%      0.78s  7.25%  runtime.schedule
+     0.06s  0.56% 47.03%      0.16s  1.49%  runtime.tryDeferToSpanScan
+     0.06s  0.56% 47.58%      0.09s  0.84%  runtime.unlock2
+     0.05s  0.46% 48.05%      0.07s  0.65%  internal/runtime/maps.(*Map).getWithoutKeySmallFastStr
+     0.05s  0.46% 48.51%      0.14s  1.30%  runtime.lock2

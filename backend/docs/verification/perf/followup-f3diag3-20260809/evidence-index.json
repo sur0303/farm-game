@@ -1,0 +1,121 @@
+{
+  "selected_run_id": "q1perf-f3diag3-0809122638-2569920",
+  "pre_overlay_run_id": "q1perf-f3diag-0809121421-2454380",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 849,
+      "sha256": "sha256:0ac86924a1aaadcf1ba5484251e2bb969e4f7e0ad45a46fb67200e469df4ded0"
+    },
+    {
+      "path": "baseline-run-manifest.json",
+      "bytes": 4463,
+      "sha256": "sha256:9ef7d727ae3d26785bdfd962b39a4af9a07125aef7b91150340c17265a33a1a2"
+    },
+    {
+      "path": "baseline-verdict.json",
+      "bytes": 754,
+      "sha256": "sha256:412b1b2a4f23a5ae5b627913839c52d93f5fa1a5d5c5bfaa18ea396d5367cd0b"
+    },
+    {
+      "path": "evidence/authority-after.json",
+      "bytes": 3938,
+      "sha256": "sha256:5cffe7b94957d1c48abb8822a922e5e7748311bbeb53457e1c4659bfe76abf97"
+    },
+    {
+      "path": "evidence/browser-verdict.json",
+      "bytes": 2586,
+      "sha256": "sha256:0a4de0c09759e875616b4325d83edd70ef583ca465a84e14437ff1cb91eac988"
+    },
+    {
+      "path": "evidence/f3-fault-chain-triage.json",
+      "bytes": 2504,
+      "sha256": "sha256:f5e7dd2e1440a9ea551fb12ecd21bfffe6cfb8f04ce3da3ea7cb7651603dc7b1"
+    },
+    {
+      "path": "evidence/fault-plan-observations.ndjson",
+      "bytes": 749,
+      "sha256": "sha256:32485a6779d5fe2c7ba0c8b095984d82b5ae8c8b2b6d39ba7aa2645fe38b45c9"
+    },
+    {
+      "path": "evidence/h5-test-overlay.json",
+      "bytes": 723,
+      "sha256": "sha256:e04f0a8be1b3cbeac4041a3283f308a2f49ebc0c868bea5ed1b5ddac88198ff7"
+    },
+    {
+      "path": "evidence/pre-overlay-contract-conflict/baseline-run-manifest.json",
+      "bytes": 4461,
+      "sha256": "sha256:ca4a522c79fc626484d8e8b3c3c7b9d5d29ceb2ea58366ad747cdd73401538da"
+    },
+    {
+      "path": "evidence/pre-overlay-contract-conflict/browser-verdict.json",
+      "bytes": 2265,
+      "sha256": "sha256:4f47d2a609bb31e331fb2411a12aba21f03f9e80dcf1e2e5d58c8d231792abd0"
+    },
+    {
+      "path": "evidence/pre-overlay-contract-conflict/f3-fault-chain-triage.json",
+      "bytes": 2221,
+      "sha256": "sha256:d422323e96120aeaecf87712773419ce7a922de6deec46eddd7f2b96b88543d1"
+    },
+    {
+      "path": "evidence/pre-overlay-contract-conflict/fault-plan-observations.ndjson",
+      "bytes": 749,
+      "sha256": "sha256:c3d9c5c3a0effb305a0cb6eacac4e8e85e2840a782947c8ac0021082e65feb6c"
+    },
+    {
+      "path": "evidence/pre-overlay-contract-conflict/protocol-events.ndjson",
+      "bytes": 9219,
+      "sha256": "sha256:a3cca279563ad59d3ed0adec4041d06754c4c1c05337b6aa6d3f8cd8c9cc8160"
+    },
+    {
+      "path": "evidence/pre-overlay-contract-conflict/proxy.log",
+      "bytes": 464,
+      "sha256": "sha256:7576405c0bb1effd595f78bfa8d4eb9915ca856f79c6be03928cd52b44e7172d"
+    },
+    {
+      "path": "evidence/pre-overlay-contract-conflict/ws-frame-tap.ndjson",
+      "bytes": 43255,
+      "sha256": "sha256:3ccb049dad3e55bbe67642310aa1e2ece7e1dc8b0c81866a2c193ea5d07a119e"
+    },
+    {
+      "path": "evidence/protocol-events.ndjson",
+      "bytes": 12931,
+      "sha256": "sha256:25a0b3081a0560fa938e9cdd735091670d4693f07379fbc6d389c03ffb434190"
+    },
+    {
+      "path": "evidence/protocol-verdict.json",
+      "bytes": 967,
+      "sha256": "sha256:9c10ae2e6cc31384a5ba194b87f62fc622fd4d10635b58a2474463759a8d0932"
+    },
+    {
+      "path": "evidence/proxy.log",
+      "bytes": 623,
+      "sha256": "sha256:a80e7bc1baddee0848f973a2b72583aa501223c30a45b1a98fac3d895fe046db"
+    },
+    {
+      "path": "evidence/theft-invalid-order-triage.json",
+      "bytes": 7419,
+      "sha256": "sha256:7b2b854241bdd2f82654c9982766c99a70c31bfedce3e93d9d495932fca59c37"
+    },
+    {
+      "path": "evidence/theft-redis-dump.json",
+      "bytes": 9976,
+      "sha256": "sha256:b323192cfc800597ce036273f973551ed54b84eb2299c0a1fa315de5353bef88"
+    },
+    {
+      "path": "evidence/worker.log",
+      "bytes": 3377,
+      "sha256": "sha256:acec990fe16698b92cf99e2a23263d2baab4a460d6fba2b5c12109f53c60e201"
+    },
+    {
+      "path": "evidence/ws-frame-tap.ndjson",
+      "bytes": 61898,
+      "sha256": "sha256:84ae5e7a7e1c27616125746dbe32d1a785c894aeada6f064b0f7d91f2f3ffad9"
+    },
+    {
+      "path": "product-correctness-anchor.json",
+      "bytes": 5727,
+      "sha256": "sha256:9878e3dc03ac8a85e778c3f3cffdc49ffce0ee0e1642c59ed3ccc636240879c6"
+    }
+  ]
+}

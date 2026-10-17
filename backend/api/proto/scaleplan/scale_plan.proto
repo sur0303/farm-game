@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+package farmgame.scaleplan;
+
+option go_package = "farmgame/api/gen/scaleplan;scaleplanpb";
+
+// ScalePlan is an internal, mTLS-protected manual control-plane contract.
+// It intentionally contains no caller role, credential, endpoint, or proof
+// evidence. Mutation methods are the only operations exposed by this service.
+enum ScalePlanOperation {
+  SCALE_PLAN_OPERATION_UNSPECIFIED = 0;
+  SCALE_PLAN_OPERATION_SCALE_OUT = 1;
+  SCALE_PLAN_OPERATION_SCALE_IN = 2;
+  SCALE_PLAN_OPERATION_DRAIN_HOLDER = 3;
+}
+
+message WorkloadRef {
+  string realm = 1;
+  string domain = 2;
+  string namespace = 3;
+  string kind = 4;
+  string name = 5;
+}
+
+// ShardMove is an explicit manifest entry. The API never selects or balances
+// shards on behalf of an operator.
+message ShardMove {
+  string domain = 1;
+  uint32 virtual_shard = 2;
+  string source_holder_id = 3;
+  string target_holder_id = 4;
+  int32 target_ordinal = 5;
+}
+
+message SubmitScalePlanRequest {
+  string idempotency_key = 1;
+  string realm = 2;
+  string domain = 3;
+  ScalePlanOperation operation = 4;
+  WorkloadRef workload = 5;
+  int32 expected_replicas = 6;
+  int32 desired_replicas = 7;
+  repeated ShardMove moves = 8;
+  int64 route_plan_ttl_ms = 9;
+  int64 plan_ttl_ms = 10;
+  int64 recovery_retention_ms = 11;
+  uint32 max_route_plans_inflight = 12;
+  uint32 max_shards_per_wave = 13;
+}
+
+message ScalePlan {
+  string schema_version = 1;
+  string plan_id = 2;
+  string payload_digest = 3;
+  string realm = 4;
+  string domain = 5;
+  ScalePlanOperation operation = 6;
+  WorkloadRef workload = 7;
+  int32 expected_replicas = 8;
+  int32 desired_replicas = 9;
+  repeated ShardMove moves = 10;
+  int64 route_plan_ttl_ms = 11;
+  int64 plan_ttl_ms = 12;
+  int64 recovery_retention_ms = 13;
+  uint32 max_route_plans_inflight = 14;
+  uint32 max_shards_per_wave = 15;
+  string status = 16;
+  string phase = 17;
+  uint32 wave_index = 18;
+  uint64 attempt = 19;
+  uint64 revision = 20;
+  string blocked_reason = 21;
+  string paused_reason = 22;
+  string error_code = 23;
+  int64 created_at_ms = 24;
+  int64 updated_at_ms = 25;
+  int64 completed_at_ms = 26;
+  int64 start_deadline_ms = 27;
+  int64 recovery_retain_until_ms = 28;
+  // The digest binds the exact blocked durable checkpoint. It is present only
+  // when the service can validate the checkpoint or when a terminal receipt
+  // retains the exact checkpoint used for termination.
+  string blocked_checkpoint_digest = 29;
+}
+
+message SubmitScalePlanResponse {
+  ScalePlan plan = 1;
+}
+
+message GetScalePlanRequest {
+  string plan_id = 1;
+}
+
+message GetScalePlanResponse {
+  ScalePlan plan = 1;
+}
+
+message ListRecoverableScalePlansRequest {
+  uint32 limit = 1;
+}
+
+message ListRecoverableScalePlansResponse {
+  repeated ScalePlan plans = 1;
+  bool truncated = 2;
+}
+
+message PauseRequest {
+  string plan_id = 1;
+  // Empty means the only operator pause reason, OPERATOR_PAUSED. Other
+  // reasons are rejected; dependency pause is not an operator API.
+  string reason = 2;
+}
+
+message PauseResponse {
+  ScalePlan plan = 1;
+}
+
+message ResumeRequest {
+  string plan_id = 1;
+}
+
+message ResumeResponse {
+  ScalePlan plan = 1;
+}
+
+message TerminateBlockedRequest {
+  string plan_id = 1;
+  uint64 expected_revision = 2;
+  string expected_blocked_reason = 3;
+  string expected_payload_digest = 4;
+  string expected_checkpoint_digest = 5;
+  string termination_id = 6;
+}
+
+message TerminateBlockedResponse {
+  ScalePlan plan = 1;
+}
+
+service ScalePlanService {
+  rpc SubmitScalePlan(SubmitScalePlanRequest) returns (SubmitScalePlanResponse);
+  rpc GetScalePlan(GetScalePlanRequest) returns (GetScalePlanResponse);
+  rpc ListRecoverableScalePlans(ListRecoverableScalePlansRequest) returns (ListRecoverableScalePlansResponse);
+  rpc Pause(PauseRequest) returns (PauseResponse);
+  rpc Resume(ResumeRequest) returns (ResumeResponse);
+  rpc TerminateBlocked(TerminateBlockedRequest) returns (TerminateBlockedResponse);
+}

@@ -1,0 +1,204 @@
+name: farm-game-s2
+
+# Core Compose uses the shared DevCloud Redis instance.  Inject the complete
+# URL at runtime; never put the password in this file or in a committed .env.
+services:
+  player-svr:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        SERVICE: player-svr
+    environment:
+      PLAYER_LISTEN: ":9100"
+      PLAYER_HEALTH_LISTEN: ":9101"
+      # RT1B-3C-B (C2 seam): base compose does NOT enable the membership
+      # runtime.  Opt in explicitly with docker-compose.membership.yml
+      # (AUTHORITY_MEMBERSHIP_MODE=true) or an explicit deployment value; a
+      # missing variable keeps the legacy path and can never silently switch
+      # runtime semantics.
+      AUTHORITY_MEMBERSHIP_MODE: "${AUTHORITY_MEMBERSHIP_MODE:-false}"
+      ACTOR_ASSIGNMENT_MODE: "${ACTOR_ASSIGNMENT_MODE:-static}"
+      # Set FARM_REDIS_CLUSTER_URLS for the 3-primary/3-replica cluster;
+      # FARM_REDIS_URL remains a single-node compatibility fallback.
+      FARM_REDIS_URL: "${FARM_REDIS_URL:-}"
+      FARM_REDIS_CLUSTER_URLS: "${FARM_REDIS_CLUSTER_URLS:-}"
+      FARM_AUTHORITY_REDIS_URL: "${FARM_AUTHORITY_REDIS_URL:-}"
+      FARM_RUNTIME_REDIS_URL: "${FARM_RUNTIME_REDIS_URL:-}"
+      FARM_PROJECTION_REDIS_URL: "${FARM_PROJECTION_REDIS_URL:-}"
+    ports:
+      - "9100:9100"
+      - "9101:9101"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9101/readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  farm-svr:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        SERVICE: farm-svr
+    depends_on:
+      player-svr:
+        condition: service_healthy
+    environment:
+      FARM_LISTEN: ":9090"
+      FARM_HEALTH_LISTEN: ":9091"
+      # RT1B-3C-B (C2 seam): base compose does NOT enable the membership
+      # runtime.  Opt in explicitly with docker-compose.membership.yml
+      # (AUTHORITY_MEMBERSHIP_MODE=true) or an explicit deployment value; a
+      # missing variable keeps the legacy path and can never silently switch
+      # runtime semantics.
+      AUTHORITY_MEMBERSHIP_MODE: "${AUTHORITY_MEMBERSHIP_MODE:-false}"
+      ACTOR_ASSIGNMENT_MODE: "${ACTOR_ASSIGNMENT_MODE:-static}"
+      PLAYER_ADDR: "player-svr:9100"
+      GATEWAY_DOWNLINK_ADDR: "farm-gate:9092"
+      FARM_REDIS_URL: "${FARM_REDIS_URL:-}"
+      FARM_REDIS_CLUSTER_URLS: "${FARM_REDIS_CLUSTER_URLS:-}"
+      FARM_AUTHORITY_REDIS_URL: "${FARM_AUTHORITY_REDIS_URL:-}"
+      FARM_RUNTIME_REDIS_URL: "${FARM_RUNTIME_REDIS_URL:-}"
+      FARM_PROJECTION_REDIS_URL: "${FARM_PROJECTION_REDIS_URL:-}"
+      FARM_CROP_MATURE_AFTER: "${FARM_CROP_MATURE_AFTER:-10s}"
+      # Friend-opportunity experiment: A keeps this false; B1/B2 set it true.
+      # Attaching the wakeup is part of the same authority commit as Farm state.
+      FARM_OPPORTUNITY_WAKEUP_ATTACH_ENABLED: "${FARM_OPPORTUNITY_WAKEUP_ATTACH_ENABLED:-false}"
+      FARM_OPPORTUNITY_HEADER_READ_MODE: "${FARM_OPPORTUNITY_HEADER_READ_MODE:-full}"
+      FARM_OPPORTUNITY_HEADER_FULL_FALLBACK: "${FARM_OPPORTUNITY_HEADER_FULL_FALLBACK:-8}"
+      PERMIT_SECRET: "${PERMIT_SECRET:?Set PERMIT_SECRET to at least 32 random bytes}"
+    ports:
+      - "9090:9090"
+      - "9091:9091"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9091/readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  farm-worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        SERVICE: farm-worker
+    depends_on:
+      player-svr:
+        condition: service_healthy
+      farm-svr:
+        condition: service_healthy
+    environment:
+      FARM_REDIS_URL: "${FARM_REDIS_URL:-}"
+      FARM_REDIS_CLUSTER_URLS: "${FARM_REDIS_CLUSTER_URLS:-}"
+      ACTOR_ASSIGNMENT_MODE: "${ACTOR_ASSIGNMENT_MODE:-static}"
+      FARM_AUTHORITY_REDIS_URL: "${FARM_AUTHORITY_REDIS_URL:-}"
+      FARM_RUNTIME_REDIS_URL: "${FARM_RUNTIME_REDIS_URL:-}"
+      FARM_PROJECTION_REDIS_URL: "${FARM_PROJECTION_REDIS_URL:-}"
+      WORKFLOW_STORE_PREFIX: "${WORKFLOW_STORE_PREFIX:-farm:v121:m1:workflow}"
+      PLAYER_ADDR: "player-svr:9100"
+      FARM_ADDR: "farm-svr:9090"
+      WORKER_HEALTH_LISTEN: ":9201"
+      WORKER_POLL_INTERVAL: "${WORKER_POLL_INTERVAL:-1s}"
+      SOURCE_ORDER_WORKER_BUCKETS_PER_ROUND: "${SOURCE_ORDER_WORKER_BUCKETS_PER_ROUND:-256}"
+      SOURCE_ORDER_WORKER_IDLE_MAX_INTERVAL: "${SOURCE_ORDER_WORKER_IDLE_MAX_INTERVAL:-4s}"
+      SOURCE_ORDER_DUE_OBSERVE_INTERVAL: "${SOURCE_ORDER_DUE_OBSERVE_INTERVAL:-10s}"
+      WORKER_CLAIM_LEASE: "${WORKER_CLAIM_LEASE:-5s}"
+      WORKER_OPERATION_TIMEOUT: "${WORKER_OPERATION_TIMEOUT:-3s}"
+      # Friend-opportunity experiment: disabled by default. Shadow mode advances
+      # the recoverable schedule but deliberately suppresses client Hints.
+      FARM_OPPORTUNITY_WAKEUP_ENABLED: "${FARM_OPPORTUNITY_WAKEUP_ENABLED:-false}"
+      FARM_OPPORTUNITY_WAKEUP_SHADOW: "${FARM_OPPORTUNITY_WAKEUP_SHADOW:-false}"
+      FARM_OPPORTUNITY_WAKEUP_POLL_INTERVAL: "${FARM_OPPORTUNITY_WAKEUP_POLL_INTERVAL:-1s}"
+      FARM_OPPORTUNITY_WAKEUP_LEASE: "${FARM_OPPORTUNITY_WAKEUP_LEASE:-5s}"
+      FARM_OPPORTUNITY_WAKEUP_CLAIM_LIMIT: "${FARM_OPPORTUNITY_WAKEUP_CLAIM_LIMIT:-64}"
+      FARM_OPPORTUNITY_WAKEUP_DISCOVERY_LIMIT: "${FARM_OPPORTUNITY_WAKEUP_DISCOVERY_LIMIT:-256}"
+      FARM_OPPORTUNITY_WAKEUP_MAX_CONCURRENT: "${FARM_OPPORTUNITY_WAKEUP_MAX_CONCURRENT:-4}"
+      FARM_OPPORTUNITY_WAKEUP_ROUND_TIME_BUDGET: "${FARM_OPPORTUNITY_WAKEUP_ROUND_TIME_BUDGET:-800ms}"
+      FARM_WORKER_ASSIGNMENT_MODE: "${FARM_WORKER_ASSIGNMENT_MODE:-static}"
+      FARM_WORKER_OWNED_SHARDS: "${FARM_WORKER_OWNED_SHARDS:-}"
+      # pubsub remains the safe default. direct/shadow-direct additionally use
+      # the authoritative SessionRoute and the existing Gate DeliverBatch RPC.
+      FARM_OPPORTUNITY_HINT_TRANSPORT: "${FARM_OPPORTUNITY_HINT_TRANSPORT:-pubsub}"
+      GATEWAY_DOWNLINK_ROUTES: "${GATEWAY_DOWNLINK_ROUTES:-farm-gate-local=farm-gate:9092}"
+      PERMIT_SECRET: "${PERMIT_SECRET:?Set PERMIT_SECRET to at least 32 random bytes}"
+    ports:
+      - "9201:9201"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9201/readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  farm-gate:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        SERVICE: farm-gate
+    depends_on:
+      player-svr:
+        condition: service_healthy
+      farm-svr:
+        condition: service_healthy
+    environment:
+      GATEWAY_LISTEN: ":8080"
+      FARM_APP_PROFILE: "${FARM_APP_PROFILE:-showcase}"
+      # Null numeric values only forward an explicit host override; farm-gate derives absent values from the profile.
+      SHARE_TOKEN_TTL_PROFILE: "${SHARE_TOKEN_TTL_PROFILE:-share-token-ttl-v1}"
+      SHARE_TOKEN_TTL:
+      FRIEND_LIMIT_PROFILE: "${FRIEND_LIMIT_PROFILE:-friend-limit-v1}"
+      FRIEND_LIMIT:
+      GATE_TRANSPORT: "websocket"
+      GATE_WS_PATH: "/ws"
+      GATE_CONTROL_LISTEN: ":9093"
+      GATE_CONTROL_TARGETS: "${GATE_CONTROL_TARGETS:-}"
+      ACTOR_ASSIGNMENT_MODE: "${ACTOR_ASSIGNMENT_MODE:-static}"
+      PLAYER_ADDR: "player-svr:9100"
+      FARM_ADDR: "farm-svr:9090"
+      LOGIC_HEALTH_ADDR: "http://farm-svr:9091"
+      FARM_REDIS_URL: "${FARM_REDIS_URL:-}"
+      FARM_REDIS_CLUSTER_URLS: "${FARM_REDIS_CLUSTER_URLS:-}"
+      FARM_AUTHORITY_REDIS_URL: "${FARM_AUTHORITY_REDIS_URL:-}"
+      FARM_RUNTIME_REDIS_URL: "${FARM_RUNTIME_REDIS_URL:-}"
+      FARM_PROJECTION_REDIS_URL: "${FARM_PROJECTION_REDIS_URL:-}"
+      PERMIT_SECRET: "${PERMIT_SECRET:?Set PERMIT_SECRET to at least 32 random bytes}"
+      WEB_ACCOUNT_STORE_PREFIX: "${WEB_ACCOUNT_STORE_PREFIX:-farm:v122:primary:web-account}"
+      WEB_ACCOUNT_PLAYER_ID_BASE: "${WEB_ACCOUNT_PLAYER_ID_BASE:-1000000}"
+      WEB_LOGIN_RATE_LIMIT_PREFIX: "${WEB_LOGIN_RATE_LIMIT_PREFIX:-farm:v03:web-login-limit}"
+      WEB_LOGIN_IP_BURST: "${WEB_LOGIN_IP_BURST:-30}"
+      WEB_LOGIN_IP_WINDOW: "${WEB_LOGIN_IP_WINDOW:-1m}"
+      WEB_LOGIN_DEVICE_BURST: "${WEB_LOGIN_DEVICE_BURST:-10}"
+      WEB_LOGIN_DEVICE_WINDOW: "${WEB_LOGIN_DEVICE_WINDOW:-1m}"
+      WEB_LOGIN_RATE_LIMIT_SECRET: "${WEB_LOGIN_RATE_LIMIT_SECRET:-}"
+      HTTP_SESSION_COOKIE_ACTIVE_VERSION: "${HTTP_SESSION_COOKIE_ACTIVE_VERSION:-1}"
+      HTTP_SESSION_COOKIE_KEYRING: "${HTTP_SESSION_COOKIE_KEYRING:-}"
+      HTTP_SESSION_COOKIE_SECURE: "${HTTP_SESSION_COOKIE_SECURE:-1}"
+      GATE_WS_METRICS: "1"
+      GATE_WS_COMMAND_QUEUE_SIZE: "${GATE_WS_COMMAND_QUEUE_SIZE:-16}"
+      GATE_DOWNLINK_WRITER_MAX_ITEMS: "${GATE_DOWNLINK_WRITER_MAX_ITEMS:-256}"
+      GATE_DOWNLINK_WRITER_MAX_BYTES: "${GATE_DOWNLINK_WRITER_MAX_BYTES:-1048576}"
+      GATE_DOWNLINK_HINT_MAX_ITEMS: "${GATE_DOWNLINK_HINT_MAX_ITEMS:-32}"
+      GATE_DOWNLINK_HINT_MAX_BYTES: "${GATE_DOWNLINK_HINT_MAX_BYTES:-65536}"
+      GATE_DOWNLINK_DRAIN_QUANTUM: "${GATE_DOWNLINK_DRAIN_QUANTUM:-64}"
+      GATE_PREAUTH_MAX_CONNECTIONS: "${GATE_PREAUTH_MAX_CONNECTIONS:-4096}"
+      GATE_PREAUTH_MAX_CONNECTIONS_PER_IP: "${GATE_PREAUTH_MAX_CONNECTIONS_PER_IP:-64}"
+      GATE_PREAUTH_MAX_FRAMES_PER_CONNECTION: "${GATE_PREAUTH_MAX_FRAMES_PER_CONNECTION:-1}"
+      GATE_PREAUTH_MAX_BYTES_PER_CONNECTION: "${GATE_PREAUTH_MAX_BYTES_PER_CONNECTION:-65536}"
+      GATE_PREAUTH_MAX_BYTES_PER_IP: "${GATE_PREAUTH_MAX_BYTES_PER_IP:-1048576}"
+      GATE_PREAUTH_MAX_BYTES_POD: "${GATE_PREAUTH_MAX_BYTES_POD:-67108864}"
+      GATE_PREAUTH_HELLO_TIMEOUT: "${GATE_PREAUTH_HELLO_TIMEOUT:-10s}"
+      GATE_BACKEND_MAX_INFLIGHT: "${GATE_BACKEND_MAX_INFLIGHT:-1024}"
+      GATE_BACKEND_RPC_TIMEOUT: "${GATE_BACKEND_RPC_TIMEOUT:-3s}"
+      GATE_ROUTE_LEASE_TTL: "${GATE_ROUTE_LEASE_TTL:-30s}"
+      LOAD_TEST_TOKEN_SECRET: "${LOAD_TEST_TOKEN_SECRET:-}"
+      WSS_ENDPOINT: "${WSS_ENDPOINT:?Set WSS_ENDPOINT to an explicit public wss:// endpoint}"
+    ports:
+      - "8080:8080"
+      - "9092:9092"
+      - "9093:9093"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20

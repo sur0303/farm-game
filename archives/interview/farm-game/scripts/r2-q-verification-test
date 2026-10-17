@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+TMP_DIR="$(mktemp -d /tmp/r2-q-verification-test.XXXXXX)"
+cleanup() {
+  rm -rf -- "$TMP_DIR"
+}
+trap cleanup EXIT
+
+"$ROOT_DIR/scripts/r2-q-verification" --help >/dev/null
+
+OUT="$TMP_DIR/invalid"
+set +e
+"$ROOT_DIR/scripts/r2-q-verification" \
+  --out "$OUT" \
+  --run-id r2q-test-invalid \
+  --h5-root "$TMP_DIR/missing-h5" >"$TMP_DIR/invalid.stdout" 2>"$TMP_DIR/invalid.stderr"
+code=$?
+set -e
+
+[[ "$code" -eq 1 ]] || { echo "invalid assembly must exit 1, got $code" >&2; exit 1; }
+
+python3 - "$OUT" <<'PY'
+import json
+import pathlib
+import sys
+
+out = pathlib.Path(sys.argv[1])
+verdict = json.loads((out / "verdict.json").read_text())
+manifest = json.loads((out / "run-manifest.json").read_text())
+assert verdict["verdict"] == "FAIL"
+assert verdict["invalid_assembly"] is True
+assert verdict["handoff"] == "BLOCKED"
+assert verdict["final_pass_claim_allowed"] is False
+assert manifest["r2"]["expected_base_commit"] == "54c6d0a15cd2e0555d309b59319f1ce30fab268c"
+assert manifest["r2"]["h5_entry_base_commit"] == "e3ce394cf77bbe111755fcd5dc576dfd4a557d34"
+assert manifest["binding"]["h5_expected_base_commit"] == "e3ce394cf77bbe111755fcd5dc576dfd4a557d34"
+assert manifest["route_snapshot"]["path"] == "deploy/k8s/static-staging/base/route-snapshot.v1.json"
+assert manifest["tools"]["p1_k8s_validator"]["path"] == "scripts/validate-k8s-static-staging"
+assert manifest["tools"]["p1_k8s_test"]["path"] == "scripts/test-k8s-static-staging"
+assert manifest["security"]["flushall_allowed"] is False
+assert manifest["security"]["max_unresolved_operations"] == 1
+statuses = {item["id"]: item["status"] for item in verdict["gates"]}
+assert statuses["kubernetes.cluster_deployment"] == "BLOCKED_ENVIRONMENT"
+assert statuses["h5.official_url"] == "BLOCKED_ENVIRONMENT"
+assert statuses["model.v2.field_equality"] == "SKIPPED_NOT_COMPOSED"
+assert statuses["worker.invalid_order"] == "SKIPPED_NOT_COMPOSED"
+assert statuses["friendship.boundary.shadow_no_duplicate_write"] == "SKIPPED_NOT_COMPOSED"
+assert all(item["status"] != "PASS" for item in verdict["gates"] if item["area"] != "assembly")
+for name in (
+    "run-manifest.json",
+    "verdict.json",
+    "metrics-summary.json",
+    "fixture-summary.json",
+    "r2-q-evidence.md",
+    "evidence-index.json",
+    "checksums.sha256",
+):
+    assert (out / name).is_file(), name
+for line in (out / "checksums.sha256").read_text().splitlines():
+    digest, path = line.split("  ", 1)
+    assert len(digest) == 64, line
+    assert (out / path).is_file(), path
+PY
+
+OUT2="$TMP_DIR/uncomposed"
+set +e
+"$ROOT_DIR/scripts/r2-q-verification" \
+  --out "$OUT2" \
+  --run-id r2q-test-uncomposed \
+  --backend-root "$ROOT_DIR" \
+  --h5-root "$(cd "$ROOT_DIR/../classic-farm-h5" && pwd)" >"$TMP_DIR/uncomposed.stdout" 2>"$TMP_DIR/uncomposed.stderr"
+code=$?
+set -e
+
+# The test worktree is intentionally dirty while the coordinator is developed;
+# either an invalid assembly or unresolved gates is acceptable, but a skipped
+# contract must never silently become PASS.
+[[ "$code" -eq 1 || "$code" -eq 2 ]] || { echo "expected fail-closed exit 1/2, got $code" >&2; exit 1; }
+python3 - "$OUT2" <<'PY'
+import json
+import pathlib
+import sys
+
+out = pathlib.Path(sys.argv[1])
+verdict = json.loads((out / "verdict.json").read_text())
+assert verdict["final_pass_claim_allowed"] is False
+for item in verdict["gates"]:
+    if item["status"] == "SKIPPED_NOT_COMPOSED":
+        assert item["final_pass_eligible"] is False
+PY
+
+echo "r2-q-verification tests: PASS"

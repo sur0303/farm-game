@@ -1,0 +1,1826 @@
+{
+  "acceptance_blockers": [
+    "cluster credentials and cluster identity",
+    "registry image digests for backend runtime and H5 showcase image",
+    "controlled Redis URI/ACL/persistence prerequisites",
+    "external TLS Secret and formal staging host/URL",
+    "Gate RollingUpdate/Drain, Worker kill, and same-Holder restart evidence"
+  ],
+  "checks": [
+    {
+      "message": "",
+      "name": "object:Service/farm-svr-headless:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/farm-svr-headless:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:PodDisruptionBudget/farm-svr:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:PodDisruptionBudget/farm-svr:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/farm-svr:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/farm-svr:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:StatefulSet/farm-svr:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:StatefulSet/farm-svr:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Deployment/farm-gate:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Deployment/farm-gate:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:PodDisruptionBudget/farm-gate:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:PodDisruptionBudget/farm-gate:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/farm-gate:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/farm-gate:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Deployment/farm-h5:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Deployment/farm-h5:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:PodDisruptionBudget/farm-h5:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:PodDisruptionBudget/farm-h5:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/farm-h5:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/farm-h5:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Ingress/farm-staging-web:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Ingress/farm-staging-web:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Namespace/farm-staging-system:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/default-deny-ingress-egress:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/default-deny-ingress-egress:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/farm-svr-allow-required:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/farm-svr-allow-required:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/farm-gate-allow-required:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/farm-gate-allow-required:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/farm-h5-allow-ingress-controller:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/farm-h5-allow-ingress-controller:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/player-svr-allow-required:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/player-svr-allow-required:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/farm-redis-egress-controlled-cidr:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/farm-redis-egress-controlled-cidr:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/farm-worker-allow-required:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:NetworkPolicy/farm-worker-allow-required:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ConfigMap/farm-h5-nginx:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ConfigMap/farm-h5-nginx:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ConfigMap/farm-staging-platform:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ConfigMap/farm-staging-platform:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/player-svr-headless:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/player-svr-headless:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:PodDisruptionBudget/player-svr:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:PodDisruptionBudget/player-svr:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/player-svr:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/player-svr:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:StatefulSet/player-svr:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:StatefulSet/player-svr:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ServiceMonitor/farm-svr:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ServiceMonitor/farm-svr:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ServiceMonitor/farm-gate:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ServiceMonitor/farm-gate:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ServiceMonitor/player-svr:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ServiceMonitor/player-svr:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ServiceMonitor/farm-worker:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ServiceMonitor/farm-worker:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Deployment/farm-worker:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Deployment/farm-worker:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:PodDisruptionBudget/farm-worker:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:PodDisruptionBudget/farm-worker:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/farm-worker:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:Service/farm-worker:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ConfigMap/farm-static-route:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object:ConfigMap/farm-static-route:namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object-count:Namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object-count:Deployment",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object-count:StatefulSet",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object-count:Service",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object-count:ConfigMap",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object-count:Secret",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object-count:PodDisruptionBudget",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object-count:Ingress",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object-count:NetworkPolicy",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object-count:ServiceMonitor",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "object-identity:unique",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:replicas",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:termination",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:topology-spread",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:anti-affinity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:containers",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:farm-gate:startupProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:farm-gate:readinessProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:farm-gate:livenessProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:farm-gate:prestop",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:farm-gate:route-mount",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-gate:route-volume",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:replicas",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:termination",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:topology-spread",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:anti-affinity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:containers",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:player-svr:startupProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:player-svr:readinessProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:player-svr:livenessProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:player-svr:prestop",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:player-svr:route-mount",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:route-volume",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:player-svr:fixed-holder",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:replicas",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:termination",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:topology-spread",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:anti-affinity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:containers",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:farm-svr:startupProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:farm-svr:readinessProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:farm-svr:livenessProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:farm-svr:prestop",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:farm-svr:route-mount",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:route-volume",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-svr:fixed-holder",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:replicas",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:termination",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:topology-spread",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:anti-affinity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:containers",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:farm-worker:startupProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:farm-worker:readinessProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:farm-worker:livenessProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:farm-worker:prestop",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:farm-worker:route-mount",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-worker:route-volume",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-h5:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-h5:replicas",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-h5:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-h5:termination",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-h5:topology-spread",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-h5:anti-affinity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-h5:containers",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-h5:nginx:startupProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-h5:nginx:readinessProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-h5:nginx:livenessProbe",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "workload:farm-h5:nginx:prestop",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "services:count",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-gate:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-gate:clusterip",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-gate:port:http",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-gate:port:downlink",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-gate:port:control",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-gate:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:player-svr:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:player-svr:clusterip",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:player-svr:port:grpc",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:player-svr:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:player-svr-headless:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:player-svr-headless:headless",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:player-svr-headless:port:grpc",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:player-svr-headless:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-svr:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-svr:clusterip",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-svr:port:grpc",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-svr:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-svr-headless:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-svr-headless:headless",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-svr-headless:port:grpc",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-svr-headless:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-worker:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-worker:clusterip",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-worker:port:health",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-worker:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-h5:present",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-h5:clusterip",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-h5:port:http",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "service:farm-h5:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-gate:farm-gate:startupProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-gate:farm-gate:startupProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-gate:farm-gate:readinessProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-gate:farm-gate:readinessProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-gate:farm-gate:livenessProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-gate:farm-gate:livenessProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-gate:farm-gate:readiness-contract",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:player-svr:player-svr:startupProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:player-svr:player-svr:startupProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:player-svr:player-svr:readinessProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:player-svr:player-svr:readinessProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:player-svr:player-svr:livenessProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:player-svr:player-svr:livenessProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:player-svr:player-svr:readiness-contract",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-svr:farm-svr:startupProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-svr:farm-svr:startupProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-svr:farm-svr:readinessProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-svr:farm-svr:readinessProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-svr:farm-svr:livenessProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-svr:farm-svr:livenessProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-svr:farm-svr:readiness-contract",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-worker:farm-worker:startupProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-worker:farm-worker:startupProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-worker:farm-worker:readinessProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-worker:farm-worker:readinessProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-worker:farm-worker:livenessProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-worker:farm-worker:livenessProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-worker:farm-worker:readiness-contract",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-h5:nginx:startupProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-h5:nginx:startupProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-h5:nginx:readinessProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-h5:nginx:readinessProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-h5:nginx:livenessProbe:path",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-h5:nginx:livenessProbe:port",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "probe:farm-h5:nginx:readiness-contract",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "pdb:count",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "pdb:farm-gate:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "pdb:player-svr:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "pdb:farm-svr:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "pdb:farm-worker:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "pdb:farm-h5:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:configmap",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder-count",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:player-svr-0:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:player-svr-0:endpoint",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:player-svr-0:active",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:player-svr-1:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:player-svr-1:endpoint",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:player-svr-1:active",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:farm-svr-0:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:farm-svr-0:endpoint",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:farm-svr-0:active",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:farm-svr-1:identity",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:farm-svr-1:endpoint",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:holder:farm-svr-1:active",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:player:shard-count",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:player:0:generation",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:player:0:holder-domain",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:player:1:generation",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:player:1:holder-domain",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:player:2:generation",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:player:2:holder-domain",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:player:3:generation",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:player:3:holder-domain",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:farm:shard-count",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:farm:0:generation",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:farm:0:holder-domain",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:farm:1:generation",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:farm:1:holder-domain",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:farm:2:generation",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:farm:2:holder-domain",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:farm:3:generation",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:farm:3:holder-domain",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "route:static-realm",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "secrets:release-external",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:FARM_APP_PROFILE",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:SOCIAL_PRODUCT_PROFILE_VERSION",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:FRIEND_LIMIT_PROFILE",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:SHARE_TOKEN_TTL_PROFILE",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:CAPACITY_PROFILE_VERSION",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:REDIS_PHYSICAL_PROFILE_VERSION",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:REDIS_AUTHORITY_LAYOUT_VERSION",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:REDIS_WORKFLOW_LAYOUT_VERSION",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:REDIS_WORKFLOW_HASH_VERSION",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:REDIS_WORKFLOW_BUCKET_COUNT",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:ACTOR_AUTHORITY_MODE",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:AUTHORITY_MEMBERSHIP_MODE",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:GATE_TRANSPORT",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:HTTP_SESSION_COOKIE_SECURE",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:FRIENDSHIP_RPC_TIMEOUT",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:WORKER_READINESS_CONTRACT_VERSION",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:WORKER_READINESS_MAX_SCAN_AGE_V1",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:WORKER_DUE_OBSERVE_LIMIT",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:GUARD_SYNC_WORKER_ENABLED",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:MAIL_WORKER_ENABLED",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "friendship:mode-known",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "friendship:release:intended-mode",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "worker:no-stale-required-families",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:redis-namespace",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:wss-endpoint",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "profile:host-consistency",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "gate:showcase-image",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "gate:no-demo-or-test-env",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "gate:showcase-profile",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "gate:no-gateproxy",
+      "status": "PASS"
+    },
+    {
+      "message": "remote_player requires a bound 64-hex zero-unexplained-shadow evidence SHA-256",
+      "name": "friendship:release-shadow-evidence-sha256",
+      "status": "FAIL"
+    },
+    {
+      "message": "remote_player requires explicit reviewed shadow evidence",
+      "name": "friendship:release-shadow-evidence-reviewed",
+      "status": "FAIL"
+    },
+    {
+      "message": "",
+      "name": "friendship:release-shadow-evidence-scope",
+      "status": "PASS"
+    },
+    {
+      "message": "remote_player requires a reviewed, bound shadow evidence reference",
+      "name": "friendship:release-shadow-evidence-ref",
+      "status": "FAIL"
+    },
+    {
+      "message": "unbound release placeholder: registry.example.invalid/farm-game-runtime@sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST",
+      "name": "release:no-unbound-placeholders",
+      "status": "FAIL"
+    },
+    {
+      "message": "unbound release placeholder: registry.example.invalid/farm-game-runtime@sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST",
+      "name": "release:no-unbound-placeholders",
+      "status": "FAIL"
+    },
+    {
+      "message": "unbound release placeholder: registry.example.invalid/classic-farm-h5@sha256:REPLACE_WITH_64_HEX_H5_DIGEST",
+      "name": "release:no-unbound-placeholders",
+      "status": "FAIL"
+    },
+    {
+      "message": "unbound release placeholder: REPLACE_WITH_FORMAL_STAGING_HOST",
+      "name": "release:no-unbound-placeholders",
+      "status": "FAIL"
+    },
+    {
+      "message": "unbound release placeholder: REPLACE_WITH_CONTROLLED_REDIS_CIDR",
+      "name": "release:no-unbound-placeholders",
+      "status": "FAIL"
+    },
+    {
+      "message": "unbound release placeholder: REPLACE_WITH_64_HEX_ZERO_UNEXPLAINED_SHADOW_EVIDENCE",
+      "name": "release:no-unbound-placeholders",
+      "status": "FAIL"
+    },
+    {
+      "message": "unbound release placeholder: registry.example.invalid/farm-game-runtime@sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST",
+      "name": "release:no-unbound-placeholders",
+      "status": "FAIL"
+    },
+    {
+      "message": "unbound release placeholder: registry.example.invalid/farm-game-runtime@sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST",
+      "name": "release:no-unbound-placeholders",
+      "status": "FAIL"
+    },
+    {
+      "message": "",
+      "name": "secret-ref:farm-gate:FARM_REDIS_URL",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "secret-ref:farm-gate:PERMIT_SECRET",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "secret-ref:farm-gate:HTTP_SESSION_COOKIE_KEYRING",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "secret-ref:farm-gate:WEB_LOGIN_RATE_LIMIT_SECRET",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "secret-ref:player-svr:FARM_REDIS_URL",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "secret-ref:farm-svr:FARM_REDIS_URL",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "secret-ref:farm-svr:PERMIT_SECRET",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "secret-ref:farm-svr:THEFT_PRF_HMAC_SECRET",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "secret-ref:farm-worker:FARM_REDIS_URL",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networkpolicy:complete-set",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networkpolicy:default-deny",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networkpolicy:port:8080",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networkpolicy:port:9090",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networkpolicy:port:9091",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networkpolicy:port:9092",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networkpolicy:port:9100",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networkpolicy:port:9201",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networkpolicy:port:6379",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networkpolicy:port:53",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networking:gate-to-player-grpc-egress",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networking:player-grpc-from-gate",
+      "status": "PASS"
+    },
+    {
+      "message": "Redis egress must be a controlled, explicit CIDR (reserved candidate CIDR is not release-ready)",
+      "name": "networkpolicy:redis-cidr",
+      "status": "FAIL"
+    },
+    {
+      "message": "",
+      "name": "networking:internal-service:farm-svr-headless",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networking:internal-service:farm-svr",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networking:internal-service:player-svr-headless",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networking:internal-service:player-svr",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networking:ingress-h5-only",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "networking:ingress-tls-ref",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "monitoring:complete-set",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "monitoring:player-svr:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "monitoring:player-svr:endpoint",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "monitoring:farm-svr:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "monitoring:farm-svr:endpoint",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "monitoring:farm-worker:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "monitoring:farm-worker:endpoint",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "monitoring:farm-gate:selector",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "monitoring:farm-gate:endpoint",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "scaling:no-hpa",
+      "status": "PASS"
+    },
+    {
+      "message": "",
+      "name": "image:farm-svr:farm-svr:no-latest",
+      "status": "PASS"
+    },
+    {
+      "message": "release image must be bound by a 64-hex digest",
+      "name": "image:farm-svr:farm-svr:digest",
+      "status": "FAIL"
+    },
+    {
+      "message": "",
+      "name": "image:farm-gate:farm-gate:no-latest",
+      "status": "PASS"
+    },
+    {
+      "message": "release image must be bound by a 64-hex digest",
+      "name": "image:farm-gate:farm-gate:digest",
+      "status": "FAIL"
+    },
+    {
+      "message": "",
+      "name": "image:farm-h5:nginx:no-latest",
+      "status": "PASS"
+    },
+    {
+      "message": "release image must be bound by a 64-hex digest",
+      "name": "image:farm-h5:nginx:digest",
+      "status": "FAIL"
+    },
+    {
+      "message": "",
+      "name": "image:player-svr:player-svr:no-latest",
+      "status": "PASS"
+    },
+    {
+      "message": "release image must be bound by a 64-hex digest",
+      "name": "image:player-svr:player-svr:digest",
+      "status": "FAIL"
+    },
+    {
+      "message": "",
+      "name": "image:farm-worker:farm-worker:no-latest",
+      "status": "PASS"
+    },
+    {
+      "message": "release image must be bound by a 64-hex digest",
+      "name": "image:farm-worker:farm-worker:digest",
+      "status": "FAIL"
+    },
+    {
+      "message": "kubectl kustomize",
+      "name": "render:kustomize",
+      "status": "PASS"
+    }
+  ],
+  "cluster": {
+    "checked": false,
+    "cluster_identity": null,
+    "official_url": null,
+    "reason": "No cluster credentials or formal URL were supplied; rendering is not deployment acceptance."
+  },
+  "hashes": {
+    "config_sha256": "2304c22e48959b685a3ab8ccc2245530fc5a82f8d6d6e24ae8f4d4d5b703af26",
+    "manifest_sha256": "573d6af67944749757e6cc56bd2d9de1d554c96ea39636dd83d7b5162acbe973",
+    "release_image_digests": {
+      "registry.example.invalid/classic-farm-h5": "sha256:REPLACE_WITH_64_HEX_H5_DIGEST",
+      "registry.example.invalid/farm-game-runtime": "sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST"
+    },
+    "rendered_sha256": "37495b27a9b1abec6e69a563d2ad5ee1eebd90bef919fb5f5c9fc5943e1fcf79",
+    "route_snapshot_sha256": "723b4cf7f051e4386321d0ca92d2b097faff15e1584620a632e7568d65e5a7cc"
+  },
+  "issues": [
+    {
+      "check": "release-image-digests",
+      "message": "registry.example.invalid/farm-game-runtime digest is not a bound sha256:64-hex digest: sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST"
+    },
+    {
+      "check": "release-image-digests",
+      "message": "registry.example.invalid/classic-farm-h5 digest is not a bound sha256:64-hex digest: sha256:REPLACE_WITH_64_HEX_H5_DIGEST"
+    },
+    {
+      "check": "friendship:release-shadow-evidence-sha256",
+      "message": "remote_player requires a bound 64-hex zero-unexplained-shadow evidence SHA-256"
+    },
+    {
+      "check": "friendship:release-shadow-evidence-reviewed",
+      "message": "remote_player requires explicit reviewed shadow evidence"
+    },
+    {
+      "check": "friendship:release-shadow-evidence-ref",
+      "message": "remote_player requires a reviewed, bound shadow evidence reference"
+    },
+    {
+      "check": "release:no-unbound-placeholders",
+      "message": "unbound release placeholder: registry.example.invalid/farm-game-runtime@sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST"
+    },
+    {
+      "check": "release:no-unbound-placeholders",
+      "message": "unbound release placeholder: registry.example.invalid/farm-game-runtime@sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST"
+    },
+    {
+      "check": "release:no-unbound-placeholders",
+      "message": "unbound release placeholder: registry.example.invalid/classic-farm-h5@sha256:REPLACE_WITH_64_HEX_H5_DIGEST"
+    },
+    {
+      "check": "release:no-unbound-placeholders",
+      "message": "unbound release placeholder: REPLACE_WITH_FORMAL_STAGING_HOST"
+    },
+    {
+      "check": "release:no-unbound-placeholders",
+      "message": "unbound release placeholder: REPLACE_WITH_CONTROLLED_REDIS_CIDR"
+    },
+    {
+      "check": "release:no-unbound-placeholders",
+      "message": "unbound release placeholder: REPLACE_WITH_64_HEX_ZERO_UNEXPLAINED_SHADOW_EVIDENCE"
+    },
+    {
+      "check": "release:no-unbound-placeholders",
+      "message": "unbound release placeholder: registry.example.invalid/farm-game-runtime@sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST"
+    },
+    {
+      "check": "release:no-unbound-placeholders",
+      "message": "unbound release placeholder: registry.example.invalid/farm-game-runtime@sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST"
+    },
+    {
+      "check": "networkpolicy:redis-cidr",
+      "message": "Redis egress must be a controlled, explicit CIDR (reserved candidate CIDR is not release-ready)"
+    },
+    {
+      "check": "image:farm-svr:farm-svr:digest",
+      "message": "release image must be bound by a 64-hex digest"
+    },
+    {
+      "check": "image:farm-gate:farm-gate:digest",
+      "message": "release image must be bound by a 64-hex digest"
+    },
+    {
+      "check": "image:farm-h5:nginx:digest",
+      "message": "release image must be bound by a 64-hex digest"
+    },
+    {
+      "check": "image:player-svr:player-svr:digest",
+      "message": "release image must be bound by a 64-hex digest"
+    },
+    {
+      "check": "image:farm-worker:farm-worker:digest",
+      "message": "release image must be bound by a 64-hex digest"
+    }
+  ],
+  "namespace": "farm-staging-system",
+  "object_counts": {
+    "ConfigMap": 3,
+    "Deployment": 3,
+    "Ingress": 1,
+    "Namespace": 1,
+    "NetworkPolicy": 7,
+    "PodDisruptionBudget": 5,
+    "Service": 7,
+    "ServiceMonitor": 4,
+    "StatefulSet": 2
+  },
+  "profile": "release",
+  "render": {
+    "available": true,
+    "bytes": 37688,
+    "ok": true,
+    "rendered_sha256": "37495b27a9b1abec6e69a563d2ad5ee1eebd90bef919fb5f5c9fc5943e1fcf79",
+    "tool": "kubectl kustomize"
+  },
+  "schema": "farm.k8s.static-staging.validation/v1",
+  "status": "REJECTED",
+  "topology": {
+    "farm-gate": "Deployment x3",
+    "farm-h5": "Nginx Deployment x2",
+    "farm-svr": "fixed StatefulSet Holder x2",
+    "farm-worker": "Deployment x2",
+    "player-svr": "fixed StatefulSet Holder x2",
+    "redis": "external controlled Secret URI",
+    "route": "static assignment snapshot"
+  }
+}

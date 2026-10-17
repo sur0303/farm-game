@@ -1,0 +1,10 @@
+{
+  "checks": {},
+  "failures": [
+    "missing artifacts: round-b-client.json, round-b-gate-before.prom, round-b-gate-pre-drain.prom, round-b-gate-drain-1.prom, round-b-gate-drain-2.prom, round-b-proxy-a.json, round-b-proxy-b.json, round-b-proxy-a-drain-1.json, round-b-proxy-a-drain-2.json, round-b-proxy-b-drain-1.json, round-b-proxy-b-drain-2.json, gate-exit.json",
+    "loopback socket unavailable during dynamic port allocation"
+  ],
+  "round": "B",
+  "schema_version": "r1-q1-real-lease-round/v1",
+  "status": "INCONCLUSIVE"
+}

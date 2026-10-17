@@ -1,0 +1,3 @@
+{"timestamp":"2026-08-07T02:21:59.325710017Z","direction":"send","kind":"ClientHello"}
+{"timestamp":"2026-08-07T02:21:59.326721022Z","direction":"recv","kind":"ServerHello","detail":"session=3b3a90f893c6c2e2c6586a1ad0cc7f5e epoch=4 server_time_ms=1786069319326"}
+{"timestamp":"2026-08-07T02:21:59.326881925Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-join-smoke_bot1786069298-1786069319326744806 command_type=6"}

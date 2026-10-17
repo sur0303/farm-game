@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package guard;
+
+option go_package = "farmgame/api/gen/guard;guardpb";
+
+// Neutral guard contracts shared by PlayerActor persistence and FarmActor
+// theft adjudication. This package intentionally imports no business service
+// protocol, so both sides can depend on one schema without an import cycle.
+enum GuardInterceptPolicy {
+  GUARD_INTERCEPT_POLICY_UNSPECIFIED = 0;
+  GUARD_INTERCEPT_POLICY_FULL_GROSS = 1;
+}
+
+// GuardRuleSnapshot freezes the exact rule selected by a successful feed or
+// guard switch. Hot configuration changes must never rewrite this snapshot.
+message GuardRuleSnapshot {
+  uint64 pet_config_version = 1;
+  uint64 guard_rule_version = 2;
+  uint32 trigger_probability_bp = 3;
+  GuardInterceptPolicy intercept_policy = 4;
+  uint64 random_algorithm_version = 5;
+  uint64 random_key_version = 6;
+}

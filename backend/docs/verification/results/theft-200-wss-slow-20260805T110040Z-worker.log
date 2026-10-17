@@ -1,0 +1,75 @@
+2026/08/05 19:01:11 worker actor routing enabled with 2 connections
+2026/08/05 19:01:11 farm-worker shared generic recovery enabled for PLANT and HARVEST
+2026/08/05 19:01:11 farm-worker durable Theft recovery enabled from Pair DueIndex
+2026/08/05 19:01:11 farm-worker running, worker_id=theft-hot-slow-worker boot_id=theft-hot-slow-worker-20260805T110040Z version=0.0.0-dev
+2026/08/05 19:01:12 recovery round combined={Claimed:1 Resumed:1 Completed:1 Retried:0 LeaseLost:0 Skipped:0 Failed:0} legacy={Claimed:0 Resumed:0 Completed:0 Retried:0 LeaseLost:0 Skipped:0 Failed:0}
+2026/08/05 19:01:15 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:1 InvalidOrders:0 Claimed:1 Completed:1 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:15 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:1 InvalidOrders:0 Claimed:1 Completed:1 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:15 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:16 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:3 Retried:1 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:1 LastError:workflow: retry scheduled
+rpc error: code = Unavailable desc = FARM_PARTICIPANT_ADMISSION_BUSY}
+2026/08/05 19:01:16 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:16 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:1 InvalidOrders:0 Claimed:1 Completed:1 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:17 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:4 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:17 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:2 Retried:1 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:1 LastError:workflow: retry scheduled
+rpc error: code = Unavailable desc = FARM_PARTICIPANT_ADMISSION_BUSY}
+2026/08/05 19:01:17 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:18 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:18 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:18 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:18 recovery round theft={Discovered:12 MalformedMembers:0 NonTheft:6 InvalidOrders:0 Claimed:6 Completed:6 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:18 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:18 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:4 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:18 recovery round theft={Discovered:12 MalformedMembers:0 NonTheft:6 InvalidOrders:0 Claimed:6 Completed:6 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:18 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:19 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:19 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:1 InvalidOrders:0 Claimed:1 Completed:1 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:19 recovery round theft={Discovered:12 MalformedMembers:0 NonTheft:6 InvalidOrders:0 Claimed:6 Completed:6 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:19 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:1 InvalidOrders:0 Claimed:1 Completed:1 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:19 recovery round theft={Discovered:10 MalformedMembers:0 NonTheft:5 InvalidOrders:0 Claimed:5 Completed:5 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:19 recovery round theft={Discovered:10 MalformedMembers:0 NonTheft:5 InvalidOrders:0 Claimed:5 Completed:5 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:19 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:19 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:1 InvalidOrders:0 Claimed:1 Completed:1 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:20 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:20 recovery round theft={Discovered:10 MalformedMembers:0 NonTheft:5 InvalidOrders:0 Claimed:5 Completed:5 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:20 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:1 InvalidOrders:0 Claimed:1 Completed:1 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:20 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:20 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:20 recovery round theft={Discovered:14 MalformedMembers:0 NonTheft:7 InvalidOrders:0 Claimed:7 Completed:7 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:21 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:21 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:21 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:4 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:21 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:4 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:21 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:21 recovery round theft={Discovered:12 MalformedMembers:0 NonTheft:6 InvalidOrders:0 Claimed:6 Completed:6 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:21 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:4 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:21 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:22 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:22 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:22 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:22 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:22 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:22 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:1 InvalidOrders:0 Claimed:1 Completed:1 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:22 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:22 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:4 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:22 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:4 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:23 recovery round theft={Discovered:12 MalformedMembers:0 NonTheft:6 InvalidOrders:0 Claimed:6 Completed:6 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:23 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:23 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:4 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:23 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:23 recovery round theft={Discovered:10 MalformedMembers:0 NonTheft:5 InvalidOrders:0 Claimed:5 Completed:5 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:23 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:23 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:23 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:4 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:23 recovery round theft={Discovered:10 MalformedMembers:0 NonTheft:5 InvalidOrders:0 Claimed:5 Completed:5 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:24 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:24 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:24 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:2 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:24 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:4 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:24 recovery round theft={Discovered:6 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:3 Completed:3 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:24 recovery round theft={Discovered:8 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:4 Completed:4 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:24 recovery round theft={Discovered:5 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:2 Completed:2 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:24 recovery round theft={Discovered:5 MalformedMembers:0 NonTheft:4 InvalidOrders:0 Claimed:1 Completed:1 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:25 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:3 InvalidOrders:0 Claimed:1 Completed:1 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:0 LastError:}
+2026/08/05 19:01:27 recover Theft workflows: context canceled
+2026/08/05 19:01:27 farm-worker stopped

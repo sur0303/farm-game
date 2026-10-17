@@ -1,0 +1,44 @@
+=== top t=1 05:52:09 ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-lk2rn          60m          57Mi            
+farm-svr-0                          40m          2505Mi          
+player-svr-0                        5m           4168Mi          
+=== top t=2 05:52:12 ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-lk2rn          60m          57Mi            
+farm-svr-0                          40m          2505Mi          
+player-svr-0                        5m           4168Mi          
+=== top t=3 05:52:15 ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-lk2rn          60m          57Mi            
+farm-svr-0                          40m          2505Mi          
+player-svr-0                        5m           4168Mi          
+=== top t=4 05:52:19 ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-lk2rn          60m          57Mi            
+farm-svr-0                          40m          2505Mi          
+player-svr-0                        5m           4168Mi          
+=== top t=5 05:52:22 ===
+NAME                                 CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-lk2rn           16m          51Mi            
+farm-svr-0                           11m          2506Mi          
+player-svr-0                         4m           4168Mi          
+ws-stress-thick-login-135209-2pzzk   39m          21Mi            
+=== top t=6 05:52:25 ===
+NAME                                 CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-lk2rn           16m          51Mi            
+farm-svr-0                           11m          2506Mi          
+player-svr-0                         4m           4168Mi          
+ws-stress-thick-login-135209-2pzzk   39m          21Mi            
+=== top t=7 05:52:29 ===
+NAME                                 CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-lk2rn           16m          51Mi            
+farm-svr-0                           11m          2506Mi          
+player-svr-0                         4m           4168Mi          
+ws-stress-thick-login-135209-2pzzk   39m          21Mi            
+=== top t=8 05:52:32 ===
+NAME                                 CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-lk2rn           16m          51Mi            
+farm-svr-0                           11m          2506Mi          
+player-svr-0                         4m           4168Mi          
+ws-stress-thick-login-135209-2pzzk   39m          21Mi            

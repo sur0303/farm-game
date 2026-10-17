@@ -1,0 +1,11 @@
+{
+  "finished_at": "2026-08-06T13:50:00Z",
+  "frames": 0,
+  "steps": {
+    "register": {
+      "status": "fail",
+      "detail": "register status 400: {\"error\":\"account: username must be 3-24 letters, digits, or underscores\",\"error_code\":\"ERR_INVALID_ACCOUNT_INPUT\"}\n"
+    }
+  },
+  "verdict": "FAIL"
+}

@@ -1,0 +1,10 @@
+{
+  "verdict": "FAIL",
+  "reason": "scenario s3a failed: plant status=REJECTED code=ERR_INSUFFICIENT_ITEM msg=Plant was rejected",
+  "steps": {
+    "plant": {
+      "status": "fail",
+      "detail": "plant status=REJECTED code=ERR_INSUFFICIENT_ITEM msg=Plant was rejected"
+    }
+  }
+}

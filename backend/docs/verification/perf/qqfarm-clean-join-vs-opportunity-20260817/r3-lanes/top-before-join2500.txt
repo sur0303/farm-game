@@ -1,0 +1,16 @@
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-57cd676cbc-f4fw5          10m          15Mi            
+farm-grafana-64f7f46898-z58tr       1m           49Mi            
+farm-prometheus-5966b58fdf-6xrnv    3m           75Mi            
+farm-redis-0                        21m          23Mi            
+farm-redis-1                        21m          23Mi            
+farm-redis-2                        30m          19Mi            
+farm-redis-3                        6m           11Mi            
+farm-redis-4                        7m           11Mi            
+farm-redis-5                        7m           12Mi            
+farm-route-bootstrap                0m           2Mi             
+farm-svr-0                          2m           21Mi            
+farm-worker-a-8c9dcbf44-ljwhd       31m          14Mi            
+farm-worker-b-5fdcbff857-29rk9      40m          14Mi            
+player-svr-0                        3m           19Mi            
+route-controller-6cfb8b9b79-p5jb4   7m           14Mi            

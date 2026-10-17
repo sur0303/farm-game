@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+BACKEND_ID="sha256:672cf6862dcf06a4a5bfbb6146263b98bf04de930b113f7eb8fd8e8efb3493e9"
+H5_ID="sha256:eb1bb441ab6c46ef647bb07e360d9f068f9728e07a82f18450ef85b633f96f80"
+BACKEND_REF="127.0.0.1:5001/farm/backend:business-5ce4371"
+H5_REF="127.0.0.1:5001/farm/h5:h5-f22dcb4"
+RECEIPT="$LAB_ROOT/receipts/frozen-images-local-registry.json"
+MODE="${1:---dry-run}"
+case "$MODE" in --dry-run|--publish) ;; *) echo "usage: $0 [--dry-run|--publish]" >&2; exit 2;; esac
+fail() { echo "publish-frozen-images: $*" >&2; exit 1; }
+for command in docker curl python3 sha256sum; do command -v "$command" >/dev/null || fail "$command missing"; done
+
+for image in "$BACKEND_ID" "$H5_ID"; do docker image inspect "$image" >/dev/null 2>&1 || fail "frozen local image missing: $image"; done
+[[ "$(docker image inspect "$BACKEND_ID" -f '{{.Id}}')" == "$BACKEND_ID" ]] || fail "backend image identity drift"
+[[ "$(docker image inspect "$H5_ID" -f '{{.Id}}')" == "$H5_ID" ]] || fail "H5 image identity drift"
+
+if [[ "$MODE" == "--dry-run" ]]; then
+  python3 - "$BACKEND_ID" "$H5_ID" "$BACKEND_REF" "$H5_REF" <<'PY'
+import json,sys
+backend,h5,backend_ref,h5_ref=sys.argv[1:]
+print(json.dumps({"schema_version":"farm-local-frozen-image-publication-plan.v1","status":"DRY_RUN_NOT_PUBLISHED","backend_image_id":backend,"h5_image_id":h5,"backend_target":backend_ref,"h5_target":h5_ref,"company_redis_contacted":False},sort_keys=True,indent=2))
+PY
+  exit 0
+fi
+
+curl -fsS http://127.0.0.1:5001/v2/ >/dev/null || fail "local Registry is not ready"
+docker tag "$BACKEND_ID" "$BACKEND_REF"
+docker tag "$H5_ID" "$H5_REF"
+docker push "$BACKEND_REF" >/dev/null
+docker push "$H5_REF" >/dev/null
+backend_digest=$(docker image inspect "$BACKEND_REF" -f '{{range .RepoDigests}}{{println .}}{{end}}' | awk -F@ '$1=="127.0.0.1:5001/farm/backend" {print $2; exit}')
+h5_digest=$(docker image inspect "$H5_REF" -f '{{range .RepoDigests}}{{println .}}{{end}}' | awk -F@ '$1=="127.0.0.1:5001/farm/h5" {print $2; exit}')
+[[ "$backend_digest" =~ ^sha256:[0-9a-f]{64}$ ]] || fail "backend manifest digest missing"
+[[ "$h5_digest" =~ ^sha256:[0-9a-f]{64}$ ]] || fail "H5 manifest digest missing"
+
+python3 - "$RECEIPT" "$BACKEND_ID" "$H5_ID" "$backend_digest" "$h5_digest" <<'PY'
+import json,os,sys,tempfile
+path,backend_id,h5_id,backend_digest,h5_digest=sys.argv[1:]
+value={"schema_version":"farm-local-frozen-image-publication-receipt.v1","status":"PUBLISHED_NOT_ACTIVATED","backend_business_head":"5ce43715363eea4f18e0925b6992429785053261","h5_commit":"f22dcb447e154e424656b12409e041c32dfb4c5c","backend_local_image_id":backend_id,"h5_local_image_id":h5_id,"backend_registry_ref":"127.0.0.1:5001/farm/backend@"+backend_digest,"h5_registry_ref":"127.0.0.1:5001/farm/h5@"+h5_digest,"company_redis_contacted":False,"formal_l2_authorized":False}
+os.makedirs(os.path.dirname(path),exist_ok=True)
+fd,tmp=tempfile.mkstemp(prefix=".image-receipt-",dir=os.path.dirname(path),text=True)
+with os.fdopen(fd,"w") as out: json.dump(value,out,sort_keys=True,indent=2); out.write("\n")
+os.replace(tmp,path)
+PY
+chmod 0640 "$RECEIPT"
+cat "$RECEIPT"

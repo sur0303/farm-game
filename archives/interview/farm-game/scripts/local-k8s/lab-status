@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+from pathlib import Path
+from typing import Any
+
+LAB_ROOT = Path(os.environ.get("FARM_L2_LAB_ROOT", "/data/farm-l2-r2"))
+KUBECONFIG = LAB_ROOT / "runtime" / "kubeconfig"
+
+
+def run(*args: str) -> tuple[int, str]:
+    process = subprocess.run(args, text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    return process.returncode, process.stdout.strip()
+
+
+def file_hash(path: Path) -> str | None:
+    if not path.is_file():
+        return None
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def disk(path: str) -> dict[str, Any]:
+    usage = shutil.disk_usage(path)
+    return {
+        "path": path,
+        "total_bytes": usage.total,
+        "used_bytes": usage.used,
+        "free_bytes": usage.free,
+        "free_percent": round(usage.free * 100 / usage.total, 3),
+    }
+
+
+status: dict[str, Any] = {
+    "schema_version": "farm-local-k8s-status.v1",
+    "environment_class": "LOCAL_K8S_CAPACITY_LAB",
+    "company_redis_contacted": False,
+    "formal_l2_authorized": False,
+    "mixed_authorized": False,
+    "lab_root": str(LAB_ROOT),
+    "disk": {"root": disk("/"), "data": disk("/data")},
+    "receipts": {},
+}
+for name in (
+    "k3s-bootstrap.json",
+    "local-registry.json",
+    "cpu-allocation-profile-probe.json",
+    "local-dedicated-redis.json",
+    "local-tls-functional-g1.json",
+    "functional-secrets.json",
+    "frozen-images-local-registry.json",
+    "functional-render-binding.json",
+):
+    path = LAB_ROOT / "receipts" / name
+    status["receipts"][name] = {"present": path.is_file(), "sha256": file_hash(path)}
+
+code, value = run("systemctl", "is-active", "k3s")
+status["k3s_service"] = {"active": code == 0 and value == "active", "state": value or "unknown"}
+if KUBECONFIG.is_file():
+    env = os.environ.copy()
+    env["KUBECONFIG"] = str(KUBECONFIG)
+    process = subprocess.run(
+        ["kubectl", "get", "nodes", "-o", "json"],
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if process.returncode == 0:
+        nodes = json.loads(process.stdout).get("items", [])
+        status["cluster"] = {
+            "reachable": True,
+            "context": "farm-l2-r2",
+            "nodes": [
+                {
+                    "name": node.get("metadata", {}).get("name"),
+                    "ready": any(
+                        condition.get("type") == "Ready" and condition.get("status") == "True"
+                        for condition in node.get("status", {}).get("conditions", [])
+                    ),
+                    "kubelet_version": node.get("status", {}).get("nodeInfo", {}).get("kubeletVersion"),
+                }
+                for node in nodes
+            ],
+            "kubeconfig_sha256": file_hash(KUBECONFIG),
+        }
+        dependency = subprocess.run(
+            ["kubectl", "get", "deployment", "farm-local-redis", "-n", "farm-l2-r2-deps", "-o", "json"],
+            env=env,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+        )
+        if dependency.returncode == 0:
+            deployment = json.loads(dependency.stdout)
+            status["local_redis"] = {
+                "profile": "LOCAL_DEDICATED_REDIS_FUNCTIONAL_ONLY",
+                "ready_replicas": deployment.get("status", {}).get("readyReplicas", 0),
+                "desired_replicas": deployment.get("spec", {}).get("replicas", 0),
+                "capacity_constant_eligible": False,
+            }
+        else:
+            status["local_redis"] = {"profile": "NOT_DEPLOYED", "capacity_constant_eligible": False}
+    else:
+        status["cluster"] = {"reachable": False, "error_class": "KUBECTL_FAILED"}
+else:
+    status["cluster"] = {"reachable": False, "error_class": "KUBECONFIG_ABSENT"}
+
+code, value = run("docker", "inspect", "-f", "{{.State.Running}}", "farm-l2-r2-registry")
+status["registry"] = {
+    "running": code == 0 and value == "true",
+    "listen": "127.0.0.1:5001",
+}
+
+status["preflight"] = {
+    "data_free_at_least_50_gib": status["disk"]["data"]["free_bytes"] >= 50 * 1024**3,
+    "root_not_evidence_target": not str(LAB_ROOT).startswith("/var/") and str(LAB_ROOT).startswith("/data/"),
+}
+status["status"] = "LAB_BOOTSTRAPPED_NOT_QUALIFIED" if status["cluster"].get("reachable") else "LAB_NOT_BOOTSTRAPPED"
+print(json.dumps(status, sort_keys=True, indent=2))

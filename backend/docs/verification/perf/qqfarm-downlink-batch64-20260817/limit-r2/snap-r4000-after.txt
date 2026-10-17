@@ -1,0 +1,48 @@
+=== top r4000-after 03:52:49 ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-577f645cd8-n8gkf          830m         764Mi           
+farm-grafana-64f7f46898-z58tr       2m           49Mi            
+farm-prometheus-5966b58fdf-6xrnv    4m           72Mi            
+farm-redis-0                        35m          99Mi            
+farm-redis-1                        146m         125Mi           
+farm-redis-2                        134m         94Mi            
+farm-redis-3                        16m          66Mi            
+farm-redis-4                        37m          117Mi           
+farm-redis-5                        37m          115Mi           
+farm-svr-0                          57m          1964Mi          
+farm-worker-a-8c9dcbf44-4kncl       41m          14Mi            
+farm-worker-b-5fdcbff857-b8njs      28m          15Mi            
+player-svr-0                        417m         2011Mi          
+route-controller-7555ccf646-fz5bg   9m           14Mi            
+=== restarts ===
+farm-gate-577f645cd8-n8gkf r=0 ready=True
+farm-grafana-64f7f46898-z58tr r=0 ready=True
+farm-prometheus-5966b58fdf-6xrnv r=0 ready=True
+farm-redis-0 r=0 ready=True
+farm-redis-1 r=0 ready=True
+farm-redis-2 r=0 ready=True
+farm-redis-3 r=0 ready=True
+farm-redis-4 r=0 ready=True
+farm-redis-5 r=0 ready=True
+farm-svr-0 r=0 ready=True
+farm-worker-a-8c9dcbf44-4kncl r=0 ready=True
+farm-worker-b-5fdcbff857-b8njs r=0 ready=True
+player-svr-0 r=0 ready=True
+route-controller-7555ccf646-fz5bg r=0 ready=True
+ws-stress-join-114432-kvrpt r=0 ready=False
+ws-stress-join-114530-vnjk5 r=0 ready=False
+ws-stress-join-114611-rjksz r=0 ready=False
+ws-stress-join-115113-z27rv r=0 ready=False
+ws-stress-join-115139-pbj6q r=0 ready=False
+ws-stress-join-115204-mtgn6 r=0 ready=False
+ws-stress-join-115229-m5xzg r=0 ready=False
+=== farm metrics ===
+farm_downlink_lanes_current 1
+farm_downlink_queue_full_total 67144
+go_goroutines 48961
+=== player metrics ===
+go_goroutines 48789
+=== gate metrics ===
+farmgate_downlink_writer_queue_bytes 0
+farmgate_downlink_writer_queue_items 0
+go_goroutines 71

@@ -1,0 +1,65 @@
+{
+  "gaps": [
+    {
+      "impact": "record-size percentiles cannot be compared yet",
+      "metric": "actor_record_bytes",
+      "owner": "A3",
+      "status": "PENDING_OBSERVABILITY"
+    },
+    {
+      "impact": "Redis request/response write amplification is not yet measured",
+      "metric": "commit_bytes",
+      "owner": "A3",
+      "status": "PENDING_OBSERVABILITY"
+    },
+    {
+      "impact": "planned and attempted counts are exact; per-arrival scheduler lag is not emitted by ws-stress",
+      "metric": "open_arrival_lag_ms",
+      "owner": "Q1",
+      "status": "PENDING_OBSERVABILITY"
+    },
+    {
+      "impact": "queue rejection/kick counters exist but queue depth is not exported",
+      "metric": "connection_writer_queue_depth",
+      "owner": "Gate",
+      "status": "PENDING_OBSERVABILITY"
+    },
+    {
+      "impact": "Redis aggregate commandstats cannot attribute SessionRoute exactly",
+      "metric": "redis_session_route_qps",
+      "owner": "Gate/A4",
+      "status": "PENDING_OBSERVABILITY"
+    },
+    {
+      "impact": "lease counters exist; exact Redis QPS attribution is pending",
+      "metric": "redis_subscription_lease_qps",
+      "owner": "A4",
+      "status": "PENDING_OBSERVABILITY"
+    },
+    {
+      "impact": "open-arrival mix drives login/Join plus authority-confirmed Buy/Plant protocol journeys; Hero and hot-farm anchors cover SELL/WATER/THEFT/CLAIM_TASK/Friend paths as closed correctness witnesses",
+      "metric": "mixed_open_arrival_operations",
+      "owner": "Q1 + scenario owners",
+      "status": "PARTIAL"
+    },
+    {
+      "impact": "first-run staircase records a growth curve only",
+      "metric": "safe_connections_per_gate",
+      "owner": "Q1",
+      "status": "NOT_FROZEN"
+    },
+    {
+      "impact": "this baseline is not final capacity proof",
+      "metric": "supports_30m_dau",
+      "owner": "Q1",
+      "status": "PROHIBITED_CLAIM"
+    },
+    {
+      "impact": "no passing real-H5 correctness anchor in this run",
+      "metric": "playwright_h5_witness",
+      "owner": "Q1",
+      "status": "MISSING_OR_FAILED"
+    }
+  ],
+  "schema": "farm-game.q1-perf-evidence.v1"
+}

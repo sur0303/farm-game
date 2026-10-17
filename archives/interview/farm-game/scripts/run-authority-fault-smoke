@@ -1,0 +1,204 @@
+#!/usr/bin/env bash
+# Authority Fault Smoke: S2 (Join post-ready Change + PresenceEpoch) and
+# S3 (DeliverBatch Unavailable / response-loss retry / permanent FARM_CHANGE
+# failure) through the gate-vertical-e2e fault-injection proxy.
+#
+# Verdict: PASS (all scenarios) / FAIL (any scenario failed) / INCONCLUSIVE.
+# Exit codes: 0=PASS 1=FAIL 2=INCONCLUSIVE (mirrors run-authority-vertical-smoke).
+#
+# Evidence per scenario is saved under docs/verification/results/authority-fault-<ts>/:
+#   scenario-<name>.verdict.json   fault-bot verdict + step details
+#   scenario-<name>.frames.ndjson  client-side witness
+#   protocol-events.ndjson         downlink events (presence_epoch / versions / queue status)
+set -Eeuo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+cd "$ROOT_DIR"
+STAMP="$(date +%Y%m%dT%H%M%SZ)"
+OUT="$ROOT_DIR/docs/verification/results/authority-fault-${STAMP}"
+mkdir -p "$OUT"
+BIN="$OUT/bin"
+mkdir -p "$BIN"
+
+VERDICT="PASS"
+REASON="all fault scenarios passed"
+SCENARIO_PASS=0
+SCENARIO_FAIL=0
+
+pick_port() { python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1]); s.close()'; }
+
+cleanup() {
+  set +e
+  [[ -f "$OUT/pids" ]] && while read -r pid; do kill "$pid" 2>/dev/null; done < "$OUT/pids"
+  sleep 1
+  [[ -f "$OUT/pids" ]] && while read -r pid; do kill -9 "$pid" 2>/dev/null; done < "$OUT/pids"
+}
+trap cleanup EXIT
+
+# --- 1. build ----------------------------------------------------------------
+echo "=== 1. build ==="
+GOCACHE="${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache}"
+for svc in player-svr farm-svr farm-worker farm-gate authority-smoke-fixture gate-vertical-e2e authority-fault-bot; do
+  echo "  building $svc"
+  GOCACHE="$GOCACHE" CGO_ENABLED=0 go build -buildvcs=false -trimpath -o "$BIN/$svc" "./cmd/$svc"
+done
+
+# --- 2. redis config ---------------------------------------------------------
+REDIS_CONFIG="${FARM_REDIS_CONFIG:-$ROOT_DIR/deploy/secrets/redis.conf.local}"
+[[ -f "$REDIS_CONFIG" ]] || { echo "missing Redis config: $REDIS_CONFIG" >&2; exit 2; }
+read_config_value() { sed -n -E "s/^[[:space:]]*$1:[[:space:]]*(.*[^[:space:]])[[:space:]]*$/\1/p" "$REDIS_CONFIG" | head -n 1; }
+uri_encode() {
+  local input="$1" output="" char encoded index
+  LC_ALL=C
+  for ((index = 0; index < ${#input}; index++)); do
+    char="${input:index:1}"
+    case "$char" in [a-zA-Z0-9.~_-]) output+="$char" ;; *) printf -v encoded '%%%02X' "'$char"; output+="$encoded" ;; esac
+  done
+  printf '%s' "$output"
+}
+redis_host=$(read_config_value host); redis_port=$(read_config_value port)
+redis_password=$(read_config_value password); redis_db=$(read_config_value db); redis_db="${redis_db:-0}"
+REDIS_URL="redis://:$(uri_encode "$redis_password")@${redis_host}:${redis_port}/${redis_db}"
+echo "  redis: ${redis_host}:${redis_port}/${redis_db}"
+
+# --- 3. ports + namespace -----------------------------------------------------
+PLAYER_PORT="$(pick_port)"; PLAYER_HEALTH="$(pick_port)"
+FARM_PORT="$(pick_port)"; FARM_HEALTH="$(pick_port)"
+WORKER_HEALTH="$(pick_port)"
+GATE_HTTP="$(pick_port)"; GATE_DOWNLINK_REAL="$(pick_port)"; GATE_CONTROL="$(pick_port)"
+DOWNLINK_PROXY="$(pick_port)"; PROXY_ADMIN="$(pick_port)"
+NAMESPACE="fault-${STAMP,,}"
+PROFILE="redis-physical-v1"; REALM="smoke-authority"
+PLAYER_HOLDER="fault-player"; FARM_HOLDER="fault-farm"
+PLAYER_BOOT="fault-player-${STAMP}"; FARM_BOOT="fault-farm-${STAMP}"
+ROUTE="$OUT/route-snapshot.json"
+PERMIT_SECRET="fault-permit-${STAMP}-at-least-32-bytes!!"
+WORKFLOW_PREFIX="fault:${STAMP}:workflow"
+
+start() { local name="$1"; shift; nohup "$@" > "$OUT/$name.log" 2>&1 & echo "$!" >> "$OUT/pids"; echo "  started $name pid=$!"; }
+
+wait_http() { local url="$1" deadline=$((SECONDS + 40)); until curl -fsS "$url" >/dev/null 2>&1; do ((SECONDS >= deadline)) && return 1; sleep 0.3; done; }
+
+# --- 4. fixture init ---------------------------------------------------------
+echo "=== 4. fixture init ==="
+"$BIN/authority-smoke-fixture" init \
+  --redis-url "$REDIS_URL" --namespace "$NAMESPACE" --zone local \
+  --profile "$PROFILE" --realm "$REALM" --run-id "$STAMP" \
+  --player-holder "$PLAYER_HOLDER" --player-boot "$PLAYER_BOOT" \
+  --player-endpoint "127.0.0.1:$PLAYER_PORT" \
+  --farm-holder "$FARM_HOLDER" --farm-boot "$FARM_BOOT" \
+  --farm-endpoint "127.0.0.1:$FARM_PORT" \
+  --route-out "$ROUTE" --json-out "$OUT/fixture.json" >/dev/null
+
+COMMON_AUTH=(
+  "ACTOR_AUTHORITY_MODE=authority" "ACTOR_ROUTE_SNAPSHOT=$ROUTE"
+  "ACTOR_AUTHORITY_LEASE_TTL=55s" "ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN=3s"
+  "ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL=5s"
+  "REDIS_PHYSICAL_PROFILE_VERSION=$PROFILE"
+  "REDIS_NAMESPACE_ENVIRONMENT=$NAMESPACE" "REDIS_NAMESPACE_ZONE=local"
+  "REDIS_AUTHORITY_LAYOUT_VERSION=v1" "REDIS_WORKFLOW_LAYOUT_VERSION=v1"
+  "REDIS_WORKFLOW_HASH_VERSION=1" "REDIS_WORKFLOW_BUCKET_COUNT=256"
+  "FARM_REDIS_URL=$REDIS_URL" "WORKFLOW_STORE_PREFIX=$WORKFLOW_PREFIX"
+)
+
+# --- 5. start services ---------------------------------------------------------
+echo "=== 5. start services ==="
+: > "$OUT/pids"
+start gate env \
+  "GATEWAY_LISTEN=127.0.0.1:$GATE_HTTP" "GATEWAY_ID=authority-fault-gate" \
+  "FARM_APP_PROFILE=test" \
+  "GATEWAY_DOWNLINK_LISTEN=127.0.0.1:$GATE_DOWNLINK_REAL" "GATE_CONTROL_LISTEN=127.0.0.1:$GATE_CONTROL" \
+  "GATE_TRANSPORT=websocket" "GATE_WS_PATH=/ws" \
+  "GATE_WS_ALLOWED_ORIGINS=127.0.0.1:$GATE_HTTP" \
+  "PLAYER_ADDR=127.0.0.1:$PLAYER_PORT" "FARM_ADDR=127.0.0.1:$FARM_PORT" \
+  "LOGIC_HEALTH_ADDR=http://127.0.0.1:$FARM_HEALTH" \
+  "FARM_REDIS_URL=$REDIS_URL" \
+  "WEB_ACCOUNT_STORE_PREFIX=fault:${STAMP}:web-account" "WEB_ACCOUNT_PLAYER_ID_BASE=1000000" \
+  "DEMO_PLATFORM_TOKEN=demo-platform-token" "DEMO_PLAYER_ID=10001" \
+  "HTTP_SESSION_TTL=2h" "HTTP_SESSION_COOKIE_SECURE=0" \
+  "PERMIT_SECRET=$PERMIT_SECRET" "GATEWAY_TICKET_TTL=60s" "GATE_ROUTE_LEASE_TTL=30s" \
+  "GATE_BOOT_LEASE_PREFIX=fault:${STAMP}:gate-boot-lease" "GATE_BOOT_LEASE_TTL=15s" \
+  "GATE_BOOT_LEASE_RENEW_TIMEOUT=3s" "INITIAL_RULE_VERSION=1" \
+  "GATE_WS_METRICS=1" "GATE_WS_RATE_PER_SEC=100" "GATE_WS_RATE_BURST=200" \
+  "WSS_ENDPOINT=ws://127.0.0.1:$GATE_HTTP/ws" \
+  "$BIN/farm-gate"
+start proxy "$BIN/gate-vertical-e2e" proxy \
+  --listen "127.0.0.1:$DOWNLINK_PROXY" --upstream "127.0.0.1:$GATE_DOWNLINK_REAL" \
+  --admin-listen "127.0.0.1:$PROXY_ADMIN" --events-out "$OUT/protocol-events.ndjson"
+start player env "${COMMON_AUTH[@]}" \
+  "ACTOR_HOLDER_POD=$PLAYER_HOLDER" "ACTOR_HOLDER_BOOT_ID=$PLAYER_BOOT" \
+  "PLAYER_LISTEN=127.0.0.1:$PLAYER_PORT" "PLAYER_HEALTH_LISTEN=127.0.0.1:$PLAYER_HEALTH" \
+  "PERMIT_SECRET=$PERMIT_SECRET" "$BIN/player-svr"
+start farm env "${COMMON_AUTH[@]}" \
+  "ACTOR_HOLDER_POD=$FARM_HOLDER" "ACTOR_HOLDER_BOOT_ID=$FARM_BOOT" \
+  "FARM_LISTEN=127.0.0.1:$FARM_PORT" "FARM_HEALTH_LISTEN=127.0.0.1:$FARM_HEALTH" \
+  "PLAYER_ADDR=127.0.0.1:$PLAYER_PORT" "GATEWAY_DOWNLINK_ADDR=127.0.0.1:$DOWNLINK_PROXY" \
+  "PERMIT_SECRET=$PERMIT_SECRET" \
+  "THEFT_PRF_MODE=test" "THEFT_PRF_HMAC_SECRET=fault-theft-prf-${STAMP}-at-least-32-bytes" \
+  "FARM_CROP_MATURE_AFTER=5s" \
+  "FARM_SUBSCRIPTION_LEASE_INITIAL_TTL=30s" "FARM_SUBSCRIPTION_LEASE_MAX_EXTENSION=30s" \
+  "GATE_BOOT_REAPER_MODE=disabled" \
+  "$BIN/farm-svr"
+start worker env \
+  "ACTOR_AUTHORITY_MODE=authority" "ACTOR_ROUTE_SNAPSHOT=$ROUTE" \
+  "FARM_REDIS_URL=$REDIS_URL" "WORKFLOW_STORE_PREFIX=$WORKFLOW_PREFIX" \
+  "REDIS_PHYSICAL_PROFILE_VERSION=$PROFILE" \
+  "REDIS_NAMESPACE_ENVIRONMENT=$NAMESPACE" "REDIS_NAMESPACE_ZONE=local" \
+  "REDIS_AUTHORITY_LAYOUT_VERSION=v1" "REDIS_WORKFLOW_LAYOUT_VERSION=v1" \
+  "REDIS_WORKFLOW_HASH_VERSION=1" "REDIS_WORKFLOW_BUCKET_COUNT=256" \
+  "PLAYER_ADDR=127.0.0.1:$PLAYER_PORT" "FARM_ADDR=127.0.0.1:$FARM_PORT" \
+  "WORKER_ID=fault-worker" "WORKER_BOOT_ID=fault-worker-$STAMP" "WORKER_LEASE_TOKEN=fault-lease-$STAMP" \
+  "WORKER_POLL_INTERVAL=100ms" "WORKER_CLAIM_LIMIT=8" "WORKER_CLAIM_LEASE=5s" \
+  "WORKER_OPERATION_TIMEOUT=3s" "WORKER_PARTICIPANT_BUDGET_MS=5000" \
+  "WORKER_HEALTH_LISTEN=127.0.0.1:$WORKER_HEALTH" \
+  "$BIN/farm-worker"
+
+# --- 6. wait ready -------------------------------------------------------------
+echo "=== 6. wait ready ==="
+wait_http "http://127.0.0.1:$PLAYER_HEALTH/readyz" || { echo "player-svr not ready" >&2; exit 2; }
+echo "  player ready"
+wait_http "http://127.0.0.1:$FARM_HEALTH/readyz" || { echo "farm-svr not ready" >&2; exit 2; }
+echo "  farm ready"
+wait_http "http://127.0.0.1:$WORKER_HEALTH/readyz" || { echo "worker not ready" >&2; exit 2; }
+echo "  worker ready"
+for _ in $(seq 1 50); do curl -sf "http://127.0.0.1:$GATE_HTTP/readyz" >/dev/null 2>&1 && break; sleep 0.3; done
+curl -sf "http://127.0.0.1:$GATE_HTTP/readyz" >/dev/null 2>&1 || { echo "gate not ready" >&2; exit 2; }
+echo "  gate ready"
+
+# --- 7. run fault scenarios -----------------------------------------------------
+ACCOUNT_BASE="fault${STAMP,,}"
+run_scenario() {
+  local name="$1"; shift
+  echo "=== S: $name ==="
+  local verdict_file="$OUT/scenario-$name.verdict.json"
+  set +e
+  "$BIN/authority-fault-bot" "$@" \
+    --json-out "$verdict_file" --frames-out "$OUT/scenario-$name.frames.ndjson" > "$OUT/scenario-$name.log" 2>&1
+  local code=$?
+  set -e
+  local v="FAIL"
+  [[ $code -eq 0 ]] && v="PASS"
+  echo "  $name: verdict=$v exit=$code"
+  if [[ $v == "PASS" ]]; then SCENARIO_PASS=$((SCENARIO_PASS + 1)); else SCENARIO_FAIL=$((SCENARIO_FAIL + 1)); VERDICT="FAIL"; REASON="$name failed (exit $code)"; fi
+  if [[ -f "$verdict_file" ]]; then
+    python3 -c "import json; d=json.load(open('$verdict_file')); [print(f'    {k}: {v[\"status\"]} {v.get(\"detail\",\"\")}') for k,v in d.get('steps',{}).items()]"
+  else
+    tail -5 "$OUT/scenario-$name.log"
+  fi
+}
+
+U_A="faulta${STAMP,,}"; U_B="faultb${STAMP,,}"
+run_scenario s3a --http-url "http://127.0.0.1:$GATE_HTTP" --ws-url "ws://127.0.0.1:$GATE_HTTP/ws" \
+  --proxy-admin "http://127.0.0.1:$PROXY_ADMIN" --scenario s3a --user-a "$U_A" --password smoke123
+run_scenario s3b --http-url "http://127.0.0.1:$GATE_HTTP" --ws-url "ws://127.0.0.1:$GATE_HTTP/ws" \
+  --proxy-admin "http://127.0.0.1:$PROXY_ADMIN" --scenario s3b --user-a "$U_A" --password smoke123
+run_scenario s3c --http-url "http://127.0.0.1:$GATE_HTTP" --ws-url "ws://127.0.0.1:$GATE_HTTP/ws" \
+  --proxy-admin "http://127.0.0.1:$PROXY_ADMIN" --scenario s3c --user-a "$U_A" --password smoke123
+run_scenario s2 --http-url "http://127.0.0.1:$GATE_HTTP" --ws-url "ws://127.0.0.1:$GATE_HTTP/ws" \
+  --proxy-admin "http://127.0.0.1:$PROXY_ADMIN" --scenario s2 --user-a "$U_A" --user-b "$U_B" --password smoke123
+
+echo "=== result ==="
+echo "  scenarios passed: $SCENARIO_PASS failed: $SCENARIO_FAIL"
+echo "  verdict: $VERDICT ($REASON)"
+echo "  evidence: $OUT"
+if [[ "$VERDICT" == "PASS" ]]; then exit 0; else exit 1; fi

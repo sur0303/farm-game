@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "friend-opportunity-c0.plan.v1",
+  "title": "Friend Opportunity C0 Plan",
+  "type": "object",
+  "required": ["schema_version", "name", "transport", "matrix", "identity", "redis_safety"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "friend-opportunity-c0.plan.v1" },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "claims_30m_dau": { "type": "boolean" },
+    "transport": {
+      "type": "object",
+      "required": ["expected", "effective_required", "unsupported"],
+      "additionalProperties": false,
+      "properties": {
+        "expected": { "const": "direct" },
+        "effective_required": { "const": "direct" },
+        "unsupported": {
+          "type": "array",
+          "items": { "type": "string" },
+          "contains": { "const": "pubsub" }
+        }
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "density_percent": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "fake_base": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "matrix": {
+      "type": "object",
+      "required": ["friend_counts", "scenarios"],
+      "additionalProperties": false,
+      "properties": {
+        "friend_counts": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "enum": [20, 100, 300] }
+        },
+        "scenarios": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "enum": ["friend-list", "next-opportunity", "hint"] }
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "required": ["conns", "viewer_must_equal_login"],
+      "additionalProperties": false,
+      "properties": {
+        "conns": { "const": 1 },
+        "viewer_must_equal_login": { "const": true }
+      }
+    },
+    "redis_safety": {
+      "type": "object",
+      "required": ["ephemeral_only", "forbidden"],
+      "additionalProperties": false,
+      "properties": {
+        "ephemeral_only": { "const": true },
+        "forbidden": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,3 @@
+2026/08/05 19:00:48 player-svr using company persistent Redis for workflow records and precise Pair result fallback
+2026/08/05 19:00:48 player-svr authority mode enabled holder=theft-hot-baseline-player boot=theft-hot-baseline-player-20260805T110040Z snapshot=/tmp/theft-hot-baseline.dpW2YJ/route.json
+2026/08/05 19:00:48 player-svr listening on 127.0.0.1:22142, version=0.0.0-dev

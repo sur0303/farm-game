@@ -1,0 +1,402 @@
+#!/usr/bin/env bash
+# Q1-PERF-BASELINE-V1 scenario coordinator.
+# Existing Go Protocol Bots carry load; Playwright is only a two-page witness.
+set -Eeuo pipefail
+
+LOAD_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
+TOOL="$LOAD_ROOT/tools/perf/q1perf.py"
+CONFIG="$LOAD_ROOT/deploy/load/q1-perf-baseline-v1-first-run.json"
+BACKEND_ROOT="$LOAD_ROOT"
+BACKEND_COMMIT="260babcd93cfb6a4a58a481cc3c7f8c1f95e455a"
+H5_ROOT="$LOAD_ROOT/../classic-farm-h5-q1-perf-baseline-v1"
+H5_COMMIT="df379b5fcc5eb710fc1efa5406c752ba18c3ab30"
+RUN_KIND="baseline"
+BASELINE_METRICS=""
+PROFILES="product,hot,connections,mix"
+RUN_ID="q1perf-$(date -u +%Y%m%dT%H%M%SZ)-$$"
+OUT=""
+
+usage() {
+  cat <<'EOF'
+usage: scripts/perf/run-baseline [options]
+  --config PATH             frozen profile JSON
+  --backend-root PATH       backend candidate checkout
+  --backend-commit SHA      exact production commit represented by checkout
+  --h5-root PATH            exact H5 checkout
+  --h5-commit SHA           exact H5 commit
+  --run-kind baseline|candidate
+  --baseline-metrics PATH   required for candidate comparison
+  --profiles LIST           product,hot,connections,mix
+  --run-id ID               q1perf-* safe run id
+  --out PATH                evidence directory
+
+The runner supports only an ephemeral loopback Redis. It never executes
+FLUSHALL and removes only containers whose exact IDs it created.
+EOF
+}
+
+while (($#)); do
+  case "$1" in
+    --config) CONFIG=$2; shift 2 ;;
+    --backend-root) BACKEND_ROOT=$2; shift 2 ;;
+    --backend-commit) BACKEND_COMMIT=$2; shift 2 ;;
+    --h5-root) H5_ROOT=$2; shift 2 ;;
+    --h5-commit) H5_COMMIT=$2; shift 2 ;;
+    --run-kind) RUN_KIND=$2; shift 2 ;;
+    --baseline-metrics) BASELINE_METRICS=$2; shift 2 ;;
+    --profiles) PROFILES=$2; shift 2 ;;
+    --run-id) RUN_ID=$2; shift 2 ;;
+    --out) OUT=$2; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) printf 'unknown argument: %s\n' "$1" >&2; usage >&2; exit 2 ;;
+  esac
+done
+
+CONFIG=$(realpath "$CONFIG")
+BACKEND_ROOT=$(realpath "$BACKEND_ROOT")
+H5_ROOT=$(realpath "$H5_ROOT")
+if [[ -z "$OUT" ]]; then OUT="$LOAD_ROOT/docs/verification/perf/results/$RUN_ID"; fi
+OUT=$(realpath -m "$OUT")
+
+if [[ ! "$RUN_ID" =~ ^q1perf-[a-z0-9][a-z0-9-]{5,47}$ ]]; then
+  printf 'unsafe run id/namespace: %s\n' "$RUN_ID" >&2
+  exit 2
+fi
+if [[ "$RUN_KIND" != baseline && "$RUN_KIND" != candidate ]]; then
+  printf 'run kind must be baseline or candidate\n' >&2
+  exit 2
+fi
+if [[ "$RUN_KIND" == candidate && -z "$BASELINE_METRICS" ]]; then
+  printf 'candidate run requires --baseline-metrics\n' >&2
+  exit 2
+fi
+if [[ ! -x "$TOOL" ]]; then chmod +x "$TOOL"; fi
+# shellcheck source=scripts/perf/lib-stack.sh
+source "$LOAD_ROOT/scripts/perf/lib-stack.sh"
+
+profile_selected() {
+  local short=$1
+  [[ ",$PROFILES," == *",$short,"* ]]
+}
+profile_enabled() {
+  local key=$1
+  python3 - "$CONFIG" "$key" <<'PY'
+import json,sys
+x=json.load(open(sys.argv[1]))
+raise SystemExit(0 if x.get('profiles',{}).get(sys.argv[2],{}).get('enabled',False) else 1)
+PY
+}
+
+mkdir -p "$OUT/scenarios" "$OUT/evidence" "$OUT/private"
+chmod 700 "$OUT/private"
+exec > >(tee "$OUT/coordinator.log") 2>&1
+printf 'Q1 coordinator run=%s out=%s\n' "$RUN_ID" "$OUT"
+printf 'backend=%s h5=%s config=%s profiles=%s\n' "$BACKEND_COMMIT" "$H5_COMMIT" "$CONFIG" "$PROFILES"
+
+MAIN_REDIS_CONTAINER=""
+MAIN_REDIS_CONFIG=""
+ACTIVE_STACK=""
+PRODUCT_XVFB_PID=""
+MAIN_REDIS_CLEANED=false
+cleanup() {
+  local code=$?
+  set +e
+  if [[ -n "$ACTIVE_STACK" ]]; then
+    perf_stack_down "$ACTIVE_STACK" || true
+    ACTIVE_STACK=""
+  fi
+  if [[ -n "$PRODUCT_XVFB_PID" ]]; then
+    kill "$PRODUCT_XVFB_PID" 2>/dev/null || true
+    wait "$PRODUCT_XVFB_PID" 2>/dev/null || true
+  fi
+  if [[ -n "$MAIN_REDIS_CONTAINER" ]]; then
+    docker rm -f "$MAIN_REDIS_CONTAINER" >/dev/null 2>&1 || true
+    if ! docker inspect "$MAIN_REDIS_CONTAINER" >/dev/null 2>&1; then MAIN_REDIS_CLEANED=true; fi
+  fi
+  [[ -n "$MAIN_REDIS_CONFIG" ]] && rm -f "$MAIN_REDIS_CONFIG"
+  rm -rf "$OUT/private"
+  exit "$code"
+}
+trap cleanup EXIT INT TERM
+
+# A small exact local Redis is created first so the manifest can freeze a target
+# hash before any scenario starts. Generic stages create their own exact local
+# Redis to avoid cross-stage actor/record carry-over.
+MAIN_REDIS_CONTAINER="q1perf-main-${RUN_ID#q1perf-}-$RANDOM"
+MAIN_REDIS_CONTAINER=${MAIN_REDIS_CONTAINER:0:63}
+docker run -d --rm --name "$MAIN_REDIS_CONTAINER" -p 127.0.0.1::6379 redis:7.4-alpine \
+  redis-server --save '' --appendonly no --latency-tracking yes \
+  >"$OUT/private/main-redis-container-id.txt"
+MAIN_REDIS_MAPPING=""
+for _ in $(seq 1 100); do
+  MAIN_REDIS_MAPPING=$(docker port "$MAIN_REDIS_CONTAINER" 6379/tcp 2>/dev/null | head -1 || true)
+  [[ -n "$MAIN_REDIS_MAPPING" ]] && break
+  sleep 0.1
+done
+MAIN_REDIS_PORT=${MAIN_REDIS_MAPPING##*:}
+for _ in $(seq 1 100); do
+  if docker exec "$MAIN_REDIS_CONTAINER" redis-cli ping 2>/dev/null | grep -q PONG; then break; fi
+  sleep 0.1
+done
+docker exec "$MAIN_REDIS_CONTAINER" redis-cli ping 2>/dev/null | grep -q PONG
+MAIN_REDIS_TARGET="redis://127.0.0.1:${MAIN_REDIS_PORT}/0"
+MAIN_REDIS_HASH=$(python3 "$TOOL" endpoint-hash --target "$MAIN_REDIS_TARGET")
+MAIN_REDIS_CONFIG="$OUT/private/redis.conf.local"
+umask 077
+cat >"$MAIN_REDIS_CONFIG" <<EOF
+host:      127.0.0.1
+port:      $MAIN_REDIS_PORT
+password:
+db:        0
+EOF
+
+manifest_args=(manifest --config "$CONFIG" --out "$OUT" --run-id "$RUN_ID" --run-kind "$RUN_KIND" \
+  --backend-root "$BACKEND_ROOT" --backend-commit "$BACKEND_COMMIT" \
+  --h5-root "$H5_ROOT" --h5-commit "$H5_COMMIT" --load-root "$LOAD_ROOT" \
+  --redis-target "$MAIN_REDIS_TARGET" --redis-mode ephemeral_local --namespace "$RUN_ID")
+if [[ -n "$BASELINE_METRICS" ]]; then manifest_args+=(--comparison-baseline "$BASELINE_METRICS"); fi
+python3 "$TOOL" "${manifest_args[@]}"
+
+EXPECTED_SCENARIOS=0
+STOP=false
+record_inconclusive() {
+  local name=$1 profile=$2 reason=$3 planned=${4:-}
+  local args=(record-status --out "$OUT/scenarios/$name.json" --name "$name" --profile "$profile" \
+    --status INCONCLUSIVE --failure-class environment --reason "$reason" --namespace "$RUN_ID" \
+    --redis-endpoint-hash "$MAIN_REDIS_HASH")
+  [[ -n "$planned" ]] && args+=(--planned "$planned")
+  python3 "$TOOL" "${args[@]}" || true
+}
+
+# Profile 1: two real browser contexts, the Go authority bot, fault proxy, and
+# read-only Authority audit. A correctness failure is an immediate stop.
+if profile_selected product && profile_enabled product_correctness_anchor; then
+  EXPECTED_SCENARIOS=$((EXPECTED_SCENARIOS + 1))
+  CORRECT_OUT="$OUT/evidence/product-correctness-anchor"
+  mkdir -p "$CORRECT_OUT"
+  if [[ ! -d "$H5_ROOT/node_modules" ]]; then
+    record_inconclusive product-correctness-anchor product_correctness_anchor "H5 node_modules missing; no dependency install was attempted during the measured run"
+    STOP=true
+  else
+    printf '\n=== product correctness anchor ===\n'
+    SAFE_SMOKE_ID="q1$(date -u +%m%d%H%M%S)$$"
+    H5_PORT=$(perf_pick_port)
+    PRODUCT_XVFB_PID=""
+    if [[ -z "${DISPLAY:-}" ]]; then
+      DISPLAY_NUMBER=$((190 + ($$ % 100)))
+      while [[ -e "/tmp/.X11-unix/X$DISPLAY_NUMBER" ]]; do DISPLAY_NUMBER=$((DISPLAY_NUMBER + 1)); done
+      Xvfb ":$DISPLAY_NUMBER" -screen 0 1440x900x24 -nolisten tcp >"$CORRECT_OUT/xvfb.log" 2>&1 &
+      PRODUCT_XVFB_PID=$!
+      export DISPLAY=":$DISPLAY_NUMBER"
+      for _ in $(seq 1 100); do
+        [[ -e "/tmp/.X11-unix/X$DISPLAY_NUMBER" ]] && break
+        kill -0 "$PRODUCT_XVFB_PID" 2>/dev/null || break
+        sleep 0.05
+      done
+    fi
+    mkdir -p "$CORRECT_OUT/control"
+    set +e
+    PERF_BACKEND_ROOT="$BACKEND_ROOT" PERF_LOAD_ROOT="$LOAD_ROOT" FARM_REDIS_CONFIG="$MAIN_REDIS_CONFIG" H5_ROOT="$H5_ROOT" \
+      SMOKE_RUN_ID="$SAFE_SMOKE_ID" SMOKE_OUT="$CORRECT_OUT" \
+      SMOKE_PLAYWRIGHT_CONFIG="playwright.cp-vertical-b.config.ts" \
+      SMOKE_PLAYWRIGHT_TEST="cp-vertical-b.spec.ts" SMOKE_CONTROL_DIR="$CORRECT_OUT/control" \
+      SMOKE_CROP_MATURE_AFTER=10s SMOKE_H5_ALLOWED_ORIGINS="127.0.0.1:$H5_PORT,localhost:$H5_PORT" \
+      FARM_E2E_H5_PORT="$H5_PORT" SMOKE_REQUIRE_SOCIAL_ORACLE=1 SMOKE_E2E_COMMAND_RESULT_FAULTS=1 \
+      "$LOAD_ROOT/scripts/perf/run-product-anchor-profile"
+    CORRECT_RC=$?
+    set -e
+    if [[ -n "$PRODUCT_XVFB_PID" ]]; then
+      kill "$PRODUCT_XVFB_PID" 2>/dev/null || true
+      wait "$PRODUCT_XVFB_PID" 2>/dev/null || true
+      unset DISPLAY
+    fi
+    set +e
+    python3 "$TOOL" ingest-correctness --evidence-dir "$CORRECT_OUT" \
+      --out "$OUT/scenarios/product-correctness-anchor.json" \
+      --namespace "smoke-$SAFE_SMOKE_ID" --redis-endpoint-hash "$MAIN_REDIS_HASH"
+    INGEST_RC=$?
+    set -e
+    if ((CORRECT_RC != 0 || INGEST_RC != 0)); then STOP=true; fi
+  fi
+fi
+
+# Profile 3 anchor: existing real 200-WSS Theft bot, client version oracle,
+# slow-reader variant, and read-only authority/conservation audit.
+if [[ "$STOP" == false ]] && profile_selected hot && profile_enabled hot_farm_theft; then
+  EXPECTED_SCENARIOS=$((EXPECTED_SCENARIOS + 1))
+  THEFT_OUT="$OUT/evidence/hot-farm-theft"
+  mkdir -p "$THEFT_OUT"
+  THEFT_STAMP="$(date -u +%Y%m%dT%H%M%SZ)q1${RUN_ID##*-}"
+  printf '\n=== hot farm Theft baseline + slow reader ===\n'
+  set +e
+  THEFT_HOT_RESULT_DIR="$THEFT_OUT" THEFT_HOT_RUN_STAMP="$THEFT_STAMP" THEFT_HOT_CASES=both \
+    "$BACKEND_ROOT/scripts/run-theft-200-wss-hot-farm"
+  THEFT_RC=$?
+  set -e
+  THEFT_HASH=$(python3 "$TOOL" endpoint-hash --target "redis://theft-ephemeral-${RUN_ID}:6379/0")
+  set +e
+  python3 "$TOOL" ingest-theft --evidence-dir "$THEFT_OUT" \
+    --out "$OUT/scenarios/hot-farm-theft-baseline-and-slow-reader.json" \
+    --expected-cases 2 --namespace "theft-$THEFT_STAMP" --redis-endpoint-hash "$THEFT_HASH"
+  INGEST_RC=$?
+  set -e
+  if ((THEFT_RC != 0 || INGEST_RC != 0)); then STOP=true; fi
+fi
+
+NEED_GENERIC=false
+if profile_selected connections && profile_enabled gate_connection_staircase; then NEED_GENERIC=true; fi
+if profile_selected mix && profile_enabled mixed_business_staircase; then NEED_GENERIC=true; fi
+BUILD_DIR="$OUT/private/bin"
+if [[ "$STOP" == false && "$NEED_GENERIC" == true ]]; then
+  perf_build_binaries "$BACKEND_ROOT" "$LOAD_ROOT" "$BUILD_DIR"
+fi
+
+STAGE_INDEX=0
+if [[ "$STOP" == false ]] && profile_selected connections && profile_enabled gate_connection_staircase; then
+  while IFS=$'\t' read -r STAGE_NAME CONNS RATE DURATION; do
+    [[ -n "$STAGE_NAME" ]] || continue
+    EXPECTED_SCENARIOS=$((EXPECTED_SCENARIOS + 1))
+    STAGE_INDEX=$((STAGE_INDEX + 1))
+    STAGE_DIR="$OUT/evidence/$STAGE_NAME"
+    STAGE_NAMESPACE="${RUN_ID}-c${STAGE_INDEX}"
+    mkdir -p "$STAGE_DIR"
+    printf '\n=== connection staircase %s: planned=%s rate=%s/s duration=%ss ===\n' "$STAGE_NAME" "$CONNS" "$RATE" "$DURATION"
+    set +e
+    ENV_FILE=$(perf_stack_up "$BUILD_DIR" "$STAGE_DIR/stack" "$STAGE_NAMESPACE" "$((CONNS + 128))" "$STAGE_NAME")
+    STACK_RC=$?
+    set -e
+    if ((STACK_RC != 0)); then
+      record_inconclusive "$STAGE_NAME" gate_connection_staircase "isolated stack did not become ready" "$CONNS"
+      STOP=true
+      break
+    fi
+    ACTIVE_STACK="$STAGE_DIR/stack"
+    # shellcheck disable=SC1090
+    source "$ENV_FILE"
+    REDIS_HASH=$(python3 "$TOOL" endpoint-hash --target "$PERF_REDIS_TARGET")
+    DRIVER_JSON="$STAGE_DIR/ws-driver.json"
+    LOAD_TEST_TOKEN_SECRET="$PERF_LOAD_SECRET" "$BUILD_DIR/ws-stress" \
+      -scenario join -player-start "$((950000000 + STAGE_INDEX * 10000))" \
+      -conns "$CONNS" -rate "$RATE" -duration "${DURATION}s" \
+      -http-url "$PERF_GATE_HTTP" -ws-url "$PERF_GATE_WS" -json-out "$DRIVER_JSON" \
+      >"$STAGE_DIR/ws-driver.log" 2>&1 &
+    DRIVER_PID=$!
+    STOP_FILE="$STAGE_DIR/sampler.stop"
+    python3 "$TOOL" sample --out "$STAGE_DIR/resource-samples.ndjson" --stop-file "$STOP_FILE" --interval 0.5 \
+      --process "load-generator=$DRIVER_PID" --process "gate=$PERF_GATE_PID" --process "farm=$PERF_FARM_PID" \
+      --process "player=$PERF_PLAYER_PID" --process "worker=$PERF_WORKER_PID" \
+      --metrics "gate=$PERF_GATE_METRICS" --metrics "farm=$PERF_FARM_METRICS" \
+      --metrics "player=$PERF_PLAYER_METRICS" --metrics "worker=$PERF_WORKER_METRICS" &
+    SAMPLER_PID=$!
+    set +e
+    wait "$DRIVER_PID"; DRIVER_RC=$?
+    set -e
+    touch "$STOP_FILE"
+    wait "$SAMPLER_PID" || true
+    perf_stack_down "$ACTIVE_STACK" || true
+    ACTIVE_STACK=""
+    set +e
+    python3 "$TOOL" ingest-ws --input "$DRIVER_JSON" --samples "$STAGE_DIR/resource-samples.ndjson" \
+      --out "$OUT/scenarios/$STAGE_NAME.json" --name "$STAGE_NAME" --profile gate_connection_staircase \
+      --planned "$CONNS" --namespace "$STAGE_NAMESPACE" --redis-endpoint-hash "$REDIS_HASH"
+    INGEST_RC=$?
+    set -e
+    if ((DRIVER_RC != 0 || INGEST_RC != 0)); then STOP=true; break; fi
+  done < <(python3 - "$CONFIG" <<'PY'
+import json,sys
+for s in json.load(open(sys.argv[1]))['profiles']['gate_connection_staircase']['stages']:
+    if s.get('enabled',True):
+        print(s['name'],s['connections'],s['arrival_rate_per_second'],s['duration_seconds'],sep='\t')
+PY
+)
+fi
+
+if [[ "$STOP" == false ]] && profile_selected mix && profile_enabled mixed_business_staircase; then
+  while IFS=$'\t' read -r STAGE_NAME DURATION JOIN_CONNS JOIN_RATE PLANT_CONNS PLANT_RATE; do
+    [[ -n "$STAGE_NAME" ]] || continue
+    EXPECTED_SCENARIOS=$((EXPECTED_SCENARIOS + 1))
+    STAGE_INDEX=$((STAGE_INDEX + 1))
+    PLANNED=$((JOIN_CONNS + PLANT_CONNS))
+    STAGE_DIR="$OUT/evidence/$STAGE_NAME"
+    STAGE_NAMESPACE="${RUN_ID}-m${STAGE_INDEX}"
+    mkdir -p "$STAGE_DIR"
+    printf '\n=== mixed staircase %s: planned=%s join=%s/s plant=%s/s ===\n' "$STAGE_NAME" "$PLANNED" "$JOIN_RATE" "$PLANT_RATE"
+    set +e
+    ENV_FILE=$(perf_stack_up "$BUILD_DIR" "$STAGE_DIR/stack" "$STAGE_NAMESPACE" "$((PLANNED + 128))" "$STAGE_NAME")
+    STACK_RC=$?
+    set -e
+    if ((STACK_RC != 0)); then
+      record_inconclusive "$STAGE_NAME" mixed_business_staircase "isolated mixed stack did not become ready" "$PLANNED"
+      STOP=true
+      break
+    fi
+    ACTIVE_STACK="$STAGE_DIR/stack"
+    # shellcheck disable=SC1090
+    source "$ENV_FILE"
+    REDIS_HASH=$(python3 "$TOOL" endpoint-hash --target "$PERF_REDIS_TARGET")
+    JOIN_JSON="$STAGE_DIR/ws-join.json"; PLANT_JSON="$STAGE_DIR/business-journeys.json"
+    LOAD_TEST_TOKEN_SECRET="$PERF_LOAD_SECRET" "$BUILD_DIR/ws-stress" \
+      -scenario join -player-start "$((960000000 + STAGE_INDEX * 20000))" \
+      -conns "$JOIN_CONNS" -rate "$JOIN_RATE" -duration "${DURATION}s" \
+      -http-url "$PERF_GATE_HTTP" -ws-url "$PERF_GATE_WS" -json-out "$JOIN_JSON" \
+      >"$STAGE_DIR/ws-join.log" 2>&1 &
+    JOIN_PID=$!
+    python3 "$TOOL" run-bot-arrivals --bot "$BUILD_DIR/perf-baseline" \
+      --http-url "$PERF_GATE_HTTP" --ws-url "$PERF_GATE_WS" \
+      --arrivals "$PLANT_CONNS" --rate "$PLANT_RATE" --max-arrival-lag-ms 250 \
+      --max-concurrency 128 --completion-timeout "$((DURATION + 120))" \
+      --user-prefix "q1m${STAGE_INDEX}u" --password smoke123 \
+      --bot-extra-arg=--stop-after-plant \
+      --evidence-dir "$STAGE_DIR/business-bots" --out "$PLANT_JSON" \
+      >"$STAGE_DIR/business-journeys.log" 2>&1 &
+    PLANT_PID=$!
+    STOP_FILE="$STAGE_DIR/sampler.stop"
+    python3 "$TOOL" sample --out "$STAGE_DIR/resource-samples.ndjson" --stop-file "$STOP_FILE" --interval 0.5 \
+      --process "load-join=$JOIN_PID" --process "load-plant=$PLANT_PID" --process "gate=$PERF_GATE_PID" \
+      --process "farm=$PERF_FARM_PID" --process "player=$PERF_PLAYER_PID" --process "worker=$PERF_WORKER_PID" \
+      --metrics "gate=$PERF_GATE_METRICS" --metrics "farm=$PERF_FARM_METRICS" \
+      --metrics "player=$PERF_PLAYER_METRICS" --metrics "worker=$PERF_WORKER_METRICS" &
+    SAMPLER_PID=$!
+    set +e
+    wait "$JOIN_PID"; JOIN_RC=$?
+    wait "$PLANT_PID"; PLANT_RC=$?
+    set -e
+    touch "$STOP_FILE"
+    wait "$SAMPLER_PID" || true
+    perf_stack_down "$ACTIVE_STACK" || true
+    ACTIVE_STACK=""
+    set +e
+    python3 "$TOOL" ingest-ws --input "$JOIN_JSON" --input "$PLANT_JSON" --samples "$STAGE_DIR/resource-samples.ndjson" \
+      --out "$OUT/scenarios/$STAGE_NAME.json" --name "$STAGE_NAME" --profile mixed_business_staircase \
+      --planned "$PLANNED" --namespace "$STAGE_NAMESPACE" --redis-endpoint-hash "$REDIS_HASH"
+    INGEST_RC=$?
+    set -e
+    if ((JOIN_RC != 0 || PLANT_RC != 0 || INGEST_RC != 0)); then STOP=true; break; fi
+  done < <(python3 - "$CONFIG" <<'PY'
+import json,sys
+for s in json.load(open(sys.argv[1]))['profiles']['mixed_business_staircase']['stages']:
+    if s.get('enabled',True):
+        print(s['name'],s['duration_seconds'],s['join_connections'],s['join_rate_per_second'],s['plant_connections'],s['plant_rate_per_second'],sep='\t')
+PY
+)
+fi
+
+# Destroy the coordinator Redis before verdict generation so cleanup is an
+# observed fact, not a promise. No shared data or unrelated container is touched.
+docker logs "$MAIN_REDIS_CONTAINER" >"$OUT/evidence/main-redis.log" 2>&1 || true
+docker rm -f "$MAIN_REDIS_CONTAINER" >/dev/null 2>&1 || true
+if ! docker inspect "$MAIN_REDIS_CONTAINER" >/dev/null 2>&1; then MAIN_REDIS_CLEANED=true; fi
+MAIN_REDIS_CONTAINER=""
+rm -f "$MAIN_REDIS_CONFIG"; MAIN_REDIS_CONFIG=""
+rm -rf "$OUT/private"
+
+printf '\n=== evidence report ===\n'
+final_args=(finalize --out "$OUT" --run-kind "$RUN_KIND" --expected-scenarios "$EXPECTED_SCENARIOS")
+[[ "$MAIN_REDIS_CLEANED" == true ]] && final_args+=(--cleanup-completed)
+if [[ -n "$BASELINE_METRICS" ]]; then final_args+=(--baseline-metrics "$BASELINE_METRICS"); fi
+set +e
+python3 "$TOOL" "${final_args[@]}"
+FINAL_RC=$?
+set -e
+printf 'run complete rc=%s report=%s\n' "$FINAL_RC" "$OUT/performance-baseline-report.md"
+exit "$FINAL_RC"

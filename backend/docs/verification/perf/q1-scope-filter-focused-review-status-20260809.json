@@ -1,0 +1,102 @@
+{
+  "schema": "farm-game.q1-scope-filter-review-status.v1",
+  "checkpoint": "CP-Q1-SCOPE-FILTER-CORRECTNESS",
+  "status": "POSTMERGE_QUALIFICATION_PASS",
+  "backend_fix_head": "9ee567cdcddfbd3ab9f9531786ef61c2cdf97f5f",
+  "backend_production_fix": "9ee567cdcddfbd3ab9f9531786ef61c2cdf97f5f",
+  "backend_local_integration_snapshot": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+  "h5_contract_head": "48ea2dbb52ed50902e15372a5d07721e46d333ca",
+  "h5_local_integration_snapshot": "fdb9849c0aad613b9a1c45ab8bf33a692c5ee967",
+  "harness_fix_head": "dae92dd513872b4247fcb17311b950c48c46b5e9",
+  "harness_10x_evidence_commit": "fc298561da0b109dc402e890f735c6a445f6c353",
+  "diagnostic_rounds": 10,
+  "diagnostic_result": "PASS",
+  "baseline_eligible": false,
+  "legacy_due_test": {
+    "status": "PASS",
+    "test": "TestLegacyCareDueUpgradeRoutesOnceToCareAndDoesNotSpinLeaseRetryOrLastError",
+    "rounds": 10
+  },
+  "harness_negative_test": {
+    "status": "PASS",
+    "tests": [
+      "test_invalid_analyzer_detects_each_negative_control",
+      "test_invalid_order_and_due_negative_controls_fail_then_clean_control_passes"
+    ],
+    "invalid_order_exit_code": 1,
+    "persistent_due_exit_code": 1,
+    "restored_clean_exit_code": 0
+  },
+  "latest_positive_gate": {
+    "run_id": "q1perf-reviewgate-0809134904",
+    "scenario_status": "PASS",
+    "f3_classification": "F3_CHAIN_PASS",
+    "invalid_order_classification": "NO_INVALID_PAIR_DUE_RESIDUE",
+    "invalid_processing_observations": 0,
+    "persistent_pair_due_candidates": 0,
+    "wire_theft_after_first_click": 0,
+    "wire_theft_after_second_click": 1,
+    "hard_correctness_incident_count": 0,
+    "diagnostic_verdict": "INCONCLUSIVE_ENVIRONMENT",
+    "backend_commit": "56ceca6f7cfc8582438a899abe5aa7a90c1d4798",
+    "h5_commit": "48ea2dbb52ed50902e15372a5d07721e46d333ca",
+    "load_tool_commit": "1d077ec98d4a1901faab89dc16212c925ace3909",
+    "evidence_hashes": {
+      "baseline-run-manifest.json": "sha256:e30521234fd87779c0c5b809084103a8b6e5258e4e00eda70a326feb283966f5",
+      "baseline-verdict.json": "sha256:90aa2b0556649ded4001ea88547e5d11b8de989eb04e0063d64c02484fe846a9",
+      "scenarios/product-correctness-anchor.json": "sha256:81abed4706be3b679b26ac56b25e88126b52a5ea4cfe6193b149c485ec50daa2",
+      "evidence/product-correctness-anchor/theft-invalid-order-triage.json": "sha256:86592a2c6bdcf88e1df6154394587de65043485a45018415e8448df67db293f1",
+      "evidence/product-correctness-anchor/f3-fault-chain-triage.json": "sha256:dc97e7c7482392d4f597f7fc8d2f6146feeaf1086d7fc3549efd2cef45352b97",
+      "evidence/product-correctness-anchor/browser-verdict.json": "sha256:b0119c5fe2fa334de7f89a5e533b1a90bdd433c6c4750a7f8d443d8753ca2132"
+    },
+    "note": "Positive diagnostic predates the final review-closure commits; exact final heads require the planned Premerge combination Gate."
+  },
+  "focused_review": {
+    "status": "PASS",
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "exact_head_closure": "PASS",
+    "evidence": "q1-scope-filter-focused-review-result-20260809.md"
+  },
+  "fixed_branch_push": {
+    "status": "PASS",
+    "backend": "9ee567cdcddfbd3ab9f9531786ef61c2cdf97f5f",
+    "h5": "48ea2dbb52ed50902e15372a5d07721e46d333ca",
+    "q1_handoff": "113332a669796067a368899a63752419c5112919",
+    "ls_remote": "PASS"
+  },
+  "backend_premerge": {
+    "status": "PASS",
+    "integration_base": "4c6195c8141bdc3368ecda3922e4f9f3252d0046",
+    "code_gate_head": "bf0c6063201051caf08be5da4c062c7bd5189ffa",
+    "final_head": "8e240eabd85fdaa037fb1396b07d5af1ac457e4f"
+  },
+  "h5_premerge": {
+    "status": "PASS",
+    "integration_base": "fdb9849c0aad613b9a1c45ab8bf33a692c5ee967",
+    "gate_head": "c1bc17bcad17b88688ae7c8fae77d384f21d5fbb"
+  },
+  "combination_gate": {
+    "status": "PASS",
+    "run_id": "q1perf-premerge2-0809144959",
+    "evidence": "q1-scope-filter-premerge-gate-20260809.json"
+  },
+  "integration_merge": {
+    "status": "PASS",
+    "backend_integration_commit": "4824c9c02fe70873b2f9a8eab3ce274d227063a8",
+    "h5_integration_commit": "525c4d324100b17a891f02797c4880fa9a02f70a",
+    "checkpoint_tag": "cp-q1-scope-filter-correctness-20260809",
+    "ls_remote": "PASS"
+  },
+  "formal_baseline_rerun": "BLOCKED_PENDING_CAP_REDIS_L1_AND_CAP_SINGLE_POD_L2",
+  "supports_30m_dau": false,
+  "known_gate_note": "One parallel full-suite attempt hit pre-existing concurrency flakes; standalone go test ./... -count=1 passed. Modified worker/theft packages and focused Friend recovery tests pass under race. Full Friend race remains flaky at TestConcurrentAddBothDirectionsAndDelete and is not claimed green.",
+  "backend_initial_fix": "6c15a9325a77a457bd5aa8adec87e35138c98793",
+  "postmerge_qualification": {
+    "status": "PASS",
+    "rounds": "1/1",
+    "run_id": "q1perf-postmerge-0809150124",
+    "evidence": "q1-postmerge-qualification-20260809/evidence-index.json"
+  }
+}

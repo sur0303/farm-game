@@ -1,0 +1,17 @@
+.env
+.env.*
+*.pem
+*.key
+secrets/
+kubeconfig
+*.kubeconfig
+id_rsa
+id_ed25519
+*.pprof
+*.prof
+farm-game/docs/verification/
+farm-game/deploy/secrets/
+classic-farm-h5/node_modules/
+classic-farm-h5/dist/
+classic-farm-h5/test-results/
+classic-farm-h5/playwright-report/

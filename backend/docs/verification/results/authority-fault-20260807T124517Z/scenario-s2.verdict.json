@@ -1,0 +1,30 @@
+{
+  "verdict": "PASS",
+  "reason": "scenario s2 passed",
+  "steps": {
+    "friend_relationship": {
+      "status": "ok",
+      "detail": "owner share created and guest accepted (A\u003c-\u003eB friends)"
+    },
+    "guest_converged": {
+      "status": "ok",
+      "detail": "guest final FarmVersion 4 == owner committed version, no gap"
+    },
+    "ordering": {
+      "status": "ok",
+      "detail": "Ready precedes the post-ready change on the connection; server sequence continuous; FarmVersion has no gap; no extra REJOIN_REQUIRED"
+    },
+    "owner_plant": {
+      "status": "ok",
+      "detail": "owner committed FARM_CHANGE V3 -\u003e V4 while guest ACTIVATING"
+    },
+    "presence_epoch": {
+      "status": "ok",
+      "detail": "post-ready change PresenceEpoch=6 \u003e 0"
+    },
+    "queue_accepted": {
+      "status": "ok",
+      "detail": "gate returned QUEUE_ACCEPTED (no STALE_CONNECTION) for post-ready change"
+    }
+  }
+}

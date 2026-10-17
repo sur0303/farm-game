@@ -1,0 +1,39 @@
+{
+  "run_id": "c0m0811180951451926416",
+  "namespace": "foperf-c0m0811180951451926416",
+  "hint_transport_effective": "direct",
+  "redis_measurement_gate": "pass",
+  "evidence_gate": "pass",
+  "run_id_gate": "pass",
+  "matrix_cells": {
+    "friends-100": {
+      "friend_count": 100,
+      "viewer_player_id": 813011001,
+      "target_owner_id": 813011002,
+      "verified_friend_count": 100,
+      "run_id": "c0m0811180951451926416f100"
+    },
+    "friends-20": {
+      "friend_count": 20,
+      "viewer_player_id": 813010201,
+      "target_owner_id": 813010202,
+      "verified_friend_count": 20,
+      "run_id": "c0m0811180951451926416f20"
+    },
+    "friends-300": {
+      "friend_count": 300,
+      "viewer_player_id": 813013001,
+      "target_owner_id": 813013002,
+      "verified_friend_count": 300,
+      "run_id": "c0m0811180951451926416f300"
+    }
+  },
+  "verdict": "pass",
+  "claims_30m_dau": false,
+  "notes": [
+    "30m-model matrix records comparable cells only; it does not prove 30 million DAU.",
+    "Each friend_count cell uses a distinct viewer/target/bootstrap/operation run_id.",
+    "Redis evidence is scraped before/after each workload and aggregated across participating services.",
+    "Unsupported knobs online-ratio/friend-base/pubsub are rejected by ws-stress."
+  ]
+}

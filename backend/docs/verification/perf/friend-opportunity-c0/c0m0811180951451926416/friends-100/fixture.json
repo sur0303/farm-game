@@ -1,0 +1,18 @@
+{
+  "run_id": "c0m0811180951451926416f100",
+  "namespace": "foperf-c0m0811180951451926416",
+  "zone": "local",
+  "viewer_player_id": 813011001,
+  "target_owner_id": 813011002,
+  "friend_count": 100,
+  "verified_friend_count": 100,
+  "fake_players": 99,
+  "density_percent": 20,
+  "initialized_players": 99,
+  "activated_pairs": 199,
+  "index_rows_applied": 398,
+  "farm_records_seeded": 100,
+  "elapsed_ms": 291,
+  "cleanup_hint": "exact run-scoped cleanup only for namespace foperf-c0m0811180951451926416:local; never FLUSH, CONFIG, SLOWLOG, or broad SCAN+DEL",
+  "cleanup_scope": "foperf-c0m0811180951451926416:local"
+}

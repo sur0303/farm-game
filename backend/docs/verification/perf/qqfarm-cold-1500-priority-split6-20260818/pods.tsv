@@ -1,0 +1,105 @@
+2026-08-18T07:33:48Z
+farm-gate-68578cdb56-qr5cj                      1/1   Running   0             15m    198.18.0.111    198.18.0.22   <none>   <none>
+farm-grafana-64f7f46898-z58tr                   1/1   Running   0             2d4h   198.18.0.29    198.18.0.30    <none>   <none>
+farm-prometheus-5966b58fdf-6xrnv                1/1   Running   0             2d4h   198.18.0.31   198.18.0.32    <none>   <none>
+farm-redis-0                                    1/1   Running   0             23h    198.18.0.33    198.18.0.34     <none>   <none>
+farm-redis-1                                    1/1   Running   0             23h    198.18.0.35    198.18.0.36   <none>   <none>
+farm-redis-2                                    1/1   Running   0             23h    198.18.0.37   198.18.0.38   <none>   <none>
+farm-route-bootstrap                            1/1   Running   0             17m    198.18.0.112   198.18.0.113    <none>   <none>
+farm-svr-0                                      1/1   Running   1 (16m ago)   17m    198.18.0.114   198.18.0.115    <none>   <none>
+farm-svr-1                                      1/1   Running   1 (16m ago)   17m    198.18.0.116    198.18.0.117    <none>   <none>
+farm-worker-a-7659c87b74-7wlln                  1/1   Running   0             15m    198.18.0.118   198.18.0.119    <none>   <none>
+farm-worker-b-64f9dc8d57-dr9g8                  1/1   Running   0             15m    198.18.0.120   198.18.0.63    <none>   <none>
+player-svr-0                                    1/1   Running   1 (16m ago)   17m    198.18.0.121    198.18.0.117    <none>   <none>
+player-svr-1                                    1/1   Running   1 (17m ago)   17m    198.18.0.122   198.18.0.113    <none>   <none>
+route-controller-6686f9cdb9-zg9ct               1/1   Running   0             16m    198.18.0.123   198.18.0.113    <none>   <none>
+ws-stress-cold-thick-login-153315-1831-7czgw    1/1   Running   0             32s    198.18.0.129   198.18.0.130    <none>   <none>
+ws-stress-cold-thick-login-153315-2325-vh479    1/1   Running   0             32s    198.18.0.131    198.18.0.132    <none>   <none>
+ws-stress-cold-thick-login-153315-25235-bp8r4   1/1   Running   0             32s    198.18.0.133   198.18.0.61   <none>   <none>
+ws-stress-cold-thick-login-153315-30188-cpshc   1/1   Running   0             32s    198.18.0.134   198.18.0.135    <none>   <none>
+ws-stress-cold-thick-login-153315-31230-k494l   1/1   Running   0             32s    198.18.0.136   198.18.0.137    <none>   <none>
+ws-stress-cold-thick-login-153315-6691-9zktv    1/1   Running   0             32s    198.18.0.138   198.18.0.20    <none>   <none>
+2026-08-18T07:34:06Z
+farm-gate-68578cdb56-qr5cj                      1/1   Running   0             15m    198.18.0.111    198.18.0.22   <none>   <none>
+farm-grafana-64f7f46898-z58tr                   1/1   Running   0             2d4h   198.18.0.29    198.18.0.30    <none>   <none>
+farm-prometheus-5966b58fdf-6xrnv                1/1   Running   0             2d4h   198.18.0.31   198.18.0.32    <none>   <none>
+farm-redis-0                                    1/1   Running   0             23h    198.18.0.33    198.18.0.34     <none>   <none>
+farm-redis-1                                    1/1   Running   0             23h    198.18.0.35    198.18.0.36   <none>   <none>
+farm-redis-2                                    1/1   Running   0             23h    198.18.0.37   198.18.0.38   <none>   <none>
+farm-route-bootstrap                            1/1   Running   0             17m    198.18.0.112   198.18.0.113    <none>   <none>
+farm-svr-0                                      1/1   Running   1 (17m ago)   17m    198.18.0.114   198.18.0.115    <none>   <none>
+farm-svr-1                                      1/1   Running   1 (17m ago)   17m    198.18.0.116    198.18.0.117    <none>   <none>
+farm-worker-a-7659c87b74-7wlln                  1/1   Running   0             15m    198.18.0.118   198.18.0.119    <none>   <none>
+farm-worker-b-64f9dc8d57-dr9g8                  1/1   Running   0             15m    198.18.0.120   198.18.0.63    <none>   <none>
+player-svr-0                                    1/1   Running   1 (17m ago)   17m    198.18.0.121    198.18.0.117    <none>   <none>
+player-svr-1                                    1/1   Running   1 (17m ago)   17m    198.18.0.122   198.18.0.113    <none>   <none>
+route-controller-6686f9cdb9-zg9ct               1/1   Running   0             17m    198.18.0.123   198.18.0.113    <none>   <none>
+ws-stress-cold-thick-login-153315-1831-7czgw    1/1   Running   0             51s    198.18.0.129   198.18.0.130    <none>   <none>
+ws-stress-cold-thick-login-153315-2325-vh479    1/1   Running   0             51s    198.18.0.131    198.18.0.132    <none>   <none>
+ws-stress-cold-thick-login-153315-25235-bp8r4   1/1   Running   0             51s    198.18.0.133   198.18.0.61   <none>   <none>
+ws-stress-cold-thick-login-153315-30188-cpshc   1/1   Running   0             51s    198.18.0.134   198.18.0.135    <none>   <none>
+ws-stress-cold-thick-login-153315-31230-k494l   1/1   Running   0             51s    198.18.0.136   198.18.0.137    <none>   <none>
+ws-stress-cold-thick-login-153315-6691-9zktv    1/1   Running   0             51s    198.18.0.138   198.18.0.20    <none>   <none>
+2026-08-18T07:34:25Z
+farm-gate-68578cdb56-qr5cj                      1/1   Running   0             16m    198.18.0.111    198.18.0.22   <none>   <none>
+farm-grafana-64f7f46898-z58tr                   1/1   Running   0             2d4h   198.18.0.29    198.18.0.30    <none>   <none>
+farm-prometheus-5966b58fdf-6xrnv                1/1   Running   0             2d4h   198.18.0.31   198.18.0.32    <none>   <none>
+farm-redis-0                                    1/1   Running   0             23h    198.18.0.33    198.18.0.34     <none>   <none>
+farm-redis-1                                    1/1   Running   0             23h    198.18.0.35    198.18.0.36   <none>   <none>
+farm-redis-2                                    1/1   Running   0             23h    198.18.0.37   198.18.0.38   <none>   <none>
+farm-route-bootstrap                            1/1   Running   0             17m    198.18.0.112   198.18.0.113    <none>   <none>
+farm-svr-0                                      1/1   Running   1 (17m ago)   17m    198.18.0.114   198.18.0.115    <none>   <none>
+farm-svr-1                                      1/1   Running   1 (17m ago)   17m    198.18.0.116    198.18.0.117    <none>   <none>
+farm-worker-a-7659c87b74-7wlln                  1/1   Running   0             16m    198.18.0.118   198.18.0.119    <none>   <none>
+farm-worker-b-64f9dc8d57-dr9g8                  1/1   Running   0             16m    198.18.0.120   198.18.0.63    <none>   <none>
+player-svr-0                                    1/1   Running   1 (17m ago)   17m    198.18.0.121    198.18.0.117    <none>   <none>
+player-svr-1                                    1/1   Running   1 (17m ago)   17m    198.18.0.122   198.18.0.113    <none>   <none>
+route-controller-6686f9cdb9-zg9ct               1/1   Running   0             17m    198.18.0.123   198.18.0.113    <none>   <none>
+ws-stress-cold-thick-login-153315-1831-7czgw    1/1   Running   0             69s    198.18.0.129   198.18.0.130    <none>   <none>
+ws-stress-cold-thick-login-153315-2325-vh479    1/1   Running   0             69s    198.18.0.131    198.18.0.132    <none>   <none>
+ws-stress-cold-thick-login-153315-25235-bp8r4   1/1   Running   0             69s    198.18.0.133   198.18.0.61   <none>   <none>
+ws-stress-cold-thick-login-153315-30188-cpshc   1/1   Running   0             69s    198.18.0.134   198.18.0.135    <none>   <none>
+ws-stress-cold-thick-login-153315-31230-k494l   1/1   Running   0             69s    198.18.0.136   198.18.0.137    <none>   <none>
+ws-stress-cold-thick-login-153315-6691-9zktv    1/1   Running   0             69s    198.18.0.138   198.18.0.20    <none>   <none>
+2026-08-18T07:34:44Z
+farm-gate-68578cdb56-qr5cj                      1/1   Running   0             16m    198.18.0.111    198.18.0.22   <none>   <none>
+farm-grafana-64f7f46898-z58tr                   1/1   Running   0             2d4h   198.18.0.29    198.18.0.30    <none>   <none>
+farm-prometheus-5966b58fdf-6xrnv                1/1   Running   0             2d4h   198.18.0.31   198.18.0.32    <none>   <none>
+farm-redis-0                                    1/1   Running   0             23h    198.18.0.33    198.18.0.34     <none>   <none>
+farm-redis-1                                    1/1   Running   0             23h    198.18.0.35    198.18.0.36   <none>   <none>
+farm-redis-2                                    1/1   Running   0             23h    198.18.0.37   198.18.0.38   <none>   <none>
+farm-route-bootstrap                            1/1   Running   0             18m    198.18.0.112   198.18.0.113    <none>   <none>
+farm-svr-0                                      1/1   Running   1 (17m ago)   18m    198.18.0.114   198.18.0.115    <none>   <none>
+farm-svr-1                                      1/1   Running   1 (17m ago)   18m    198.18.0.116    198.18.0.117    <none>   <none>
+farm-worker-a-7659c87b74-7wlln                  1/1   Running   0             16m    198.18.0.118   198.18.0.119    <none>   <none>
+farm-worker-b-64f9dc8d57-dr9g8                  1/1   Running   0             16m    198.18.0.120   198.18.0.63    <none>   <none>
+player-svr-0                                    1/1   Running   1 (17m ago)   18m    198.18.0.121    198.18.0.117    <none>   <none>
+player-svr-1                                    1/1   Running   1 (17m ago)   18m    198.18.0.122   198.18.0.113    <none>   <none>
+route-controller-6686f9cdb9-zg9ct               1/1   Running   0             17m    198.18.0.123   198.18.0.113    <none>   <none>
+ws-stress-cold-thick-login-153315-1831-7czgw    1/1   Running   0             88s    198.18.0.129   198.18.0.130    <none>   <none>
+ws-stress-cold-thick-login-153315-2325-vh479    1/1   Running   0             88s    198.18.0.131    198.18.0.132    <none>   <none>
+ws-stress-cold-thick-login-153315-25235-bp8r4   1/1   Running   0             88s    198.18.0.133   198.18.0.61   <none>   <none>
+ws-stress-cold-thick-login-153315-30188-cpshc   1/1   Running   0             88s    198.18.0.134   198.18.0.135    <none>   <none>
+ws-stress-cold-thick-login-153315-31230-k494l   1/1   Running   0             88s    198.18.0.136   198.18.0.137    <none>   <none>
+ws-stress-cold-thick-login-153315-6691-9zktv    1/1   Running   0             88s    198.18.0.138   198.18.0.20    <none>   <none>
+2026-08-18T07:35:03Z
+farm-gate-68578cdb56-qr5cj                      1/1   Running   0             16m    198.18.0.111    198.18.0.22   <none>   <none>
+farm-grafana-64f7f46898-z58tr                   1/1   Running   0             2d4h   198.18.0.29    198.18.0.30    <none>   <none>
+farm-prometheus-5966b58fdf-6xrnv                1/1   Running   0             2d4h   198.18.0.31   198.18.0.32    <none>   <none>
+farm-redis-0                                    1/1   Running   0             23h    198.18.0.33    198.18.0.34     <none>   <none>
+farm-redis-1                                    1/1   Running   0             23h    198.18.0.35    198.18.0.36   <none>   <none>
+farm-redis-2                                    1/1   Running   0             23h    198.18.0.37   198.18.0.38   <none>   <none>
+farm-route-bootstrap                            1/1   Running   0             18m    198.18.0.112   198.18.0.113    <none>   <none>
+farm-svr-0                                      1/1   Running   1 (18m ago)   18m    198.18.0.114   198.18.0.115    <none>   <none>
+farm-svr-1                                      1/1   Running   1 (18m ago)   18m    198.18.0.116    198.18.0.117    <none>   <none>
+farm-worker-a-7659c87b74-7wlln                  1/1   Running   0             16m    198.18.0.118   198.18.0.119    <none>   <none>
+farm-worker-b-64f9dc8d57-dr9g8                  1/1   Running   0             16m    198.18.0.120   198.18.0.63    <none>   <none>
+player-svr-0                                    1/1   Running   1 (18m ago)   18m    198.18.0.121    198.18.0.117    <none>   <none>
+player-svr-1                                    1/1   Running   1 (18m ago)   18m    198.18.0.122   198.18.0.113    <none>   <none>
+route-controller-6686f9cdb9-zg9ct               1/1   Running   0             18m    198.18.0.123   198.18.0.113    <none>   <none>
+ws-stress-cold-thick-login-153315-1831-7czgw    1/1   Running   0             107s   198.18.0.129   198.18.0.130    <none>   <none>
+ws-stress-cold-thick-login-153315-2325-vh479    1/1   Running   0             107s   198.18.0.131    198.18.0.132    <none>   <none>
+ws-stress-cold-thick-login-153315-25235-bp8r4   1/1   Running   0             107s   198.18.0.133   198.18.0.61   <none>   <none>
+ws-stress-cold-thick-login-153315-30188-cpshc   1/1   Running   0             107s   198.18.0.134   198.18.0.135    <none>   <none>
+ws-stress-cold-thick-login-153315-31230-k494l   1/1   Running   0             107s   198.18.0.136   198.18.0.137    <none>   <none>
+ws-stress-cold-thick-login-153315-6691-9zktv    1/1   Running   0             107s   198.18.0.138   198.18.0.20    <none>   <none>

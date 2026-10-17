@@ -1,0 +1,23 @@
+{
+  "schema_version": "cap-single-pod-l2.profile-binding.v0.1",
+  "binding_id": "R2",
+  "status": "ACTIVE",
+  "task_id": "CAP-SINGLE-POD-L2-R2",
+  "run_id_pattern": "^capsingle-l2-r2-[0-9]{8}T[0-9]{6}Z-[0-9]+$",
+  "manifest_schema_version": "cap-single-pod-l2-r2.run-manifest.v0.1",
+  "manifest_schema_sha256": "8d868efc457af536e0c0496fd9ef633fb968a8eabac099d7cbd616ab95dc1eaf",
+  "profile_schema_version": "cap-single-pod-l2-r2.profile.v0.1",
+  "profile_version": "CAP-SINGLE-POD-L2-R2-v0.1",
+  "required_metrics_schema_version": "cap-single-pod-l2-r2.required-metrics.v0.1",
+  "stop_conditions_schema_version": "cap-single-pod-l2-r2.stop-conditions.v0.1",
+  "verdict_rules_schema_version": "cap-single-pod-l2-r2.verdict-rules.v0.1",
+  "environment_schema_version": "cap-single-pod-l2-r2.environment-validity.v0.1",
+  "frozen_identity": {
+    "backend_evidence_head": "6f239b136e0943ec0dc30e3c92644974fc2b3454",
+    "backend_business_commit": "5ce43715363eea4f18e0925b6992429785053261",
+    "backend_image_digest": "sha256:06bd1f8a3a9ab31a84e8c0480ddee959116aeca8db21e19cc42d4181a471f2c9",
+    "h5_commit": "fc7be57174e9ff4f18e6dfeb5fc1610d681172cf",
+    "h5_image_digest": "sha256:63cd2271c7d433ea3b0eb6724797ea60e558bdeb20f3d3f3dc7a08c010f63601",
+    "model_layout": "R2:authority-v1+workflow-v1;actors-written-v1;Model-Field-V2-read-supported-write-disabled"
+  }
+}

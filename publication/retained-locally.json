@@ -1,0 +1,1442 @@
+[
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-freeze.png",
+    "bytes": 211022,
+    "sha256": "091113edf459e86408e85e62c9ec9a4262745e5432cd8a7d4025258d03f9389b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-midterm-4k.png",
+    "bytes": 1150986,
+    "sha256": "7539c59122230e1b099ed98b2cbc6a1bc1b5bd84131932d790177b69d4a2522f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-midterm-vector.pdf",
+    "bytes": 236647,
+    "sha256": "5df39df144cb824c006b5186038ae3546f2e0b05c5db48c5222974b68c6b92ef",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-midterm.png",
+    "bytes": 386127,
+    "sha256": "a0e11fac734b489d4471390a448c56de1c31606465c9077dc31aaa7dfbb2ccdf",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-v2.1-review.png",
+    "bytes": 1776589,
+    "sha256": "f096a4c90de8dc91e47f74af338a727dc4e130ed7b1d9345202fc1510c938af7",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-v2.2-freeze.png",
+    "bytes": 298053,
+    "sha256": "6614e97d3cb501795a579f095702dd405d993d351fe0ef4e68ca7ba7883333de",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-v2.3-freeze.png",
+    "bytes": 312798,
+    "sha256": "888b804faa237e8e04443334772bec1e320d33ff32db3ac8fc448f9c32a49964",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-v2.4-freeze.png",
+    "bytes": 408838,
+    "sha256": "b4078659b0f0ec8d6ef0b78ffeb49901400010da769fec2cd54e1f38a5f0c3c5",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-v2.5-freeze.png",
+    "bytes": 269322,
+    "sha256": "d8313e118db6f3146fdba0cb4bd243f03e5c3e16e5b01a9a8a322d0abdca1db6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-v2.6-freeze-review-fixed.png",
+    "bytes": 208339,
+    "sha256": "97c6147dae5821bc1a3028ace71860e726b9fee953ae69045954445cde6bd25a",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-v2.6-freeze-review.png",
+    "bytes": 208339,
+    "sha256": "97c6147dae5821bc1a3028ace71860e726b9fee953ae69045954445cde6bd25a",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-v3.0-freeze.png",
+    "bytes": 375114,
+    "sha256": "ea25689b5f04fc93d7d30336474032818445ace5030bf52232b329c6d3ed3ab8",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/design/assets/classic-farm-overall-architecture-v3.1-freeze.png",
+    "bytes": 452660,
+    "sha256": "eda8b45bb776d651c3cd70efb8c06968fa8982b6d683fa8e41048680ff2aa87b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/evidence/friend-opportunity-real-ab/fofinalb2fence/b2/viewer.png",
+    "bytes": 390960,
+    "sha256": "366db8b7a6b17233888217417fdb4c73d66f4101d82b9668792bd3834fb5334e",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-20260818/farm0.cpu.pprof",
+    "bytes": 92359,
+    "sha256": "492e183ba649d646fbc7a1f0348e77cb89b29c2bfdb12cf14fc7aeca62f7a229",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-20260818/farm0.heap.pprof",
+    "bytes": 56254,
+    "sha256": "04a687b956c3bdf30af2f37f03f758273521f15d0ddcc65ac9ad15387bd00782",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-20260818/farm1.cpu.pprof",
+    "bytes": 87689,
+    "sha256": "0eae9842f60f80da37304e68857e9c3f61e38e40e6902c4a2b0d4b5bab6ca23e",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-20260818/farm1.heap.pprof",
+    "bytes": 56271,
+    "sha256": "32157e51f6bbe99905859812a111d6712c70f1d8c017dd7cd8d6daa47b344ca3",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-20260818/gate.cpu.pprof",
+    "bytes": 129686,
+    "sha256": "f54946efd25c74d180c6f3512d312efc21d057c2c4548ba7c6e2f0fc9bac2a66",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-20260818/gate.heap.pprof",
+    "bytes": 56593,
+    "sha256": "7d56aa65b8da056d713006e76861d5b84c1c7661303ead0aa351c7c5b27a0539",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-20260818/player0.cpu.pprof",
+    "bytes": 104542,
+    "sha256": "eedee3b9a10792d906a78aa63d0ba80c9793206588a427ff9084586321eddbb8",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-20260818/player0.heap.pprof",
+    "bytes": 59214,
+    "sha256": "ba14e3447abb73ebae52b57cc96f0a7319e288ff2702caf17e6affb4790ec18c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-20260818/player1.cpu.pprof",
+    "bytes": 80144,
+    "sha256": "2a3850c3308a0ced0759b82577f2361ff25b53f3dea569ac1f67350fb923da72",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-20260818/player1.heap.pprof",
+    "bytes": 53877,
+    "sha256": "16a1f5ee7c96c0b5790302918f6b51da1f822dfb12e9979b2d926f1ef21dc34b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.1.pb.gz",
+    "bytes": 49220,
+    "sha256": "043959fb3238721ea99c92449d57440b04cffeccfa52508805ce535e279b3739",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.10.pb.gz",
+    "bytes": 60183,
+    "sha256": "387fb6b1d3195b9d3bb4b6bc6a50ccaa75cc3fa4f74d8f3d39d5488bdc27e44b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.11.pb.gz",
+    "bytes": 60465,
+    "sha256": "95f9a99cf9786cbd881a68ac6b7c7e0a6384738a421e78508b8bb16e16a23bd8",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.12.pb.gz",
+    "bytes": 60810,
+    "sha256": "8390d01380c4b44d0152a00f32f6e438c4141ace36b76eca1ae546f8c1e48fd4",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.13.pb.gz",
+    "bytes": 61330,
+    "sha256": "d37445b0066faa1728bdd48b3d11e5c7d2e47d651668c492d49a37eb268df854",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.14.pb.gz",
+    "bytes": 61464,
+    "sha256": "a804d442b3b818d79a96647e91dcef00b86c5f152e5e96a35b11d562179aa5f6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.15.pb.gz",
+    "bytes": 61952,
+    "sha256": "5df09ab0fde810dea7e06c39dd9f3d0a1855d93f70345e0e7777c0ba97cc694c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.16.pb.gz",
+    "bytes": 62203,
+    "sha256": "a33892d59762a15db718709fd815ec753d2b8a79b70e16d9650a3a535d48f25f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.17.pb.gz",
+    "bytes": 62238,
+    "sha256": "bce875c87d5d7a08d2041008b8ebb7474442e956755284f1ae76cb9f924b8351",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.18.pb.gz",
+    "bytes": 62336,
+    "sha256": "a1d1ec3c677ae3ecefd15877958430b180bd065655c2a9f6e506eeb8be198778",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.19.pb.gz",
+    "bytes": 62396,
+    "sha256": "23ca4ac4e1d925f70a202753a6be255dd56c722cf1133f59cfaa763c2bc9777e",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.2.pb.gz",
+    "bytes": 52673,
+    "sha256": "732cfcf563d5ece7851a6b5e8df927af6c9a87114e3683ebf855c562284eb828",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.20.pb.gz",
+    "bytes": 62587,
+    "sha256": "2ba39634d6f10aed337e142d8518e9b0fdd3c396cf14630ae848df3a15d6f21c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.21.pb.gz",
+    "bytes": 62594,
+    "sha256": "8201fcf9ecea6d25abd1b06a5674b0c16746566241917fa450cdd2aee0e8a1bc",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.3.pb.gz",
+    "bytes": 54584,
+    "sha256": "a7cde15748c331ea44383ea3a12077e7e70fe522fb700a671c088a5ad4cdd6ab",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.4.pb.gz",
+    "bytes": 55936,
+    "sha256": "3c644bb56f666ad77d1b97110d9a4c581e9da33de71c42d78813efe605424d6d",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.5.pb.gz",
+    "bytes": 57160,
+    "sha256": "677cc0204a6dccb70a1bacfd096a01c633b82d48092c6cd96efb7cdf7a6669b8",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.6.pb.gz",
+    "bytes": 58205,
+    "sha256": "43a01ce6aec2044a31a15543464080a7f054525e48c132c0c95ed7c5db9138a4",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.7.pb.gz",
+    "bytes": 58466,
+    "sha256": "709659be682f5bcf1f17a98768eafe5379039d05613f6ea8683a354825627fc3",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.8.pb.gz",
+    "bytes": 59072,
+    "sha256": "93218089a1d6f2ec019c32f49c964e5c192eed64e5bc1eb14de8acc15e8938a1",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-gate-68578cdb56-qr5cj.heap.9.pb.gz",
+    "bytes": 59342,
+    "sha256": "4d74b8ddc8630990e00889c7a5b7d2082688b320feaecc28f3320008e50d8d29",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.1.pb.gz",
+    "bytes": 50041,
+    "sha256": "9bb0c1b0f85f6d76e154bb06abbc76d8d025d023a803152a4056e1a5d9593ca1",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.10.pb.gz",
+    "bytes": 62855,
+    "sha256": "3a1627475b952d89f5343ebab02d93dfa7963b5f3d85610fb7bded5406f9650c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.11.pb.gz",
+    "bytes": 63285,
+    "sha256": "f9e4e2441e757ec186cfea2becbed9d690525c8f4e9a1add62ca51aa4472f026",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.12.pb.gz",
+    "bytes": 63624,
+    "sha256": "887882f7499fe1256858c7345c9dd74678e0dd4e078d69307e881979600fc9bf",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.13.pb.gz",
+    "bytes": 63877,
+    "sha256": "5e1a8b43ddb0bb9ab5f4d208fc89d9a987ffdd243cc171edf59bef64ba34c204",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.14.pb.gz",
+    "bytes": 64365,
+    "sha256": "f06610f56b6345576ee0dc4fd9c2a3efab7816a4d8fdfe5a717a98fae1e060e0",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.15.pb.gz",
+    "bytes": 64688,
+    "sha256": "c9fd7ac6a9b0f04422d30b37a14f22d26f1a68cd15b01b176ca334ad51627ce4",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.16.pb.gz",
+    "bytes": 64700,
+    "sha256": "6ec4847c36b27c6e3a92cd6caf1eebd09e1f15bef1db0274e04833f138998c60",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.17.pb.gz",
+    "bytes": 64834,
+    "sha256": "3c7fe94691f2dd271891499577b9173f7f21ca6d4d7bda98debd21f454e978b5",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.18.pb.gz",
+    "bytes": 64921,
+    "sha256": "1f6852fdfaf1a13f50170200275caa1c9d728054d195cc9204caf4f2ad519304",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.19.pb.gz",
+    "bytes": 65024,
+    "sha256": "3bead41df0415221d3021cdb87dd69614cc3167f206fabb60cf65e5f8bd1093c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.2.pb.gz",
+    "bytes": 53606,
+    "sha256": "ab77df33249b9d6d2af3b231979743687e0544d7c490e891dc0927aef62bfcb2",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.20.pb.gz",
+    "bytes": 65060,
+    "sha256": "a18209a6c19f53d68e169c8121ba570750b00836186a345e4199cc0400f72e6f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.21.pb.gz",
+    "bytes": 65161,
+    "sha256": "cf97656a32e49f6f9aa557d5b41d29f3286ff8c82b199ec70829919739042ab1",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.3.pb.gz",
+    "bytes": 56179,
+    "sha256": "c2e0bf9fa6c0aebb81aba722c7d3f4cae18ceab209025ba7011843a9daee33ac",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.4.pb.gz",
+    "bytes": 58017,
+    "sha256": "8f02ec659958d8e3b5a06229905541dc2297da601ee14ce129007f14f42c98d8",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.5.pb.gz",
+    "bytes": 58767,
+    "sha256": "044e56224bc1ce1f304d3f506f17752d1c94e43ccb2a609bce34d1fa55634506",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.6.pb.gz",
+    "bytes": 60128,
+    "sha256": "d34a8779c995f14a4742bc935241c73e7f6236e41b410947a3344d6961733fac",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.7.pb.gz",
+    "bytes": 61173,
+    "sha256": "81e849ca8568597515221cddcdcbadc764f970ed6caa844e68ed9f32711aa7ad",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.8.pb.gz",
+    "bytes": 61397,
+    "sha256": "13e9a722c9618c2b78fe8c800e0816a648d2e256a0c9c3b2e4e373a27c3d7e8f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-0.heap.9.pb.gz",
+    "bytes": 61984,
+    "sha256": "5ebcb9befc9a06aee1bfe46940ade5e7538ac54366e7254461b10c0b27be09db",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.1.pb.gz",
+    "bytes": 48613,
+    "sha256": "eb0cc60ce88a531703de827c1ef0853cb7290e7944499753fb97a2199bc27be9",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.10.pb.gz",
+    "bytes": 62877,
+    "sha256": "d2bc1551e811d603725149a8c806110345ba3055ce34d34966795eaf39701f1a",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.11.pb.gz",
+    "bytes": 63702,
+    "sha256": "7b2e32eb7477a4c23d5969fff60629f306372248a94f4becb99cd4312328195e",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.12.pb.gz",
+    "bytes": 63863,
+    "sha256": "d10d12352621447148175c34db2dc56975e751fd95633c6abb684b4c71eb3de6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.13.pb.gz",
+    "bytes": 64010,
+    "sha256": "dd416bda36da96780573d1d09c40c3665e888c08e72c66e8d01981cbdf60824e",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.14.pb.gz",
+    "bytes": 64540,
+    "sha256": "95802d9b5f5f64409164a3b83554cb069fbcf1d4b1a929a8b596adb5678336b5",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.15.pb.gz",
+    "bytes": 64980,
+    "sha256": "e3f3b963fb911453038270e39f9239ce78731d41a529e552f320be96425f04b1",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.16.pb.gz",
+    "bytes": 65156,
+    "sha256": "87fefe71ff0d49b9074b67669a848908c73625f55181d77657f1fd34b11253b3",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.17.pb.gz",
+    "bytes": 65166,
+    "sha256": "c5c76c5d09f2554617b9e73ed71ffedb2f537122e3936a0f416ac26bee331094",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.18.pb.gz",
+    "bytes": 65332,
+    "sha256": "0c00d5c855e72bf108be51bd37385e3602f6d2e125e5eb1fd3ab9d569db79d81",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.19.pb.gz",
+    "bytes": 65469,
+    "sha256": "0bbe776166570e27df667d8e0dda24e51803ba4bde72ec5b6219d94291d1c0d7",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.2.pb.gz",
+    "bytes": 53038,
+    "sha256": "27535d4fe5585c8776a1fe5f6e369a3c2215f61e0af7afe61aed0320be5a5169",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.20.pb.gz",
+    "bytes": 65735,
+    "sha256": "5e968e74d8cae4ed0f7666a46626c02b5a9988064274c60aed23b4d2d95be0a1",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.21.pb.gz",
+    "bytes": 65708,
+    "sha256": "4a95b803805335c9e178c9849e7c117a51855a6e4f67857a4e4b54681ad59d3b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.3.pb.gz",
+    "bytes": 54888,
+    "sha256": "46766f2a551f298a43286ece6dc01db26723e8353b0b5dba1314d598bed6d2ff",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.4.pb.gz",
+    "bytes": 56225,
+    "sha256": "81e096bcd081faf27b72f7459f79de79be21b8f98a2b1bb3325fd2e25b1a9399",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.5.pb.gz",
+    "bytes": 58080,
+    "sha256": "54b9a2f382f1657ba716d8b58a7df17e2a0bb6f30c8f2b4f117f9a03d9b3771a",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.6.pb.gz",
+    "bytes": 59472,
+    "sha256": "ae1c7749e2ed1145b5f082e7bf14d69cbde15d81b61712584d9651aa90cd5f1b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.7.pb.gz",
+    "bytes": 60753,
+    "sha256": "8e7d873b326cc4e9bbde7d7a69d21105f6b5b07cc731214fe63495bc81f4bcd6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.8.pb.gz",
+    "bytes": 61831,
+    "sha256": "bd7262013a3d3795dc59b0deccd3afb2a403e3f79beb5c036517bb45094b1205",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/farm-svr-1.heap.9.pb.gz",
+    "bytes": 62225,
+    "sha256": "14c88f561c240cc452c42ba3c8c6e3bd0cfefc88146b613caceeef3fadfa0aec",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/flame/farm-gate-heap-latest.png",
+    "bytes": 775732,
+    "sha256": "1de7d7c3b57c0157321a9654577a75d082c3bcd5f2cd5a1642bcdcbb45364534",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/flame/farm-svr-heap-latest.png",
+    "bytes": 628259,
+    "sha256": "c785a61b8fffb334c8f73091bdddc1d66e9eaf0ba8871a566e0789b465170fa0",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/flame/player-svr-heap-latest.png",
+    "bytes": 433322,
+    "sha256": "c7fa7e0dffaac2569c129fed7c06f2a36b4458f4662981ee5e0fe3f94ae193b1",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.1.pb.gz",
+    "bytes": 49119,
+    "sha256": "4d20a06fd5319d8c1790f293f55b99cdbd18311ef80cfa82cc68ad992752d4e6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.10.pb.gz",
+    "bytes": 63561,
+    "sha256": "91000d51651c9ce38b118008c9830bf893a87cd57b360cbf18cfa6b806998e1f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.11.pb.gz",
+    "bytes": 63790,
+    "sha256": "dd2895cb45902d1992342d8f831e5fbd6b7847ccdc96ac045ebb88fa7ef7814f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.12.pb.gz",
+    "bytes": 64155,
+    "sha256": "ae85692b50b9013ad869144e1ac99accba0db9c8309c9cdeb47c66ecd0285bff",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.13.pb.gz",
+    "bytes": 64769,
+    "sha256": "bed2c4d833ee152ab900638e4b51b5ef5a3619699e1f06f1182921e5331e9c4b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.14.pb.gz",
+    "bytes": 65315,
+    "sha256": "024d69922db31eca23edf44a2b5860bb415260deeab528f2aac34c32867f97fb",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.15.pb.gz",
+    "bytes": 66101,
+    "sha256": "e878d68def04ae82d1712acb13e4a95e8166bc47fb1b601e605eebb372b552f6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.16.pb.gz",
+    "bytes": 66243,
+    "sha256": "21fde3920429dc6e54f683c48c52a2709bcb4f89c09306a149d9b00c0751be42",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.17.pb.gz",
+    "bytes": 66322,
+    "sha256": "11f21823345dd4f90dfba3cb8125547bf1b81430715b8428e58d2c718ef6e231",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.18.pb.gz",
+    "bytes": 66595,
+    "sha256": "bfd06263755002f6b14391d624f8495a0af79ed9c95d78684f4cc5361dd898d3",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.19.pb.gz",
+    "bytes": 66557,
+    "sha256": "bc6811ef5ad594ef4b19173e1863db8ceb59eb5d550dec103ae4fd4fa2a54167",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.2.pb.gz",
+    "bytes": 53144,
+    "sha256": "4fd735b7bd6a4aa12f51d29cb89d42e25e9d8065ba16a4a02f42a67e9587bdde",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.20.pb.gz",
+    "bytes": 66587,
+    "sha256": "2e0029f87a82a9a37699deed40aa369b0b5dd3f174c004e6d7d0b2d47a39b0a8",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.21.pb.gz",
+    "bytes": 66586,
+    "sha256": "1d29d2fe6d7381183ab2e60eb4626d16e6e1a6b86493c98b922d2410a2f68198",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.3.pb.gz",
+    "bytes": 54725,
+    "sha256": "d56236a33fa7cf5839df92634e6cfa8ba37db205e34ed3eb6c29b434b5a104ef",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.4.pb.gz",
+    "bytes": 57696,
+    "sha256": "897cc12c88ec85d55b62cd372b11de192e1f1c71147603cee9bb379d67f9bab4",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.5.pb.gz",
+    "bytes": 58700,
+    "sha256": "b1a7a4999d8074ba8d1acfd09eee8b8eea78bab4e03bee6ec43397a28077dc5d",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.6.pb.gz",
+    "bytes": 59708,
+    "sha256": "8085139520381be08660facd92c0a117d92165198d64d7e7d491ab45395821f8",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.7.pb.gz",
+    "bytes": 60939,
+    "sha256": "ef8bf85aaab87b4b8e98f734ef72b5636584396d8bfbbd5ae73c5e14571fa0b6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.8.pb.gz",
+    "bytes": 62100,
+    "sha256": "eddfbd422e85f4ce44b0d75110f849022e2afe02b7a1757e526ffb52e1da1249",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-0.heap.9.pb.gz",
+    "bytes": 62679,
+    "sha256": "b915e3b32bfaa9ca1b6f67cec7e0eec55de01ff8c090f98eab9d5d31d5db142b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.1.pb.gz",
+    "bytes": 53507,
+    "sha256": "240d4e7e426276e4b09daabba180d54ed281e0f8d8b1c47e423f13a32b326b30",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.10.pb.gz",
+    "bytes": 66635,
+    "sha256": "74e3393845edc18b88f2ca7f9190eb0cee47909d1c47448f80e294cba3817305",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.11.pb.gz",
+    "bytes": 66952,
+    "sha256": "3593488d43a72de636e7da6d089932a8887fdd9013af05196b2312a4f9a34dc6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.12.pb.gz",
+    "bytes": 66997,
+    "sha256": "4167b26fbdf25d23fd81afd1b577dfb46dfc8554d3d619cd0dfa067ad695f533",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.13.pb.gz",
+    "bytes": 67553,
+    "sha256": "12181610f736ebbbcaca5712b50eb97d35563cfb27b4b7fb95127eb3dd74f633",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.14.pb.gz",
+    "bytes": 67768,
+    "sha256": "65475f8b0d6bbac217b585216f4567c598e67bf59146559818ef1958e473f532",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.15.pb.gz",
+    "bytes": 68086,
+    "sha256": "4b6df86a60031910282e4d5a09d041855c1a12dbcea276a411bbfa3040901fb6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.16.pb.gz",
+    "bytes": 68524,
+    "sha256": "dc16a62fd2c1818960ae6ce9529b6400778245c9836337e1b5d8f48948de09e7",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.17.pb.gz",
+    "bytes": 68600,
+    "sha256": "80e603b05df02b4fb3d52314f30dbd12060c54db001b0f849fa5cd52759ed70e",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.18.pb.gz",
+    "bytes": 69027,
+    "sha256": "4a18056cac8fce994126678c13d928ee7b89f572e0f69cb9ed02af886baab31d",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.19.pb.gz",
+    "bytes": 69024,
+    "sha256": "d92c4c41af615aa6f7d7a7bb4ffc2e71579b4ba59e305fa6d9cc30043c27b3c4",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.2.pb.gz",
+    "bytes": 58739,
+    "sha256": "b737d1ad3ac28df99abda066d9936a263b8956b64bfb62b72464f65fdc514762",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.20.pb.gz",
+    "bytes": 69163,
+    "sha256": "6f88584176ad141560f85ff731831c6f3675065bff7b486edce8368b9bd87698",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.21.pb.gz",
+    "bytes": 69559,
+    "sha256": "3556487303135df0fa464164bb4565b4bbead104936815adac01c927b40611d1",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.3.pb.gz",
+    "bytes": 60951,
+    "sha256": "33e106c39a03bc829982f69dd2bf14f54c644731c630519411e20b8e7708f8c7",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.4.pb.gz",
+    "bytes": 61965,
+    "sha256": "faf1b64443d0e1020dbb6facce64217b78459bf93f094baff1a2786d6fac0422",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.5.pb.gz",
+    "bytes": 63237,
+    "sha256": "1c3315ca819a8a75f9f7c59d545877775d29f291c5200a117df9d5811860bad8",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.6.pb.gz",
+    "bytes": 64191,
+    "sha256": "a2ad460f60f2e13623137e18eb166f1bf4f550fb239d6121addc4c129fbf24fb",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.7.pb.gz",
+    "bytes": 65239,
+    "sha256": "3ac1c86206563a35dfb0c35e2bad093653d7165d710ef0ca562d9d10d56d6edf",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.8.pb.gz",
+    "bytes": 65896,
+    "sha256": "a005a5fbc509ff398a15e6cf94c7d31426c3a756abf5d56669803ddd1aa7bc09",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1000-priority-split4-20260818/pprof/player-svr-1.heap.9.pb.gz",
+    "bytes": 66340,
+    "sha256": "dffcbc7456eb32fe428308cc40f63ebb6ec48b5f78eb1f958f88de5cb406f7ed",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/cpu/farm-gate-68578cdb56-qr5cj.cpu.1.pb.gz",
+    "bytes": 173909,
+    "sha256": "69d3b781b3dcd458c4aaa2b621a648c50ce85ff30fb7624ed6b0b941e57fdb9e",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/cpu/farm-gate.png",
+    "bytes": 1043943,
+    "sha256": "dd31fe7ec4391aded28b8d024cf1ef2ae5472102f8e9dc61d7ad3135332f227e",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/cpu/farm-svr-0.cpu.1.pb.gz",
+    "bytes": 122077,
+    "sha256": "5dc595289bd2b55e45e8988ed85a0844e477132ddc31bd45cf9342fe21281d7e",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/cpu/farm-svr-0.png",
+    "bytes": 1499153,
+    "sha256": "6d48588959613c1b757f5820aa91802bca0f37efae3d8fc3a6bb8136d644fdc4",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/cpu/farm-svr-1.cpu.1.pb.gz",
+    "bytes": 113790,
+    "sha256": "a5993fa66b7bddcd5a48cd7958f20064b24516be132610e7ec30e6428b9e0aab",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/cpu/farm-svr-1.png",
+    "bytes": 1483521,
+    "sha256": "4be4f2468a48e13aef28432abbb6c127bc10a47fd98d298c94ab145f90f494ed",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/cpu/player-svr-0.cpu.1.pb.gz",
+    "bytes": 105248,
+    "sha256": "3368b5c8a26f0596f98b7584c85c1d917aa9c376938dcc450a6c008cc097b8ef",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/cpu/player-svr-0.png",
+    "bytes": 1359437,
+    "sha256": "3ab2a045a050ef1bdc042844d6732312f0b6fad6cec128e02488c295bff3891a",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/cpu/player-svr-1.cpu.1.pb.gz",
+    "bytes": 139962,
+    "sha256": "8543412bffab6ded7be1ea332411f91ccfa434b65d1cfc23cf7542a1756e18a6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/cpu/player-svr-1.png",
+    "bytes": 1220217,
+    "sha256": "5296299d9f8329cb3ca3c0e62c3bdcbd9b6e5e4cc385f65047c3183334c94dc1",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-gate-68578cdb56-qr5cj.heap.1.pb.gz",
+    "bytes": 64423,
+    "sha256": "75dbfc8f436231ff41ab0f547ea1b4bf6d12630a7f220009bdb00b48121a5cd3",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-gate-68578cdb56-qr5cj.heap.2.pb.gz",
+    "bytes": 65417,
+    "sha256": "20e945c11028def5cb1553557a8c5b71042c9e3c707656767aa70fbc63acf36b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-gate-68578cdb56-qr5cj.heap.3.pb.gz",
+    "bytes": 65959,
+    "sha256": "8227d54de89af5aff37d2e5ec28113db64be969947a427a8066740165e5a9aaa",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-gate-68578cdb56-qr5cj.heap.4.pb.gz",
+    "bytes": 66240,
+    "sha256": "66707fe52f8f00db8a046862e30cbd93bfe6eafc7e4b52c106a0adf4bad5f1e7",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-gate-68578cdb56-qr5cj.heap.5.pb.gz",
+    "bytes": 66594,
+    "sha256": "4f29d72f0d8856d9975e51ae16fc0f675b41a5053a7afd1bd844014bafe955c4",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-svr-0.heap.1.pb.gz",
+    "bytes": 68700,
+    "sha256": "5eef4c159125343e0855486068fc5343e4427d5e3bd7ee644e6c07466390fe0a",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-svr-0.heap.2.pb.gz",
+    "bytes": 69339,
+    "sha256": "5d8f562919591b68453cad192aada2ef3e21243708ab3967920b9a5455f19992",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-svr-0.heap.3.pb.gz",
+    "bytes": 69930,
+    "sha256": "17bdc714d8983a15ce6898cd5ee3529c896b8d1bfacc7942574f6085322ead71",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-svr-0.heap.4.pb.gz",
+    "bytes": 70344,
+    "sha256": "055e92aef133379baf6be595501931a11734348ce9424a4b62b632526c3bdb1c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-svr-0.heap.5.pb.gz",
+    "bytes": 70821,
+    "sha256": "3b0860aadca686971c8b5fb3ae4e9aef9ac25d227d09b308a3272cb7b24c2142",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-svr-1.heap.1.pb.gz",
+    "bytes": 68021,
+    "sha256": "fa324d4a5d84a55824a2d3f014b1b2114ba97351bc42f5425914b34bdb82d4e4",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-svr-1.heap.2.pb.gz",
+    "bytes": 68647,
+    "sha256": "5709848134645a6c1368c65d4e435462d3fe65d885523464feed6398f904c289",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-svr-1.heap.3.pb.gz",
+    "bytes": 69355,
+    "sha256": "edfa5cbaaa8adba8b9ab6902528dbd30ad325949cac2d4ceb1ab7117059002fc",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-svr-1.heap.4.pb.gz",
+    "bytes": 69813,
+    "sha256": "6c4a00c57e4be8788de846eb226bb057ec1149224975fefb3cf1c22a21180d0c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/farm-svr-1.heap.5.pb.gz",
+    "bytes": 70030,
+    "sha256": "4332d3e9ab4ecc354dfb63ab435a29084ad72d07b816e55d4153fc51daff6018",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/player-svr-0.heap.1.pb.gz",
+    "bytes": 68662,
+    "sha256": "f9dad8ca877e4e586d0e9b0aaa592f631667c3b53cc5828be21362e8830e275f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/player-svr-0.heap.2.pb.gz",
+    "bytes": 69217,
+    "sha256": "ca69a8305372c7d2385fc0201c6afb801895a79b3f8a9c89610523fcee6ee929",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/player-svr-0.heap.3.pb.gz",
+    "bytes": 69675,
+    "sha256": "2a644fa6d11c7f62097c689491ce082e10e5df01b5800f750bf83537b06ceb17",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/player-svr-0.heap.4.pb.gz",
+    "bytes": 69915,
+    "sha256": "55693d2a8f1536b1694e8ac08383b52beb426ca4b9b3db4a5ed372e0232ff1de",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/player-svr-0.heap.5.pb.gz",
+    "bytes": 70147,
+    "sha256": "e648208a8e2220c6e3ff98fb7fe809cc0b3a9fd52e37332b1c21c1c494719b93",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/player-svr-1.heap.1.pb.gz",
+    "bytes": 72344,
+    "sha256": "5d9393db46841d39088fb3aac81c02d4deb388a4c2fb978955d55025a4fc3108",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/player-svr-1.heap.2.pb.gz",
+    "bytes": 73071,
+    "sha256": "83b96a0cccdc4000fadecec17ea62c9f24d18cdaccfc1913574e9ba0248b8f2b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/player-svr-1.heap.3.pb.gz",
+    "bytes": 73569,
+    "sha256": "b35b7474a973c350d8d2e0daa8ca2b1d0a1a764a4e00cdca77556d0bee456808",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/player-svr-1.heap.4.pb.gz",
+    "bytes": 73965,
+    "sha256": "13f2c1d52dfb36733147acf2598f175fcc035cbea7d125fe5f2be42ed4243efc",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-1500-priority-split6-20260818/pprof/heap/player-svr-1.heap.5.pb.gz",
+    "bytes": 74272,
+    "sha256": "21934749e0c93fdf6b8bd8a9719530dea5194f785aac08097568a4a91956cc59",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-500-20260818/farm0.cpu.pprof",
+    "bytes": 67926,
+    "sha256": "cc8c7f9efabab750d43f220b7f75a2fec0a6350eed686e7bce6bdfbfaaf4a7bb",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-500-20260818/farm0.heap.pprof",
+    "bytes": 49546,
+    "sha256": "ce7c123156a1fdcb60dd59c5f7fcb0fbc411fac8e8623ed334ab4d8e22b633f5",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-500-20260818/farm1.cpu.pprof",
+    "bytes": 73808,
+    "sha256": "684d04d1bc1f625bc0f875469a93b2e676d2ae74db1eb68c51720ac89a522853",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-500-20260818/farm1.heap.pprof",
+    "bytes": 52795,
+    "sha256": "66b4b280c4ea09c081682dad89f86e87eebfb0e23073604327f6cda3c0ce3959",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-500-20260818/gate.cpu.pprof",
+    "bytes": 101823,
+    "sha256": "d702a6b52e8ba611a2a98cba89f0b17f3fb3f9da6315f93ce83207e354bb533e",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-500-20260818/gate.heap.pprof",
+    "bytes": 49661,
+    "sha256": "3286b9f7cb86cff7721731ca0759f12054e0669b5dbf1bc0d51b003508fb2ed6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-500-20260818/player0.cpu.pprof",
+    "bytes": 59213,
+    "sha256": "c047ab4fc4b22f8cb5ab8e8c4349bd10f559e7ed93f555dc0fc1d399f529c058",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-500-20260818/player0.heap.pprof",
+    "bytes": 49510,
+    "sha256": "9801037884b8ab7dbd0659442081a8a85d43dbf3edbb2f6ac2eaec862d94ca0a",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-500-20260818/player1.cpu.pprof",
+    "bytes": 78548,
+    "sha256": "7cac3ddd5c74d6a9659d4670074a4134b941e887b278dd1c03c7466d4ce54a10",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-500-20260818/player1.heap.pprof",
+    "bytes": 56014,
+    "sha256": "36f1b0f3c90eaa5dd2182498b55cc79748cc239588ecb17f3c5950171d208746",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-pool-2000-async-20260818/farm0.cpu.pprof",
+    "bytes": 91858,
+    "sha256": "c2bf29ef4c1f4d363ab7af01231716b09ad26770f4adb40d5e62366722be8b6c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-pool-2000-async-20260818/farm1.cpu.pprof",
+    "bytes": 88471,
+    "sha256": "08896bac3ca9084cfd35ece8ceb74937570afa43ad242a60c8ffb9e6c23e2d63",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-cold-pool-2000-async-20260818/gate.cpu.pprof",
+    "bytes": 160250,
+    "sha256": "ba7679f8b5b49e317d28eb4b72c5c25a1abc73ae657a62c65b1adbd442b748ab",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-downlink-batch32-pprof-20260817/pprof/farm-r2500.cpu.pprof",
+    "bytes": 2692,
+    "sha256": "4f71f97bb7a01b9914a9651e989db812d67ffcdb057e083d9ce9ecc1794d59ae",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-downlink-batch32-pprof-20260817/pprof/farm-r3000.cpu.pprof",
+    "bytes": 75207,
+    "sha256": "1f145286c68ae5ce0956bfa379c11f60a0682800fc7c5fbd70ac49191f0e89f7",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-downlink-batch32-pprof-20260817/pprof/gate-r2500.cpu.pprof",
+    "bytes": 3587,
+    "sha256": "aeb5780274ba6c15d6e677038ffdcc72c5c4f2e844b69ceccb97453fd9042960",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-downlink-batch32-pprof-20260817/pprof/gate-r3000.cpu.pprof",
+    "bytes": 78222,
+    "sha256": "caba30bb21285aed0295f040e784d01a1f8654b5fff3392f9b23431cc77d9e5f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-downlink-batch32-pprof-20260817/pprof/player-r2500.cpu.pprof",
+    "bytes": 3037,
+    "sha256": "c75f7cde1052b0d70014824d3b0726232bee117a2d78b960cb46d7aef0875f01",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-downlink-batch32-pprof-20260817/pprof/player-r3000.cpu.pprof",
+    "bytes": 53860,
+    "sha256": "b0fdca93e093858185ca1788d34932fc93a0ee79afb3dfd154b9cf9b0a997c4f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/cold-pprof-two-loaders-947190000/farm0.cpu.pprof",
+    "bytes": 49549,
+    "sha256": "2220a70c30f1a553fabad57c85dd99d9bf9303fece38b57a796237537f73b602",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/cold-pprof-two-loaders-947190000/farm1.cpu.pprof",
+    "bytes": 44817,
+    "sha256": "29f33485f5f35b9f22b2a1bc0166dc396d28e4cf303d7b378030eeb9a3524c4d",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/cold-pprof-two-loaders-947190000/gate.cpu.pprof",
+    "bytes": 72398,
+    "sha256": "43f19070fa18ad673dca4167795b840aa260a1a87d60ee849170b3538d3334ca",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/cold-pprof-two-loaders-947190000/player0.cpu.pprof",
+    "bytes": 46664,
+    "sha256": "74ad9d026f1f46a7ffbaad58c40f2969adc1817c8377a9693d9d8286397d6d19",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/cold-pprof-two-loaders-947190000/player1.cpu.pprof",
+    "bytes": 38570,
+    "sha256": "bda1c3253d25b88c6203692019cd4e85e7a8f4ac7044bf15c69e35dec113f54a",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/deep-cold-947090000/farm.allocs.pprof",
+    "bytes": 59466,
+    "sha256": "49ece2883af7acc7f8aead06530679414a7a83ecfe1dab0f2619782b80257123",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/deep-cold-947090000/farm.goroutine.txt",
+    "bytes": 3252508,
+    "sha256": "0045d1071cf36deac28f746bce77cd391c906ca18da512ea9d64ba558ef68103",
+    "reason": "large runtime dump retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/deep-cold-947090000/farm.heap.pprof",
+    "bytes": 58952,
+    "sha256": "b759805f41636fb31d0f4cca6aace2c5c13880d2f416ed070569e92a97c354a6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/deep-cold-947090000/gate.allocs.pprof",
+    "bytes": 60158,
+    "sha256": "70a0ad0725a4bb8bc4b5e11ceb600e8472d1fe55e9019ecc45f5cde2a0834ae3",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/deep-cold-947090000/gate.goroutine.txt",
+    "bytes": 27214366,
+    "sha256": "b8b8950612f0a5bdb231c7f79b300dcc5713c088ec289d01cd4b79e1408aba3f",
+    "reason": "large runtime dump retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/deep-cold-947090000/gate.heap.pprof",
+    "bytes": 60775,
+    "sha256": "735f505d4ae733746b57c2cc8501064a04a445872ced453e99aba8949275f368",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/deep-cold-947090000/player.allocs.pprof",
+    "bytes": 58225,
+    "sha256": "f68ad664f331ef8bbe1ea3a192267ca65abb29eee5cec1c2857f0c669f0149e3",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/deep-cold-947090000/player.heap.pprof",
+    "bytes": 59245,
+    "sha256": "b40fa46bc52c2837937219a773437a1dbe9fe28f379156a4521f1a52d300cdde",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/pprof-guard-1024/farm.cpu.pprof",
+    "bytes": 54209,
+    "sha256": "228ea943925cb5460e65870b47e47eef974e614a86ea76f655cba8adaad2fc15",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/pprof-guard-1024/gate.cpu.pprof",
+    "bytes": 86220,
+    "sha256": "a8d6e2e7d8df7ea82f1147cb282d14512bcb32604c7a46c7659a393482dc3298",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/pprof-guard-1024/player.cpu.pprof",
+    "bytes": 60700,
+    "sha256": "a9aa99ff284f71ea2ed396eee6354b6bc6c365555819aa0450ea32d9f7b63965",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/pprof-inflight3096/farm.cpu.pprof",
+    "bytes": 54873,
+    "sha256": "9c356545a53ee2856e57647f9415dc61e123efbdbd1f55b6b63243d0239cd825",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/pprof-inflight3096/gate.cpu.pprof",
+    "bytes": 95505,
+    "sha256": "65b8b78ba2d75637b2e37a92b01db5341626ea62cebfdeb4512f95b78f1145eb",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/pprof-inflight3096/player.cpu.pprof",
+    "bytes": 66265,
+    "sha256": "97bce0fe2f7ff2818a485832c25c64ea82f8762fda1e671aa06d2a5993b49b5c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/pprof-v2-admission/farm.cpu.pprof",
+    "bytes": 51570,
+    "sha256": "2d1fe5032232ddd49ea8aece2e471b61a3359044dd8b5a7ec8bf581552a75ea5",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/pprof-v2-admission/gate.cpu.pprof",
+    "bytes": 84051,
+    "sha256": "af4439172013e4c43aed627cc84e252ca005040a38ac4516c17c888fda91e5a3",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/pprof-v2-admission/player.cpu.pprof",
+    "bytes": 53864,
+    "sha256": "ffe89e80810aee37091dcf7e63139daa34ed61f22e4f84b25572d275ca3a75ce",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/steady-reconnect-2m-947200000/farm0.steady.cpu.pprof",
+    "bytes": 62197,
+    "sha256": "255fe88c0243032b04ad3e33633e99cd9375b78327e90aa1abbcd3190c91199f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/steady-reconnect-2m-947200000/farm1.steady.cpu.pprof",
+    "bytes": 73158,
+    "sha256": "1331bed582d3763b95bfa3cf687e56bf94565a6d0b767e6745b5d6c652d9c5f9",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/steady-reconnect-2m-947200000/gate.steady.cpu.pprof",
+    "bytes": 150212,
+    "sha256": "dfb3768632f35a4c7c4ec555fdc6e2b1b7798824e2b6c2537df034a9b24b4799",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/steady-reconnect-2m-947200000/player0.steady.cpu.pprof",
+    "bytes": 67172,
+    "sha256": "d4c0a782b072dc66df7a742b63c189473cc6ad03ea7edaf86ef601163c511273",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-thick-login-1024-20260818/steady-reconnect-2m-947200000/player1.steady.cpu.pprof",
+    "bytes": 75661,
+    "sha256": "79ac6815535862a763582abd70db0ea7bea1204b7e53fcfef33ce6bfed03b31d",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-warm-ramp-20260820/screenshots/command-mix-correctness.png",
+    "bytes": 75702,
+    "sha256": "25650844298d71f0d32e74e9533217a329a5b3cf98c776e055ae7350ea0cf2a5",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "backend/docs/verification/perf/qqfarm-warm-ramp-20260820/screenshots/ramp-summary.png",
+    "bytes": 132053,
+    "sha256": "c760d1f2a2674e9778751fd9115d2359a2fd663cdad6611a939ddeacef6a601c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/classic-farm-h5/docs/ui/friend-farm.png",
+    "bytes": 289400,
+    "sha256": "b3ecfa3e0443c255bb95ac6c9af27324a7df08bdf13e98855e812b19c83bf7df",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/classic-farm-h5/docs/ui/own-farm.png",
+    "bytes": 281857,
+    "sha256": "bed4ebd589106907e91e6d20d3f3e9adeda4e0dbcb0fdff7ac533771ff789ab7",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/evidence/hot-shard/screenshots/command-correctness-rate-annotated.png",
+    "bytes": 88564,
+    "sha256": "007334544656816db30c5d988a6fd4b8be8347c1791758445f3a5fbaeb262879",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/evidence/hot-shard/screenshots/command-failures-annotated.png",
+    "bytes": 42168,
+    "sha256": "1f2611d9c3ba5892c3d3df2c244534c3685499f374c3125af2cfb55d6db6fd9a",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/evidence/hot-shard/screenshots/command-result-matrix-annotated.png",
+    "bytes": 53645,
+    "sha256": "aed40a457e56c8cc396fc83e9ce9873fbf222c1e5ef6213b4934a80cfb00364b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/evidence/hot-shard/screenshots/command-results-trend-annotated.png",
+    "bytes": 114879,
+    "sha256": "6d44ccbc418fa6a00dac92ee95f69469352cfb0c870a7ee5d0db762fa3ce161c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/evidence/hot-shard/screenshots/migration-errors-annotated.png",
+    "bytes": 99084,
+    "sha256": "69823de99671b6d4f4aa53bcf80c1756fd1daca7fb5da14619834e4e207a2b90",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/evidence/hot-shard/screenshots/player-active-per-holder-annotated.png",
+    "bytes": 84043,
+    "sha256": "4a714688c61f8fc30265509207cf582fb0968f91d7bbab31c4b79a6d8d5ae6ae",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/evidence/hot-shard/screenshots/ppt-grid-4.png",
+    "bytes": 230678,
+    "sha256": "7178d306841962d384dc52087608b610883581ac5e05224d1c9648051f643ef8",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/evidence/hot-shard/screenshots/ppt-single-page.png",
+    "bytes": 152940,
+    "sha256": "d186903119332ed00253cf0592e36ed87447053c2ff1ea0e9608e9d0a2d2127c",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/evidence/hot-shard/screenshots/route-revisions-annotated.png",
+    "bytes": 94584,
+    "sha256": "05b0111c5562a01e7f93986226718a69fa5e3405f069980f29ab681f37d3990f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/evidence/hot-shard/screenshots/shard-distribution-annotated.png",
+    "bytes": 82513,
+    "sha256": "d14a0f155a067675b20e87ebf5f122240604440b2574aef46d9e3313ddbaf86b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-freeze.png",
+    "bytes": 211022,
+    "sha256": "091113edf459e86408e85e62c9ec9a4262745e5432cd8a7d4025258d03f9389b",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-midterm-4k.png",
+    "bytes": 1150986,
+    "sha256": "7539c59122230e1b099ed98b2cbc6a1bc1b5bd84131932d790177b69d4a2522f",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-midterm-vector.pdf",
+    "bytes": 236647,
+    "sha256": "5df39df144cb824c006b5186038ae3546f2e0b05c5db48c5222974b68c6b92ef",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-midterm.png",
+    "bytes": 386127,
+    "sha256": "a0e11fac734b489d4471390a448c56de1c31606465c9077dc31aaa7dfbb2ccdf",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-v2.1-review.png",
+    "bytes": 1776589,
+    "sha256": "f096a4c90de8dc91e47f74af338a727dc4e130ed7b1d9345202fc1510c938af7",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-v2.2-freeze.png",
+    "bytes": 298053,
+    "sha256": "6614e97d3cb501795a579f095702dd405d993d351fe0ef4e68ca7ba7883333de",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-v2.3-freeze.png",
+    "bytes": 312798,
+    "sha256": "888b804faa237e8e04443334772bec1e320d33ff32db3ac8fc448f9c32a49964",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-v2.4-freeze.png",
+    "bytes": 408838,
+    "sha256": "b4078659b0f0ec8d6ef0b78ffeb49901400010da769fec2cd54e1f38a5f0c3c5",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-v2.5-freeze.png",
+    "bytes": 269322,
+    "sha256": "d8313e118db6f3146fdba0cb4bd243f03e5c3e16e5b01a9a8a322d0abdca1db6",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-v2.6-freeze-review-fixed.png",
+    "bytes": 208339,
+    "sha256": "97c6147dae5821bc1a3028ace71860e726b9fee953ae69045954445cde6bd25a",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-v2.6-freeze-review.png",
+    "bytes": 208339,
+    "sha256": "97c6147dae5821bc1a3028ace71860e726b9fee953ae69045954445cde6bd25a",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-v3.0-freeze.png",
+    "bytes": 375114,
+    "sha256": "ea25689b5f04fc93d7d30336474032818445ace5030bf52232b329c6d3ed3ab8",
+    "reason": "binary capture or attachment retained in the local original"
+  },
+  {
+    "path": "archives/interview/farm-game/docs/design/assets/classic-farm-overall-architecture-v3.1-freeze.png",
+    "bytes": 452660,
+    "sha256": "eda8b45bb776d651c3cd70efb8c06968fa8982b6d683fa8e41048680ff2aa87b",
+    "reason": "binary capture or attachment retained in the local original"
+  }
+]

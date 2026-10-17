@@ -1,0 +1,17 @@
+challenge=d3188d437d62366e92eed26c884ef7ac
+player_pod_uid=95d4344d-c610-41ad-b8a2-8bb6e2e92095
+farm_pod_uid=11b0e98a-2c09-4b00-831e-4c23544fbafd
+player_sts_uid=e9fbf6a1-21b6-4c5d-a5cb-d6d6c888fcdf
+farm_sts_uid=88488903-fefa-4f29-8cf0-55511021a6c4
+player_boot=player-svr-0-95d4344d-c610-41ad-b8a2-8bb6e2e92095
+farm_boot=farm-svr-0-11b0e98a-2c09-4b00-831e-4c23544fbafd
+worker_a_boot=farm-worker-a-60b45f25aecdd662fb511b74512c6dd7
+worker_b_boot=farm-worker-b-6f895d79c68356098c66682f6b47e236
+initial_ctrl_boot=route-controller-initial-r14-d3188d437d62366e92eed26c884ef7ac
+assign_ctrl_boot=route-controller-assign-r14-d3188d437d62366e92eed26c884ef7ac
+final_ctrl_boot=route-controller-final-r14-d3188d437d62366e92eed26c884ef7ac
+player_image=mirrors.tencent.com/uc-backend/farm-route-runtime@sha256:20bce078a8d7f57c447fb7b301b84313aa9ffe498c3cd68133fac69ca4060a64
+farm_image=mirrors.tencent.com/uc-backend/farm-route-runtime@sha256:25b3a71ea4c51e21fc720cb6eeb8dabc9f0b92edb6e54a04d3ca7f3f9f47ce57
+join_smoke_start=1787930000000
+thick_smoke_start=946000000
+attempt=r14-bootstrap-readonly

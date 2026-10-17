@@ -1,0 +1,4 @@
+# Raw measured runs are retained locally/archived externally. Commit only an
+# explicitly selected evidence bundle; never make every transient run a source change.
+results/*
+!results/.gitkeep

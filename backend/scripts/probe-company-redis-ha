@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+REDIS_CONFIG="${FARM_REDIS_CONFIG:-$ROOT_DIR/deploy/secrets/redis.conf.local}"
+
+if [[ ! -f "$REDIS_CONFIG" ]]; then
+  echo "missing Redis config: $REDIS_CONFIG" >&2
+  exit 2
+fi
+
+read_config_value() {
+  local key="$1"
+  sed -n -E "s/^[[:space:]]*${key}:[[:space:]]*(.*[^[:space:]])[[:space:]]*$/\\1/p" "$REDIS_CONFIG" | head -n 1
+}
+
+uri_encode() {
+  local input="$1"
+  local output=""
+  local char encoded index
+  LC_ALL=C
+  for ((index = 0; index < ${#input}; index++)); do
+    char="${input:index:1}"
+    case "$char" in
+      [a-zA-Z0-9.~_-]) output+="$char" ;;
+      *) printf -v encoded '%%%02X' "'$char"; output+="$encoded" ;;
+    esac
+  done
+  printf '%s' "$output"
+}
+
+redis_host=$(read_config_value host)
+redis_port=$(read_config_value port)
+redis_password=$(read_config_value password)
+redis_db=$(read_config_value db)
+redis_db="${redis_db:-0}"
+if [[ -z "$redis_host" || -z "$redis_port" || -z "$redis_password" ]]; then
+  echo "Redis config must contain host, port and password" >&2
+  exit 2
+fi
+export FARM_REDIS_URL="redis://:$(uri_encode "$redis_password")@${redis_host}:${redis_port}/${redis_db}"
+
+cd "$ROOT_DIR"
+exec go run ./cmd/redis-ha-probe "$@"

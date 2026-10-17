@@ -1,0 +1,55 @@
+{
+  "mode": "authority",
+  "run_id": "slow-20260805T110040Z",
+  "redis_version": "7.4.10",
+  "redis_url": "redis://127.0.0.1:32786/0",
+  "real_redis_process": true,
+  "route_snapshot": {
+    "realm": "theft-hot-slow",
+    "global_revision": 1,
+    "hash_version": 2,
+    "hash_seed": 202608050200,
+    "player": {
+      "shard_count": 1,
+      "routes": [
+        {
+          "holder_index": 0,
+          "state": "ACTIVE",
+          "shard_revision": 1,
+          "expected_writer_epoch": 1,
+          "expected_lease_epoch": 1,
+          "lease_expire_at_ms": 1785927725949
+        }
+      ]
+    },
+    "farm": {
+      "shard_count": 1,
+      "routes": [
+        {
+          "holder_index": 1,
+          "state": "ACTIVE",
+          "shard_revision": 1,
+          "expected_writer_epoch": 1,
+          "expected_lease_epoch": 1,
+          "lease_expire_at_ms": 1785927725949
+        }
+      ]
+    },
+    "holders": [
+      {
+        "instance_id": "theft-hot-slow-player",
+        "boot_id": "theft-hot-slow-player-20260805T110040Z",
+        "endpoint": "127.0.0.1:29656",
+        "state": "ACTIVE",
+        "weight": 1
+      },
+      {
+        "instance_id": "theft-hot-slow-farm",
+        "boot_id": "theft-hot-slow-farm-20260805T110040Z",
+        "endpoint": "127.0.0.1:28452",
+        "state": "ACTIVE",
+        "weight": 1
+      }
+    ]
+  }
+}

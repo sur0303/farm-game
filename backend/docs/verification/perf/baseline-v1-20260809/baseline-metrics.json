@@ -1,0 +1,123 @@
+{
+  "load_totals": {
+    "actual_injected_arrivals": 0,
+    "actual_to_planned_ratio": null,
+    "completed": 0,
+    "planned_arrivals": 0,
+    "schedule_drop": 0
+  },
+  "profiles": {
+    "product-correctness-anchor": {
+      "actual": {
+        "playwright_verdict": "FAIL",
+        "protocol_verdict": "PASS"
+      },
+      "correctness_invariants": {
+        "browser_witness_failure": 1,
+        "hero_or_fault_failure": 1,
+        "protocol_bot_step_failure": 0
+      },
+      "metrics": {
+        "browser_steps": [
+          {
+            "detail": {
+              "ownerA": "1000003",
+              "ownerB": "1000002"
+            },
+            "step": "login"
+          },
+          {
+            "detail": {
+              "aHarvestPlot": "plot-0",
+              "bTheftPlot": "plot-0"
+            },
+            "step": "buy-and-plant"
+          },
+          {
+            "step": "harvest"
+          },
+          {
+            "step": "reverse-visit-b-to-a-ready"
+          },
+          {
+            "step": "share-and-join-friend"
+          },
+          {
+            "detail": {
+              "farmVersion": "3",
+              "generationBefore": "1",
+              "revision": "8"
+            },
+            "step": "f1-lost-care-result-recovered"
+          },
+          {
+            "step": "friend-farm-simulated-disconnect-recovery"
+          },
+          {
+            "step": "f2-gate-drain-restored-friend-target"
+          },
+          {
+            "step": "water-cycle-cleared-on-harvest"
+          }
+        ],
+        "protocol_steps": {
+          "bootstrap": {
+            "status": "ok"
+          },
+          "bootstrap_refresh": {
+            "detail": "inventory map[2001:500] (produce landed), coin 90 unchanged",
+            "status": "ok"
+          },
+          "buy": {
+            "status": "ok"
+          },
+          "grow": {
+            "status": "ok"
+          },
+          "harvest": {
+            "status": "ok"
+          },
+          "hello": {
+            "status": "ok"
+          },
+          "join": {
+            "status": "ok"
+          },
+          "login": {
+            "status": "ok"
+          },
+          "plant": {
+            "detail": "plot=0 cycle=sid1_pjH4VbZAC_lIcR376Ocw9RexLXaRUp9zGNyDsLf4wCA mature_at_ms=1786270206656 farm_version=1",
+            "status": "ok"
+          },
+          "premature_reject": {
+            "status": "ok"
+          },
+          "recovery_complete": {
+            "status": "ok"
+          },
+          "recovery_once": {
+            "detail": "ClientRecoveryComplete sent exactly once",
+            "status": "ok"
+          },
+          "register": {
+            "status": "ok"
+          }
+        }
+      },
+      "planned": {
+        "faults": [
+          "F1",
+          "F2",
+          "F3",
+          "lost_claim_result"
+        ],
+        "go_protocol_bots": 1,
+        "playwright_h5_witnesses": 2
+      },
+      "profile": "product_correctness_anchor",
+      "status": "FAIL"
+    }
+  },
+  "schema": "farm-game.q1-perf-evidence.v1"
+}

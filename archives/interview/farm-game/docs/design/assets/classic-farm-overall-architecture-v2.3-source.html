@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>经典农场后台总体生产架构 v2.3</title>
+<style>
+  :root {
+    --navy: #0b3d82;
+    --blue: #1769c2;
+    --blue-soft: #edf5ff;
+    --purple: #6336a5;
+    --purple-soft: #f5efff;
+    --orange: #d85812;
+    --orange-soft: #fff3e9;
+    --green: #1d7b45;
+    --green-soft: #eef9f1;
+    --teal: #087b83;
+    --ink: #132238;
+    --muted: #52637a;
+    --line: #cdd9e8;
+    --paper: #f6f9fd;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    width: 1920px;
+    height: 1200px;
+    overflow: hidden;
+    background: #fff;
+    color: var(--ink);
+    font-family: "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif;
+  }
+
+  body { padding: 18px 22px; }
+
+  .header {
+    height: 66px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .title {
+    color: var(--navy);
+    font-size: 31px;
+    font-weight: 800;
+    letter-spacing: .4px;
+  }
+
+  .subtitle {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .header-note {
+    color: var(--navy);
+    font-size: 15px;
+    font-weight: 700;
+    text-align: right;
+    line-height: 1.5;
+  }
+
+  .layout {
+    height: 1098px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 318px;
+    gap: 14px;
+  }
+
+  .main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .layer {
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: white;
+    display: grid;
+    grid-template-columns: 158px minmax(0, 1fr);
+    overflow: hidden;
+  }
+
+  .layer-label {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    line-height: 1.35;
+  }
+
+  .layer-content {
+    min-width: 0;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .access { height: 165px; border-color: #2264ae; }
+  .access .layer-label { background: var(--navy); }
+
+  .route { height: 128px; border-color: #6b42aa; }
+  .route .layer-label { background: var(--purple); }
+  .route .layer-content { background: var(--purple-soft); }
+
+  .services { height: 250px; border-color: #2865b5; }
+  .services .layer-label { background: var(--blue); }
+  .services .layer-content { background: var(--blue-soft); align-items: stretch; }
+
+  .async { height: 128px; border-color: #df6a24; }
+  .async .layer-label { background: var(--orange); }
+  .async .layer-content { background: var(--orange-soft); }
+
+  .data { height: 135px; border-color: #24804b; }
+  .data .layer-label { background: var(--green); }
+  .data .layer-content { background: var(--green-soft); }
+
+  .flows { height: 162px; border-color: #2865b5; }
+  .flows .layer-label { background: var(--navy); }
+  .flows .layer-content { background: #fbfdff; align-items: stretch; }
+
+  .box {
+    border: 1.5px solid #7d9abd;
+    border-radius: 8px;
+    background: #fff;
+    padding: 8px 10px;
+    text-align: center;
+    min-width: 0;
+  }
+
+  .box-title {
+    color: var(--navy);
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  .box-body {
+    margin-top: 4px;
+    color: var(--ink);
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+
+  .arrow {
+    color: var(--blue);
+    font-size: 25px;
+    font-weight: 800;
+    flex: 0 0 auto;
+  }
+
+  .flow-stack {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .client { width: 170px; }
+  .login { width: 230px; }
+  .session { width: 190px; }
+  .transport { width: 135px; }
+  .gateproxy { width: 140px; }
+  .gate { width: 305px; }
+
+  .route-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.35fr 1fr 1fr 1.05fr;
+    gap: 10px;
+  }
+
+  .route-card {
+    border: 1.5px solid #8b6bbc;
+    border-radius: 8px;
+    background: #fff;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .route-card .box-title { color: var(--purple); }
+
+  .service-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.15fr 1.2fr .95fr .9fr 1.05fr;
+    gap: 9px;
+  }
+
+  .service-card {
+    border: 1.6px solid #4c82c5;
+    border-radius: 9px;
+    background: #fff;
+    padding: 9px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .service-name {
+    color: var(--navy);
+    font-size: 17px;
+    font-weight: 900;
+    text-align: center;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #d8e4f2;
+  }
+
+  .service-mode {
+    color: var(--muted);
+    font-size: 11.5px;
+    text-align: center;
+    margin: 3px 0 7px;
+  }
+
+  .chip {
+    border: 1px solid #aec4df;
+    background: #fafdff;
+    border-radius: 5px;
+    padding: 4px 5px;
+    font-size: 11.5px;
+    line-height: 1.25;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+
+  .service-foot {
+    margin-top: auto;
+    color: #334a65;
+    font-size: 11px;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .async-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.35fr 1.05fr .9fr .7fr .95fr 1.35fr;
+    gap: 9px;
+    align-items: center;
+  }
+
+  .async-card {
+    border: 1.5px solid #e07a38;
+    border-radius: 8px;
+    background: #fff;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .async-card .box-title { color: var(--orange); }
+
+  .data-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.45fr 1.1fr .9fr 1.15fr;
+    gap: 9px;
+    align-items: stretch;
+  }
+
+  .data-card {
+    border: 1.5px solid #4a9a69;
+    border-radius: 8px;
+    background: #fff;
+    padding: 8px;
+  }
+
+  .data-card .box-title { color: var(--green); text-align: left; }
+  .data-card .box-body { text-align: left; font-size: 11.7px; }
+
+  .flow-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 9px;
+  }
+
+  .flow-card {
+    border: 1.4px solid #8aa8cc;
+    border-radius: 8px;
+    background: white;
+    padding: 8px;
+  }
+
+  .flow-card h3 {
+    margin: 0 0 6px;
+    color: var(--navy);
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .flow-card p {
+    margin: 0;
+    color: #263a53;
+    font-size: 11.4px;
+    line-height: 1.45;
+  }
+
+  .sidebar {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .side-card {
+    border: 2px solid #3b70b1;
+    border-radius: 12px;
+    background: #fff;
+    padding: 13px 14px;
+  }
+
+  .principles { height: 710px; }
+  .semantics { flex: 1 1 auto; }
+
+  .side-title {
+    color: var(--navy);
+    font-size: 20px;
+    font-weight: 900;
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #d7e3f1;
+  }
+
+  .principle {
+    margin: 13px 0;
+    display: grid;
+    grid-template-columns: 16px 1fr;
+    gap: 6px;
+    color: #172b44;
+    font-size: 13.2px;
+    font-weight: 600;
+    line-height: 1.47;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--navy);
+    margin-top: 6px;
+  }
+
+  .semantic-row {
+    margin-top: 10px;
+    border-left: 4px solid var(--teal);
+    background: #f1fbfb;
+    padding: 8px 9px;
+    border-radius: 5px;
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+
+  .footer {
+    height: 51px;
+    margin-top: 10px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #073774, #1358a4);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: .2px;
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="title">经典农场后台总体生产架构（v2.3-freeze）</div>
+      <div class="subtitle">七个部署单元｜Player 软资产异步回写｜Farm / 跨 Actor 可靠提交｜Query 公开信息投影</div>
+    </div>
+    <div class="header-note">成熟由 now ≥ mature_at 决定<br/>Scheduler 只负责 P1 主动副作用</div>
+  </div>
+
+  <div class="layout">
+    <main class="main">
+      <section class="layer access">
+        <div class="layer-label">1. 客户端与接入</div>
+        <div class="layer-content">
+          <div class="flow-stack">
+            <div class="flow-row">
+              <div class="box client"><div class="box-title">H5 / 微信小程序</div><div class="box-body">Web / WebView</div></div>
+              <div class="arrow">→</div>
+              <div class="box login"><div class="box-title">HTTPS Login / Auth Adapter</div><div class="box-body">网页 Ticket / wx code / JSON</div></div>
+              <div class="arrow">→</div>
+              <div class="box session"><div class="box-title">SessionAuthority</div><div class="box-body">connection_ticket / session_epoch</div></div>
+            </div>
+            <div class="flow-row">
+              <div class="box client"><div class="box-title">WSS 游戏连接</div><div class="box-body">Binary Protobuf</div></div>
+              <div class="arrow">→</div>
+              <div class="box transport"><div class="box-title">TCONND</div><div class="box-body">TLS / 心跳</div></div>
+              <div class="arrow">→</div>
+              <div class="box gateproxy"><div class="box-title">gateproxy</div><div class="box-body">事件适配</div></div>
+              <div class="arrow">→</div>
+              <div class="box gate"><div class="box-title">farm-gate</div><div class="box-body">ClientHello / Session / 协议 / 限流 / 路由 / 下行背压</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="layer route">
+        <div class="layer-label">2. 路由、会话与治理</div>
+        <div class="layer-content">
+          <div class="route-grid">
+            <div class="route-card">
+              <div class="box-title">Actor Routing Platform</div>
+              <div class="box-body">Discovery → VirtualShard → Assignment<br/>HolderLease / Redirect / writer_epoch</div>
+            </div>
+            <div class="route-card">
+              <div class="box-title">Player / Farm Region</div>
+              <div class="box-body">ActorKey → VirtualShard → Holder Pod<br/>两个独立路由域</div>
+            </div>
+            <div class="route-card">
+              <div class="box-title">SessionRoute（Redis）</div>
+              <div class="box-body">player_id → gate / connection<br/>session_epoch / route_revision</div>
+            </div>
+            <div class="route-card">
+              <div class="box-title">Observability</div>
+              <div class="box-body">Logs / Metrics / Trace<br/>Audit / BI / Config</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="layer services">
+        <div class="layer-label">3. 核心业务层<br/>七个部署单元</div>
+        <div class="layer-content">
+          <div class="service-grid">
+            <div class="service-card">
+              <div class="service-name">player-svr</div>
+              <div class="service-mode">长状态 / PLAYER Shard</div>
+              <div class="chip">PlayerIngress / Coordinator</div>
+              <div class="chip">PlayerActor(player_id)</div>
+              <div class="chip">EconomyTxn / Asset / Pet / Task</div>
+              <div class="chip">DirtyModel / Versioned Writeback</div>
+              <div class="service-foot">普通软资产：内存原子 + 异步 HMSet<br/>可靠步骤：Receipt + ForceFlush</div>
+            </div>
+            <div class="service-card">
+              <div class="service-name">farm-svr</div>
+              <div class="service-mode">长状态 / FARM Shard</div>
+              <div class="chip">FarmIngress / Coordinator</div>
+              <div class="chip">FarmActor(farm_id)</div>
+              <div class="chip">Plot / CropCycle / Care / Theft</div>
+              <div class="chip">Presence / JoiningBuffer / ReadPath</div>
+              <div class="service-foot">FarmActionState<br/>Settlement / PendingOutbox</div>
+            </div>
+            <div class="service-card">
+              <div class="service-name">social-svr</div>
+              <div class="service-mode">无状态 / 关系权威</div>
+              <div class="chip">FriendRelation</div>
+              <div class="chip">申请 / 邀请 / 删除 / 黑名单</div>
+              <div class="chip">VisitPermit / ActionPermit</div>
+              <div class="service-foot">条件写 + InviteReceipt</div>
+            </div>
+            <div class="service-card">
+              <div class="service-name">support-svr</div>
+              <div class="service-mode">无 Actor / 订单驱动</div>
+              <div class="chip">MailDomain</div>
+              <div class="chip">CommerceDomain</div>
+              <div class="chip">ActivityDomain</div>
+              <div class="service-foot">不直接修改 Player / Farm</div>
+            </div>
+            <div class="service-card">
+              <div class="service-name">query-svr</div>
+              <div class="service-mode">无状态读服务</div>
+              <div class="chip">Query BFF / FriendQuery</div>
+              <div class="chip">PlayerPublicProfile / FarmSummary</div>
+              <div class="chip">RedPoint / Rank / Feed Query</div>
+              <div class="service-foot">不建立 infosvr；批量只读投影<br/>不参与最终裁决</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="layer async">
+        <div class="layer-label">4. 两类异步与恢复</div>
+        <div class="layer-content">
+          <div class="async-grid">
+            <div class="async-card"><div class="box-title">Player Writeback</div><div class="box-body">DirtyModel / UniqueQueue<br/>增量 HMSet；进程内非 WAL</div></div>
+            <div class="async-card"><div class="box-title">Durable Commit</div><div class="box-body">Farm / Receipt / Order<br/>事实 + 关键 Outbox</div></div>
+            <div class="async-card"><div class="box-title">OutboxRelay</div><div class="box-body">发现 / 发布 / Ack<br/>允许重复</div></div>
+            <div class="async-card"><div class="box-title">EventBus</div><div class="box-body">至少一次<br/>分区事件流</div></div>
+            <div class="async-card"><div class="box-title">Typed Consumers</div><div class="box-body">Task / RedPoint / Rank<br/>Feed / Notify</div></div>
+            <div class="async-card"><div class="box-title">farm-worker</div><div class="box-body">WorkflowRunner / Reconcile<br/>独立 Worker Pool；P1 Scheduler</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="layer data">
+        <div class="layer-label">5. 存储与部署</div>
+        <div class="layer-content">
+          <div class="data-grid">
+            <div class="data-card">
+              <div class="box-title">TcaplusDB（恢复基线与可靠流程）</div>
+              <div class="box-body">Player Snapshot/HMSet · Farm Authority<br/>Workflow / Order / Settlement / Receipt<br/>Profile/Farm 投影 · Outbox · P1 Job</div>
+            </div>
+            <div class="data-card">
+              <div class="box-title">Redis（可重建热状态）</div>
+              <div class="box-body">SessionRoute / 限流 / Cache<br/>RedPoint / Rank / 在线提示<br/>P1 Scheduler 近端索引</div>
+            </div>
+            <div class="data-card">
+              <div class="box-title">Config</div>
+              <div class="box-body">Crop / Offer / Pet / Reward<br/>Feature Toggle / RuleVersion</div>
+            </div>
+            <div class="data-card">
+              <div class="box-title">Linux 容器化</div>
+              <div class="box-body">三周：Docker Compose<br/>生产：Kubernetes / 多副本<br/>Readiness / Drain / 滚动发布</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="layer flows">
+        <div class="layer-label">6. 核心业务闭环</div>
+        <div class="layer-content">
+          <div class="flow-grid">
+            <div class="flow-card">
+              <h3>① 登录 / Join</h3>
+              <p>HTTPS Auth → WSS ClientHello → Session<br/>JoinFarm → Snapshot(V) → JoiningBuffer → InFarm</p>
+            </div>
+            <div class="flow-card">
+              <h3>② Buy / Plant / Harvest</h3>
+              <p>Buy：EconomyTxn → Dirty → 异步回写<br/>Plant：可靠预留 → Farm 种植 → 确认消耗<br/>Harvest：Farm 结束 → Player 可靠入仓</p>
+            </div>
+            <div class="flow-card">
+              <h3>③ Friend / Care / Theft</h3>
+              <p>Visit/Action Permit → FarmActor 裁决<br/>偷菜：作物入仓 + 访客扣金币<br/>农场主同额到账</p>
+            </div>
+            <div class="flow-card">
+              <h3>④ Task / Mail / RedPoint</h3>
+              <p>RewardReceipt 与资产同提交<br/>MailClaimOrder 最终闭合<br/>来源摘要 → RedPoint 投影</p>
+            </div>
+            <div class="flow-card">
+              <h3>⑤ P1 主动副作用</h3>
+              <p>mature_at 决定成熟<br/>Persistent Scheduler 只唤醒<br/>成熟提醒 / 好友机会通知</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">首个完整实现：接入与路由 → 双 Actor 与 Join → Buy / Plant / Harvest → 好友同场 / Care / Theft → 支撑模块与压测</div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="side-card principles">
+        <div class="side-title">关键设计原则</div>
+        <div class="principle"><span class="dot"></span><span>只有 PlayerActor 与 FarmActor；模块不等于微服务。</span></div>
+        <div class="principle"><span class="dot"></span><span>Gate 只做接入、Session、路由、背压与下行，不编排 Workflow。</span></div>
+        <div class="principle"><span class="dot"></span><span>普通 Player 软资产内存原子后异步回写；接受受控硬崩溃 RPO。</span></div>
+        <div class="principle"><span class="dot"></span><span>Farm、唯一领取、付费与跨 Actor Receipt 必须可靠持久化。</span></div>
+        <div class="principle"><span class="dot"></span><span>WorkflowRecord 是唯一全局进度；Actor 只保存本地 Receipt / Settlement。</span></div>
+        <div class="principle"><span class="dot"></span><span>业务事实与关键 Outbox 同提交；EventBus 不是唯一事实。</span></div>
+        <div class="principle"><span class="dot"></span><span>Presence 不是权限；Join 与偷菜/护理分别取得 Permit。</span></div>
+        <div class="principle"><span class="dot"></span><span>好友页批量读取 PlayerPublicProfile + FarmReadPath，不激活冷 Actor。</span></div>
+        <div class="principle"><span class="dot"></span><span>作物成熟由 mature_at 派生；Scheduler 属于 P1。</span></div>
+        <div class="principle"><span class="dot"></span><span>query-svr 内公开档案、红点、排行榜和 Feed 可重建；不拆 infosvr。</span></div>
+      </div>
+
+      <div class="side-card semantics">
+        <div class="side-title">偷菜资产语义</div>
+        <div class="semantic-row"><strong>访客：</strong>仓库增加作物；页面显示作物估值；钱包扣实际罚金。</div>
+        <div class="semantic-row"><strong>农场主：</strong>钱包增加与访客实际扣款完全相同的金币。</div>
+        <div class="semantic-row"><strong>一致性：</strong>Farm 先裁决份额；Workflow 依次闭合访客和农场主 PlayerActor。</div>
+        <div class="semantic-row"><strong>故障：</strong>中途超时返回 PROCESSING，Worker 按同一 ID 恢复，不回滚偷菜事实。</div>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

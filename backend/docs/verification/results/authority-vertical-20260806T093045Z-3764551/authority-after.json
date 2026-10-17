@@ -1,0 +1,47 @@
+{
+  "audited_at": "2026-08-06T09:32:29Z",
+  "authority": {
+    "farm": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-farm-20260806T093045Z-3764551",
+        "holder_instance_id": "smoke-farm",
+        "last_transition_at_ms": "1786008652292",
+        "last_transition_digest": "41bee709a9fa9f4b92bd1b9d32f65bd81ee7afdf91aba0287aa3a56e7fb99623",
+        "last_transition_id": "claim-FARM-20260806T093045Z-3764551",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786008802330",
+        "lease_state": "ACTIVE",
+        "route_domain": "FARM",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260806t093045z-3764551:local:auth:farm:v1:s:0}:shard-authority"
+    },
+    "player": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-player-20260806T093045Z-3764551",
+        "holder_instance_id": "smoke-player",
+        "last_transition_at_ms": "1786008652291",
+        "last_transition_digest": "6201dd51a29a6c4c667040df5d1f96e8bd8b8279713b1d1f0ae59d3304fc0bf2",
+        "last_transition_id": "claim-PLAYER-20260806T093045Z-3764551",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786008802315",
+        "lease_state": "ACTIVE",
+        "route_domain": "PLAYER",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260806t093045z-3764551:local:auth:player:v1:s:0}:shard-authority"
+    }
+  },
+  "protocol_verdict": null,
+  "route_snapshot_sha256": "41a"
+}

@@ -1,0 +1,845 @@
+-test.shuffle 1786276811536054645
+--- FAIL: TestMembershipRuntimeRemoveFenceFailureImmediatelyLowersReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeTopologyMismatchFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalWinsConcurrentCloseAndPreservesCause (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestStaticMembershipRuntimeLocalHolderBootMismatchFailsStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFatalIsStickyAfterStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeLostGenerationKeepsProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalAfterCommitGateCheckCannotLeaveGuardOrEntry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedNeverStartsLegacyRenewal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRejectedRouteSnapshotNeverReachesMembershipReconciler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedFailureNeverFallsBackToLegacy (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveCleanupFailureAfterSuccessfulFenceKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderBootAndNonActiveProtectionRemains (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipObserverMaySkipIntermediateFullSnapshotsAndConverge (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeDynamicAddFailureKeepsProcessReadyAndTargetShardClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseFailClosedAndIdempotent (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAfterFatalPreservesCauseAndReapsAllResources (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeMigrationRemovesOldGenerationKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAndFatalConcurrentNoDeadlock (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeCloseIsNotFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeObserverDrivesRemoveAndReadd (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderMustBeRegisteredInSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalImmediatelyFencesAllOwnedGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardHolderStartsProcessReadyAndFailsClosedForEveryShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRegisteredHolderWithZeroRoutesSucceeds (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalCancelsDegradedAddRetry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeOwnershipFilterDoesNotTouchForeignGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseWinsConcurrentFatalWithoutRecordingFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionKeepsPlayerAndFarmAuthorityNamespacesSeparate (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderRegistrationFailureLeavesNoRunningResidue (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalRejectsLateCommitPrepared (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionActivatesAuthorityLoadsCommitsAndReloads (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardDynamicAssignmentStillFailsClosedBeforeGrant (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeUnknownModeFails (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionRejectsStaleLeaseAndBootAndAcceptsNewWriterGeneration (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeLegacyNeverStartsPerShardScheduler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseRejectsLateSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFenceFailureLowersProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupPartialFailureFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveFenceFailureImmediatelyLowersReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeTopologyMismatchFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalWinsConcurrentCloseAndPreservesCause (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestStaticMembershipRuntimeLocalHolderBootMismatchFailsStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFatalIsStickyAfterStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeLostGenerationKeepsProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalAfterCommitGateCheckCannotLeaveGuardOrEntry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedNeverStartsLegacyRenewal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRejectedRouteSnapshotNeverReachesMembershipReconciler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedFailureNeverFallsBackToLegacy (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveCleanupFailureAfterSuccessfulFenceKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderBootAndNonActiveProtectionRemains (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipObserverMaySkipIntermediateFullSnapshotsAndConverge (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeDynamicAddFailureKeepsProcessReadyAndTargetShardClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseFailClosedAndIdempotent (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAfterFatalPreservesCauseAndReapsAllResources (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeMigrationRemovesOldGenerationKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAndFatalConcurrentNoDeadlock (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeCloseIsNotFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeObserverDrivesRemoveAndReadd (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderMustBeRegisteredInSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalImmediatelyFencesAllOwnedGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardHolderStartsProcessReadyAndFailsClosedForEveryShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRegisteredHolderWithZeroRoutesSucceeds (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalCancelsDegradedAddRetry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeOwnershipFilterDoesNotTouchForeignGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseWinsConcurrentFatalWithoutRecordingFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionKeepsPlayerAndFarmAuthorityNamespacesSeparate (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderRegistrationFailureLeavesNoRunningResidue (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalRejectsLateCommitPrepared (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionActivatesAuthorityLoadsCommitsAndReloads (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardDynamicAssignmentStillFailsClosedBeforeGrant (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeUnknownModeFails (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionRejectsStaleLeaseAndBootAndAcceptsNewWriterGeneration (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeLegacyNeverStartsPerShardScheduler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseRejectsLateSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFenceFailureLowersProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupPartialFailureFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveFenceFailureImmediatelyLowersReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeTopologyMismatchFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalWinsConcurrentCloseAndPreservesCause (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestStaticMembershipRuntimeLocalHolderBootMismatchFailsStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFatalIsStickyAfterStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeLostGenerationKeepsProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalAfterCommitGateCheckCannotLeaveGuardOrEntry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedNeverStartsLegacyRenewal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRejectedRouteSnapshotNeverReachesMembershipReconciler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedFailureNeverFallsBackToLegacy (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveCleanupFailureAfterSuccessfulFenceKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderBootAndNonActiveProtectionRemains (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipObserverMaySkipIntermediateFullSnapshotsAndConverge (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeDynamicAddFailureKeepsProcessReadyAndTargetShardClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseFailClosedAndIdempotent (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAfterFatalPreservesCauseAndReapsAllResources (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeMigrationRemovesOldGenerationKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAndFatalConcurrentNoDeadlock (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeCloseIsNotFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeObserverDrivesRemoveAndReadd (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderMustBeRegisteredInSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalImmediatelyFencesAllOwnedGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardHolderStartsProcessReadyAndFailsClosedForEveryShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRegisteredHolderWithZeroRoutesSucceeds (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalCancelsDegradedAddRetry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeOwnershipFilterDoesNotTouchForeignGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseWinsConcurrentFatalWithoutRecordingFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionKeepsPlayerAndFarmAuthorityNamespacesSeparate (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderRegistrationFailureLeavesNoRunningResidue (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalRejectsLateCommitPrepared (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionActivatesAuthorityLoadsCommitsAndReloads (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardDynamicAssignmentStillFailsClosedBeforeGrant (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeUnknownModeFails (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionRejectsStaleLeaseAndBootAndAcceptsNewWriterGeneration (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeLegacyNeverStartsPerShardScheduler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseRejectsLateSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFenceFailureLowersProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupPartialFailureFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveFenceFailureImmediatelyLowersReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeTopologyMismatchFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalWinsConcurrentCloseAndPreservesCause (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestStaticMembershipRuntimeLocalHolderBootMismatchFailsStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFatalIsStickyAfterStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeLostGenerationKeepsProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalAfterCommitGateCheckCannotLeaveGuardOrEntry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedNeverStartsLegacyRenewal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRejectedRouteSnapshotNeverReachesMembershipReconciler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedFailureNeverFallsBackToLegacy (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveCleanupFailureAfterSuccessfulFenceKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderBootAndNonActiveProtectionRemains (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipObserverMaySkipIntermediateFullSnapshotsAndConverge (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeDynamicAddFailureKeepsProcessReadyAndTargetShardClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseFailClosedAndIdempotent (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAfterFatalPreservesCauseAndReapsAllResources (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeMigrationRemovesOldGenerationKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAndFatalConcurrentNoDeadlock (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeCloseIsNotFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeObserverDrivesRemoveAndReadd (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderMustBeRegisteredInSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalImmediatelyFencesAllOwnedGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardHolderStartsProcessReadyAndFailsClosedForEveryShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRegisteredHolderWithZeroRoutesSucceeds (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalCancelsDegradedAddRetry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeOwnershipFilterDoesNotTouchForeignGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseWinsConcurrentFatalWithoutRecordingFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionKeepsPlayerAndFarmAuthorityNamespacesSeparate (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderRegistrationFailureLeavesNoRunningResidue (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalRejectsLateCommitPrepared (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionActivatesAuthorityLoadsCommitsAndReloads (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardDynamicAssignmentStillFailsClosedBeforeGrant (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeUnknownModeFails (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionRejectsStaleLeaseAndBootAndAcceptsNewWriterGeneration (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeLegacyNeverStartsPerShardScheduler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseRejectsLateSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFenceFailureLowersProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupPartialFailureFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveFenceFailureImmediatelyLowersReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeTopologyMismatchFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalWinsConcurrentCloseAndPreservesCause (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestStaticMembershipRuntimeLocalHolderBootMismatchFailsStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFatalIsStickyAfterStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeLostGenerationKeepsProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalAfterCommitGateCheckCannotLeaveGuardOrEntry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedNeverStartsLegacyRenewal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRejectedRouteSnapshotNeverReachesMembershipReconciler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedFailureNeverFallsBackToLegacy (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveCleanupFailureAfterSuccessfulFenceKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderBootAndNonActiveProtectionRemains (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipObserverMaySkipIntermediateFullSnapshotsAndConverge (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeDynamicAddFailureKeepsProcessReadyAndTargetShardClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseFailClosedAndIdempotent (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAfterFatalPreservesCauseAndReapsAllResources (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeMigrationRemovesOldGenerationKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAndFatalConcurrentNoDeadlock (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeCloseIsNotFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeObserverDrivesRemoveAndReadd (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderMustBeRegisteredInSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalImmediatelyFencesAllOwnedGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardHolderStartsProcessReadyAndFailsClosedForEveryShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRegisteredHolderWithZeroRoutesSucceeds (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalCancelsDegradedAddRetry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeOwnershipFilterDoesNotTouchForeignGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseWinsConcurrentFatalWithoutRecordingFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionKeepsPlayerAndFarmAuthorityNamespacesSeparate (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderRegistrationFailureLeavesNoRunningResidue (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalRejectsLateCommitPrepared (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionActivatesAuthorityLoadsCommitsAndReloads (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardDynamicAssignmentStillFailsClosedBeforeGrant (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeUnknownModeFails (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionRejectsStaleLeaseAndBootAndAcceptsNewWriterGeneration (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeLegacyNeverStartsPerShardScheduler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseRejectsLateSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFenceFailureLowersProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupPartialFailureFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveFenceFailureImmediatelyLowersReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeTopologyMismatchFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalWinsConcurrentCloseAndPreservesCause (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestStaticMembershipRuntimeLocalHolderBootMismatchFailsStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFatalIsStickyAfterStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeLostGenerationKeepsProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalAfterCommitGateCheckCannotLeaveGuardOrEntry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedNeverStartsLegacyRenewal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRejectedRouteSnapshotNeverReachesMembershipReconciler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedFailureNeverFallsBackToLegacy (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveCleanupFailureAfterSuccessfulFenceKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderBootAndNonActiveProtectionRemains (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipObserverMaySkipIntermediateFullSnapshotsAndConverge (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeDynamicAddFailureKeepsProcessReadyAndTargetShardClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseFailClosedAndIdempotent (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAfterFatalPreservesCauseAndReapsAllResources (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeMigrationRemovesOldGenerationKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAndFatalConcurrentNoDeadlock (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeCloseIsNotFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeObserverDrivesRemoveAndReadd (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderMustBeRegisteredInSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalImmediatelyFencesAllOwnedGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardHolderStartsProcessReadyAndFailsClosedForEveryShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRegisteredHolderWithZeroRoutesSucceeds (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalCancelsDegradedAddRetry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeOwnershipFilterDoesNotTouchForeignGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseWinsConcurrentFatalWithoutRecordingFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionKeepsPlayerAndFarmAuthorityNamespacesSeparate (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderRegistrationFailureLeavesNoRunningResidue (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalRejectsLateCommitPrepared (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionActivatesAuthorityLoadsCommitsAndReloads (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardDynamicAssignmentStillFailsClosedBeforeGrant (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeUnknownModeFails (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionRejectsStaleLeaseAndBootAndAcceptsNewWriterGeneration (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeLegacyNeverStartsPerShardScheduler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseRejectsLateSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFenceFailureLowersProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupPartialFailureFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveFenceFailureImmediatelyLowersReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeTopologyMismatchFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalWinsConcurrentCloseAndPreservesCause (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestStaticMembershipRuntimeLocalHolderBootMismatchFailsStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFatalIsStickyAfterStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeLostGenerationKeepsProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalAfterCommitGateCheckCannotLeaveGuardOrEntry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedNeverStartsLegacyRenewal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRejectedRouteSnapshotNeverReachesMembershipReconciler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedFailureNeverFallsBackToLegacy (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveCleanupFailureAfterSuccessfulFenceKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderBootAndNonActiveProtectionRemains (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipObserverMaySkipIntermediateFullSnapshotsAndConverge (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeDynamicAddFailureKeepsProcessReadyAndTargetShardClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseFailClosedAndIdempotent (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAfterFatalPreservesCauseAndReapsAllResources (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeMigrationRemovesOldGenerationKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAndFatalConcurrentNoDeadlock (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeCloseIsNotFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeObserverDrivesRemoveAndReadd (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderMustBeRegisteredInSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalImmediatelyFencesAllOwnedGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardHolderStartsProcessReadyAndFailsClosedForEveryShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRegisteredHolderWithZeroRoutesSucceeds (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalCancelsDegradedAddRetry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeOwnershipFilterDoesNotTouchForeignGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseWinsConcurrentFatalWithoutRecordingFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionKeepsPlayerAndFarmAuthorityNamespacesSeparate (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderRegistrationFailureLeavesNoRunningResidue (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalRejectsLateCommitPrepared (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionActivatesAuthorityLoadsCommitsAndReloads (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardDynamicAssignmentStillFailsClosedBeforeGrant (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeUnknownModeFails (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionRejectsStaleLeaseAndBootAndAcceptsNewWriterGeneration (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeLegacyNeverStartsPerShardScheduler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseRejectsLateSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFenceFailureLowersProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupPartialFailureFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveFenceFailureImmediatelyLowersReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeTopologyMismatchFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalWinsConcurrentCloseAndPreservesCause (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestStaticMembershipRuntimeLocalHolderBootMismatchFailsStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFatalIsStickyAfterStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeLostGenerationKeepsProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalAfterCommitGateCheckCannotLeaveGuardOrEntry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedNeverStartsLegacyRenewal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRejectedRouteSnapshotNeverReachesMembershipReconciler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedFailureNeverFallsBackToLegacy (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveCleanupFailureAfterSuccessfulFenceKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderBootAndNonActiveProtectionRemains (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipObserverMaySkipIntermediateFullSnapshotsAndConverge (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeDynamicAddFailureKeepsProcessReadyAndTargetShardClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseFailClosedAndIdempotent (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAfterFatalPreservesCauseAndReapsAllResources (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeMigrationRemovesOldGenerationKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAndFatalConcurrentNoDeadlock (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeCloseIsNotFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeObserverDrivesRemoveAndReadd (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderMustBeRegisteredInSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalImmediatelyFencesAllOwnedGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardHolderStartsProcessReadyAndFailsClosedForEveryShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRegisteredHolderWithZeroRoutesSucceeds (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalCancelsDegradedAddRetry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeOwnershipFilterDoesNotTouchForeignGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseWinsConcurrentFatalWithoutRecordingFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionKeepsPlayerAndFarmAuthorityNamespacesSeparate (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderRegistrationFailureLeavesNoRunningResidue (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalRejectsLateCommitPrepared (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionActivatesAuthorityLoadsCommitsAndReloads (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardDynamicAssignmentStillFailsClosedBeforeGrant (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeUnknownModeFails (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionRejectsStaleLeaseAndBootAndAcceptsNewWriterGeneration (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeLegacyNeverStartsPerShardScheduler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseRejectsLateSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFenceFailureLowersProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupPartialFailureFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveFenceFailureImmediatelyLowersReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeTopologyMismatchFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalWinsConcurrentCloseAndPreservesCause (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestStaticMembershipRuntimeLocalHolderBootMismatchFailsStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFatalIsStickyAfterStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeLostGenerationKeepsProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalAfterCommitGateCheckCannotLeaveGuardOrEntry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedNeverStartsLegacyRenewal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRejectedRouteSnapshotNeverReachesMembershipReconciler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedFailureNeverFallsBackToLegacy (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveCleanupFailureAfterSuccessfulFenceKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderBootAndNonActiveProtectionRemains (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipObserverMaySkipIntermediateFullSnapshotsAndConverge (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeDynamicAddFailureKeepsProcessReadyAndTargetShardClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseFailClosedAndIdempotent (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAfterFatalPreservesCauseAndReapsAllResources (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeMigrationRemovesOldGenerationKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAndFatalConcurrentNoDeadlock (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeCloseIsNotFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeObserverDrivesRemoveAndReadd (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderMustBeRegisteredInSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalImmediatelyFencesAllOwnedGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardHolderStartsProcessReadyAndFailsClosedForEveryShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRegisteredHolderWithZeroRoutesSucceeds (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalCancelsDegradedAddRetry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeOwnershipFilterDoesNotTouchForeignGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseWinsConcurrentFatalWithoutRecordingFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionKeepsPlayerAndFarmAuthorityNamespacesSeparate (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderRegistrationFailureLeavesNoRunningResidue (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalRejectsLateCommitPrepared (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionActivatesAuthorityLoadsCommitsAndReloads (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardDynamicAssignmentStillFailsClosedBeforeGrant (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeUnknownModeFails (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionRejectsStaleLeaseAndBootAndAcceptsNewWriterGeneration (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeLegacyNeverStartsPerShardScheduler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseRejectsLateSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFenceFailureLowersProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupPartialFailureFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveFenceFailureImmediatelyLowersReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeTopologyMismatchFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalWinsConcurrentCloseAndPreservesCause (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestStaticMembershipRuntimeLocalHolderBootMismatchFailsStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFatalIsStickyAfterStartup (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeLostGenerationKeepsProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestFatalAfterCommitGateCheckCannotLeaveGuardOrEntry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedNeverStartsLegacyRenewal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRejectedRouteSnapshotNeverReachesMembershipReconciler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeComposedFailureNeverFallsBackToLegacy (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeRemoveCleanupFailureAfterSuccessfulFenceKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderBootAndNonActiveProtectionRemains (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipObserverMaySkipIntermediateFullSnapshotsAndConverge (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeDynamicAddFailureKeepsProcessReadyAndTargetShardClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseFailClosedAndIdempotent (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAfterFatalPreservesCauseAndReapsAllResources (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeMigrationRemovesOldGenerationKeepsReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseAndFatalConcurrentNoDeadlock (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeCloseIsNotFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeObserverDrivesRemoveAndReadd (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupZeroShardProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderMustBeRegisteredInSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalImmediatelyFencesAllOwnedGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardHolderStartsProcessReadyAndFailsClosedForEveryShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRegisteredHolderWithZeroRoutesSucceeds (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalCancelsDegradedAddRetry (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeOwnershipFilterDoesNotTouchForeignGuards (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestCloseWinsConcurrentFatalWithoutRecordingFatal (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionKeepsPlayerAndFarmAuthorityNamespacesSeparate (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestLocalHolderRegistrationFailureLeavesNoRunningResidue (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRuntimeFatalRejectsLateCommitPrepared (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionActivatesAuthorityLoadsCommitsAndReloads (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestZeroShardDynamicAssignmentStillFailsClosedBeforeGrant (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeUnknownModeFails (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFarmDomainAdmitsAssignedShard (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestRedisProcessCompositionRejectsStaleLeaseAndBootAndAcceptsNewWriterGeneration (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestNewRuntimeForModeLegacyNeverStartsPerShardScheduler (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeCloseRejectsLateSnapshot (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeFenceFailureLowersProcessReady (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+--- FAIL: TestMembershipRuntimeStartupPartialFailureFailsClosed (0.00s)
+    miniredis.go:148: could not start miniredis: listen tcp 127.0.0.1:0: socket: operation not permitted
+FAIL
+FAIL	farmgame/internal/authoritycomposition	15.888s
+?   	farmgame/internal/authoritycomposition/testkit	[no test files]
+FAIL

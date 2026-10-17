@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
+TASK_DIR="$ROOT/docs/verification/perf/cap-redis/CAP-REDIS-L1-R1"
+MANIFEST="$TASK_DIR/manifest.json"
+PROFILE="$TASK_DIR/profile.json"
+MODE=${1:-full}
+
+case "$MODE" in
+  smoke|matrix-smoke|full) ;;
+  *) echo "usage: $0 [smoke|matrix-smoke|full]" >&2; exit 2 ;;
+esac
+
+business_head=$(git -C "$ROOT" rev-parse 93a66ce76d509d86e8cac8e1d87563d084eba821^{commit})
+evidence_head=$(git -C "$ROOT" rev-parse 34d94b58b4cc941f184923b05cae79086c5d9da0^{commit})
+[[ "$business_head" == 93a66ce76d509d86e8cac8e1d87563d084eba821 ]]
+[[ "$evidence_head" == 34d94b58b4cc941f184923b05cae79086c5d9da0 ]]
+[[ "$(docker image inspect redis:7.4-alpine --format '{{.Id}}')" == sha256:2a51817f79255c8b69f86a974459c2e0359aff81417d80158f2b9e541e6f4b33 ]]
+[[ "$(docker image inspect q1-friend-hot-share-backend:93a66ce --format '{{.Id}}')" == sha256:9498736750d89ece6cc511acf3f7fa243218ac1a2ce64f2806580f898a053ab7 ]]
+[[ "$(docker image inspect q1-postmerge-h5:525c4d3 --format '{{.Id}}')" == sha256:9bfdedaa70f7cbf8bac86bb25cc2ff62dba1cf7832fb5d8f66c72c1f113486fd ]]
+python3 "$ROOT/scripts/perf/cap-redis/verify_manifest.py" --profile "$PROFILE" --manifest "$MANIFEST"
+
+build_dir=$(mktemp -d /tmp/cap-redis-l1-r1-build.XXXXXX)
+active_container=""
+cleanup() {
+  if [[ -n "$active_container" ]]; then
+    docker rm -f "$active_container" >/dev/null 2>&1 || true
+  fi
+  rm -rf "$build_dir"
+}
+trap cleanup EXIT INT TERM
+
+GOFLAGS=-buildvcs=false go build -trimpath -o "$build_dir/cap-redis" "$ROOT/cmd/cap-redis"
+binary_sha=$(sha256sum "$build_dir/cap-redis" | awk '{print $1}')
+profile_sha=$(sha256sum "$PROFILE" | awk '{print $1}')
+manifest_sha=$(sha256sum "$MANIFEST" | awk '{print $1}')
+
+stamp=$(date -u +%Y%m%dT%H%M%SZ)
+train_id="capredis-l1-r1-${stamp}-$$"
+train_dir="$TASK_DIR/results/$train_id"
+mkdir -p "$train_dir/rounds"
+printf '%s\n' "$binary_sha" > "$train_dir/harness-binary.sha256"
+printf '%s\n' "$profile_sha" > "$train_dir/profile-file.sha256"
+printf '%s\n' "$manifest_sha" > "$train_dir/manifest-file.sha256"
+
+if [[ "$MODE" == smoke ]]; then
+  rounds=("smoke:1")
+  operations=4
+  concurrency=1
+  distributions=uniform
+  scenarios=""
+elif [[ "$MODE" == matrix-smoke ]]; then
+  rounds=("smoke:1")
+  operations=300
+  concurrency=1,10,100,300
+  distributions=uniform,hot
+  scenarios=""
+else
+  rounds=("warmup:1" "formal:1" "formal:2" "formal:3" "formal:4" "formal:5")
+  operations=600
+  concurrency=1,10,100,300
+  distributions=uniform,hot
+  scenarios=""
+fi
+operations=${CAP_REDIS_OPERATIONS:-$operations}
+concurrency=${CAP_REDIS_CONCURRENCY:-$concurrency}
+distributions=${CAP_REDIS_KEY_DISTRIBUTIONS:-$distributions}
+scenarios=${CAP_REDIS_SCENARIOS:-$scenarios}
+
+for item in "${rounds[@]}"; do
+  kind=${item%%:*}
+  number=${item##*:}
+  active_container="cap-redis-l1-r1-${stamp,,}-${kind}-${number}-$$"
+  secret=$(openssl rand -hex 24)
+  docker run -d --name "$active_container" \
+    --cpus 4 --memory 4g --memory-swap 4g \
+    -p 127.0.0.1::6379 \
+    redis:7.4-alpine \
+    redis-server --save '' --appendonly no --protected-mode yes \
+      --requirepass "$secret" --maxmemory 3gb --maxmemory-policy noeviction \
+      --slowlog-log-slower-than 0 --slowlog-max-len 1000000 >/dev/null
+  port=$(docker port "$active_container" 6379/tcp | awk -F: '{print $NF}')
+  for _ in $(seq 1 100); do
+    if docker exec -e REDISCLI_AUTH="$secret" "$active_container" redis-cli ping 2>/dev/null | grep -qx PONG; then break; fi
+    sleep 0.1
+  done
+  docker exec -e REDISCLI_AUTH="$secret" "$active_container" redis-cli ping 2>/dev/null | grep -qx PONG
+
+  round_id="$train_id-$kind-$number"
+  zone=$(printf 'r%s%s' "$number" "$(date +%s%N)" | tail -c 31)
+  output="$train_dir/rounds/$kind-$number.json"
+  export CAP_REDIS_URL="redis://:${secret}@127.0.0.1:${port}/0"
+  export GOGC=100
+  export GOMEMLIMIT=4GiB
+  args=(--manifest "$MANIFEST" --output "$output" --run-id "$round_id" \
+    --round-kind "$kind" --round-number "$number" --environment capr1 --zone "$zone" \
+    --operations "$operations" --concurrency "$concurrency" --key-distributions "$distributions")
+  if [[ -n "$scenarios" ]]; then args+=(--scenarios "$scenarios"); fi
+  "$build_dir/cap-redis" "${args[@]}" | tee "$train_dir/rounds/$kind-$number.stdout"
+  unset CAP_REDIS_URL
+
+  docker inspect "$active_container" --format '{{.HostConfig.NanoCpus}} {{.HostConfig.Memory}} {{.HostConfig.MemorySwap}} {{.Image}}' \
+    > "$train_dir/rounds/$kind-$number.container-limits.txt"
+  docker exec -e REDISCLI_AUTH="$secret" "$active_container" redis-cli --no-auth-warning CONFIG GET \
+    appendonly maxmemory maxmemory-policy save slowlog-log-slower-than slowlog-max-len \
+    > "$train_dir/rounds/$kind-$number.redis-config.txt"
+  docker rm -f "$active_container" >/dev/null
+  active_container=""
+  unset secret
+ done
+
+summary_mode=$MODE
+if [[ "$summary_mode" == matrix-smoke ]]; then summary_mode=smoke; fi
+python3 "$ROOT/scripts/perf/cap-redis/summarize.py" --train-dir "$train_dir" --profile "$PROFILE" --manifest "$MANIFEST" --mode "$summary_mode"
+printf 'CAP_REDIS_TRAIN=%s MODE=%s REPORT=%s\n' "$train_id" "$MODE" "$train_dir/report.md"

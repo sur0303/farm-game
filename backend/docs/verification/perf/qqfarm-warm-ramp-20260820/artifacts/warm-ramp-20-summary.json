@@ -1,0 +1,23 @@
+{
+  "run_id": "warm-ramp-20-20260820",
+  "scenario": "journey",
+  "player_start": 3501200000,
+  "players": 20,
+  "duration": "6m",
+  "session_duration": "5m",
+  "think_time": "5s",
+  "unlock_plots": true,
+  "ready": 20,
+  "succeeded": 20,
+  "failed": 0,
+  "cancelled": 0,
+  "actions": 1573,
+  "turns": 1226,
+  "rejected": 0,
+  "timeouts": 0,
+  "action_qps": 5.209870479245956,
+  "p95_ms": 35.43518518518517,
+  "p99_ms": 41.0,
+  "qualified": true,
+  "command_counts": {"BUY": 347, "PLANT": 347, "CARE": 225, "HARVEST": 329, "SELL": 325, "UNLOCK_PLOT_WARMUP": 380}
+}

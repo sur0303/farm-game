@@ -1,0 +1,20 @@
+{
+  "schema": "farm.r2-q.fixture/product-regressions/v1",
+  "fixture_id": "product-regressions-v1",
+  "contract_status": "SKIPPED_NOT_COMPOSED",
+  "deterministic": true,
+  "production_semantics_changed": false,
+  "test_groups": {
+    "backend": ["full", "race", "vet", "build"],
+    "h5": ["test", "ts", "build", "audit"],
+    "product": ["hero_repeat", "task_3_of_3", "f1", "f2", "f3"],
+    "wss": ["baseline", "slow_reader"],
+    "social": ["limits", "public_scb"],
+    "r1": ["lease_formal_real_evidence"]
+  },
+  "repetition_targets": {"hero": "10/10_unless_named_waiver", "task": "3/3", "f1": "10/10", "f2": "10/10", "f3": "10/10"},
+  "wss_target": {"connections": 200, "cases": ["baseline", "slow_reader"], "cases_separate": true},
+  "social_limits": {"friend_limit": 300, "share_reuse": true, "public_scb_unchanged": true},
+  "evidence_rules": {"backend_h5_deploy_clean": true, "official_url_separate": true, "localhost_not_staging": true, "r1_lease_evidence_retained": true, "no_mock_auth": true},
+  "cases": ["backend_full_race_vet_build", "h5_test_ts_build_audit", "hero_repeat", "task_3_of_3", "f1_f2_f3", "wss_200_baseline_slow_reader", "social_limits_public_scb", "r1_lease_formal_real"]
+}

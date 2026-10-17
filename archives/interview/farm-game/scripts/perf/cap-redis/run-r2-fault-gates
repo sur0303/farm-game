@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
+TRAIN=${1:?usage: run-r2-fault-gates TRAIN_DIR}
+TRAIN=$(realpath "$TRAIN")
+[[ "$TRAIN" == "$ROOT/docs/verification/perf/cap-redis/CAP-REDIS-L1-R2/results/"* ]]
+[[ -f "$TRAIN/summary.json" ]]
+OUT="$TRAIN/faults";mkdir -p "$OUT"
+BUSINESS_HEAD=5ce43715363eea4f18e0925b6992429785053261
+TEST_HEAD=$(git -C "$ROOT" rev-parse HEAD)
+git -C "$ROOT" merge-base --is-ancestor "$BUSINESS_HEAD" "$TEST_HEAD"
+[[ -z "$(git -C "$ROOT" status --porcelain --untracked-files=all)" ]]
+redis_image=$(docker image inspect redis:7.4-alpine --format '{{.Id}}')
+[[ "$redis_image" == sha256:2a51817f79255c8b69f86a974459c2e0359aff81417d80158f2b9e541e6f4b33 ]]
+containers=()
+secrets=()
+cleanup(){ unset CAP_REDIS_FAULT_URL FARM_REDIS_URL Q2R2_LIVE; for c in "${containers[@]}";do docker rm -f "$c" >/dev/null 2>&1||true;done; }
+trap cleanup EXIT INT TERM
+start_redis(){
+ local name="$1" secret port
+ secret=$(openssl rand -hex 24);secrets+=("$secret")
+ docker run -d --name "$name" --cpus 2 --memory 2g --memory-swap 2g -p 127.0.0.1::6379 redis:7.4-alpine \
+  redis-server --save '' --appendonly no --protected-mode yes --requirepass "$secret" --maxmemory 1536mb --maxmemory-policy noeviction >/dev/null
+ containers+=("$name");port=$(docker port "$name" 6379/tcp|awk -F: '{print $NF}')
+ for _ in $(seq 1 100);do docker exec -e REDISCLI_AUTH="$secret" "$name" redis-cli --no-auth-warning ping 2>/dev/null|grep -qx PONG&&break;sleep .1;done
+ LAST_PORT=$port;LAST_SECRET=$secret
+}
+stamp=$(date -u +%Y%m%dT%H%M%SZ)-$$
+start_redis "cap-r2-fault-main-${stamp,,}";cap_port=$LAST_PORT;cap_secret=$LAST_SECRET
+export CAP_REDIS_FAULT_URL="redis://:${cap_secret}@127.0.0.1:${cap_port}/0"
+GOFLAGS=-buildvcs=false go test "$ROOT/cmd/cap-redis" -run '^TestCAPRedis(ConnectionReconstructionAfterServerKill|PostWriteResponseLossResolvesCommitted)$' -count=1 -v >"$OUT/connection-and-response-loss.txt"
+unset CAP_REDIS_FAULT_URL
+for required in TestCAPRedisConnectionReconstructionAfterServerKill TestCAPRedisPostWriteResponseLossResolvesCommitted;do grep -q -- "--- PASS: $required" "$OUT/connection-and-response-loss.txt";done
+cap_db=$(docker exec -e REDISCLI_AUTH="$cap_secret" "cap-r2-fault-main-${stamp,,}" redis-cli --no-auth-warning DBSIZE|tr -d '\r');[[ "$cap_db" == 0 ]]
+
+start_redis "cap-r2-fault-noscript-${stamp,,}";q2r_port=$LAST_PORT;q2r_secret=$LAST_SECRET
+export FARM_REDIS_URL="redis://:${q2r_secret}@127.0.0.1:${q2r_port}/0" Q2R2_LIVE=1
+GOFLAGS=-buildvcs=false go test "$ROOT/internal/storage/redis/authority" \
+ -run '^TestLiveQ2R2(NoScriptReloadWithoutGlobalFlush|CommitIdempotentReplayAfterUnknown|CleanupUsesExactKeys)$' -count=1 -v >"$OUT/noscript-and-idempotent-replay.txt"
+unset FARM_REDIS_URL Q2R2_LIVE
+for required in TestLiveQ2R2NoScriptReloadWithoutGlobalFlush TestLiveQ2R2CommitIdempotentReplayAfterUnknown TestLiveQ2R2CleanupUsesExactKeys;do grep -q -- "--- PASS: $required" "$OUT/noscript-and-idempotent-replay.txt";done
+q2r_db=$(docker exec -e REDISCLI_AUTH="$q2r_secret" "cap-r2-fault-noscript-${stamp,,}" redis-cli --no-auth-warning DBSIZE|tr -d '\r');[[ "$q2r_db" =~ ^[0-9]+$ ]]
+# The Q2R probe tracks and deletes its exact primary keys. Any internal
+# authority metadata remains confined to this one-purpose instance, which is
+# destroyed by exact container name below; no broad cleanup command is used.
+
+printf 'CAP_DBSIZE_AFTER_EXACT_CLEANUP=0\nQ2R_INSTANCE_TEARDOWN=destroyed_unique_ephemeral_container\nSCRIPT_FLUSH_USED=false\nNAMESPACE_WIDE_SCAN_USED_BY_FAULT_TESTS=false\n' >"$OUT/fault-gate-cleanup.txt"
+redis_version=$(docker exec -e REDISCLI_AUTH="$q2r_secret" "cap-r2-fault-noscript-${stamp,,}" redis-cli --no-auth-warning INFO server|awk -F: '/^redis_version:/{gsub("\r","");print $2}')
+printf 'TEST_HEAD=%s\nREDIS_IMAGE_ID=%s\nREDIS_VERSION=%s\nBIND=loopback_unique_ephemeral\nPERSISTENCE=disabled\nINSTANCE_COUNT=2\n' "$TEST_HEAD" "$redis_image" "$redis_version" >"$OUT/fault-gate-environment.txt"
+for c in "${containers[@]}";do docker rm -f "$c" >/dev/null;done;containers=();secrets=()
+
+python3 - "$OUT" "$(basename "$TRAIN")" "$BUSINESS_HEAD" "$TEST_HEAD" <<'PY'
+import hashlib,json,pathlib,sys
+out=pathlib.Path(sys.argv[1]);train,business,head=sys.argv[2:]
+files=['connection-and-response-loss.txt','noscript-and-idempotent-replay.txt','fault-gate-cleanup.txt','fault-gate-environment.txt']
+connection=(out/files[0]).read_text();noscript=(out/files[1]).read_text();cleanup=(out/files[2]).read_text()
+checks={
+ 'noscript_recovery':'Q2R2-NOSCRIPT OK' in noscript,
+ 'connection_reconstruction':'CONNECTION_REBUILD_PASS' in connection and 'durable_readback=true' in connection,
+ 'post_write_response_loss_classified_timeout_unknown':'commit=TIMEOUT_UNKNOWN' in connection,
+ 'timeout_unknown_resolved_from_durable_receipt':'resolution=COMMITTED' in connection and 'receipt_match=true' in connection,
+ 'same_identity_replay_already_committed':'Q2R2-7 OK' in noscript and 'ALREADY_COMMITTED' in noscript,
+ 'cap_exact_cleanup':'CAP_DBSIZE_AFTER_EXACT_CLEANUP=0' in cleanup,
+ 'q2r_isolated_instance_destroyed':'Q2R_INSTANCE_TEARDOWN=destroyed_unique_ephemeral_container' in cleanup,
+ 'no_script_flush':'SCRIPT_FLUSH_USED=false' in cleanup,
+ 'no_namespace_wide_scan_by_fault_tests':'NAMESPACE_WIDE_SCAN_USED_BY_FAULT_TESTS=false' in cleanup,
+}
+report={'schema_version':'cap-redis-fault-gates-v1','train_run_id':train,'backend_business_commit':business,
+ 'formal_evidence_commit_at_start':head,'test_head':head,'scope':'CAP-REDIS-L1-R2 required fault qualification; no performance claim',
+ 'checks':checks,'attachments':{name:hashlib.sha256((out/name).read_bytes()).hexdigest() for name in files},
+ 'verdict':'PASS' if all(checks.values()) else 'FAIL'}
+(out/'fault-gate-verdict.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n')
+if report['verdict']!='PASS':raise SystemExit(1)
+print('CAP_REDIS_L1_R2_FAULT_GATES=PASS')
+PY
+trap - EXIT INT TERM
+printf 'CAP_REDIS_L1_R2_FAULT_GATES=PASS OUT=%s\n' "$OUT"

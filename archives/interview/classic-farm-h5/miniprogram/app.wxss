@@ -1,0 +1,31 @@
+/* Classic Farm WeChat Mini-Program global styles */
+page {
+  background: #87CEEB;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #3a2f1f;
+}
+
+view, text, button {
+  box-sizing: border-box;
+}
+
+button {
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  padding: 20rpx 32rpx;
+}
+
+button::after {
+  border: none;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid rgba(212, 167, 106, .2);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}

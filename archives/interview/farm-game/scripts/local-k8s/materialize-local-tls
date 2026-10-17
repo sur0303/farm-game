@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+KUBECONFIG="${KUBECONFIG:-$LAB_ROOT/runtime/kubeconfig}"
+TLS_DIR="$LAB_ROOT/runtime/tls/functional-g1"
+RECEIPT="$LAB_ROOT/receipts/local-tls-functional-g1.json"
+MODE="${1:---dry-run}"
+case "$MODE" in --dry-run|--apply) ;; *) echo "usage: $0 [--dry-run|--apply]" >&2; exit 2;; esac
+fail() { echo "materialize-local-tls: $*" >&2; exit 1; }
+for cmd in openssl kubectl python3 sha256sum; do command -v "$cmd" >/dev/null || fail "$cmd missing"; done
+[[ -s "$KUBECONFIG" ]] || fail "kubeconfig missing"
+[[ "$(KUBECONFIG="$KUBECONFIG" kubectl config current-context)" == "farm-l2-r2" ]] || fail "refusing non-lab context"
+
+if [[ "$MODE" == "--dry-run" ]]; then
+  printf '%s\n' '{"schema_version":"farm-local-tls-plan.v1","status":"DRY_RUN_NOT_MATERIALIZED","hosts":["farm.l2.local","api.farm.l2.local","ws.farm.l2.local"],"company_redis_contacted":false}'
+  exit 0
+fi
+
+install -d -m 0700 "$TLS_DIR"
+if [[ ! -s "$TLS_DIR/ca.key" || ! -s "$TLS_DIR/ca.crt" ]]; then
+  openssl req -x509 -newkey rsa:3072 -nodes -days 30 -sha256 \
+    -subj '/CN=farm-l2-r2 local CA' \
+    -keyout "$TLS_DIR/ca.key" -out "$TLS_DIR/ca.crt" >/dev/null 2>&1
+fi
+cat >"$TLS_DIR/server.cnf" <<'EOF'
+[req]
+prompt = no
+distinguished_name = dn
+req_extensions = req_ext
+[dn]
+CN = farm.l2.local
+[req_ext]
+subjectAltName = @alt
+[alt]
+DNS.1 = farm.l2.local
+DNS.2 = api.farm.l2.local
+DNS.3 = ws.farm.l2.local
+EOF
+openssl req -new -newkey rsa:3072 -nodes -sha256 -config "$TLS_DIR/server.cnf" \
+  -keyout "$TLS_DIR/tls.key" -out "$TLS_DIR/server.csr" >/dev/null 2>&1
+openssl x509 -req -days 14 -sha256 -in "$TLS_DIR/server.csr" \
+  -CA "$TLS_DIR/ca.crt" -CAkey "$TLS_DIR/ca.key" -CAcreateserial \
+  -extfile "$TLS_DIR/server.cnf" -extensions req_ext -out "$TLS_DIR/tls.crt" >/dev/null 2>&1
+chmod 0600 "$TLS_DIR"/*
+
+KUBECONFIG="$KUBECONFIG" kubectl create namespace farm-l2-r2 --dry-run=client -o yaml | KUBECONFIG="$KUBECONFIG" kubectl apply -f - >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl label namespace farm-l2-r2 app.kubernetes.io/part-of=farm-game farm.io/lab-id=farm-l2-r2 farm.io/route-mode=static --overwrite >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl -n farm-l2-r2 create secret tls farm-local-tls \
+  --cert="$TLS_DIR/tls.crt" --key="$TLS_DIR/tls.key" --dry-run=client -o yaml | KUBECONFIG="$KUBECONFIG" kubectl apply -f - >/dev/null
+
+cert_sha=$(sha256sum "$TLS_DIR/tls.crt" | awk '{print $1}')
+ca_sha=$(sha256sum "$TLS_DIR/ca.crt" | awk '{print $1}')
+not_after=$(openssl x509 -in "$TLS_DIR/tls.crt" -noout -enddate | cut -d= -f2-)
+python3 - "$RECEIPT" "$cert_sha" "$ca_sha" "$not_after" <<'PY'
+import json, os, sys, tempfile
+path, cert_sha, ca_sha, not_after = sys.argv[1:]
+value={"schema_version":"farm-local-tls-receipt.v1","status":"MATERIALIZED_FUNCTIONAL_ONLY","secret":"farm-local-tls","namespace":"farm-l2-r2","certificate_sha256":cert_sha,"ca_certificate_sha256":ca_sha,"not_after":not_after,"private_key_persisted_in_evidence":False,"company_redis_contacted":False,"public_tls_certified":False}
+os.makedirs(os.path.dirname(path),exist_ok=True)
+fd,tmp=tempfile.mkstemp(prefix=".tls-receipt-",dir=os.path.dirname(path),text=True)
+with os.fdopen(fd,"w") as out: json.dump(value,out,sort_keys=True,indent=2); out.write("\n")
+os.replace(tmp,path)
+PY
+chmod 0640 "$RECEIPT"
+cat "$RECEIPT"

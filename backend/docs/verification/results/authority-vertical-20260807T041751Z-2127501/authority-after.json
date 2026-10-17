@@ -1,0 +1,95 @@
+{
+  "audited_at": "2026-08-07T04:18:24Z",
+  "authority": {
+    "farm": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-farm-20260807T041751Z-2127501",
+        "holder_instance_id": "smoke-farm",
+        "last_transition_at_ms": "1786076278517",
+        "last_transition_digest": "27c8ef13f3db680408f8b77fbf8468e6f33b4551d01ba379309c47f87e8fe03f",
+        "last_transition_id": "claim-FARM-20260807T041751Z-2127501",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786076358554",
+        "lease_state": "ACTIVE",
+        "route_domain": "FARM",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260807t041751z-2127501:local:auth:farm:v1:s:0}:shard-authority"
+    },
+    "player": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-player-20260807T041751Z-2127501",
+        "holder_instance_id": "smoke-player",
+        "last_transition_at_ms": "1786076278517",
+        "last_transition_digest": "4eb49beff98968b4be49597e689603516f27cc524b0c94915e0ab8cc4de7a9a7",
+        "last_transition_id": "claim-PLAYER-20260807T041751Z-2127501",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786076358545",
+        "lease_state": "ACTIVE",
+        "route_domain": "PLAYER",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260807t041751z-2127501:local:auth:player:v1:s:0}:shard-authority"
+    }
+  },
+  "protocol_verdict": {
+    "finished_at": "2026-08-07T04:18:24Z",
+    "frames": 19,
+    "steps": {
+      "bootstrap": {
+        "status": "ok"
+      },
+      "bootstrap_refresh": {
+        "detail": "inventory map[2001:500] (produce landed), coin 90 unchanged",
+        "status": "ok"
+      },
+      "buy": {
+        "status": "ok"
+      },
+      "grow": {
+        "status": "ok"
+      },
+      "harvest": {
+        "status": "ok"
+      },
+      "hello": {
+        "status": "ok"
+      },
+      "join": {
+        "status": "ok"
+      },
+      "login": {
+        "status": "ok"
+      },
+      "plant": {
+        "detail": "plot=0 cycle=sid1_5oCXhvpp-Nz2vi2Ry-3eClirUoQdAvnwDqYXB108Bgo mature_at_ms=1786076302766 farm_version=1",
+        "status": "ok"
+      },
+      "premature_reject": {
+        "status": "ok"
+      },
+      "recovery_complete": {
+        "status": "ok"
+      },
+      "recovery_once": {
+        "detail": "ClientRecoveryComplete sent exactly once",
+        "status": "ok"
+      },
+      "register": {
+        "status": "ok"
+      }
+    },
+    "verdict": "PASS"
+  },
+  "route_snapshot_sha256": "41a"
+}

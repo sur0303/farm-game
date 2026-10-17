@@ -1,0 +1,16 @@
+{
+  "farm_assignment_revision": 1,
+  "farm_boot": "smoke-farm-20260807T040002Z-2076213",
+  "farm_holder": "smoke-farm",
+  "farm_writer_epoch": 1,
+  "lease_until_ms": 1786075264141,
+  "namespace": "smoke-20260807t040002z-2076213",
+  "player_assignment_revision": 1,
+  "player_boot": "smoke-player-20260807T040002Z-2076213",
+  "player_holder": "smoke-player",
+  "player_writer_epoch": 1,
+  "profile": "redis-physical-v1",
+  "realm": "smoke-authority",
+  "run_id": "20260807T040002Z-2076213",
+  "zone": "local"
+}

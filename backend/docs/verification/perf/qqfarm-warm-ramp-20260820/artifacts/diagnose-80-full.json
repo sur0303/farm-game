@@ -1,0 +1,32 @@
+{
+  "start": 1787159218.512918,
+  "finish": 1787159525.692193,
+  "window": 337,
+  "eval": 1787159530.692193,
+  "queries": {
+    "gate_backend_by_reason": {
+      "query": "sum by(reason)(increase(farm_gate_command_backend_rejected_total[337s]))",
+      "result": []
+    },
+    "gate_command_by_status": {
+      "query": "sum by(command_type,status,error_code)(increase(farm_gate_command_results_total[337s]))",
+      "result": []
+    },
+    "gate_client_non_ok": {
+      "query": "sum by(method,code,target)(increase(farm_rpc_client_calls_total{code!=\"OK\"}[337s]))",
+      "result": []
+    },
+    "all_server_non_ok": {
+      "query": "sum by(pod,service,method,code)(increase(farm_rpc_calls_total{code!=\"OK\"}[337s]))",
+      "result": []
+    },
+    "gate_client_all": {
+      "query": "sum by(method,code,target)(increase(farm_rpc_client_calls_total[337s]))",
+      "result": []
+    },
+    "gate_command_backend": {
+      "query": "sum(increase(farm_gate_command_backend_rejected_total[337s]))",
+      "result": []
+    }
+  }
+}

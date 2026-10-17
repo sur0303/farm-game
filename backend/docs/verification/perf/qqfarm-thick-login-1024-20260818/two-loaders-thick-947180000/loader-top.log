@@ -1,0 +1,144 @@
+--- 03:51:06
+Error from server (NotFound): pods "ws-stress-thick-login-114119-5x58c" not found
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-fsfzg   9m           19Mi            
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   11m          28Mi            
+player-svr-1   9m           25Mi            
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   10m          25Mi            
+farm-svr-1   10m          24Mi            
+--- 03:51:13
+Error from server (NotFound): pods "ws-stress-thick-login-114119-5x58c" not found
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115106-23451-tjfb9" not found
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115106-5954-k9drn" not found
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-fsfzg   9m           19Mi            
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   11m          28Mi            
+player-svr-1   9m           25Mi            
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   10m          25Mi            
+farm-svr-1   10m          24Mi            
+--- 03:51:20
+Error from server (NotFound): pods "ws-stress-thick-login-114119-5x58c" not found
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-23451-tjfb9   602m         251Mi           
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-5954-k9drn   530m         239Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-fsfzg   113m         364Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   12m          25Mi            
+player-svr-1   119m         246Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   12m          29Mi            
+farm-svr-1   10m          27Mi            
+--- 03:51:28
+Error from server (NotFound): pods "ws-stress-thick-login-114119-5x58c" not found
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-23451-tjfb9   602m         251Mi           
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-5954-k9drn   530m         239Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-fsfzg   113m         364Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   12m          25Mi            
+player-svr-1   119m         246Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   12m          29Mi            
+farm-svr-1   10m          27Mi            
+--- 03:51:35
+Error from server (NotFound): pods "ws-stress-thick-login-114119-5x58c" not found
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-23451-tjfb9   602m         251Mi           
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-5954-k9drn   530m         239Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-fsfzg   113m         364Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   12m          25Mi            
+player-svr-1   119m         246Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   12m          29Mi            
+farm-svr-1   10m          27Mi            
+--- 03:51:42
+Error from server (NotFound): pods "ws-stress-thick-login-114119-5x58c" not found
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-23451-tjfb9   602m         251Mi           
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-5954-k9drn   530m         239Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-fsfzg   113m         364Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   12m          25Mi            
+player-svr-1   119m         246Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   12m          29Mi            
+farm-svr-1   10m          27Mi            
+--- 03:51:50
+Error from server (NotFound): pods "ws-stress-thick-login-114119-5x58c" not found
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-23451-tjfb9   16m          251Mi           
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-5954-k9drn   13m          239Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-fsfzg   359m         1090Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   240m         356Mi           
+player-svr-1   81m          317Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   242m         543Mi           
+farm-svr-1   202m         555Mi           
+--- 03:51:57
+Error from server (NotFound): pods "ws-stress-thick-login-114119-5x58c" not found
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-23451-tjfb9   16m          251Mi           
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-5954-k9drn   13m          239Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-fsfzg   359m         1090Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   240m         356Mi           
+player-svr-1   81m          317Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   242m         543Mi           
+farm-svr-1   202m         555Mi           
+--- 03:52:05
+Error from server (NotFound): pods "ws-stress-thick-login-114119-5x58c" not found
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-23451-tjfb9   16m          251Mi           
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115106-5954-k9drn   13m          239Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-fsfzg   359m         1090Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   240m         356Mi           
+player-svr-1   81m          317Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   242m         543Mi           
+farm-svr-1   202m         555Mi           
+--- 03:52:12
+Error from server (NotFound): pods "ws-stress-thick-login-114119-5x58c" not found
+Error from server (NotFound): pods "ws-stress-thick-login-115106-23451-tjfb9" not found
+Error from server (NotFound): pods "ws-stress-thick-login-115106-5954-k9drn" not found
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-fsfzg   359m         1090Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   240m         356Mi           
+player-svr-1   81m          317Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   242m         543Mi           
+farm-svr-1   202m         555Mi           
+--- 03:52:20
+Error from server (NotFound): pods "ws-stress-thick-login-114119-5x58c" not found
+Error from server (NotFound): pods "ws-stress-thick-login-115106-23451-tjfb9" not found
+Error from server (NotFound): pods "ws-stress-thick-login-115106-5954-k9drn" not found
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-fsfzg   136m         1087Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   13m          329Mi           
+player-svr-1   13m          317Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   94m          548Mi           
+farm-svr-1   83m          554Mi           

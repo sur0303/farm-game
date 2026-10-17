@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# One headed, real-stack CP-VERTICAL-B browser hard gate.
+set -Eeuo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+# Keep CP-B's default aligned with the rollback-compatible vertical smoke
+# default while preserving an explicitly empty value for the main harness to
+# reject fail-closed.
+if [[ ${SMOKE_FRIENDSHIP_SERVICE_MODE+x} ]]; then
+  SMOKE_FRIENDSHIP_SERVICE_MODE="$SMOKE_FRIENDSHIP_SERVICE_MODE"
+else
+  SMOKE_FRIENDSHIP_SERVICE_MODE="local_gate"
+fi
+case "$SMOKE_FRIENDSHIP_SERVICE_MODE" in
+  local_gate|remote_shadow|remote_player) ;;
+  *)
+    echo "invalid SMOKE_FRIENDSHIP_SERVICE_MODE=$SMOKE_FRIENDSHIP_SERVICE_MODE (want local_gate|remote_shadow|remote_player)" >&2
+    exit 2
+    ;;
+esac
+export SMOKE_FRIENDSHIP_SERVICE_MODE
+
+EVIDENCE_ID="${CPB_RUN_ID:-cpb-$(date -u +%Y%m%dT%H%M%SZ)-$$}"
+# Redis namespace components are deliberately short and alphanumeric.
+SMOKE_ID="${CPB_SMOKE_RUN_ID:-b$(date +%s)$$}"
+OUT="${CPB_OUT:-$ROOT_DIR/docs/verification/results/cp-vertical-b-$EVIDENCE_ID}"
+H5_DIR="${H5_ROOT:-$ROOT_DIR/../classic-farm-h5}"
+CONTROL="$OUT/control"
+mkdir -p "$OUT" "$CONTROL"
+
+XVFB_PID=""
+cleanup_xvfb() {
+  if [[ -n "$XVFB_PID" ]]; then
+    kill "$XVFB_PID" 2>/dev/null || true
+    wait "$XVFB_PID" 2>/dev/null || true
+  fi
+}
+trap cleanup_xvfb EXIT INT TERM
+
+if [[ -z "${DISPLAY:-}" ]]; then
+  display_number=$((90 + ($$ % 100)))
+  while [[ -e "/tmp/.X11-unix/X$display_number" ]]; do
+    display_number=$((display_number + 1))
+  done
+  Xvfb ":$display_number" -screen 0 1440x900x24 -nolisten tcp >"$OUT/xvfb.log" 2>&1 &
+  XVFB_PID=$!
+  export DISPLAY=":$display_number"
+  for _ in $(seq 1 100); do
+    [[ -e "/tmp/.X11-unix/X$display_number" ]] && break
+    kill -0 "$XVFB_PID" 2>/dev/null || { echo "Xvfb exited" >&2; exit 2; }
+    sleep 0.05
+  done
+fi
+
+export H5_ROOT="$H5_DIR"
+export SMOKE_RUN_ID="$SMOKE_ID"
+export SMOKE_OUT="$OUT"
+export SMOKE_PLAYWRIGHT_CONFIG="playwright.cp-vertical-b.config.ts"
+export SMOKE_PLAYWRIGHT_TEST="${SMOKE_PLAYWRIGHT_TEST:-cp-vertical-b.spec.ts}"
+export SMOKE_CONTROL_DIR="$CONTROL"
+export SMOKE_CROP_MATURE_AFTER="${SMOKE_CROP_MATURE_AFTER:-10s}"
+export SMOKE_H5_PORT="${SMOKE_H5_PORT:-5194}"
+export FARM_E2E_HEADED=1
+export SMOKE_REQUIRE_SOCIAL_ORACLE="${SMOKE_REQUIRE_SOCIAL_ORACLE:-1}"
+export SMOKE_E2E_COMMAND_RESULT_FAULTS="${SMOKE_E2E_COMMAND_RESULT_FAULTS:-1}"
+
+"$ROOT_DIR/scripts/run-authority-vertical-smoke"

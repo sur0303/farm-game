@@ -1,0 +1,49 @@
+job.batch/ws-stress-join-131027 created
+job=ws-stress-join-131027
+job.batch/ws-stress-join-131027 condition met
+2026/08/17 05:10:29 ws-stress HTTP=http://farm-gate:8080 WSS=ws://farm-gate:8080/ws conns=10000 rate=3000/s duration=15s scenario=join run_id=dkqykuj36bx2
+{
+  "run_id": "dkqykuj36bx2",
+  "cell_run_id": "dkqykuj36bx2",
+  "scenario": "join",
+  "auth_mode": "load_test_token",
+  "configured_connections": 10000,
+  "player_start": 1787000000000,
+  "connect_rate_per_second": 3000,
+  "configured_duration_seconds": 15,
+  "started_at": "2026-08-17T05:10:29.101913882Z",
+  "finished_at": "2026-08-17T05:10:44.213079163Z",
+  "attempted": 10000,
+  "ready": 9999,
+  "active_at_end": 0,
+  "peak_active": 10000,
+  "login_errors": 0,
+  "connect_errors": 0,
+  "hello_errors": 0,
+  "join_errors": 1,
+  "scenario_attempted": 0,
+  "scenario_succeeded": 0,
+  "scenario_errors": 0,
+  "unexpected_disconnects": 0,
+  "ready_rate": 0.9999,
+  "elapsed_ms": 15096.52213,
+  "qps": 662.3379818143585,
+  "ready_p50_ms": 59.508348,
+  "ready_p95_ms": 271.597029,
+  "ready_p99_ms": 338.137909,
+  "ready_max_ms": 498.84344,
+  "login_p50_ms": 12.676865,
+  "login_p95_ms": 38.108997,
+  "hello_p50_ms": 4.45981,
+  "hello_p95_ms": 22.018246,
+  "join_accepted_p50_ms": 17.700905,
+  "join_accepted_p95_ms": 201.796602,
+  "snapshot_p50_ms": 9.82098,
+  "snapshot_p95_ms": 84.278833,
+  "scenario_p95_ms": 0,
+  "failure_reasons": {
+    "join_barrier: network timeout": 1
+  },
+  "git_sha": "unknown",
+  "test_environment": "developer_026-qqfarm"
+}

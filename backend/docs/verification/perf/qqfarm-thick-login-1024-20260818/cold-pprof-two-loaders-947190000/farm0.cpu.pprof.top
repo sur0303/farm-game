@@ -1,0 +1,39 @@
+File: farm-svr
+Build ID: ffca9b336f4ed02ff98b4a0969503ed0381e1583
+Type: cpu
+Time: 2026-08-18 11:59:02 CST
+Duration: 20s, Total samples = 6.25s (31.25%)
+Showing nodes accounting for 3.35s, 53.60% of 6.25s total
+Dropped 534 nodes (cum <= 0.03s)
+Showing top 30 nodes out of 358
+      flat  flat%   sum%        cum   cum%
+     0.46s  7.36%  7.36%      0.46s  7.36%  internal/runtime/syscall/linux.Syscall6
+     0.43s  6.88% 14.24%      0.43s  6.88%  runtime.memmove
+     0.28s  4.48% 18.72%      0.57s  9.12%  runtime.scanObject
+     0.21s  3.36% 22.08%      0.48s  7.68%  runtime.scanObjectsSmall
+     0.16s  2.56% 24.64%      0.16s  2.56%  runtime.futex
+     0.16s  2.56% 27.20%      0.20s  3.20%  runtime.typePointers.next
+     0.15s  2.40% 29.60%      0.23s  3.68%  runtime.(*unwinder).resolveInternal
+     0.15s  2.40% 32.00%      0.15s  2.40%  runtime.spanClass.sizeclass (inline)
+     0.14s  2.24% 34.24%      0.14s  2.24%  runtime.memclrNoHeapPointers
+     0.13s  2.08% 36.32%      0.32s  5.12%  runtime.tryDeferToSpanScan
+     0.09s  1.44% 37.76%      0.09s  1.44%  runtime.typePointers.nextFast (inline)
+     0.08s  1.28% 39.04%      0.11s  1.76%  runtime.scanObjectSmall
+     0.08s  1.28% 40.32%      0.11s  1.76%  runtime.step
+     0.06s  0.96% 41.28%      0.11s  1.76%  google.golang.org/protobuf/internal/impl.(*MessageInfo).marshalAppendPointer
+     0.06s  0.96% 42.24%      0.06s  0.96%  internal/runtime/maps.ctrlGroup.matchH2
+     0.06s  0.96% 43.20%      0.06s  0.96%  runtime.(*mspan).moveInlineMarks
+     0.06s  0.96% 44.16%      0.86s 13.76%  runtime.mallocgc
+     0.06s  0.96% 45.12%      0.06s  0.96%  runtime.nextFreeFast (inline)
+     0.05s   0.8% 45.92%      0.18s  2.88%  google.golang.org/protobuf/internal/impl.(*MessageInfo).unmarshalPointerEager
+     0.05s   0.8% 46.72%      0.05s   0.8%  memeqbody
+     0.05s   0.8% 47.52%      0.05s   0.8%  runtime.extractHeapBitsSmall
+     0.05s   0.8% 48.32%      0.05s   0.8%  runtime.findfunc
+     0.05s   0.8% 49.12%      0.25s  4.00%  runtime.newobject
+     0.04s  0.64% 49.76%      0.04s  0.64%  runtime.(*mspan).writeHeapBitsSmall
+     0.04s  0.64% 50.40%      0.08s  1.28%  runtime.(*stkframe).getStackMap
+     0.04s  0.64% 51.04%      0.10s  1.60%  runtime.bulkBarrierPreWrite
+     0.04s  0.64% 51.68%      0.04s  0.64%  runtime.casgstatus
+     0.04s  0.64% 52.32%      0.04s  0.64%  runtime.findObject
+     0.04s  0.64% 52.96%      0.05s   0.8%  runtime.gopark
+     0.04s  0.64% 53.60%      0.04s  0.64%  runtime.heapSetTypeSmallHeader (inline)

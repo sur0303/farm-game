@@ -1,0 +1,49 @@
+job.batch/ws-stress-join-134216 created
+job=ws-stress-join-134216
+job.batch/ws-stress-join-134216 condition met
+2026/08/17 05:42:19 ws-stress HTTP=http://farm-gate:8080 WSS=ws://farm-gate:8080/ws conns=10000 rate=4000/s duration=15s scenario=join run_id=dkqz98d9eehe
+{
+  "run_id": "dkqz98d9eehe",
+  "cell_run_id": "dkqz98d9eehe",
+  "scenario": "join",
+  "auth_mode": "load_test_token",
+  "configured_connections": 10000,
+  "player_start": 1787150000000,
+  "connect_rate_per_second": 4000,
+  "configured_duration_seconds": 15,
+  "started_at": "2026-08-17T05:42:19.964462482Z",
+  "finished_at": "2026-08-17T05:42:35.073688814Z",
+  "attempted": 10000,
+  "ready": 9845,
+  "active_at_end": 0,
+  "peak_active": 9845,
+  "login_errors": 0,
+  "connect_errors": 0,
+  "hello_errors": 0,
+  "join_errors": 155,
+  "scenario_attempted": 0,
+  "scenario_succeeded": 0,
+  "scenario_errors": 0,
+  "unexpected_disconnects": 0,
+  "ready_rate": 0.9845,
+  "elapsed_ms": 15091.948433,
+  "qps": 652.3345904411493,
+  "ready_p50_ms": 235.576519,
+  "ready_p95_ms": 557.69154,
+  "ready_p99_ms": 642.112763,
+  "ready_max_ms": 757.167489,
+  "login_p50_ms": 33.538202,
+  "login_p95_ms": 169.021851,
+  "hello_p50_ms": 9.524929,
+  "hello_p95_ms": 99.516895,
+  "join_accepted_p50_ms": 97.135663,
+  "join_accepted_p95_ms": 405.939688,
+  "snapshot_p50_ms": 23.699003,
+  "snapshot_p95_ms": 117.458938,
+  "scenario_p95_ms": 0,
+  "failure_reasons": {
+    "join_barrier: join rejected: status=UNAVAILABLE code=ERR_SERVER_BUSY message=服务器繁忙，请稍后重试": 155
+  },
+  "git_sha": "unknown",
+  "test_environment": "developer_026-qqfarm"
+}

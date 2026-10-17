@@ -1,0 +1,15 @@
+{
+  "checkpoint": "CP-MVP-BEFORE-HARDENING",
+  "backend_commit": "260babcd93cfb6a4a58a481cc3c7f8c1f95e455a",
+  "h5_commit": "48991e6a9ca724941b54202603605948b169eed1",
+  "h5_parent_product_commit": "df379b5fcc5eb710fc1efa5406c752ba18c3ab30",
+  "h5_baseline_alignment": "test-only explicit Theft confirmation in F3 gate",
+  "contract_baseline": "16858bcbde81520a133272f035f838b07e056c33",
+  "authority_mode": "redis",
+  "route_mode": "static",
+  "backend_dirty": false,
+  "h5_dirty": false,
+  "evidence": ".agentctl-cp-route-state/evidence/cp-mvp-before-hardening-20260809T091148Z",
+  "valid_authority_run": "hero-task-f1f2f3-aligned",
+  "tag": "cp-mvp-before-hardening-20260809"
+}

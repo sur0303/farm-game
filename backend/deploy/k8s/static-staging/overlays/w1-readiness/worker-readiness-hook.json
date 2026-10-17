@@ -1,0 +1,40 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "farm-worker"
+  },
+  "spec": {
+    "template": {
+      "spec": {
+        "containers": [
+          {
+            "name": "farm-worker",
+            "env": [
+              {
+                "name": "WORKER_READINESS_CONTRACT_VERSION",
+                "value": "worker-family-readiness-v1"
+              },
+              {
+                "name": "WORKER_READINESS_MAX_SCAN_AGE_V1",
+                "value": "5s"
+              },
+              {
+                "name": "WORKER_DUE_OBSERVE_LIMIT",
+                "value": "4096"
+              },
+              {
+                "name": "GUARD_SYNC_WORKER_ENABLED",
+                "value": "false"
+              },
+              {
+                "name": "MAIL_WORKER_ENABLED",
+                "value": "false"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

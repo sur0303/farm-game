@@ -1,0 +1,107 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
+      "id": 1,
+      "targets": [
+        {"expr": "farm_actor_active_keys", "legendFormat": "{{actor_kind}}", "refId": "A"}
+      ],
+      "title": "Active Actor Keys",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0},
+      "id": 2,
+      "targets": [
+        {"expr": "farm_actor_mailbox_queued", "legendFormat": "{{actor_kind}} queued", "refId": "A"},
+        {"expr": "farm_actor_mailbox_max_depth", "legendFormat": "{{actor_kind}} max depth", "refId": "B"}
+      ],
+      "title": "Actor Mailbox Pressure",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0},
+      "id": 3,
+      "targets": [
+        {"expr": "rate(farm_actor_mailbox_rejected_total[5m])", "legendFormat": "{{actor_kind}}", "refId": "A"}
+      ],
+      "title": "Mailbox Rejections / second",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "id": 4,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, actor_kind, operation) (rate(farm_store_operation_seconds_bucket[5m])))",
+          "legendFormat": "{{actor_kind}}/{{operation}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Actor Store P99",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "id": 5,
+      "targets": [
+        {
+          "expr": "sum by (actor_kind, operation, result) (rate(farm_store_operation_total{result=~\"cas_conflict|writer_fenced|error\"}[5m]))",
+          "legendFormat": "{{actor_kind}}/{{operation}}/{{result}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Store Conflicts and Errors / second",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "id": 6,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(farm_workflow_age_seconds_bucket[5m])))",
+          "legendFormat": "P99 age",
+          "refId": "A"
+        }
+      ],
+      "title": "Claimed Workflow Age P99",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "id": 7,
+      "targets": [
+        {"expr": "sum by (result) (rate(farm_workflow_processed_total[5m]))", "legendFormat": "{{result}}", "refId": "A"},
+        {"expr": "rate(farm_workflow_claim_error_total[5m])", "legendFormat": "claim_error", "refId": "B"}
+      ],
+      "title": "Workflow Outcomes / second",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": ["farm", "capacity", "actor", "workflow"],
+  "templating": {"list": []},
+  "time": {"from": "now-30m", "to": "now"},
+  "timezone": "browser",
+  "title": "Classic Farm Capacity",
+  "uid": "classic-farm-capacity",
+  "version": 1
+}

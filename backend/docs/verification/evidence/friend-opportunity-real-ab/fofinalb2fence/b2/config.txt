@@ -1,0 +1,8 @@
+namespace=foperf-b2-fofinalb2fence
+attach=true
+wakeup=true
+client_mode=B2
+header_read_mode=narrow
+hint_transport=direct
+friend_navigation=v3-player-svr
+topology=random-loopback-real-processes

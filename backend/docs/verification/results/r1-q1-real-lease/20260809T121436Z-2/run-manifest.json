@@ -1,0 +1,25 @@
+{
+  "assembly_manifest_generated_before_start": true,
+  "assembly_reason": "orchestrator exited before both rounds completed (status=1)",
+  "assembly_status": "INCONCLUSIVE",
+  "lease_config": {},
+  "r1_4_commit": "1ec3dcd166a7449b40aa934ee7324154474b3c05",
+  "redis_endpoint_digest": {
+    "algorithm": "sha256",
+    "digest": "UNAVAILABLE"
+  },
+  "redis_password_recorded": false,
+  "redis_url_recorded": false,
+  "rounds": {
+    "a": {
+      "minimum_cycles": 20,
+      "subscriptions": 200
+    },
+    "b": {
+      "subscriptions": 20
+    }
+  },
+  "run_id": "20260809T121436Z-2",
+  "schema_version": "r1-q1-real-lease-run-manifest/v1",
+  "source_head": "UNAVAILABLE"
+}

@@ -1,0 +1,15 @@
+challenge=3f134d25676ecba9783c1c06f5db3aaa
+player_pod_uid=006904cf-8739-407c-9f25-22bf47f1d0b9
+farm_pod_uid=f23c708a-980c-4784-9531-5b934289a669
+player_sts_uid=e9fbf6a1-21b6-4c5d-a5cb-d6d6c888fcdf
+farm_sts_uid=88488903-fefa-4f29-8cf0-55511021a6c4
+player_boot=player-svr-0-006904cf-8739-407c-9f25-22bf47f1d0b9
+farm_boot=farm-svr-0-f23c708a-980c-4784-9531-5b934289a669
+worker_a_boot=farm-worker-a-60b45f25aecdd662fb511b74512c6dd7
+worker_b_boot=farm-worker-b-6f895d79c68356098c66682f6b47e236
+initial_ctrl_boot=route-controller-initial-clean-3f134d25676ecba9783c1c06f5db3aaa
+assign_ctrl_boot=route-controller-assign-clean-3f134d25676ecba9783c1c06f5db3aaa
+final_ctrl_boot=route-controller-final-clean-3f134d25676ecba9783c1c06f5db3aaa
+downlink_batch_size=32
+holder_pprof=0
+gate_image=sha256:244ab98e60699b8bdcde102c1fdb266003806a517b4b8462422554fdc22fc741

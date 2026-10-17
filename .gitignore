@@ -1,0 +1,9 @@
+
+# Local credentials and generated dependencies
+**/.env
+**/.env.local
+**/config.sh
+**/node_modules/
+**/__pycache__/
+**/deploy/secrets/*.conf
+!**/*.example

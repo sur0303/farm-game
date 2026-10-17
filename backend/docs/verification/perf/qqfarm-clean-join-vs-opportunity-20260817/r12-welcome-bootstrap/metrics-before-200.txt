@@ -1,0 +1,53 @@
+=== pods 2026-08-17T11:50:54Z ===
+NAME                               READY   STATUS    RESTARTS   AGE     IP             NODE            NOMINATED NODE   READINESS GATES
+farm-gate-5b5b595d85-lbw2f         1/1     Running   0          15m     198.18.0.56    198.18.0.57     <none>           <none>
+farm-grafana-64f7f46898-z58tr      1/1     Running   0          32h     198.18.0.29    198.18.0.30    <none>           <none>
+farm-prometheus-5966b58fdf-6xrnv   1/1     Running   0          32h     198.18.0.31   198.18.0.32    <none>           <none>
+farm-redis-0                       1/1     Running   0          3h47m   198.18.0.33    198.18.0.34     <none>           <none>
+farm-redis-1                       1/1     Running   0          3h47m   198.18.0.35    198.18.0.36   <none>           <none>
+farm-redis-2                       1/1     Running   0          3h47m   198.18.0.37   198.18.0.38   <none>           <none>
+farm-redis-3                       1/1     Running   0          3h48m   198.18.0.39   198.18.0.40    <none>           <none>
+farm-redis-4                       1/1     Running   0          3h48m   198.18.0.41   198.18.0.42    <none>           <none>
+farm-redis-5                       1/1     Running   0          3h48m   198.18.0.43    198.18.0.44    <none>           <none>
+farm-route-bootstrap               1/1     Running   0          17m     198.18.0.58   198.18.0.28    <none>           <none>
+farm-svr-0                         1/1     Running   0          17m     198.18.0.59   198.18.0.32    <none>           <none>
+farm-worker-a-8c9dcbf44-pctpx      1/1     Running   0          15m     198.18.0.60   198.18.0.61   <none>           <none>
+farm-worker-b-5fdcbff857-b95jg     1/1     Running   0          15m     198.18.0.62   198.18.0.63    <none>           <none>
+player-svr-0                       1/1     Running   0          17m     198.18.0.64   198.18.0.18   <none>           <none>
+route-controller-994877cdc-jkkbm   1/1     Running   0          14m     198.18.0.65   198.18.0.66    <none>           <none>
+=== restarts ===
+farm-gate-5b5b595d85-lbw2f r=0 ready=true uid=65c30ff6-d00a-4356-b821-218e82670c61
+farm-grafana-64f7f46898-z58tr r=0 ready=true uid=9bde1e3e-0f11-4d3d-b095-610f75c1ed9b
+farm-prometheus-5966b58fdf-6xrnv r=0 ready=true uid=4b39ce9a-0cb7-4452-8e43-c2dcdce983eb
+farm-redis-0 r=0 ready=true uid=0bc599a1-9d87-4fd6-b136-e2b0c2eb5766
+farm-redis-1 r=0 ready=true uid=ca4139a0-6f70-421f-9510-557161cb5f94
+farm-redis-2 r=0 ready=true uid=961ae66c-989b-4646-b4a8-800969fb5de9
+farm-redis-3 r=0 ready=true uid=9821b724-8f3b-42c5-8c58-887f1487ba07
+farm-redis-4 r=0 ready=true uid=a07d54e6-a75b-497c-b5d5-3058c7cb7faa
+farm-redis-5 r=0 ready=true uid=94159656-2ca8-4569-992a-db91a88626b2
+farm-route-bootstrap r=0 ready=true uid=4ed140d9-1bbb-4b1e-ad1b-27eeb94c9f98
+farm-svr-0 r=0 ready=true uid=aec0e668-806b-4adc-aee6-e4d3e4c06554
+farm-worker-a-8c9dcbf44-pctpx r=0 ready=true uid=57cba03e-70ac-4ece-b6a9-fc910b27a955
+farm-worker-b-5fdcbff857-b95jg r=0 ready=true uid=4d3ae4ff-c549-45d5-b287-a04d3cb062ce
+player-svr-0 r=0 ready=true uid=d59f9c18-720a-4c96-af65-f25e6e60650d
+route-controller-994877cdc-jkkbm r=0 ready=true uid=f575091c-ee91-463f-87e3-69d727e5ba15
+=== top ===
+NAME                               CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-lbw2f         10m          18Mi            
+farm-grafana-64f7f46898-z58tr      1m           49Mi            
+farm-prometheus-5966b58fdf-6xrnv   3m           75Mi            
+farm-redis-0                       26m          766Mi           
+farm-redis-1                       23m          782Mi           
+farm-redis-2                       25m          767Mi           
+farm-redis-3                       9m           760Mi           
+farm-redis-4                       7m           758Mi           
+farm-redis-5                       10m          774Mi           
+farm-route-bootstrap               0m           2Mi             
+farm-svr-0                         2m           24Mi            
+farm-worker-a-8c9dcbf44-pctpx      32m          15Mi            
+farm-worker-b-5fdcbff857-b95jg     34m          16Mi            
+player-svr-0                       8m           211Mi           
+route-controller-994877cdc-jkkbm   7m           14Mi            
+=== player image ===
+mirrors.tencent.com/uc-backend/farm-route-runtime@sha256:b536925129d840c219892156593d49a08cedab312c7d4202b4d1898dd53f51a5
+queue_full_before=0

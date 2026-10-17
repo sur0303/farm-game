@@ -1,0 +1,26 @@
+{
+  "schema_version": "friend-opportunity-c0.plan.v1",
+  "name": "friend-opportunity-c0-smoke",
+  "description": "Short isolated C0 smoke over ephemeral Redis. Does not claim 30M DAU.",
+  "transport": {
+    "expected": "direct",
+    "effective_required": "direct",
+    "unsupported": ["pubsub", "online-ratio", "friend-base"]
+  },
+  "fixture": {
+    "density_percent": 50,
+    "fake_base": 7000000000
+  },
+  "matrix": {
+    "friend_counts": [20],
+    "scenarios": ["friend-list", "next-opportunity", "hint"]
+  },
+  "identity": {
+    "conns": 1,
+    "viewer_must_equal_login": true
+  },
+  "redis_safety": {
+    "ephemeral_only": true,
+    "forbidden": ["CONFIG SET", "SLOWLOG RESET", "FLUSHALL", "FLUSHDB", "broad SCAN+DEL"]
+  }
+}

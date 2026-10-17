@@ -1,0 +1,10 @@
+{
+  "verdict": "FAIL",
+  "reason": "scenario s3b failed: no retry DELIVER_BATCH_OK for the planted change",
+  "steps": {
+    "deliver_ok": {
+      "status": "fail",
+      "detail": "no retry DELIVER_BATCH_OK for the planted change"
+    }
+  }
+}

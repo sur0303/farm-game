@@ -1,0 +1,1 @@
+probe=PASS gate_ready=1 endpoints=198.18.0.68 9092 gateway_id=farm-gate routes=farm-gate=farm-gate.developer_026-qqfarm.svc.cluster.local:9092

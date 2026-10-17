@@ -1,0 +1,57 @@
+{
+  "audited_at": "2026-08-06T13:50:00Z",
+  "authority": {
+    "farm": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-farm-20260806T134934Z-294400",
+        "holder_instance_id": "smoke-farm",
+        "last_transition_at_ms": "1786024180981",
+        "last_transition_digest": "7c9e973c8d3572d47fe8c3f4a3928590c60758497d6828e1c0c9ee5b32168d3b",
+        "last_transition_id": "claim-FARM-20260806T134934Z-294400",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786024251022",
+        "lease_state": "ACTIVE",
+        "route_domain": "FARM",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260806t134934z-294400:local:auth:farm:v1:s:0}:shard-authority"
+    },
+    "player": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-player-20260806T134934Z-294400",
+        "holder_instance_id": "smoke-player",
+        "last_transition_at_ms": "1786024180981",
+        "last_transition_digest": "60a0b9d1e0a764c7c6f3964a429d7ec842ed1440b7d7f162bccd572db41b9ddc",
+        "last_transition_id": "claim-PLAYER-20260806T134934Z-294400",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786024251009",
+        "lease_state": "ACTIVE",
+        "route_domain": "PLAYER",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260806t134934z-294400:local:auth:player:v1:s:0}:shard-authority"
+    }
+  },
+  "protocol_verdict": {
+    "finished_at": "2026-08-06T13:50:00Z",
+    "frames": 0,
+    "steps": {
+      "register": {
+        "detail": "register status 400: {\"error\":\"account: username must be 3-24 letters, digits, or underscores\",\"error_code\":\"ERR_INVALID_ACCOUNT_INPUT\"}\n",
+        "status": "fail"
+      }
+    },
+    "verdict": "FAIL"
+  },
+  "route_snapshot_sha256": "418"
+}

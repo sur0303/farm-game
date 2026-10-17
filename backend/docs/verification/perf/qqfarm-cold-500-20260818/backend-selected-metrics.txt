@@ -1,0 +1,242 @@
+===player-svr-0
+# HELP actor_record_serialized_bytes Serialized model:record payload bytes submitted by Actor domain.
+# TYPE actor_record_serialized_bytes histogram
+actor_record_serialized_bytes_bucket{domain="player",le="64"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="128"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="256"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="512"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="1024"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="2048"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="4096"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="8192"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="16384"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="32768"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="65536"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="131072"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="262144"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="524288"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="1.048576e+06"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="2.097152e+06"} 75339
+actor_record_serialized_bytes_bucket{domain="player",le="+Inf"} 75339
+actor_record_serialized_bytes_sum{domain="player"} 0
+actor_record_serialized_bytes_count{domain="player"} 75339
+# HELP farm_actor_activation_actors Current actors in the given activation FSM state.
+# TYPE farm_actor_activation_actors gauge
+farm_actor_activation_actors{actor_kind="player",state="ABSENT"} 3881
+farm_actor_activation_actors{actor_kind="player",state="ACTIVE"} 71458
+farm_actor_activation_actors{actor_kind="player",state="CLAIM_UNKNOWN"} 0
+farm_actor_activation_actors{actor_kind="player",state="DRAINING"} 0
+farm_actor_activation_actors{actor_kind="player",state="FENCED"} 0
+farm_actor_activation_actors{actor_kind="player",state="LOADING"} 0
+farm_actor_activation_actors{actor_kind="player",state="PASSIVATING"} 0
+farm_actor_activation_actors{actor_kind="player",state="QUIESCING"} 0
+farm_actor_activation_actors{actor_kind="player",state="RECONCILE_REQUIRED"} 0
+farm_actor_activation_actors{actor_kind="player",state="RESOLVING_UNKNOWN"} 0
+# HELP farm_actor_activation_backoff_total Load attempts rejected while in load-failure backoff.
+# TYPE farm_actor_activation_backoff_total counter
+farm_actor_activation_backoff_total{actor_kind="player"} 0
+# HELP farm_actor_activation_concurrent_loads In-flight actor loads holding a concurrency slot.
+# TYPE farm_actor_activation_concurrent_loads gauge
+farm_actor_activation_concurrent_loads{actor_kind="player"} 0
+# HELP farm_actor_activation_entry_forgotten_total ABSENT activation entries removed after passivation released all resources.
+# TYPE farm_actor_activation_entry_forgotten_total counter
+farm_actor_activation_entry_forgotten_total{actor_kind="player"} 0
+# HELP farm_actor_activation_load_fail_total Failed actor loads that entered backoff.
+# TYPE farm_actor_activation_load_fail_total counter
+farm_actor_activation_load_fail_total{actor_kind="player"} 0
+# HELP farm_actor_activation_panic_total Actors forced ABSENT after panic supervision.
+# TYPE farm_actor_activation_panic_total counter
+farm_actor_activation_panic_total{actor_kind="player"} 0
+# HELP farm_actor_activation_passivate_completed_total Completed PASSIVATING to ABSENT passivations.
+# TYPE farm_actor_activation_passivate_completed_total counter
+farm_actor_activation_passivate_completed_total{actor_kind="player"} 0
+# HELP farm_actor_activation_pending_loads Pending load waiters against the concurrency hard gate.
+# TYPE farm_actor_activation_pending_loads gauge
+farm_actor_activation_pending_loads{actor_kind="player"} 0
+# HELP farm_actor_activation_reactivated_total Actor loads following a completed passivation (vs cold starts).
+# TYPE farm_actor_activation_reactivated_total counter
+farm_actor_activation_reactivated_total{actor_kind="player"} 0
+# HELP farm_actor_activation_throttled_total Activation / load admissions rejected by rate or concurrency gates.
+# TYPE farm_actor_activation_throttled_total counter
+farm_actor_activation_throttled_total{actor_kind="player"} 0
+# HELP farm_actor_activation_tracked_keys Tracked activation FSM entries.
+# TYPE farm_actor_activation_tracked_keys gauge
+farm_actor_activation_tracked_keys{actor_kind="player"} 75339
+# HELP farm_actor_active_keys Active keyed actor mailboxes.
+# TYPE farm_actor_active_keys gauge
+farm_actor_active_keys{actor_kind="player"} 71458
+# HELP farm_actor_idle_sweeper_blocked_total Candidates kept alive by a passivation blocker, by reason.
+# TYPE farm_actor_idle_sweeper_blocked_total counter
+farm_actor_idle_sweeper_blocked_total{actor_kind="player",reason="system_queue_nonempty"} 0
+farm_actor_idle_sweeper_blocked_total{actor_kind="player",reason="turn_running"} 0
+farm_actor_idle_sweeper_blocked_total{actor_kind="player",reason="user_queue_nonempty"} 0
+# HELP farm_actor_idle_sweeper_buckets Non-empty time buckets in the idle sweeper.
+# TYPE farm_actor_idle_sweeper_buckets gauge
+farm_actor_idle_sweeper_buckets{actor_kind="player"} 10
+# HELP farm_actor_idle_sweeper_candidates_total Idle candidates re-validated by the retire callback.
+# TYPE farm_actor_idle_sweeper_candidates_total counter
+farm_actor_idle_sweeper_candidates_total{actor_kind="player"} 3881
+# HELP farm_actor_idle_sweeper_lag_seconds How far the oldest unprocessed expired bucket lags behind, in seconds.
+# TYPE farm_actor_idle_sweeper_lag_seconds gauge
+farm_actor_idle_sweeper_lag_seconds{actor_kind="player"} 330
+# HELP farm_actor_idle_sweeper_not_idle_total Candidates that showed fresh activity during revalidation.
+# TYPE farm_actor_idle_sweeper_not_idle_total counter
+farm_actor_idle_sweeper_not_idle_total{actor_kind="player"} 0
+# HELP farm_actor_idle_sweeper_retired_total Candidates fully released by the retire callback.
+# TYPE farm_actor_idle_sweeper_retired_total counter
+farm_actor_idle_sweeper_retired_total{actor_kind="player"} 3881
+# HELP farm_actor_idle_sweeper_sweeps_total Idle sweeper ticks executed.
+# TYPE farm_actor_idle_sweeper_sweeps_total counter
+farm_actor_idle_sweeper_sweeps_total{actor_kind="player"} 27
+# HELP farm_actor_idle_sweeper_tracked_keys Keys currently tracked by the idle sweeper.
+# TYPE farm_actor_idle_sweeper_tracked_keys gauge
+farm_actor_idle_sweeper_tracked_keys{actor_kind="player"} 71458
+# HELP farm_actor_mailbox_max_depth Maximum current user mailbox depth in this process.
+# TYPE farm_actor_mailbox_max_depth gauge
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+# HELP farm_actor_mailbox_queued Queued actor turns across this process (user + system).
+# TYPE farm_actor_mailbox_queued gauge
+farm_actor_mailbox_queued{actor_kind="player"} 0
+# HELP farm_actor_mailbox_rejected_total Actor turns rejected because a queue was full (user + system).
+# TYPE farm_actor_mailbox_rejected_total counter
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+# HELP farm_actor_mailbox_retire_busy_total Per-key retire attempts kept because queued or in-flight work remained.
+# TYPE farm_actor_mailbox_retire_busy_total counter
+farm_actor_mailbox_retire_busy_total{actor_kind="player"} 0
+# HELP farm_actor_mailbox_retire_stale_total Per-key retire attempts abandoned on generation mismatch (newer mailbox reused the key).
+# TYPE farm_actor_mailbox_retire_stale_total counter
+farm_actor_mailbox_retire_stale_total{actor_kind="player"} 0
+# HELP farm_actor_mailbox_retired_total Mailboxes retired per key after going idle (goroutine and queues released).
+# TYPE farm_actor_mailbox_retired_total counter
+farm_actor_mailbox_retired_total{actor_kind="player"} 3881
+# HELP farm_actor_route_snapshot_age_seconds Seconds since the local route snapshot was last Replace-d.
+# TYPE farm_actor_route_snapshot_age_seconds gauge
+farm_actor_route_snapshot_age_seconds 716.047681103
+# HELP farm_actor_route_snapshot_revision Last successfully installed RouteSnapshot GlobalRevision.
+# TYPE farm_actor_route_snapshot_revision gauge
+farm_actor_route_snapshot_revision 2049
+# HELP farm_actor_submit_total Accepted actor turns.
+# TYPE farm_actor_submit_total counter
+farm_actor_submit_total{actor_kind="player"} 150678
+# HELP farm_actor_system_queue_queued Queued system turns across this process.
+===player-svr-1
+# HELP actor_record_serialized_bytes Serialized model:record payload bytes submitted by Actor domain.
+# TYPE actor_record_serialized_bytes histogram
+actor_record_serialized_bytes_bucket{domain="player",le="64"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="128"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="256"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="512"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="1024"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="2048"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="4096"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="8192"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="16384"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="32768"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="65536"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="131072"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="262144"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="524288"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="1.048576e+06"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="2.097152e+06"} 75255
+actor_record_serialized_bytes_bucket{domain="player",le="+Inf"} 75255
+actor_record_serialized_bytes_sum{domain="player"} 0
+actor_record_serialized_bytes_count{domain="player"} 75255
+# HELP farm_actor_activation_actors Current actors in the given activation FSM state.
+# TYPE farm_actor_activation_actors gauge
+farm_actor_activation_actors{actor_kind="player",state="ABSENT"} 4144
+farm_actor_activation_actors{actor_kind="player",state="ACTIVE"} 71111
+farm_actor_activation_actors{actor_kind="player",state="CLAIM_UNKNOWN"} 0
+farm_actor_activation_actors{actor_kind="player",state="DRAINING"} 0
+farm_actor_activation_actors{actor_kind="player",state="FENCED"} 0
+farm_actor_activation_actors{actor_kind="player",state="LOADING"} 0
+farm_actor_activation_actors{actor_kind="player",state="PASSIVATING"} 0
+farm_actor_activation_actors{actor_kind="player",state="QUIESCING"} 0
+farm_actor_activation_actors{actor_kind="player",state="RECONCILE_REQUIRED"} 0
+farm_actor_activation_actors{actor_kind="player",state="RESOLVING_UNKNOWN"} 0
+# HELP farm_actor_activation_backoff_total Load attempts rejected while in load-failure backoff.
+# TYPE farm_actor_activation_backoff_total counter
+farm_actor_activation_backoff_total{actor_kind="player"} 0
+# HELP farm_actor_activation_concurrent_loads In-flight actor loads holding a concurrency slot.
+# TYPE farm_actor_activation_concurrent_loads gauge
+farm_actor_activation_concurrent_loads{actor_kind="player"} 0
+# HELP farm_actor_activation_entry_forgotten_total ABSENT activation entries removed after passivation released all resources.
+# TYPE farm_actor_activation_entry_forgotten_total counter
+farm_actor_activation_entry_forgotten_total{actor_kind="player"} 0
+# HELP farm_actor_activation_load_fail_total Failed actor loads that entered backoff.
+# TYPE farm_actor_activation_load_fail_total counter
+farm_actor_activation_load_fail_total{actor_kind="player"} 0
+# HELP farm_actor_activation_panic_total Actors forced ABSENT after panic supervision.
+# TYPE farm_actor_activation_panic_total counter
+farm_actor_activation_panic_total{actor_kind="player"} 0
+# HELP farm_actor_activation_passivate_completed_total Completed PASSIVATING to ABSENT passivations.
+# TYPE farm_actor_activation_passivate_completed_total counter
+farm_actor_activation_passivate_completed_total{actor_kind="player"} 0
+# HELP farm_actor_activation_pending_loads Pending load waiters against the concurrency hard gate.
+# TYPE farm_actor_activation_pending_loads gauge
+farm_actor_activation_pending_loads{actor_kind="player"} 0
+# HELP farm_actor_activation_reactivated_total Actor loads following a completed passivation (vs cold starts).
+# TYPE farm_actor_activation_reactivated_total counter
+farm_actor_activation_reactivated_total{actor_kind="player"} 0
+# HELP farm_actor_activation_throttled_total Activation / load admissions rejected by rate or concurrency gates.
+# TYPE farm_actor_activation_throttled_total counter
+farm_actor_activation_throttled_total{actor_kind="player"} 0
+# HELP farm_actor_activation_tracked_keys Tracked activation FSM entries.
+# TYPE farm_actor_activation_tracked_keys gauge
+farm_actor_activation_tracked_keys{actor_kind="player"} 75255
+# HELP farm_actor_active_keys Active keyed actor mailboxes.
+# TYPE farm_actor_active_keys gauge
+farm_actor_active_keys{actor_kind="player"} 71111
+# HELP farm_actor_idle_sweeper_blocked_total Candidates kept alive by a passivation blocker, by reason.
+# TYPE farm_actor_idle_sweeper_blocked_total counter
+farm_actor_idle_sweeper_blocked_total{actor_kind="player",reason="system_queue_nonempty"} 0
+farm_actor_idle_sweeper_blocked_total{actor_kind="player",reason="turn_running"} 0
+farm_actor_idle_sweeper_blocked_total{actor_kind="player",reason="user_queue_nonempty"} 0
+# HELP farm_actor_idle_sweeper_buckets Non-empty time buckets in the idle sweeper.
+# TYPE farm_actor_idle_sweeper_buckets gauge
+farm_actor_idle_sweeper_buckets{actor_kind="player"} 10
+# HELP farm_actor_idle_sweeper_candidates_total Idle candidates re-validated by the retire callback.
+# TYPE farm_actor_idle_sweeper_candidates_total counter
+farm_actor_idle_sweeper_candidates_total{actor_kind="player"} 4144
+# HELP farm_actor_idle_sweeper_lag_seconds How far the oldest unprocessed expired bucket lags behind, in seconds.
+# TYPE farm_actor_idle_sweeper_lag_seconds gauge
+farm_actor_idle_sweeper_lag_seconds{actor_kind="player"} 360
+# HELP farm_actor_idle_sweeper_not_idle_total Candidates that showed fresh activity during revalidation.
+# TYPE farm_actor_idle_sweeper_not_idle_total counter
+farm_actor_idle_sweeper_not_idle_total{actor_kind="player"} 0
+# HELP farm_actor_idle_sweeper_retired_total Candidates fully released by the retire callback.
+# TYPE farm_actor_idle_sweeper_retired_total counter
+farm_actor_idle_sweeper_retired_total{actor_kind="player"} 4144
+# HELP farm_actor_idle_sweeper_sweeps_total Idle sweeper ticks executed.
+# TYPE farm_actor_idle_sweeper_sweeps_total counter
+farm_actor_idle_sweeper_sweeps_total{actor_kind="player"} 26
+# HELP farm_actor_idle_sweeper_tracked_keys Keys currently tracked by the idle sweeper.
+# TYPE farm_actor_idle_sweeper_tracked_keys gauge
+farm_actor_idle_sweeper_tracked_keys{actor_kind="player"} 71111
+# HELP farm_actor_mailbox_max_depth Maximum current user mailbox depth in this process.
+# TYPE farm_actor_mailbox_max_depth gauge
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+# HELP farm_actor_mailbox_queued Queued actor turns across this process (user + system).
+# TYPE farm_actor_mailbox_queued gauge
+farm_actor_mailbox_queued{actor_kind="player"} 0
+# HELP farm_actor_mailbox_rejected_total Actor turns rejected because a queue was full (user + system).
+# TYPE farm_actor_mailbox_rejected_total counter
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+# HELP farm_actor_mailbox_retire_busy_total Per-key retire attempts kept because queued or in-flight work remained.
+# TYPE farm_actor_mailbox_retire_busy_total counter
+farm_actor_mailbox_retire_busy_total{actor_kind="player"} 0
+# HELP farm_actor_mailbox_retire_stale_total Per-key retire attempts abandoned on generation mismatch (newer mailbox reused the key).
+# TYPE farm_actor_mailbox_retire_stale_total counter
+farm_actor_mailbox_retire_stale_total{actor_kind="player"} 0
+# HELP farm_actor_mailbox_retired_total Mailboxes retired per key after going idle (goroutine and queues released).
+# TYPE farm_actor_mailbox_retired_total counter
+farm_actor_mailbox_retired_total{actor_kind="player"} 4144
+# HELP farm_actor_route_snapshot_age_seconds Seconds since the local route snapshot was last Replace-d.
+# TYPE farm_actor_route_snapshot_age_seconds gauge
+farm_actor_route_snapshot_age_seconds 716.767874351
+# HELP farm_actor_route_snapshot_revision Last successfully installed RouteSnapshot GlobalRevision.
+# TYPE farm_actor_route_snapshot_revision gauge
+farm_actor_route_snapshot_revision 2049
+# HELP farm_actor_submit_total Accepted actor turns.
+# TYPE farm_actor_submit_total counter
+farm_actor_submit_total{actor_kind="player"} 150510
+# HELP farm_actor_system_queue_queued Queued system turns across this process.

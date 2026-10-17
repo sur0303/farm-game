@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package farm;
+
+option go_package = "farmgame/api/gen/farm;farmpb";
+
+import "farm/farm.proto";
+import "public/commands.proto";
+
+message PlotView {
+  uint32 plot_index = 1;
+  uint64 plot_version = 2;
+  string crop_cycle_id = 3;
+  int32 crop_definition_id = 4;
+  CropPhase crop_phase = 5;
+  int64 plant_at_ms = 6;
+  int64 mature_at_ms = 7;
+  int32 harvestable_count = 8;
+  int32 stolen_total = 9;
+  bool watered = 10;
+  PlotLockState lock_state = 11;
+  uint32 unlock_order = 12;
+  uint32 required_level = 13;
+  uint64 normal_coin_price = 14;
+  bool unlock_candidate = 15;
+  uint64 unlock_rule_version = 16;
+}
+
+message FarmSnapshot {
+  uint64 owner_id = 1;
+  int64 snapshot_time_ms = 2;
+  repeated PlotView plots = 3;
+  uint64 farm_version = 4;
+  public.PublicProfileView owner_public_profile = 5;
+}
+
+message FarmChange {
+  uint64 owner_id = 1;
+  uint64 farm_version = 2;
+  repeated PlotView changed_plots = 3;
+}
+
+// FarmChangePush is the stable public payload for a Ready subscription's
+// real-time change. Subscription identity stays in ServerPushEnvelope's
+// FarmSubscriptionPushContext; the wrapper keeps the public payload evolvable
+// without creating a second FarmChange representation.
+message FarmChangePush {
+  FarmChange change = 1;
+}
+
+message FarmCommandResult {
+  FarmSnapshot snapshot = 1;
+  int32 granted_item_id = 2;
+  int64 granted_item_count = 3;
+  bytes private_state = 4; // serialized player.PrivateState
+  string settlement_id = 5;
+  // Server-issued subscription identity returned by JoinFarm.
+  string subscription_id = 6;
+}
+
+message ResyncRequired {
+  string reason = 1;
+  uint64 latest_known_farm_version = 2;
+}
+
+// ── 28 §2.2:Join/Snapshot 屏障的 Typed Payload(W11A 冻结) ──
+// target_farm_id/subscription_id 由 FarmSubscriptionPushContext 提供,不在 Payload 重复。
+
+message FarmSnapshotPush {
+  string join_attempt_id = 1;
+  uint64 snapshot_version = 2;
+  FarmSnapshot snapshot = 3;
+}
+
+// FarmDeltaBatchPush 是 Join Catch-up 的最小公开合同:through >= from、
+// deltas 非空、首条.version == from、末条.version == through、相邻严格 +1,
+// 不得包含空洞/重复/乱序。
+message FarmDeltaBatchPush {
+  string join_attempt_id = 1;
+  uint64 from_version = 2;
+  uint64 through_version = 3;
+  repeated FarmChange deltas = 4;
+}
+
+message SubscriptionReadyPush {
+  string join_attempt_id = 1;
+  uint64 ready_through_version = 2;
+}
+
+enum RejoinReason {
+  REJOIN_REASON_UNSPECIFIED = 0;
+  REJOIN_REASON_STREAM_GAP = 1;
+  REJOIN_REASON_DELIVERY_FAILED = 2;
+  REJOIN_REASON_HOLDER_REBUILT = 3;
+  REJOIN_REASON_SUBSCRIPTION_LEASE_LOST = 4;
+}
+
+// invalid_from_version 只用于诊断"从哪个版本起无法证明连续",
+// 不能被 H5 解释成增量续传起点(28 §2.2)。
+message RejoinRequiredPush {
+  RejoinReason reason = 1;
+  optional uint64 invalid_from_version = 2;
+}

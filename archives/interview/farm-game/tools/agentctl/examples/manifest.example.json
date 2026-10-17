@@ -1,0 +1,52 @@
+{
+  "task_id": "sc1-example",
+  "repo": "/data/home/developer_026/CodeBuddy/20260519141303/farm-game",
+  "worktree": "/data/home/developer_026/CodeBuddy/20260519141303/farm-game-sc1-example",
+  "branch": "codex/sc1-example-20260804",
+  "base_commit": "9adc81d21e3ede7abbd0fd5df884ab54c7217700",
+  "execution_policy": {
+    "initial_writer_profile": "codex-luna-primary",
+    "fixer_profile": "cursor-grok45-fixer",
+    "reviewer_profile": "codex-luna-review",
+    "diagnoser_profile": "codex-sol-xhigh-diagnose",
+    "backup_profile": "codebuddy-kimi-k3-backup",
+    "max_fix_cycles_before_diagnosis": 2,
+    "max_post_diagnosis_fix_cycles": 1,
+    "require_fresh_review_session": true,
+    "automatic_provider_switch": false
+  },
+  "prompt_file": "prompts/sc1-example.md",
+  "owned_write_set": [
+    "tools/agentctl/**"
+  ],
+  "semantic_locks": [
+    "agentctl-control-plane"
+  ],
+  "risk": "medium",
+  "dependencies": [],
+  "forbidden_write_set": [
+    "src/game-protocol/**",
+    "src/actors/**",
+    "src/redis/**",
+    "src/gateway/**"
+  ],
+  "authoritative_inputs": [
+    {
+      "path": "docs/design/74-agent-control-plane-multi-model-v1.2.md",
+      "section": "CP1 Profile and RunnerAdapter"
+    }
+  ],
+  "acceptance_commands": [
+    "python3 -m unittest discover -s tools/agentctl/tests -v",
+    "git diff --check"
+  ],
+  "review_scope": [
+    "tools/agentctl/**",
+    "docs/verification/agentctl-multi-model-cp1-handoff-20260805.md"
+  ],
+  "frozen_summary": [
+    "This task owns only its declared write set.",
+    "Do not alter game protocol, Actor, Redis, Gateway, or business contracts 26-37.",
+    "Legacy model/reasoning_effort manifests remain valid during migration."
+  ]
+}

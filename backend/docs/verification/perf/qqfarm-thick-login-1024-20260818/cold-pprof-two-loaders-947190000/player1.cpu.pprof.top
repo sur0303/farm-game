@@ -1,0 +1,39 @@
+File: player-svr
+Build ID: 0565d61ea6e95006db33febdf1265cfc4ebf0546
+Type: cpu
+Time: 2026-08-18 11:59:02 CST
+Duration: 20s, Total samples = 3.91s (19.55%)
+Showing nodes accounting for 2.03s, 51.92% of 3.91s total
+Dropped 255 nodes (cum <= 0.02s)
+Showing top 30 nodes out of 456
+      flat  flat%   sum%        cum   cum%
+     0.53s 13.55% 13.55%      0.53s 13.55%  internal/runtime/syscall/linux.Syscall6
+     0.17s  4.35% 17.90%      0.17s  4.35%  runtime.memmove
+     0.16s  4.09% 21.99%      0.25s  6.39%  runtime.scanObject
+     0.13s  3.32% 25.32%      0.13s  3.32%  runtime.memclrNoHeapPointers
+     0.10s  2.56% 27.88%      0.10s  2.56%  runtime.futex
+     0.06s  1.53% 29.41%      0.07s  1.79%  runtime.step
+     0.06s  1.53% 30.95%      0.10s  2.56%  runtime.tryDeferToSpanScan
+     0.06s  1.53% 32.48%      0.07s  1.79%  runtime.typePointers.next
+     0.05s  1.28% 33.76%      0.05s  1.28%  runtime.findfunc
+     0.04s  1.02% 34.78%      0.04s  1.02%  aeshashbody
+     0.04s  1.02% 35.81%      0.06s  1.53%  google.golang.org/protobuf/internal/impl.(*MessageInfo).sizePointerSlow
+     0.04s  1.02% 36.83%      0.25s  6.39%  google.golang.org/protobuf/internal/impl.(*messageState).Range
+     0.04s  1.02% 37.85%      0.06s  1.53%  google.golang.org/protobuf/internal/impl.fieldInfoForScalar.func1
+     0.04s  1.02% 38.87%      0.11s  2.81%  runtime.(*unwinder).resolveInternal
+     0.04s  1.02% 39.90%      0.04s  1.02%  runtime.bool2int (inline)
+     0.04s  1.02% 40.92%      0.04s  1.02%  runtime.nextFreeFast (inline)
+     0.04s  1.02% 41.94%      0.14s  3.58%  runtime.pcvalue
+     0.04s  1.02% 42.97%      0.04s  1.02%  runtime.spanClass.sizeclass (inline)
+     0.03s  0.77% 43.73%      0.11s  2.81%  farmgame/internal/logic/actor/runtime.(*Executor).SubmitUserSized
+     0.03s  0.77% 44.50%      0.03s  0.77%  farmgame/internal/storage/redis/rediskey.redisCRC16
+     0.03s  0.77% 45.27%      0.06s  1.53%  google.golang.org/grpc/internal/transport.(*http2Server).operateHeaders
+     0.03s  0.77% 46.04%      0.03s  0.77%  google.golang.org/protobuf/internal/filedesc.(*Field).IsList
+     0.03s  0.77% 46.80%      0.03s  0.77%  internal/runtime/maps.(*Map).Used
+     0.03s  0.77% 47.57%      0.03s  0.77%  reflect.Value.Elem
+     0.03s  0.77% 48.34%      0.03s  0.77%  runtime.(*mspan).init
+     0.03s  0.77% 49.10%      0.08s  2.05%  runtime.bulkBarrierPreWrite
+     0.03s  0.77% 49.87%      0.54s 13.81%  runtime.mallocgc
+     0.03s  0.77% 50.64%      0.05s  1.28%  runtime.sweepone
+     0.03s  0.77% 51.41%      0.03s  0.77%  time.runtimeNow
+     0.02s  0.51% 51.92%      0.02s  0.51%  context.(*cancelCtx).Done

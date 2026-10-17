@@ -1,0 +1,3 @@
+{"http_status": 200, "observed_at": "2026-08-09T12:26:48.170871Z", "plan": {"drop_response_after_forward": false, "fail_farm_change_allow_rejoin": false, "hold_activate_response": false, "unavailable_before_forward": 0}, "source": "GET /admin/plan"}
+{"http_status": 200, "observed_at": "2026-08-09T12:27:25.756349Z", "plan": {"drop_response_after_forward": false, "fail_farm_change_allow_rejoin": true, "hold_activate_response": false, "unavailable_before_forward": 0}, "source": "GET /admin/plan"}
+{"http_status": 200, "observed_at": "2026-08-09T12:27:27.131342Z", "plan": {"drop_response_after_forward": false, "fail_farm_change_allow_rejoin": false, "hold_activate_response": false, "unavailable_before_forward": 0}, "source": "GET /admin/plan"}

@@ -1,0 +1,12 @@
+{
+  "profile_version": "redis-physical-probe-v1",
+  "authority_layout_version": "v1",
+  "workflow_layout_version": "v1",
+  "workflow_hash_version": 1,
+  "workflow_bucket_count_candidate": 256,
+  "wait_replicas": 1,
+  "wait_timeout_ms": 1000,
+  "overall_timeout_ms": 30000,
+  "probe_key_ttl_ms": 120000,
+  "lua_script_size_candidates": [1024, 8192, 32768, 65536]
+}

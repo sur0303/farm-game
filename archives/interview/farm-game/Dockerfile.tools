@@ -1,0 +1,27 @@
+# syntax=docker/dockerfile:1
+
+FROM golang:1.26-alpine AS build
+WORKDIR /src
+COPY go.mod go.sum ./
+ENV GOPROXY=https://goproxy.cn,direct
+ENV GOPRIVATE=git.internal.example.invalid
+RUN go mod download
+COPY . .
+
+ARG TOOLSET
+RUN set -eux; \
+    case "$TOOLSET" in \
+      load) tools="ws-stress lease-stress ws-driver live-farm-bot" ;; \
+      fault) tools="gate-vertical-e2e authority-fault-bot authority-smoke-fixture authority-smoke-bot q2r2b2-smoke" ;; \
+      *) echo "TOOLSET must be load or fault" >&2; exit 64 ;; \
+    esac; \
+    mkdir -p /out; \
+    for tool in $tools; do \
+      CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags "-s -w" -o "/out/$tool" "./cmd/$tool"; \
+    done
+
+FROM alpine:3.21
+RUN addgroup -S farm && adduser -S -G farm farm
+COPY --from=build /out/ /usr/local/bin/
+USER farm
+ENTRYPOINT ["/bin/sh"]

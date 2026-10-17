@@ -1,0 +1,14 @@
+{
+  "mode": "prepare",
+  "run_id": "baseline-20260805T110040Z",
+  "owner_player_id": 920000000,
+  "visitors": 199,
+  "public_share_created": true,
+  "public_share_accepted": 199,
+  "authority_pairs_active": 199,
+  "pair_fixture_writes_only": true,
+  "theft_records_written_by_helper": 0,
+  "share_accept_p50_ms": 64.676126,
+  "share_accept_p95_ms": 67.675568,
+  "share_accept_p99_ms": 74.582962
+}

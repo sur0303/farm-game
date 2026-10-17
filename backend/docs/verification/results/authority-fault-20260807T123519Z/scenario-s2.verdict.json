@@ -1,0 +1,10 @@
+{
+  "verdict": "FAIL",
+  "reason": "scenario s2 failed: plant timeout waiting plot change",
+  "steps": {
+    "owner_plant": {
+      "status": "fail",
+      "detail": "plant timeout waiting plot change"
+    }
+  }
+}

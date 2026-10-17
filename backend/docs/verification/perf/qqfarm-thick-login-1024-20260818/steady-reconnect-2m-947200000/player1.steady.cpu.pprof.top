@@ -1,0 +1,44 @@
+File: player-svr
+Build ID: 0565d61ea6e95006db33febdf1265cfc4ebf0546
+Type: cpu
+Time: 2026-08-18 12:11:00 CST
+Duration: 60s, Total samples = 18.24s (30.40%)
+Showing nodes accounting for 9.29s, 50.93% of 18.24s total
+Dropped 793 nodes (cum <= 0.09s)
+Showing top 35 nodes out of 330
+      flat  flat%   sum%        cum   cum%
+     3.24s 17.76% 17.76%      3.24s 17.76%  internal/runtime/syscall/linux.Syscall6
+     1.35s  7.40% 25.16%      1.35s  7.40%  runtime.futex
+     0.41s  2.25% 27.41%      0.41s  2.25%  runtime.nextFreeFast (inline)
+     0.41s  2.25% 29.66%      0.42s  2.30%  runtime.step
+     0.38s  2.08% 31.74%      0.38s  2.08%  runtime.memmove
+     0.24s  1.32% 33.06%      0.95s  5.21%  google.golang.org/protobuf/internal/impl.(*messageState).Range
+     0.19s  1.04% 34.10%      0.21s  1.15%  runtime.(*mspan).writeHeapBitsSmall
+     0.16s  0.88% 34.98%      0.60s  3.29%  runtime.pcvalue
+     0.15s  0.82% 35.80%      0.42s  2.30%  runtime.(*stkframe).getStackMap
+     0.15s  0.82% 36.62%      0.57s  3.12%  runtime.newobject
+     0.15s  0.82% 37.45%      0.15s  0.82%  time.runtimeNow
+     0.14s  0.77% 38.21%      0.14s  0.77%  golang.org/x/net/http/httpguts.isCTL
+     0.14s  0.77% 38.98%      0.21s  1.15%  google.golang.org/protobuf/internal/impl.(*MessageInfo).sizePointerSlow
+     0.14s  0.77% 39.75%      0.47s  2.58%  runtime.(*unwinder).resolveInternal
+     0.14s  0.77% 40.52%      0.14s  0.77%  runtime.findfunc
+     0.14s  0.77% 41.28%      0.30s  1.64%  runtime.scanObject
+     0.13s  0.71% 42.00%      0.13s  0.71%  internal/runtime/maps.ctrlGroup.matchH2
+     0.13s  0.71% 42.71%      1.84s 10.09%  runtime.findRunnable
+     0.13s  0.71% 43.42%      0.13s  0.71%  runtime.nanotime (inline)
+     0.12s  0.66% 44.08%      0.61s  3.34%  google.golang.org/protobuf/internal/impl.(*MessageInfo).unmarshalPointerEager
+     0.12s  0.66% 44.74%      0.16s  0.88%  internal/sync.(*HashTrieMap[go.shape.interface {},go.shape.interface {}]).Load
+     0.12s  0.66% 45.39%      0.61s  3.34%  runtime.adjustframe
+     0.11s   0.6% 46.00%      0.23s  1.26%  google.golang.org/protobuf/internal/impl.(*MessageInfo).marshalAppendPointer
+     0.11s   0.6% 46.60%      0.94s  5.15%  runtime.mallocgcSmallScanNoHeader
+     0.10s  0.55% 47.15%      0.14s  0.77%  runtime.selectgo
+     0.10s  0.55% 47.70%      0.11s   0.6%  runtime.tryDeferToSpanScan
+     0.09s  0.49% 48.19%      0.30s  1.64%  reflect.(*rtype).ptrTo
+     0.08s  0.44% 48.63%      0.40s  2.19%  runtime.growslice
+     0.07s  0.38% 49.01%      0.29s  1.59%  google.golang.org/protobuf/internal/impl.(*MessageInfo).mergePointer
+     0.07s  0.38% 49.40%      0.11s   0.6%  runtime.mallocgcTiny
+     0.06s  0.33% 49.73%      0.48s  2.63%  runtime.chansend
+     0.06s  0.33% 50.05%      0.39s  2.14%  runtime.makeslice
+     0.06s  0.33% 50.38%      0.55s  3.02%  runtime.netpoll
+     0.05s  0.27% 50.66%      0.24s  1.32%  farmgame/internal/storage/redis/authority.businessStateDigest
+     0.05s  0.27% 50.93%      0.41s  2.25%  github.com/redis/go-redis/v9.(*ClusterClient).processPipeline

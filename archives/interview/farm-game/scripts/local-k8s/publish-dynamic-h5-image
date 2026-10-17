@@ -1,0 +1,327 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+RUN_ID="${ROUTE_RUN_ID:-}"
+MODE="${1:---dry-run}"
+H5_ROOT="${H5_ROOT:-}"
+SOURCE_COMMIT="${H5_SOURCE_COMMIT:-fc7be57174e9ff4f18e6dfeb5fc1610d681172cf}"
+SOURCE_TREE="${H5_SOURCE_TREE:-cfeb47072287a2f8533dc7366481c006c4010012}"
+ATTESTATION_COMMIT="${H5_ATTESTATION_COMMIT:-}"
+BUILD_MODE="${H5_BUILD_MODE:-web}"
+H5_ORIGIN="${H5_ORIGIN:-https://farm.dynamic.local}"
+API_ORIGIN="${API_ORIGIN:-https://farm.dynamic.local}"
+WS_URL="${WS_URL:-wss://farm.dynamic.local/ws}"
+TARGET="127.0.0.1:5001/farm/h5:${SOURCE_COMMIT:0:12}-$RUN_ID"
+RECEIPT="$LAB_ROOT/receipts/dynamic-h5-image-$RUN_ID.json"
+
+case "$MODE" in
+  --dry-run|--build-publish) ;;
+  *)
+    echo "usage: ROUTE_RUN_ID=<id> H5_ROOT=<path> $0 [--dry-run|--build-publish]" >&2
+    exit 2
+    ;;
+esac
+[[ "$RUN_ID" =~ ^[a-z0-9][a-z0-9-]{0,62}$ ]] || {
+  echo "publish-dynamic-h5-image: ROUTE_RUN_ID is required" >&2
+  exit 1
+}
+[[ "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ && "$SOURCE_TREE" =~ ^[0-9a-f]{40}$ ]] || {
+  echo "publish-dynamic-h5-image: exact H5 source commit and tree are required" >&2
+  exit 1
+}
+[[ "$BUILD_MODE" == "web" ]] || {
+  echo "publish-dynamic-h5-image: only the web showcase product image is eligible" >&2
+  exit 1
+}
+
+if [[ "$MODE" == "--dry-run" ]]; then
+  python3 - "$RUN_ID" "$SOURCE_COMMIT" "$SOURCE_TREE" "$ATTESTATION_COMMIT" "$TARGET" "$RECEIPT" <<'PY'
+import json
+import sys
+
+run_id, source_commit, source_tree, attestation_commit, target, receipt = sys.argv[1:]
+print(json.dumps({
+    "schema_version": "farm-local-dynamic-h5-image-plan.v1",
+    "status": "DRY_RUN_NOT_BUILT",
+    "run_id": run_id,
+    "source_commit": source_commit,
+    "source_tree": source_tree,
+    "attestation_commit": attestation_commit or None,
+    "build_mode": "web",
+    "target": target,
+    "receipt": receipt,
+    "company_redis_contacted": False,
+    "cluster_applied": False,
+    "capacity_eligible": False,
+}, sort_keys=True, indent=2))
+PY
+  exit 0
+fi
+
+[[ -n "$H5_ROOT" && -d "$H5_ROOT" ]] || {
+  echo "publish-dynamic-h5-image: H5_ROOT must name the exact H5 worktree" >&2
+  exit 1
+}
+for command in curl docker git npm python3 sha256sum; do
+  command -v "$command" >/dev/null || {
+    echo "publish-dynamic-h5-image: $command missing" >&2
+    exit 1
+  }
+done
+[[ ! -e "$RECEIPT" ]] || {
+  echo "publish-dynamic-h5-image: immutable receipt already exists" >&2
+  exit 1
+}
+[[ -z "$(git -C "$H5_ROOT" status --porcelain=v1 --untracked-files=all)" ]] || {
+  echo "publish-dynamic-h5-image: H5 source worktree must be clean" >&2
+  exit 1
+}
+
+WORKTREE_HEAD=$(git -C "$H5_ROOT" rev-parse HEAD)
+OBSERVED_SOURCE_TREE=$(git -C "$H5_ROOT" rev-parse "$SOURCE_COMMIT^{tree}")
+[[ "$OBSERVED_SOURCE_TREE" == "$SOURCE_TREE" ]] || {
+  echo "publish-dynamic-h5-image: H5 source tree mismatch" >&2
+  exit 1
+}
+if [[ -n "$ATTESTATION_COMMIT" ]]; then
+  [[ "$ATTESTATION_COMMIT" =~ ^[0-9a-f]{40}$ && "$WORKTREE_HEAD" == "$ATTESTATION_COMMIT" ]] || {
+    echo "publish-dynamic-h5-image: attestation tip mismatch" >&2
+    exit 1
+  }
+  [[ "$(git -C "$H5_ROOT" rev-parse "$ATTESTATION_COMMIT^{tree}")" == "$SOURCE_TREE" ]] || {
+    echo "publish-dynamic-h5-image: attestation must preserve the source tree" >&2
+    exit 1
+  }
+  git -C "$H5_ROOT" verify-commit "$ATTESTATION_COMMIT" >/dev/null
+else
+  [[ "$WORKTREE_HEAD" == "$SOURCE_COMMIT" ]] || {
+    echo "publish-dynamic-h5-image: unsigned source worktree must be at the exact source commit" >&2
+    exit 1
+  }
+fi
+curl -fsS http://127.0.0.1:5001/v2/ >/dev/null || {
+  echo "publish-dynamic-h5-image: local Registry unavailable" >&2
+  exit 1
+}
+
+install -d -m 0700 "$LAB_ROOT/runtime"
+VERIFY_DIR=$(mktemp -d "$LAB_ROOT/runtime/dynamic-h5-verify-$RUN_ID.XXXXXX")
+cleanup() {
+  rm -rf "$VERIFY_DIR"
+}
+trap cleanup EXIT
+
+VITEST_JSON="$VERIFY_DIR/vitest.json"
+(cd "$H5_ROOT" && npm ci)
+(cd "$H5_ROOT" && npm test -- --reporter=json --outputFile="$VITEST_JSON")
+(cd "$H5_ROOT" && npm run build:web)
+(cd "$H5_ROOT" && npm run audit:build >"$VERIFY_DIR/build-audit.log")
+(cd "$H5_ROOT" && npm run validate:handoff -- \
+  --environment production \
+  --h5-origin "$H5_ORIGIN" \
+  --api-origin "$API_ORIGIN" \
+  --ws-url "$WS_URL" >"$VERIFY_DIR/handoff-validation.log")
+# audit:build intentionally ends on the WeChat artifact. Rebuild the exact
+# web/showcase artifact that this publisher is authorized to package.
+(cd "$H5_ROOT" && npm run build:web)
+[[ -z "$(git -C "$H5_ROOT" status --porcelain=v1 --untracked-files=all)" ]] || {
+  echo "publish-dynamic-h5-image: verification changed tracked H5 source" >&2
+  exit 1
+}
+[[ "$(git -C "$H5_ROOT" rev-parse HEAD)" == "$WORKTREE_HEAD" ]] || {
+  echo "publish-dynamic-h5-image: H5 source HEAD changed during verification" >&2
+  exit 1
+}
+
+PACKAGE_LOCK_SHA256=$(sha256sum "$H5_ROOT/package-lock.json" | awk '{print $1}')
+DOCKERFILE_SHA256=$(sha256sum "$H5_ROOT/Dockerfile" | awk '{print $1}')
+NGINX_SHA256=$(sha256sum "$H5_ROOT/deploy/nginx.conf" | awk '{print $1}')
+SOURCE_SIGNATURE_PRESENT=$(git -C "$H5_ROOT" cat-file commit "$SOURCE_COMMIT" | python3 -c \
+  'import sys; print("true" if any(line.startswith(("gpgsig ", "gpgsig-sha256 ")) for line in sys.stdin) else "false")')
+
+IMAGE_CONTEXT="$VERIFY_DIR/image-context"
+install -d -m 0700 "$IMAGE_CONTEXT"
+cp -a "$H5_ROOT/dist" "$IMAGE_CONTEXT/dist"
+cp "$H5_ROOT/deploy/nginx.conf" "$IMAGE_CONTEXT/default.conf"
+cat >"$IMAGE_CONTEXT/Dockerfile" <<'EOF'
+FROM nginx:1.27-alpine
+COPY default.conf /etc/nginx/conf.d/default.conf
+COPY dist /usr/share/nginx/html
+EXPOSE 8080
+HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
+  CMD ["busybox", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+EOF
+PACKAGING_DOCKERFILE_SHA256=$(sha256sum "$IMAGE_CONTEXT/Dockerfile" | awk '{print $1}')
+
+docker build \
+  --file "$IMAGE_CONTEXT/Dockerfile" \
+  --tag "$TARGET" \
+  "$IMAGE_CONTEXT" >/dev/null
+docker push "$TARGET" >/dev/null
+IMAGE_ID=$(docker image inspect "$TARGET" -f '{{.Id}}')
+DIGEST=$(docker image inspect "$TARGET" -f '{{range .RepoDigests}}{{println .}}{{end}}' |
+  awk -F@ '$1=="127.0.0.1:5001/farm/h5" {print $2; exit}')
+[[ "$IMAGE_ID" =~ ^sha256:[0-9a-f]{64}$ && "$DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]] || {
+  echo "publish-dynamic-h5-image: immutable image identity missing" >&2
+  exit 1
+}
+
+python3 - \
+  "$RECEIPT" \
+  "$RUN_ID" \
+  "$SOURCE_COMMIT" \
+  "$SOURCE_TREE" \
+  "$SOURCE_SIGNATURE_PRESENT" \
+  "$ATTESTATION_COMMIT" \
+  "$PACKAGE_LOCK_SHA256" \
+  "$DOCKERFILE_SHA256" \
+  "$PACKAGING_DOCKERFILE_SHA256" \
+  "$NGINX_SHA256" \
+  "$VITEST_JSON" \
+  "$VERIFY_DIR/build-audit.log" \
+  "$VERIFY_DIR/handoff-validation.log" \
+  "$IMAGE_ID" \
+  "$DIGEST" \
+  "$H5_ORIGIN" \
+  "$API_ORIGIN" \
+  "$WS_URL" <<'PY'
+import json
+import os
+import sys
+
+(
+    path,
+    run_id,
+    source_commit,
+    source_tree,
+    source_signature_present,
+    attestation_commit,
+    package_lock_sha256,
+    dockerfile_sha256,
+    packaging_dockerfile_sha256,
+    nginx_sha256,
+    vitest_json,
+    build_audit_log,
+    handoff_validation_log,
+    image_id,
+    digest,
+    h5_origin,
+    api_origin,
+    ws_url,
+) = sys.argv[1:]
+
+tests = json.load(open(vitest_json))
+if not tests.get("success"):
+    raise SystemExit("publish-dynamic-h5-image: Vitest JSON does not report success")
+test_files = tests.get("numTotalTestSuites")
+passed_test_files = tests.get("numPassedTestSuites")
+test_count = tests.get("numTotalTests")
+passed_tests = tests.get("numPassedTests")
+if not all(isinstance(value, int) for value in (test_files, passed_test_files, test_count, passed_tests)):
+    raise SystemExit("publish-dynamic-h5-image: Vitest result counts missing")
+if test_files != passed_test_files or test_count != passed_tests:
+    raise SystemExit("publish-dynamic-h5-image: incomplete H5 test pass")
+passed_assertions = []
+for suite in tests.get("testResults", []):
+    for assertion in suite.get("assertionResults", []):
+        if assertion.get("status") != "passed":
+            continue
+        name = assertion.get("fullName") or assertion.get("title")
+        if isinstance(name, str):
+            passed_assertions.append(name)
+required_contracts = {
+    "hint_burst_300ms_merge": "debounces Hint bursts and ignores old or duplicate owner revisions",
+    "login_home_pull_recovery": "coalesces login, return-home, and fallback edges into one next pull",
+    "fallback_pull_recovery": "fallback-poll independently requests the server-owned next opportunity",
+    "visible_pull_recovery": "visibility independently requests the server-owned next opportunity",
+    "unknown_preserves_actionable_popup": "retains a same-epoch actionable popup while an exact pull is UNKNOWN",
+    "hint_exact_ready_popup": "lets a Hint-target exact READY result become the popup target",
+}
+contract_evidence = {}
+for contract, marker in required_contracts.items():
+    matches = [name for name in passed_assertions if marker in name]
+    if len(matches) != 1:
+        raise SystemExit(
+            f"publish-dynamic-h5-image: required H5 contract test missing or ambiguous: {contract}"
+        )
+    contract_evidence[contract] = {"test": matches[0], "passed": True}
+audit_text = open(build_audit_log).read()
+audit_markers = [
+    "build:web (showcase): real-backend boundary audit passed",
+    "build:staging (test): real-backend boundary audit passed",
+    "build:wechat (local): real-backend boundary audit passed",
+]
+if any(audit_text.count(marker) != 1 for marker in audit_markers):
+    raise SystemExit("publish-dynamic-h5-image: build audit evidence incomplete")
+handoff_text = open(handoff_validation_log).read()
+handoff_markers = [
+    "handoff validation passed",
+    "environment=production",
+    f"H5_ORIGIN={h5_origin}",
+    f"API_ORIGIN={api_origin}",
+    f"WS_URL={ws_url}",
+]
+if any(handoff_text.count(marker) != 1 for marker in handoff_markers):
+    raise SystemExit("publish-dynamic-h5-image: handoff validation evidence incomplete")
+
+value = {
+    "schema_version": "farm-local-dynamic-h5-image-receipt.v1",
+    "status": "PUBLISHED_LOCAL_DYNAMIC_H5_NOT_DEPLOYED",
+    "run_id": run_id,
+    "source_commit": source_commit,
+    "source_tree": source_tree,
+    "source_commit_signature_present": source_signature_present == "true",
+    "attestation_commit": attestation_commit or None,
+    "attestation_verified": bool(attestation_commit),
+    "package_lock_sha256": package_lock_sha256,
+    "dockerfile_sha256": dockerfile_sha256,
+    "packaging": {
+        "mode": "verified-host-web-showcase-dist",
+        "dockerfile_sha256": packaging_dockerfile_sha256,
+    },
+    "nginx_conf_sha256": nginx_sha256,
+    "build_mode": "web",
+    "tests": {
+        "files": test_files,
+        "passed_files": passed_test_files,
+        "tests": test_count,
+        "passed_tests": passed_tests,
+    },
+    "product_contract_tests": contract_evidence,
+    "build_audit": {
+        "modes": ["web", "staging", "wechat"],
+        "evidence_markers": audit_markers,
+        "passed": True,
+    },
+    "handoff_validation": {
+        "environment": "production",
+        "h5_origin": h5_origin,
+        "api_origin": api_origin,
+        "ws_url": ws_url,
+        "evidence_markers": handoff_markers,
+        "passed": True,
+    },
+    "local_image_id": image_id,
+    "registry_ref": "127.0.0.1:5001/farm/h5@" + digest,
+    "company_redis_contacted": False,
+    "cluster_applied": False,
+    "capacity_eligible": False,
+}
+
+os.makedirs(os.path.dirname(path), exist_ok=True)
+fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640)
+try:
+    with os.fdopen(fd, "w") as stream:
+        json.dump(value, stream, sort_keys=True, indent=2)
+        stream.write("\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+except BaseException:
+    try:
+        os.unlink(path)
+    except FileNotFoundError:
+        pass
+    raise
+print(json.dumps(value, sort_keys=True, indent=2))
+PY

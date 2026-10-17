@@ -1,0 +1,198 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+KUBECONFIG="${KUBECONFIG:-$LAB_ROOT/runtime/kubeconfig}"
+RUN_ID="${ROUTE_RUN_ID:-}"
+REDIS_ENV="${REDIS_NAMESPACE_ENVIRONMENT:-}"
+REDIS_ZONE="${REDIS_NAMESPACE_ZONE:-z1}"
+PHASE="${1:-}"
+NAMESPACE="farm-route-dynamic"
+KUBE_CONTEXT="farm-l2-r2"
+KUBECTL_BIN=$(command -v kubectl)
+kubectl() { timeout --foreground 240s "$KUBECTL_BIN" --kubeconfig "$KUBECONFIG" --context "$KUBE_CONTEXT" "$@"; }
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO=$(CDPATH= cd -- "$SCRIPT_DIR/../.." && pwd)
+PROFILE="$LAB_ROOT/receipts/dynamic-route-profile-$RUN_ID.json"
+OUT_ROOT="$LAB_ROOT/runtime/dynamic-route-$RUN_ID"
+INITIAL_RECEIPT="$LAB_ROOT/receipts/dynamic-route-bootstrap-initial-$RUN_ID.json"
+READY_RECEIPT="$LAB_ROOT/receipts/dynamic-route-verify-ready-zero-shard-$RUN_ID.json"
+
+case "$PHASE" in --bootstrap-only) phase=initial ;; --assign) phase=assign ;; *) echo "usage: ROUTE_RUN_ID=<id> REDIS_NAMESPACE_ENVIRONMENT=<id> $0 --bootstrap-only|--assign" >&2; exit 2;; esac
+OUTPUT="$OUT_ROOT/bootstrap-$phase.json"
+RECEIPT="$LAB_ROOT/receipts/dynamic-route-bootstrap-$phase-$RUN_ID.json"
+[[ "$RUN_ID" =~ ^[a-z0-9][a-z0-9-]{0,62}$ && "$REDIS_ENV" =~ ^[a-z0-9][a-z0-9-]{0,31}$ && "$REDIS_ZONE" =~ ^[a-z0-9][a-z0-9-]{0,31}$ ]] || { echo "bootstrap-dynamic-route: run and Redis namespace identity required" >&2; exit 1; }
+[[ -s "$KUBECONFIG" && "$(kubectl config current-context)" == "farm-l2-r2" ]] || { echo "bootstrap-dynamic-route: refusing non-lab context" >&2; exit 1; }
+kubectl config view --minify -o json | python3 -c 'import json,sys; d=json.load(sys.stdin); ok=d.get("current-context")=="farm-l2-r2" and d.get("contexts",[{}])[0].get("context",{}).get("cluster")=="default" and d.get("clusters",[{}])[0].get("cluster",{}).get("server")=="https://127.0.0.1:6443"; sys.exit(0 if ok else "lab cluster identity mismatch")'
+[[ -s "$PROFILE" && ! -e "$OUTPUT" && ! -e "$RECEIPT" ]] || { echo "bootstrap-dynamic-route: immutable input/output mismatch" >&2; exit 1; }
+test -z "$(git -C "$REPO" status --porcelain)" || { echo "bootstrap-dynamic-route: source worktree must be clean" >&2; exit 1; }
+if [[ "$phase" == "assign" ]]; then
+  [[ -s "$INITIAL_RECEIPT" && -s "$READY_RECEIPT" ]] || { echo "bootstrap-dynamic-route: initial and ready-zero-shard receipts required" >&2; exit 1; }
+  replicas=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" get deployment route-controller -o jsonpath='{.spec.replicas}')
+  [[ "$replicas" == "0" ]] || { echo "bootstrap-dynamic-route: controller must be stopped before external Manager assignment" >&2; exit 1; }
+  controller_pods=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" get pod -l app.kubernetes.io/name=route-controller -o name)
+  [[ -z "$controller_pods" ]] || { echo "bootstrap-dynamic-route: controller Pod overlap rejected" >&2; exit 1; }
+fi
+
+head=$(git -C "$REPO" rev-parse HEAD)
+controller_boot=$(python3 - "$PROFILE" "$head" "$REDIS_ENV" "$REDIS_ZONE" "$phase" "$INITIAL_RECEIPT" "$READY_RECEIPT" <<'PY'
+import json,sys
+p,head,redis_env,redis_zone,phase,initial_path,ready_path=sys.argv[1:]
+def require(ok,message):
+ if not ok: raise SystemExit(message)
+d=json.load(open(p))
+require(d.get("status")=="MATERIALIZED_NOT_APPLIED" and d.get("source_head")==head,"profile/source mismatch")
+require(d.get("redis_namespace_environment")==redis_env and d.get("redis_namespace_zone")==redis_zone and d.get("shards")=={"PLAYER":4,"FARM":4,"FARM_WORKER":4},"profile namespace/shards mismatch")
+if phase=="assign":
+ initial=json.load(open(initial_path)); ready=json.load(open(ready_path))
+ require(initial.get("schema_version")=="farm-dynamic-route-bootstrap-receipt.v1","initial schema mismatch")
+ require(initial.get("status")=="BOOTSTRAPPED_ZERO_SHARD_CONTROLLER_NOT_STARTED","initial status mismatch")
+ require(initial.get("run_id")==d.get("run_id") and initial.get("source_head")==head and initial.get("final_revision")==1,"initial binding mismatch")
+ require(ready.get("schema_version")=="farm-dynamic-route-state-verification.v1","ready schema mismatch")
+ require(ready.get("status")=="READY_ZERO_SHARD_VERIFIED" and ready.get("phase")=="ready-zero-shard","ready status mismatch")
+ require(ready.get("run_id")==d.get("run_id") and ready.get("source_head")==head and ready.get("snapshot_revision")==1,"ready binding mismatch")
+ require(ready.get("holder_restart_count")==0 and ready.get("controller_overlap") is False,"ready safety mismatch")
+key="stopped_external_bootstrap" if phase=="assign" else "initial_zero_shard_runtime"
+print(d["controller_boot_generations"][key])
+PY
+)
+
+for pod in player-svr-0 player-svr-1 farm-svr-0 farm-svr-1; do
+  for _ in $(seq 1 90); do
+    uid=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" get pod "$pod" -o jsonpath='{.metadata.uid}' 2>/dev/null || true)
+    [[ -n "$uid" ]] && break
+    sleep 1
+  done
+  [[ -n "${uid:-}" ]] || { echo "bootstrap-dynamic-route: $pod UID not materialized" >&2; exit 1; }
+  if [[ "$phase" == "assign" ]]; then
+    [[ "$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" get pod "$pod" -o jsonpath='{.status.containerStatuses[0].restartCount}')" == "0" ]] || { echo "bootstrap-dynamic-route: $pod process restarted before assignment" >&2; exit 1; }
+  fi
+done
+
+pod_uid() { KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" get pod "$1" -o jsonpath='{.metadata.uid}'; }
+player_a_uid=$(pod_uid player-svr-0); player_b_uid=$(pod_uid player-svr-1)
+farm_a_uid=$(pod_uid farm-svr-0); farm_b_uid=$(pod_uid farm-svr-1)
+player_workload_uid=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" get statefulset player-svr -o jsonpath='{.metadata.uid}')
+farm_workload_uid=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" get statefulset farm-svr -o jsonpath='{.metadata.uid}')
+player_a_boot="player-svr-0-$player_a_uid"; player_b_boot="player-svr-1-$player_b_uid"
+farm_a_boot="farm-svr-0-$farm_a_uid"; farm_b_boot="farm-svr-1-$farm_b_uid"
+readarray -t worker_boots < <(python3 - "$PROFILE" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1]))
+assignments=d.get('farm_worker_assignments',{})
+for name,shards in (('farm-worker-a',[0,2]),('farm-worker-b',[1,3])):
+ value=assignments.get(name,{})
+ if value.get('shards')!=shards or not value.get('boot_id'):
+  raise SystemExit('FARM_WORKER profile assignment mismatch')
+ print(value['boot_id'])
+PY
+)
+[[ "${#worker_boots[@]}" -eq 2 ]] || { echo "bootstrap-dynamic-route: FARM_WORKER Boot binding missing" >&2; exit 1; }
+worker_a_boot=${worker_boots[0]}; worker_b_boot=${worker_boots[1]}
+if [[ "$phase" == "assign" ]]; then
+  python3 - "$INITIAL_RECEIPT" "$player_a_boot" "$player_b_boot" "$farm_a_boot" "$farm_b_boot" "$worker_a_boot" "$worker_b_boot" <<'PY'
+import json,sys
+path,*boots=sys.argv[1:]
+d=json.load(open(path)); names=('player-svr-0','player-svr-1','farm-svr-0','farm-svr-1','farm-worker-a','farm-worker-b')
+if d.get('status')!='BOOTSTRAPPED_ZERO_SHARD_CONTROLLER_NOT_STARTED':
+ raise SystemExit('initial bootstrap status mismatch')
+if d.get('holder_boot_ids')!=dict(zip(names,boots)):
+ raise SystemExit('initial Holder Boot binding mismatch')
+PY
+  for pair in "player-svr-0:$player_a_boot" "player-svr-1:$player_b_boot" "farm-svr-0:$farm_a_boot" "farm-svr-1:$farm_b_boot"; do
+    pod=${pair%%:*}; expected=${pair#*:}
+    observed=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" exec "$pod" -- cat /var/run/farm-holder/current-boot-id)
+    [[ "$observed" == "$expected" ]] || { echo "bootstrap-dynamic-route: initial process boot identity mismatch for $pod" >&2; exit 1; }
+  done
+fi
+
+port=$(python3 - <<'PY'
+import socket
+s=socket.socket(); s.bind(('127.0.0.1',0)); print(s.getsockname()[1]); s.close()
+PY
+)
+log=$(mktemp); binary=$(mktemp)
+cleanup() {
+  if [[ -n "${pf_pid:-}" ]]; then
+    kill -- "-$pf_pid" >/dev/null 2>&1 || true
+    wait "$pf_pid" >/dev/null 2>&1 || true
+  fi
+  rm -f "$log" "$binary" "${temp_output:-}"
+}
+trap cleanup EXIT
+setsid timeout --foreground 240s "$KUBECTL_BIN" \
+  --kubeconfig "$KUBECONFIG" \
+  --context "$KUBE_CONTEXT" \
+  -n farm-l2-r2-deps \
+  port-forward service/farm-local-redis "$port:6379" >"$log" 2>&1 &
+pf_pid=$!
+for _ in $(seq 1 50); do
+  grep -q "Forwarding from 127.0.0.1:$port" "$log" && break
+  kill -0 "$pf_pid" 2>/dev/null || { echo "bootstrap-dynamic-route: Redis port-forward failed" >&2; exit 1; }
+  sleep .1
+done
+grep -q "Forwarding from 127.0.0.1:$port" "$log" || { echo "bootstrap-dynamic-route: Redis port-forward timeout" >&2; exit 1; }
+(cd "$REPO" && go build -buildvcs=false -trimpath -o "$binary" ./cmd/rt2q-route-bootstrap)
+challenge=$(printf '%s' "$RUN_ID" | sha256sum | cut -c1-32)
+args=(
+  --challenge "$challenge" --realm classic-farm-dynamic-local
+  --controller-id route-controller --controller-boot "$controller_boot"
+  --redis-environment "$REDIS_ENV" --redis-zone "$REDIS_ZONE" --shard-count 4
+  --player-a player-svr-0 --player-a-boot "$player_a_boot" --player-a-endpoint "player-svr-0.player-svr-headless.$NAMESPACE.svc.cluster.local:9100"
+  --player-a-pod-uid "$player_a_uid" --player-a-workload-uid "$player_workload_uid" --player-a-ordinal 0
+  --player-a-control-endpoint "player-svr-0.player-svr-headless.$NAMESPACE.svc.cluster.local:19100" --player-a-tls-identity "holder-control.$NAMESPACE.svc.cluster.local"
+  --player-b player-svr-1 --player-b-boot "$player_b_boot" --player-b-endpoint "player-svr-1.player-svr-headless.$NAMESPACE.svc.cluster.local:9100"
+  --player-b-pod-uid "$player_b_uid" --player-b-workload-uid "$player_workload_uid" --player-b-ordinal 1
+  --player-b-control-endpoint "player-svr-1.player-svr-headless.$NAMESPACE.svc.cluster.local:19100" --player-b-tls-identity "holder-control.$NAMESPACE.svc.cluster.local"
+  --farm-a farm-svr-0 --farm-a-boot "$farm_a_boot" --farm-a-endpoint "farm-svr-0.farm-svr-headless.$NAMESPACE.svc.cluster.local:9090"
+  --farm-a-pod-uid "$farm_a_uid" --farm-a-workload-uid "$farm_workload_uid" --farm-a-ordinal 0
+  --farm-a-control-endpoint "farm-svr-0.farm-svr-headless.$NAMESPACE.svc.cluster.local:19101" --farm-a-tls-identity "holder-control.$NAMESPACE.svc.cluster.local"
+  --farm-b farm-svr-1 --farm-b-boot "$farm_b_boot" --farm-b-endpoint "farm-svr-1.farm-svr-headless.$NAMESPACE.svc.cluster.local:9090"
+  --farm-b-pod-uid "$farm_b_uid" --farm-b-workload-uid "$farm_workload_uid" --farm-b-ordinal 1
+  --farm-b-control-endpoint "farm-svr-1.farm-svr-headless.$NAMESPACE.svc.cluster.local:19101" --farm-b-tls-identity "holder-control.$NAMESPACE.svc.cluster.local"
+  --farm-worker-a farm-worker-a --farm-worker-a-boot "$worker_a_boot" --farm-worker-a-endpoint "farm-worker-a.$NAMESPACE.svc.cluster.local:9201"
+  --farm-worker-b farm-worker-b --farm-worker-b-boot "$worker_b_boot" --farm-worker-b-endpoint "farm-worker-b.$NAMESPACE.svc.cluster.local:9201"
+)
+[[ "$phase" == "initial" ]] && args+=(--bootstrap-only)
+temp_output=$(mktemp "$OUT_ROOT/.bootstrap-$phase.XXXXXX")
+FARM_REDIS_CLUSTER=1 \
+RT2Q_BOOTSTRAP_REDIS_URL="redis://127.0.0.1:$port/0" \
+RT2Q_BOOTSTRAP_REDIS_CLUSTER_URLS="redis://127.0.0.1:$port/0" \
+"$binary" "${args[@]}" > "$temp_output"
+chmod 0600 "$temp_output"
+ln "$temp_output" "$OUTPUT"
+rm -f "$temp_output"
+
+python3 - "$OUTPUT" "$RECEIPT" "$RUN_ID" "$head" "$PROFILE" "$phase" "$INITIAL_RECEIPT" "$READY_RECEIPT" "$controller_boot" "$player_a_boot" "$player_b_boot" "$farm_a_boot" "$farm_b_boot" "$worker_a_boot" "$worker_b_boot" <<'PY'
+import hashlib,json,os,sys,tempfile
+out_path,receipt,run_id,head,profile,phase,initial_receipt,ready_receipt,controller_boot,*boots=sys.argv[1:]
+out=json.load(open(out_path))
+claims=out.get("claims") or []
+def require(ok,message):
+ if not ok: raise SystemExit(message)
+if phase=="initial":
+ require(out.get("initial_revision")==1 and out.get("final_revision")==1 and len(claims)==0,"initial bootstrap output mismatch")
+ status="BOOTSTRAPPED_ZERO_SHARD_CONTROLLER_NOT_STARTED"
+else:
+ require(out.get("initial_revision")==1 and out.get("final_revision")==13 and len(claims)==12,"assignment output revision/count mismatch")
+ require({(x.get("domain"),x.get("shard")) for x in claims}=={(d,s) for d in ("PLAYER","FARM","FARM_WORKER") for s in range(4)},"assignment claim set mismatch")
+ require(all(isinstance(x.get("status"),str) and x.get("status") for x in claims),"assignment claim status missing")
+ status="ASSIGNED_4X4X4_CONTROLLER_STOPPED"
+value={
+ "schema_version":"farm-dynamic-route-bootstrap-receipt.v1","status":status,"phase":phase,
+ "run_id":run_id,"source_head":head,"controller_boot_id":controller_boot,
+ "profile_receipt_sha256":hashlib.sha256(open(profile,'rb').read()).hexdigest(),
+ "bootstrap_output_sha256":hashlib.sha256(open(out_path,'rb').read()).hexdigest(),
+ "snapshot_checksum_sha256":out.get("snapshot_checksum_sha256"),"topology_fingerprint":out.get("topology_fingerprint"),
+ "initial_bootstrap_receipt_sha256":hashlib.sha256(open(initial_receipt,'rb').read()).hexdigest() if phase=="assign" else None,
+ "ready_zero_shard_receipt_sha256":hashlib.sha256(open(ready_receipt,'rb').read()).hexdigest() if phase=="assign" else None,
+ "initial_revision":out["initial_revision"],"final_revision":out["final_revision"],"claim_count":len(claims),
+ "holder_boot_ids":{"player-svr-0":boots[0],"player-svr-1":boots[1],"farm-svr-0":boots[2],"farm-svr-1":boots[3],"farm-worker-a":boots[4],"farm-worker-b":boots[5]},
+ "company_redis_contacted":False,"exact_keys_only":True,"controller_overlap":False,
+}
+os.makedirs(os.path.dirname(receipt),exist_ok=True)
+fd,temp=tempfile.mkstemp(prefix='.dynamic-route-bootstrap-',dir=os.path.dirname(receipt),text=True)
+with os.fdopen(fd,'w') as f: json.dump(value,f,sort_keys=True,indent=2); f.write('\n')
+os.chmod(temp,0o640); os.link(temp,receipt); os.unlink(temp)
+print(json.dumps(value,sort_keys=True,indent=2))
+PY

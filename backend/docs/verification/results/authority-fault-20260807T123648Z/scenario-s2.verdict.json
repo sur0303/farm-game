@@ -1,0 +1,14 @@
+{
+  "verdict": "FAIL",
+  "reason": "scenario s2 failed: join rejected: status=REJECTED code=ERR_NOT_FRIEND msg=尚未建立好友关系",
+  "steps": {
+    "guest_join": {
+      "status": "fail",
+      "detail": "join rejected: status=REJECTED code=ERR_NOT_FRIEND msg=尚未建立好友关系"
+    },
+    "owner_plant": {
+      "status": "ok",
+      "detail": "owner committed FARM_CHANGE V3 -\u003e V4 while guest ACTIVATING"
+    }
+  }
+}

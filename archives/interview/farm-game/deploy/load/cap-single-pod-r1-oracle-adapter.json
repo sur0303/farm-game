@@ -1,0 +1,25 @@
+{
+  "schema_version": "cap-single-pod-l2.correctness-oracle-adapter.v0.1",
+  "listen": "127.0.0.1:19092",
+  "oracle_path": "/oracle",
+  "sources": [
+    {"name": "correctness", "url": "http://127.0.0.1:19093/metrics"}
+  ],
+  "gates": [
+    {"name": "duplicate_grant_total", "source": "correctness", "metric": "duplicate_grant_total", "value": "value", "aggregate": "SUM", "mode": "COUNTER_DELTA"},
+    {"name": "duplicate_debit_total", "source": "correctness", "metric": "duplicate_debit_total", "value": "value", "aggregate": "SUM", "mode": "COUNTER_DELTA"},
+    {"name": "stale_holder_commit_success_total", "source": "correctness", "metric": "stale_holder_commit_success_total", "value": "value", "aggregate": "SUM", "mode": "COUNTER_DELTA"},
+    {"name": "farm_version_gap_total", "source": "correctness", "metric": "farm_version_gap_total", "value": "value", "aggregate": "SUM", "mode": "COUNTER_DELTA"},
+    {"name": "workflow_step_unknown_residual", "source": "correctness", "metric": "workflow_step_unknown_residual", "value": "value", "aggregate": "SUM", "mode": "GAUGE_CURRENT"},
+    {"name": "due_residual_unexpected", "source": "correctness", "metric": "due_residual_unexpected", "value": "value", "aggregate": "SUM", "mode": "GAUGE_CURRENT"},
+    {"name": "h5_pending_journal_residual", "source": "correctness", "metric": "h5_pending_journal_residual", "value": "value", "aggregate": "SUM", "mode": "GAUGE_CURRENT"},
+    {"name": "authority_client_mismatch_total", "source": "correctness", "metric": "authority_client_mismatch_total", "value": "value", "aggregate": "SUM", "mode": "COUNTER_DELTA"},
+    {"name": "silent_drop_total", "source": "correctness", "metric": "silent_drop_total", "value": "value", "aggregate": "SUM", "mode": "COUNTER_DELTA"},
+    {"name": "unexpected_lease_expiry_total", "source": "correctness", "metric": "unexpected_lease_expiry_total", "value": "value", "aggregate": "SUM", "mode": "COUNTER_DELTA"},
+    {"name": "friend_pair_index_unrepaired", "source": "correctness", "metric": "friend_pair_index_unrepaired", "value": "value", "aggregate": "SUM", "mode": "GAUGE_CURRENT"},
+    {"name": "invalid_order_total", "source": "correctness", "metric": "invalid_order_total", "value": "value", "aggregate": "SUM", "mode": "COUNTER_DELTA"},
+    {"name": "wrong_scope_dispatch_total", "source": "correctness", "metric": "wrong_scope_dispatch_total", "value": "value", "aggregate": "SUM", "mode": "COUNTER_DELTA"},
+    {"name": "record_version_regression_total", "source": "correctness", "metric": "record_version_regression_total", "value": "value", "aggregate": "SUM", "mode": "COUNTER_DELTA"},
+    {"name": "receipt_conflict_leak_total", "source": "correctness", "metric": "receipt_conflict_leak_total", "value": "value", "aggregate": "SUM", "mode": "COUNTER_DELTA"}
+  ]
+}

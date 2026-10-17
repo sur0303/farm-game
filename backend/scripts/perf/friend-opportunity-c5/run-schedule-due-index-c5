@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
+TASK_DIR="$ROOT/docs/verification/perf/friend-opportunity-c5"
+MODE=${1:-smoke}
+
+case "$MODE" in
+  smoke) ordinary_count=${SCHEDULE_DUE_C5_ORDINARY_COUNT:-100000}; iterations=${SCHEDULE_DUE_C5_ITERATIONS:-2} ;;
+  full) ordinary_count=${SCHEDULE_DUE_C5_ORDINARY_COUNT:-1000000}; iterations=${SCHEDULE_DUE_C5_ITERATIONS:-5} ;;
+  *) echo "usage: $0 [smoke|full]" >&2; exit 2 ;;
+esac
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "docker is required to start an isolated ephemeral Redis" >&2
+  exit 2
+fi
+
+build_dir=$(mktemp -d /tmp/schedule-due-c5-build.XXXXXX)
+active_container=""
+cleanup() {
+  if [[ -n "$active_container" ]]; then
+    docker rm -f "$active_container" >/dev/null 2>&1 || true
+  fi
+  rm -rf "$build_dir"
+}
+trap cleanup EXIT INT TERM
+
+GOFLAGS=-buildvcs=false go build -trimpath -o "$build_dir/schedule-due-index-tool" "$ROOT/cmd/schedule-due-index-tool"
+
+stamp=$(date -u +%Y%m%dT%H%M%SZ)
+train_id="schedule-due-c5-${MODE}-${stamp}-$$"
+train_dir="$TASK_DIR/results/$train_id"
+mkdir -p "$train_dir"
+
+active_container="schedule-due-c5-${stamp,,}-$$"
+secret=$(openssl rand -hex 24)
+docker run -d --name "$active_container" \
+  --cpus 2 --memory 2g --memory-swap 2g \
+  -p 127.0.0.1::6379 \
+  redis:7.4-alpine \
+  redis-server --save '' --appendonly no --protected-mode yes \
+    --requirepass "$secret" --maxmemory 1gb --maxmemory-policy noeviction >/dev/null
+
+port=$(docker port "$active_container" 6379/tcp | awk -F: '{print $NF}')
+for _ in $(seq 1 100); do
+  if docker exec -e REDISCLI_AUTH="$secret" "$active_container" redis-cli ping 2>/dev/null | grep -qx PONG; then
+    break
+  fi
+  sleep 0.1
+done
+docker exec -e REDISCLI_AUTH="$secret" "$active_container" redis-cli ping 2>/dev/null | grep -qx PONG
+
+output="$train_dir/evidence.json"
+export SCHEDULE_DUE_REDIS_URL="redis://:${secret}@127.0.0.1:${port}/0"
+set +e
+"$build_dir/schedule-due-index-tool" \
+  -command probe \
+  -ordinary-count "$ordinary_count" \
+  -iterations "$iterations" \
+  -output "$output" | tee "$train_dir/stdout.txt"
+status=${PIPESTATUS[0]}
+set -e
+unset SCHEDULE_DUE_REDIS_URL
+
+docker inspect "$active_container" --format '{{.HostConfig.NanoCpus}} {{.HostConfig.Memory}} {{.Image}}' \
+  > "$train_dir/container-limits.txt"
+docker rm -f "$active_container" >/dev/null
+active_container=""
+unset secret
+
+cat > "$train_dir/run-meta.json" <<EOF
+{
+  "schema_version": "schedule-due-index-run-meta-v1",
+  "train_id": "$train_id",
+  "mode": "$MODE",
+  "ordinary_members": $ordinary_count,
+  "iterations": $iterations,
+  "redis_kind": "isolated_ephemeral_single_node",
+  "supports_30m_dau": false
+}
+EOF
+
+printf 'SCHEDULE_DUE_C5_TRAIN=%s MODE=%s EVIDENCE=%s STATUS=%s\n' "$train_id" "$MODE" "$output" "$status"
+exit "$status"

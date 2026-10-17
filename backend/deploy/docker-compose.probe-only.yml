@@ -1,0 +1,108 @@
+name: farm-game-tconnd-probe
+
+# This file is deliberately fail-closed.  TCONND and gateproxy are platform
+# assets; never silently substitute a locally written WebSocket adapter.
+services:
+  tconnd:
+    ipc: "host"
+    image: "${TCONND_IMAGE:?Set TCONND_IMAGE to an approved platform image}"
+    entrypoint: /bin/sh
+    working_dir: /app
+    command:
+      - -c
+      - |
+        cat <<'EOF'> /app/tbusmgr.xml
+        <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+        <TbusGCIM>
+          <BussinessID>0</BussinessID>
+          <AddrTemplet>198.18.0.7</AddrTemplet>
+          <GCIMShmKey>1688</GCIMShmKey>
+          <Channels>
+            <Priority>8</Priority>
+            <Address>198.18.0.8</Address>
+            <Address>198.18.0.9</Address>
+            <SendSize>20048000</SendSize>
+            <RecvSize>20048000</RecvSize>
+            <Desc>Channel for tconnd-gate</Desc>
+          </Channels>
+        </TbusGCIM>
+        EOF
+        ./bin/tbusmgr -W 2>&1
+        echo "TBUSMGR_EXIT=$?"
+        exec ./bin/tconnd --id=198.18.0.8 --use-bus --bus-key=1688 \
+          --log-level=600 --conf-file=/app/conf/tconnd_gcp.xml \
+          --tlogconf=/app/conf/tconnd_log.xml start
+    ports:
+      - "9980:9980"
+    volumes:
+      - /tmp/farm-socket:/data/unix-socket
+      - ./tconnd/tconnd_gcp.xml:/app/conf/tconnd_gcp.xml:ro
+    restart: unless-stopped
+
+  gateproxy:
+    image: "${GATEPROXY_IMAGE:?Set GATEPROXY_IMAGE to the matching platform image}"
+    ipc: "host"
+    command:
+      - -log_level=-1
+      - -enable_coroutine_metrics=1
+      - -liveness_port=6060
+      - -liveness_url=/healthz
+      - -sock_addr=/data/unix-socket/gateproxy.sock
+      - -tconnd_num=1
+      - -enable_anti_cheat=false
+    depends_on:
+      tconnd:
+        condition: service_started
+    volumes:
+      - /tmp/farm-socket:/data/unix-socket
+    environment:
+      SERVICE_NAME: farm-gateproxy
+      SERVICE_VERSION: "probe"
+      SERVICE_INSTANCE_ID: local
+      RELEASE_NAME: local
+      DEPLOYMENT_ENVIRONMENT: local
+      MY_POD_NAME: local-dev
+      MY_NAMESPACE: local
+      MY_POD_IP: "127.0.0.1"
+    healthcheck:
+      test: ["CMD", "test", "-S", "/data/unix-socket/gateproxy.sock"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+    restart: unless-stopped
+
+  tconnd-probe:
+    build:
+      context: ./tconnd-probe
+      dockerfile: Dockerfile
+    depends_on:
+      gateproxy:
+        condition: service_healthy
+    environment:
+      GATEPROXY_SOCKET: "/data/unix-socket/gateproxy.sock"
+      TCONND_PROBE_OUTPUT: "-"
+      TCONND_PROBE_DURATION: "30s"
+    volumes:
+      - /tmp/farm-socket:/data/unix-socket
+    stdin_open: true
+    tty: true
+
+  # WS driver: the only component that actually opens a WebSocket to TCONND.
+  # It answers the T1 question for this specific image -- does BY_WS reach TBUS?
+  # Watch its logs for a text {"tws_notify_type":"pass"} frame, and cross-check
+  # the tconnd-probe logs for a matching kind:"start" event.
+  ws-driver:
+    build:
+      context: ./ws-driver
+      dockerfile: Dockerfile
+    depends_on:
+      tconnd:
+        condition: service_started
+    environment:
+      WS_URL: "ws://tconnd:9980/"
+      WS_ORIGIN: "http://localhost/"
+      WS_RUN_DURATION: "25s"
+      WS_SEND_HELLO: "1"
+      WS_SEND_DELAY: "3s"
+    stdin_open: true
+    tty: true

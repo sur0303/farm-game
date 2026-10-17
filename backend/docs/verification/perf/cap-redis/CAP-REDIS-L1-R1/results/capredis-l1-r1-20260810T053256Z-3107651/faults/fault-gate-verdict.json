@@ -1,0 +1,26 @@
+{
+  "attachments": {
+    "connection-and-response-loss.txt": "103740f3ea69a84f41050304d46f1474fc060089c7194ebe9011af3529f305e8",
+    "fault-gate-cleanup.txt": "379b752d1d7a74d89d07644e125fd55d5a9558ce8e66f8067b6a746d36b1152c",
+    "fault-gate-environment.txt": "beff023180054f23305d72a8fc5ec920056de8fede87d160cd942b4a483ea3f7",
+    "noscript-and-idempotent-replay.txt": "22c775e6df6df329fe775362ae02a4f0d910afd17f61d09d94f29f5d3e5c3db7"
+  },
+  "backend_business_commit": "93a66ce76d509d86e8cac8e1d87563d084eba821",
+  "checks": {
+    "cap_exact_cleanup": true,
+    "connection_reconstruction": true,
+    "no_namespace_wide_scan_by_fault_tests": true,
+    "no_script_flush": true,
+    "noscript_recovery": true,
+    "post_write_response_loss_classified_timeout_unknown": true,
+    "q2r_isolated_instance_destroyed": true,
+    "same_identity_replay_already_committed": true,
+    "timeout_unknown_resolved_from_durable_receipt": true
+  },
+  "formal_evidence_commit_at_start": "1890e70b973f193f04992642a036d41699c0e654",
+  "schema_version": "cap-redis-fault-gates-v1",
+  "scope": "required L1 NOSCRIPT, connection reconstruction, and post-write response-loss qualification; no performance claim",
+  "test_head": "5fbbda4ec521c1ea7590f867dc2f7186b4ca307e",
+  "train_run_id": "capredis-l1-r1-20260810T053256Z-3107651",
+  "verdict": "PASS"
+}

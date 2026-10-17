@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${AUTO_FAILOVER_REDIS_PROBE:-}" != "1" ]]; then
+  echo "set AUTO_FAILOVER_REDIS_PROBE=1 to run the exact-key live Redis probe" >&2
+  exit 2
+fi
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+kube_context="${KUBE_CONTEXT:-kind-farm-perf}"
+kube_namespace="${KUBE_NAMESPACE:-farm-route-dynamic}"
+secret_name="${REDIS_SECRET_NAME:-farm-dynamic-secrets}"
+secret_key="${REDIS_SECRET_KEY:-authority-redis-url}"
+
+if [[ -n "${REDIS_PROFILE_FILE:-}" ]]; then
+  encoded_url="$(python3 - "${REDIS_PROFILE_FILE}" "${secret_name}" "${secret_key}" <<'PY'
+import json
+import sys
+
+profile_path, secret_name, secret_key = sys.argv[1:]
+with open(profile_path, encoding="utf-8") as source:
+    document = json.load(source)
+items = document.get("items", []) if isinstance(document, dict) else []
+for item in items:
+    if item.get("kind") == "Secret" and item.get("metadata", {}).get("name") == secret_name:
+        print(item.get("data", {}).get(secret_key, ""), end="")
+        break
+PY
+)"
+else
+  encoded_url="$(
+    kubectl --context "${kube_context}" -n "${kube_namespace}" \
+      get secret "${secret_name}" -o "jsonpath={.data.${secret_key}}"
+  )"
+fi
+if [[ -z "${encoded_url}" ]]; then
+  echo "Redis URL secret value is empty" >&2
+  exit 1
+fi
+
+redis_url="$(printf '%s' "${encoded_url}" | base64 --decode)"
+if [[ -z "${redis_url}" ]]; then
+  echo "decoded Redis URL is empty" >&2
+  exit 1
+fi
+
+port_forward_pid=""
+port_forward_log=""
+cleanup() {
+  if [[ -n "${port_forward_pid}" ]]; then
+    kill "${port_forward_pid}" >/dev/null 2>&1 || true
+    wait "${port_forward_pid}" >/dev/null 2>&1 || true
+  fi
+  if [[ -n "${port_forward_log}" ]]; then
+    rm -f "${port_forward_log}"
+  fi
+}
+trap cleanup EXIT
+
+if [[ -n "${REDIS_PORT_FORWARD_SERVICE:-}" ]]; then
+  port_forward_namespace="${REDIS_PORT_FORWARD_NAMESPACE:-${kube_namespace}}"
+  local_port="$(python3 - <<'PY'
+import socket
+
+sock = socket.socket()
+sock.bind(("127.0.0.1", 0))
+print(sock.getsockname()[1])
+sock.close()
+PY
+)"
+  port_forward_log="$(mktemp)"
+  kubectl --context "${kube_context}" -n "${port_forward_namespace}" \
+    port-forward "service/${REDIS_PORT_FORWARD_SERVICE}" \
+    "${local_port}:${REDIS_PORT_FORWARD_PORT:-6379}" \
+    >"${port_forward_log}" 2>&1 &
+  port_forward_pid=$!
+  for _ in $(seq 1 50); do
+    if (echo >/dev/tcp/127.0.0.1/"${local_port}") >/dev/null 2>&1; then
+      break
+    fi
+    if ! kill -0 "${port_forward_pid}" >/dev/null 2>&1; then
+      cat "${port_forward_log}" >&2
+      exit 1
+    fi
+    sleep 0.1
+  done
+  if ! (echo >/dev/tcp/127.0.0.1/"${local_port}") >/dev/null 2>&1; then
+    cat "${port_forward_log}" >&2
+    exit 1
+  fi
+  redis_url="$(python3 - "${redis_url}" "${local_port}" <<'PY'
+import sys
+from urllib.parse import urlsplit, urlunsplit
+
+parsed = urlsplit(sys.argv[1])
+userinfo = ""
+if parsed.username is not None:
+    userinfo = parsed.username
+    if parsed.password is not None:
+        userinfo += ":" + parsed.password
+    userinfo += "@"
+print(urlunsplit((parsed.scheme, f"{userinfo}127.0.0.1:{sys.argv[2]}", parsed.path, parsed.query, parsed.fragment)), end="")
+PY
+)"
+fi
+
+cd "${repo_root}"
+Q2R2_LIVE=1 FARM_REDIS_URL="${redis_url}" \
+  go test ./internal/storage/redis/authority \
+    -run TestLiveQ2R2ExpiredTakeoverUsesDedicatedFencedCAS \
+    -count=1 -v

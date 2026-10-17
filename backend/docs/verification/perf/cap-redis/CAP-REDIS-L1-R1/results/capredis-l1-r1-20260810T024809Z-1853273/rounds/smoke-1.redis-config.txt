@@ -1,0 +1,12 @@
+save
+
+appendonly
+no
+slowlog-log-slower-than
+0
+maxmemory
+3221225472
+slowlog-max-len
+1000000
+maxmemory-policy
+noeviction

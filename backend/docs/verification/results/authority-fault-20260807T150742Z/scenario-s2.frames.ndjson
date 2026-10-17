@@ -1,0 +1,20 @@
+{"t":"2026-08-07T07:07:52.570870111Z","dir":"send","type":"ClientHello"}
+{"t":"2026-08-07T07:07:52.571959513Z","dir":"recv","type":"ServerHello","detail":"session=0c38be8e5d0adb53e524fede8c6f7215 epoch=7"}
+{"t":"2026-08-07T07:07:52.844794455Z","dir":"send","type":"ClientHello"}
+{"t":"2026-08-07T07:07:52.845549607Z","dir":"recv","type":"ServerHello","detail":"session=c59a44aa067c9c14221b5cf7d97d123e epoch=6"}
+{"t":"2026-08-07T07:07:52.850657778Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-join-faulta20260807t150742z-1786086472850377821 command_type=6"}
+{"t":"2026-08-07T07:07:52.850772043Z","dir":"recv","type":"Push","detail":"FRIEND_ROSTER_CHANGED"}
+{"t":"2026-08-07T07:07:52.85168851Z","dir":"recv","type":"JoinAccepted","detail":"sub=sub-ed59efed5eb87a05512d44a2977e184d"}
+{"t":"2026-08-07T07:07:52.852635303Z","dir":"recv","type":"FarmSnapshot","detail":"owner=1000001 version=3 empty_plot=3 v=1"}
+{"t":"2026-08-07T07:07:52.853023313Z","dir":"recv","type":"SubscriptionReady"}
+{"t":"2026-08-07T07:07:52.853059182Z","dir":"send","type":"ClientRecoveryComplete"}
+{"t":"2026-08-07T07:07:52.853167686Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-buy-faulta20260807t150742z-1786086472853134924 command_type=2"}
+{"t":"2026-08-07T07:07:52.855522361Z","dir":"recv","type":"BuyApplied"}
+{"t":"2026-08-07T07:07:52.856660404Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-join-faultb20260807t150742z-1786086472856644714 command_type=6"}
+{"t":"2026-08-07T07:07:52.856728082Z","dir":"recv","type":"Push","detail":"FRIEND_ROSTER_CHANGED"}
+{"t":"2026-08-07T07:07:52.857871355Z","dir":"recv","type":"JoinAccepted","detail":"sub=sub-afb68a44cbbc3aaa5634f5d766e55f15"}
+{"t":"2026-08-07T07:07:52.858513475Z","dir":"recv","type":"FarmSnapshot","detail":"owner=1000001 version=3 empty_plot=3 v=1"}
+{"t":"2026-08-07T07:07:52.859097865Z","dir":"recv","type":"SubscriptionReady"}
+{"t":"2026-08-07T07:07:54.057247734Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-plant-faulta20260807t150742z-1786086474057184975 command_type=4"}
+{"t":"2026-08-07T07:07:54.070692115Z","dir":"recv","type":"FarmChange","detail":"plot=3 phase=GROWING cycle=sid1_OQiIKrPqj6uiw-xp3olhlaqPAp7c3MsMk9KXxrj-i20 plot_version=2"}
+{"t":"2026-08-07T07:07:54.072006932Z","dir":"recv","type":"FarmChange","detail":"owner=1000001 version=4"}

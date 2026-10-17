@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package contracts;
+
+option go_package = "farmgame/api/gen/contracts;contractspb";
+
+import "logicrpc/logic_service.proto";
+
+// ── SCB-1 共享身份与 Work 寻址(合同 27/28/29/31)──────────────────
+// 本文件是 EffectiveIdempotencyKey/OperationRootRef/WorkAddress/
+// SourceAuthorityRef/WorkType/ParticipantStep 的唯一 Proto 权威。
+// field number 为一次性分配:演进只能追加新号码并把退役号码标 reserved,
+// 禁止复用。稳定字符串名称(进入 StableOpaqueID/Hash 输入)的唯一权威是
+// internal/identity 与 internal/contracts 的注册表,不是本枚举标识符。
+
+// 合同 28 §3.2:执行根 Authority 种类。Root 由 CommandCatalog 与可信目标
+// 派生,客户端不能指定内部 Authority 地址。
+enum RootAuthorityKind {
+  ROOT_AUTHORITY_KIND_UNSPECIFIED = 0;
+  ROOT_AUTHORITY_KIND_PLAYER_ACTOR = 1;
+  ROOT_AUTHORITY_KIND_FARM_ACTOR = 2;
+  ROOT_AUTHORITY_KIND_FRIEND_PAIR = 3;
+  ROOT_AUTHORITY_KIND_INDEPENDENT_WORK = 4;
+}
+
+// 合同 28 §3.2 / 31 §8.1:业务幂等按执行根 Authority 隔离;不同 Root 不共享
+// Receipt、Workflow 或结果目录项。
+message OperationRootRef {
+  RootAuthorityKind root_authority_kind = 1;
+  // 规范字符串:十进制 player/farm ID,或 canonical pair 的 sid1_ ID。
+  string canonical_root_authority_id = 2;
+}
+
+// 合同 27 §9.2 / 28 §3.2:同一 Root 内相同 Key + 相同 CanonicalPayloadHash
+// 返回原结果;相同 Key + 不同 Hash 返回 IDEMPOTENCY_CONFLICT。
+message EffectiveIdempotencyKey {
+  uint64 subject_player_id = 1;
+  // 协议注册表冻结的大写稳定命令名(如 "PLANT"),不使用枚举序号或本地化名。
+  string stable_command_type_name = 2;
+  string operation_id = 3;
+  OperationRootRef operation_root = 4;
+}
+
+// 合同 29 §6.2 + 27 §7.8.2 的 P0 WorkType 注册表。稳定名称以合同 31 §8.1A
+// 黄金向量为准(如 "PLANT"、"CARE_REWARD"、"GUARD_SYNC_ORDER")。
+enum WorkType {
+  WORK_TYPE_UNSPECIFIED = 0;
+  WORK_TYPE_UNLOCK_PLOT = 1;
+  WORK_TYPE_PLANT = 2;
+  WORK_TYPE_HARVEST = 3;
+  WORK_TYPE_THEFT = 4;
+  WORK_TYPE_ADD_FRIEND = 5;
+  WORK_TYPE_CARE_REWARD = 6;
+  WORK_TYPE_GUARD_SYNC_ORDER = 7;
+  WORK_TYPE_FRIEND_TERMINATION_ORDER = 8;
+  WORK_TYPE_FRIEND_ACTION_DISPATCH_ORDER = 9;
+  WORK_TYPE_RESULT_PUBLISH_ORDER = 10;
+  WORK_TYPE_MAIL_DELIVERY_ORDER = 11;
+  WORK_TYPE_MAIL_CLAIM_PROJECTION_ORDER = 12;
+}
+
+// 合同 29 §6.2。
+enum WorkPlacementKind {
+  WORK_PLACEMENT_KIND_UNSPECIFIED = 0;
+  WORK_PLACEMENT_KIND_INDEPENDENT_WORK_BUCKET = 1;
+  WORK_PLACEMENT_KIND_SOURCE_PERSISTENCE_BUCKET = 2;
+}
+
+// 合同 29 §6.2 / 31 §8.1A:来源 Authority 种类。FRIEND_PAIR 是非 Actor
+// Authority,禁止伪造 RouteDomain、WriterClaim 或 Mailbox 身份。
+enum SourceAuthorityKind {
+  SOURCE_AUTHORITY_KIND_UNSPECIFIED = 0;
+  SOURCE_AUTHORITY_KIND_PLAYER_ACTOR = 1;
+  SOURCE_AUTHORITY_KIND_FARM_ACTOR = 2;
+  SOURCE_AUTHORITY_KIND_FRIEND_PAIR = 3;
+}
+
+// 合同 29 §6.2:SOURCE_PERSISTENCE_BUCKET 必须携带完整来源。
+message SourceAuthorityRef {
+  SourceAuthorityKind authority_kind = 1;
+  // 规范字符串:十进制 actor_id,或 canonical pair/relation ID。
+  string canonical_authority_id = 2;
+  string authority_layout_version = 3;
+  // 仅 PLAYER_ACTOR/FARM_ACTOR 来源填写并复核;非 Actor 来源必须为空。
+  optional logicrpc.RouteDomain actor_route_domain = 4;
+}
+
+// 合同 29 §6.2:Coordinator/Dispatcher、Work Repository 和 Participant
+// Ingress 都必须按 bucket_version 重新计算并核对 bucket_id,不得只拿
+// work_id 猜 Bucket。
+message WorkAddress {
+  string work_id = 1;
+  WorkType work_type = 2;
+  WorkPlacementKind placement_kind = 3;
+  uint32 bucket_version = 4;
+  uint32 bucket_id = 5;
+  optional SourceAuthorityRef source_authority = 6;
+}
+
+// 合同 29 §6.2/§7.8:稳定 Participant Step。前 15 项与
+// ParticipantCommandType 一一对应;其余为好友终止 Order(33 §3.3)与邮件
+// 后台动作(29 §7.16)的可恢复 Step。禁止用自由字符串拼写正确性状态。
+enum ParticipantStep {
+  PARTICIPANT_STEP_UNSPECIFIED = 0;
+  PARTICIPANT_STEP_RESERVE_UNLOCK_COIN = 1;
+  PARTICIPANT_STEP_COMMIT_PLOT_UNLOCK = 2;
+  PARTICIPANT_STEP_COMMIT_UNLOCK_COIN_RESERVATION = 3;
+  PARTICIPANT_STEP_RELEASE_UNLOCK_COIN_RESERVATION = 4;
+  PARTICIPANT_STEP_RESERVE_SEED = 5;
+  PARTICIPANT_STEP_COMMIT_PLANT = 6;
+  PARTICIPANT_STEP_COMMIT_SEED_RESERVATION = 7;
+  PARTICIPANT_STEP_RELEASE_SEED_RESERVATION = 8;
+  PARTICIPANT_STEP_COMMIT_HARVEST = 9;
+  PARTICIPANT_STEP_GRANT_HARVEST_REWARD = 10;
+  PARTICIPANT_STEP_DECIDE_THEFT = 11;
+  PARTICIPANT_STEP_SETTLE_THEFT_VISITOR = 12;
+  PARTICIPANT_STEP_CREDIT_GUARD_INCOME = 13;
+  PARTICIPANT_STEP_APPLY_CARE_REWARD = 14;
+  PARTICIPANT_STEP_APPLY_GUARD_SNAPSHOT = 15;
+  PARTICIPANT_STEP_CAPTURE_SHARE_GENERATION_FLOOR = 16;
+  PARTICIPANT_STEP_COMMIT_REACTIVATION_GENERATION_FLOORS = 17;
+  PARTICIPANT_STEP_REMOVE_ACTIVE_RELATION_IF_EPOCH_MATCHES = 18;
+  PARTICIPANT_STEP_REVOKE_FARM_SUBSCRIPTION = 19;
+  PARTICIPANT_STEP_MARK_FRIEND_INDEX_DIRTY = 20;
+  PARTICIPANT_STEP_RESUME_MAIL_DELIVERY_ORDER = 21;
+  PARTICIPANT_STEP_APPLY_MAIL_CLAIM_PROJECTION = 22;
+}

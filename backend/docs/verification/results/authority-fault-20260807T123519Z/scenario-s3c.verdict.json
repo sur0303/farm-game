@@ -1,0 +1,10 @@
+{
+  "verdict": "FAIL",
+  "reason": "scenario s3c failed: no REJOIN_REQUIRED within 25s despite permanent FARM_CHANGE failure",
+  "steps": {
+    "rejoin": {
+      "status": "fail",
+      "detail": "no REJOIN_REQUIRED within 25s despite permanent FARM_CHANGE failure"
+    }
+  }
+}

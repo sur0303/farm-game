@@ -1,0 +1,33 @@
+{
+  "schema": "farm.r2-q.fixture/worker-readiness/v1",
+  "fixture_id": "worker-readiness-v1",
+  "contract_status": "SKIPPED_NOT_COMPOSED",
+  "deterministic": true,
+  "production_semantics_changed": false,
+  "states": ["DISABLED", "READY", "DEGRADED", "FAILED"],
+  "families": [
+    {"family": "PLANT", "enabled": true, "critical": true, "expected_state": "READY"},
+    {"family": "HARVEST", "enabled": true, "critical": true, "expected_state": "READY"},
+    {"family": "CARE", "enabled": true, "critical": true, "expected_state": "READY"},
+    {"family": "THEFT", "enabled": true, "critical": true, "expected_state": "READY"},
+    {"family": "FRIEND_PROJECTION", "enabled": true, "critical": false, "expected_state": "READY"},
+    {"family": "GUARD_SYNC", "enabled": false, "critical": false, "expected_state": "DISABLED"},
+    {"family": "MAIL", "enabled": false, "critical": false, "expected_state": "DISABLED"}
+  ],
+  "readiness_requirements": ["repository_initialized", "route_provider_available", "participant_client_available", "scan_loop_alive", "recent_successful_scan", "work_lease_scheduler_healthy"],
+  "aggregate_policy": {"enabled_critical_not_ready": "not_ready_or_degraded_explicit", "disabled_not_counted_as_missing": true, "liveness_restart_on_redis_delay": false},
+  "fault_cases": [
+    {"case_id": "repository-disconnected", "fault": "repository", "expected": "affected_family_not_ready", "other_families": "continue"},
+    {"case_id": "route-unavailable", "fault": "route", "expected": "affected_family_not_ready"},
+    {"case_id": "participant-timeout", "fault": "participant", "expected": "bounded_retry_or_unknown"},
+    {"case_id": "scan-dead", "fault": "scan", "expected": "readiness_not_ready"},
+    {"case_id": "scheduler-dead", "fault": "scheduler", "expected": "readiness_not_ready"},
+    {"case_id": "redis-delay", "fault": "redis_delay", "expected": "readiness_changes", "liveness": "stable", "restart_storm": false},
+    {"case_id": "worker-kill-after-claim", "fault": "worker_kill", "expected": "due_index_recovery", "duplicate_side_effect": false, "due_residual": 0}
+  ],
+  "dispatch_cases": [
+    {"case_id": "invalid-order", "order_types": ["CARE", "FRIEND_ACTION", "RESULT_PUBLISH"], "theft_handler_accepts": false, "invalid_order_count": 0},
+    {"case_id": "residual", "due_residual": 0, "unmatched_due_residual": 0}
+  ],
+  "cases": ["family_state_matrix", "aggregate_readiness", "repository_route_participant_scan_scheduler_faults", "disabled_families", "redis_delay_liveness", "worker_kill_due_recovery", "invalid_order", "due_residual"]
+}

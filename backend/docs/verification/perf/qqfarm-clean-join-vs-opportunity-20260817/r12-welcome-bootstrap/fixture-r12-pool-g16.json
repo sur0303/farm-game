@@ -1,0 +1,20 @@
+{
+  "run_id": "r12-pool-g16",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 950004800,
+  "viewer_count": 200,
+  "viewer_end": 950004999,
+  "target_owner_id": 0,
+  "friend_count": 60,
+  "verified_friend_count": 60,
+  "fake_players": 60,
+  "density_percent": 20,
+  "initialized_players": 260,
+  "activated_pairs": 12000,
+  "index_rows_applied": 24000,
+  "farm_records_seeded": 60,
+  "elapsed_ms": 12477,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}

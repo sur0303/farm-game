@@ -1,0 +1,911 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import fcntl
+import importlib.machinery
+import importlib.util
+import json
+import os
+import re
+import subprocess
+import sys
+import tempfile
+import time
+from pathlib import Path
+
+sys.dont_write_bytecode = True
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+LOADER = importlib.machinery.SourceFileLoader(
+    "verify_dynamic_g2_for_g3",
+    str(SCRIPT_DIR / "verify-dynamic-g2-planned-migration"),
+)
+SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
+G2 = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = G2
+LOADER.exec_module(G2)
+G1 = G2.G1
+
+DOMAIN = "FARM_WORKER"
+SHARD = 0
+H5_EVIDENCE_LABEL = "final-g3-post-takeover"
+# The Controller runs with a read-only root filesystem, so the probe ships in
+# the published runtime image instead of being injected at verification time.
+PROBE_PATH = "/usr/local/bin/route-authority-fence-probe"
+
+
+def fence_probe_command(
+    command: list[str],
+    controller_pod: str,
+    source: dict,
+    target: dict,
+    canonical: dict,
+) -> list[str]:
+    return [
+        *command,
+        "-n",
+        G1.NAMESPACE,
+        "exec",
+        controller_pod,
+        "--",
+        PROBE_PATH,
+        "--domain",
+        DOMAIN,
+        "--shard",
+        str(SHARD),
+        "--old-holder-id",
+        source["holder_id"],
+        "--old-boot-id",
+        source["holder_boot_id"],
+        "--old-assignment-revision",
+        str(source["assignment_revision"]),
+        "--old-writer-epoch",
+        str(source["writer_epoch"]),
+        "--old-lease-epoch",
+        str(source["lease_epoch"]),
+        "--current-holder-id",
+        target["holder_id"],
+        "--current-boot-id",
+        target["boot_id"],
+        "--realm",
+        canonical["realm"],
+        "--hash-version",
+        str(canonical["hash_version"]),
+        "--hash-seed",
+        str(canonical["hash_seed"]),
+        "--player-shards",
+        str(canonical["player"]["shard_count"]),
+        "--farm-shards",
+        str(canonical["farm"]["shard_count"]),
+    ]
+
+
+def run_contract(diagnostic: bool) -> dict[str, str]:
+    if diagnostic:
+        return {
+            "g2_label": "g2-diagnostic",
+            "g2_status":
+                "G2_THREE_DOMAIN_PLANNED_MIGRATION_DIAGNOSTIC_PASS",
+            "g3_label": "g3-crash-takeover-diagnostic",
+            "g3_schema":
+                "farm-dynamic-route-g3-crash-takeover-diagnostic-receipt.v1",
+            "g3_status": "G3_PROOF_GATED_CRASH_TAKEOVER_DIAGNOSTIC_PASS",
+        }
+    return {
+        "g2_label": "g2-planned-migration",
+        "g2_status": "G2_THREE_DOMAIN_PLANNED_MIGRATION_PASS",
+        "g3_label": "g3-crash-takeover",
+        "g3_schema": "farm-dynamic-route-g3-crash-takeover-receipt.v1",
+        "g3_status": "G3_PROOF_GATED_CRASH_TAKEOVER_PASS",
+    }
+
+
+def takeover_arguments(
+    run_id: str,
+    identity_suffix: str,
+    source: dict,
+    target: dict,
+    shard: int = SHARD,
+) -> list[str]:
+    identity = f"g3-{run_id}-farm-worker-{shard}-{identity_suffix}"
+    return [
+        "takeover-after-expiry",
+        "--plan-id", identity,
+        "--transition-id", identity + "-tx",
+        "--domain", DOMAIN,
+        "--shard", str(shard),
+        "--old-holder-id", source["holder_id"],
+        "--old-boot-id", source["holder_boot_id"],
+        "--target-holder-id", target["holder_id"],
+        "--target-boot-id", target["boot_id"],
+        "--target-endpoint", target["logic_endpoint"],
+        "--holder-unavailable",
+        "--evidence", identity,
+        "--requested-ttl-ms", "60000",
+        "--expected-holder-id", source["holder_id"],
+        "--expected-holder-boot-id", source["holder_boot_id"],
+        "--expected-assignment-revision",
+        str(source["assignment_revision"]),
+        "--expected-writer-epoch", str(source["writer_epoch"]),
+        "--expected-lease-epoch", str(source["lease_epoch"]),
+    ]
+
+
+def stranded_shards(snapshot: dict, source: dict) -> list[int]:
+    """Shards the source holds besides the proof shard.
+
+    A crashed process loses every shard it held, and the store refuses to
+    transfer a shard whose Authority lease has already lapsed. Only one shard
+    fits in the holder-unavailable window, so the run evacuates the rest with
+    ordinary planned migrations before the crash.
+    """
+    table = snapshot["canonical_json"][DOMAIN.lower()]
+    holders = snapshot["canonical_json"]["holders"]
+    stranded = []
+    for shard, route in enumerate(table["routes"]):
+        if shard == SHARD or route["state"] != "ACTIVE":
+            continue
+        holder = holders[route["holder_index"]]
+        if (
+            holder["instance_id"] == source["holder_id"]
+            and holder["boot_id"] == source["holder_boot_id"]
+        ):
+            stranded.append(shard)
+    return stranded
+
+
+def rejected_code(
+    routectl: Path,
+    environment: dict,
+    arguments: list[str],
+) -> str:
+    redacted = dict(environment)
+    redacted["ROUTECTL_REDACTED_ERRORS"] = "1"
+    result = subprocess.run(
+        [str(routectl), *arguments],
+        env=redacted,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0:
+        raise ValueError("expected routectl request rejection")
+    try:
+        value = json.loads(result.stderr)
+    except json.JSONDecodeError as error:
+        raise ValueError("rejected request did not emit redacted code") from error
+    code = value.get("grpc_code", "")
+    if code not in ("InvalidArgument", "FailedPrecondition", "Aborted"):
+        raise ValueError(f"unexpected rejected gRPC code {code!r}")
+    return code
+
+
+def run_plan_ctl(
+    routectl: Path,
+    environment: dict,
+    arguments: list[str],
+) -> dict:
+    redacted = dict(environment)
+    redacted["ROUTECTL_REDACTED_ERRORS"] = "1"
+    result = subprocess.run(
+        [str(routectl), *arguments],
+        env=redacted,
+        capture_output=True,
+        text=True,
+    )
+    try:
+        value = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        value = None
+    if isinstance(value, dict) and (
+        result.returncode == 0 or isinstance(value.get("plan"), dict)
+    ):
+        return value
+    raise subprocess.CalledProcessError(
+        result.returncode,
+        result.args,
+        output=result.stdout,
+        stderr=result.stderr,
+    )
+
+
+def wait_takeover(
+    routectl: Path,
+    environment: dict,
+    arguments: list[str],
+    timeout: float = 20.0,
+) -> dict:
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            return run_plan_ctl(routectl, environment, arguments)
+        except subprocess.CalledProcessError as error:
+            try:
+                code = json.loads(error.stderr).get("grpc_code", "")
+            except (json.JSONDecodeError, TypeError):
+                raise
+            if (
+                code not in ("Aborted", "Unavailable")
+                or time.monotonic() >= deadline
+            ):
+                raise ValueError(
+                    f"takeover submission rejected grpc_code={code}"
+                ) from error
+            time.sleep(0.1)
+
+
+def source_pod(pods: list[dict], source_holder_id: str) -> dict:
+    candidates = [
+        pod
+        for pod in pods
+        if pod["name"] == source_holder_id or pod["app"] == source_holder_id
+    ]
+    if len(candidates) != 1:
+        raise ValueError(f"source pod not unique: {candidates}")
+    return candidates[0]
+
+
+def rotated_source_boot(run_id: str, source_holder_id: str) -> str:
+    return f"{source_holder_id}-{run_id}-g3-restart"
+
+
+def crash_source_with_new_boot(
+    command: list[str],
+    run_id: str,
+    source_holder_id: str,
+    old_pod_name: str,
+) -> str:
+    next_boot = rotated_source_boot(run_id, source_holder_id)
+    subprocess.run(
+        [
+            *command,
+            "-n",
+            G1.NAMESPACE,
+            "scale",
+            f"deployment/{source_holder_id}",
+            "--replicas=0",
+        ],
+        check=True,
+    )
+    subprocess.run(
+        [
+            *command,
+            "-n",
+            G1.NAMESPACE,
+            "wait",
+            "--for=delete",
+            f"pod/{old_pod_name}",
+            "--timeout=120s",
+        ],
+        check=True,
+    )
+    subprocess.run(
+        [
+            *command,
+            "-n",
+            G1.NAMESPACE,
+            "set",
+            "env",
+            f"deployment/{source_holder_id}",
+            f"WORKER_BOOT_ID={next_boot}",
+        ],
+        check=True,
+    )
+    return next_boot
+
+
+def start_source(command: list[str], source_holder_id: str) -> None:
+    subprocess.run(
+        [
+            *command,
+            "-n",
+            G1.NAMESPACE,
+            "scale",
+            f"deployment/{source_holder_id}",
+            "--replicas=1",
+        ],
+        check=True,
+    )
+
+
+def old_source_unavailable(
+    holders_output: dict,
+    source_holder_id: str,
+    old_boot_id: str,
+    now_ms: int,
+) -> bool:
+    for holder in holders_output.get("holders", []):
+        if (
+            holder.get("holder_id") == source_holder_id
+            and holder.get("boot_id") == old_boot_id
+            and int(holder.get("lease_until_ms", 0)) > now_ms
+        ):
+            return False
+    return True
+
+
+def wait_old_source_unavailable(
+    routectl: Path,
+    environment: dict,
+    source_holder_id: str,
+    old_boot_id: str,
+    timeout: float = 45.0,
+) -> None:
+    deadline = time.monotonic() + timeout
+    while True:
+        holders = G1.run_ctl(
+            routectl,
+            environment,
+            "holders",
+            "--domain",
+            DOMAIN,
+        )
+        if old_source_unavailable(
+            holders,
+            source_holder_id,
+            old_boot_id,
+            int(time.time() * 1000),
+        ):
+            return
+        if time.monotonic() >= deadline:
+            raise TimeoutError(
+                "old source holder lease did not expire"
+            )
+        time.sleep(0.2)
+
+
+def wait_new_source_boot(
+    command: list[str],
+    routectl: Path,
+    environment: dict,
+    source: dict,
+    old_pod_uid: str,
+    expected_boot_id: str,
+    timeout: float = 150.0,
+) -> tuple[dict, list[dict]]:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        pods = G1.pod_observations(G1.command_json(
+            command,
+            "-n",
+            G1.NAMESPACE,
+            "get",
+            "pods",
+            "-o",
+            "json",
+        ))
+        # Do not require global readiness inside the intentional crash window.
+        # The old Authority may be the readiness dependency we are about to
+        # repair; the exact new Pod UID and fresh Holder record are the proof.
+        try:
+            current_pod = source_pod(pods, source["holder_id"])
+        except ValueError:
+            time.sleep(0.5)
+            continue
+        if current_pod["uid"] == old_pod_uid:
+            time.sleep(0.5)
+            continue
+        holders = G1.run_ctl(
+            routectl,
+            environment,
+            "holders",
+            "--domain",
+            DOMAIN,
+        )
+        records = [
+            holder
+            for holder in holders.get("holders", [])
+            if holder.get("holder_id") == source["holder_id"]
+            and holder.get("boot_id") == expected_boot_id
+            and holder.get("process_ready") is True
+            and holder.get("draining") is False
+            and int(holder.get("lease_until_ms", 0)) > int(time.time() * 1000)
+        ]
+        if len(records) == 1:
+            return records[0], pods
+        time.sleep(0.5)
+    raise TimeoutError("source holder did not recreate with a new boot")
+
+
+def same_fence(source: dict, observed: dict) -> bool:
+    return (
+        observed.get("holder_id") == source["holder_id"]
+        and observed.get("holder_boot_id") == source["holder_boot_id"]
+        and int(observed.get("assignment_revision", 0))
+        == source["assignment_revision"]
+        and int(observed.get("writer_epoch", 0)) == source["writer_epoch"]
+        and int(observed.get("lease_epoch", 0)) == source["lease_epoch"]
+    )
+
+
+def main() -> int:
+    diagnostic = sys.argv[1:] == ["--diagnostic"]
+    if sys.argv[1:] and not diagnostic:
+        raise SystemExit(
+            "verify-dynamic-g3-crash-takeover: only --diagnostic is supported"
+        )
+    repository = Path(__file__).resolve().parents[2]
+    lab = Path(os.environ.get("FARM_L2_LAB_ROOT", "/data/farm-l2-r2"))
+    run_id = os.environ.get("ROUTE_RUN_ID", "")
+    if re.fullmatch(r"[a-z0-9][a-z0-9-]{0,62}", run_id) is None:
+        raise SystemExit(
+            "verify-dynamic-g3-crash-takeover: ROUTE_RUN_ID required"
+        )
+    if not diagnostic and not os.environ.get("H5_ROOT", ""):
+        raise SystemExit(
+            "verify-dynamic-g3-crash-takeover: H5_ROOT required"
+        )
+    if G1.git_output(repository, "status", "--porcelain"):
+        raise SystemExit(
+            "verify-dynamic-g3-crash-takeover: source worktree must be clean"
+        )
+    source_head = G1.git_output(repository, "rev-parse", "HEAD")
+    contract = run_contract(diagnostic)
+    g2_path = (
+        lab
+        / "receipts"
+        / f"dynamic-route-{contract['g2_label']}-{run_id}.json"
+    )
+    g2 = G1.load_json(g2_path)
+    if (
+        g2.get("status") != contract["g2_status"]
+        or g2.get("source_head") != source_head
+        or (
+            not diagnostic
+            and g2.get("eligible_for_g3") is not True
+        )
+    ):
+        raise SystemExit(
+            "verify-dynamic-g3-crash-takeover: G2 receipt mismatch"
+        )
+    receipt_path = (
+        lab
+        / "receipts"
+        / f"dynamic-route-{contract['g3_label']}-{run_id}.json"
+    )
+    evidence = lab / "evidence" / f"dynamic-route-{contract['g3_label']}-{run_id}"
+    if receipt_path.exists() or evidence.exists():
+        raise SystemExit(
+            "verify-dynamic-g3-crash-takeover: immutable output exists"
+        )
+    kubeconfig = Path(os.environ.get(
+        "KUBECONFIG",
+        str(lab / "runtime" / "kubeconfig"),
+    ))
+    command = G1.kubectl_command(kubeconfig)
+    lock_path = lab / "runtime" / "dynamic-route-formal-run.lock"
+    with lock_path.open("a+") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise SystemExit(
+                "verify-dynamic-g3-crash-takeover: formal lock busy"
+            ) from error
+        G1.verify_cluster(command)
+        baseline_pods = G1.pod_observations(G1.command_json(
+            command,
+            "-n",
+            G1.NAMESPACE,
+            "get",
+            "pods",
+            "-o",
+            "json",
+        ))
+        G1.require_healthy_pods(baseline_pods)
+        evidence.mkdir(parents=True)
+        tls = lab / "runtime" / "tls" / "dynamic-route" / run_id
+        with tempfile.TemporaryDirectory(prefix=f"g3-{run_id}-") as temporary:
+            routectl = Path(temporary) / "routectl"
+            subprocess.run(
+                [
+                    "go",
+                    "build",
+                    "-buildvcs=false",
+                    "-trimpath",
+                    "-o",
+                    str(routectl),
+                    "./cmd/routectl",
+                ],
+                cwd=repository,
+                check=True,
+            )
+            forward = None
+            try:
+                forward, port = G1.start_controller_forward(
+                    command,
+                    evidence,
+                    "g3",
+                )
+                environment = G1.routectl_environment(tls, port)
+                deadline = time.monotonic() + 90
+                while True:
+                    snapshot = G1.run_ctl(
+                        routectl,
+                        environment,
+                        "snapshot",
+                    )
+                    source = G2.route_identity(snapshot, DOMAIN, SHARD)
+                    if (
+                        source["state"] == "ACTIVE"
+                        and source["lease_until_ms"] - int(time.time() * 1000)
+                        >= 50_000
+                    ):
+                        break
+                    if time.monotonic() >= deadline:
+                        raise TimeoutError(
+                            "Authority did not expose a 50s takeover window"
+                        )
+                    time.sleep(0.5)
+                target = G2.wait_eligible_target(
+                    routectl,
+                    environment,
+                    DOMAIN,
+                    source["holder_id"],
+                    int(snapshot["revision"]),
+                )
+                evacuated = {}
+                for shard in stranded_shards(snapshot, source):
+                    move = G2.wait_plan_moved(
+                        routectl,
+                        environment,
+                        G2.move_arguments(
+                            run_id,
+                            DOMAIN,
+                            shard,
+                            90,
+                            G2.route_identity(snapshot, DOMAIN, shard),
+                            target,
+                        ),
+                    )["plan"]
+                    G2.wait_plan_verified(
+                        routectl,
+                        environment,
+                        move["plan_id"],
+                        DOMAIN,
+                        shard,
+                    )
+                    evacuated[str(shard)] = move["plan_id"]
+                if evacuated:
+                    snapshot = G1.run_ctl(routectl, environment, "snapshot")
+                    source = G2.route_identity(snapshot, DOMAIN, SHARD)
+                    if stranded_shards(snapshot, source):
+                        raise ValueError(
+                            "source still holds shards besides the proof shard"
+                        )
+                    target = G2.wait_eligible_target(
+                        routectl,
+                        environment,
+                        DOMAIN,
+                        source["holder_id"],
+                        int(snapshot["revision"]),
+                    )
+                early_code = rejected_code(
+                    routectl,
+                    environment,
+                    takeover_arguments(
+                        run_id,
+                        "early-live-reject",
+                        source,
+                        target,
+                    ),
+                )
+                early_shard = G1.run_ctl(
+                    routectl,
+                    environment,
+                    "shard",
+                    "--domain",
+                    DOMAIN,
+                    "--shard",
+                    str(SHARD),
+                )
+                if not same_fence(
+                    source,
+                    early_shard.get("authority", {}).get("fence", {}),
+                ):
+                    raise ValueError("early rejection changed Authority")
+                old_source_pod = source_pod(
+                    baseline_pods,
+                    source["holder_id"],
+                )
+                expected_source_boot = crash_source_with_new_boot(
+                    command,
+                    run_id,
+                    source["holder_id"],
+                    old_source_pod["name"],
+                )
+                wait_old_source_unavailable(
+                    routectl,
+                    environment,
+                    source["holder_id"],
+                    source["holder_boot_id"],
+                )
+                pre_takeover = G1.run_ctl(
+                    routectl,
+                    environment,
+                    "shard",
+                    "--domain",
+                    DOMAIN,
+                    "--shard",
+                    str(SHARD),
+                )
+                authority = pre_takeover.get("authority", {})
+                if (
+                    authority.get("state") != "ACTIVE"
+                    or not same_fence(source, authority.get("fence", {}))
+                    or int(authority.get("lease_until_ms", 0))
+                    <= int(time.time() * 1000) + 5_000
+                ):
+                    raise ValueError(
+                        "old Authority was not ACTIVE in holder-unavailable window"
+                    )
+                takeover = wait_takeover(
+                    routectl,
+                    environment,
+                    takeover_arguments(
+                        run_id,
+                        "takeover",
+                        source,
+                        target,
+                    ),
+                )
+                plan = takeover.get("plan", {})
+                if (
+                    plan.get("phase") != "SUCCEEDED"
+                    or plan.get("operation") != "crash-takeover"
+                    or plan.get("proof_holder_unavailable") is not True
+                    or plan.get("proof_lease_expired") is not False
+                ):
+                    raise ValueError(
+                        "proof-gated takeover did not succeed: "
+                        f"phase={plan.get('phase')} "
+                        f"error_code={plan.get('error_code')}"
+                    )
+                verify = G2.wait_plan_verified(
+                    routectl,
+                    environment,
+                    plan["plan_id"],
+                    DOMAIN,
+                    SHARD,
+                )
+                post_takeover = G1.run_ctl(
+                    routectl,
+                    environment,
+                    "shard",
+                    "--domain",
+                    DOMAIN,
+                    "--shard",
+                    str(SHARD),
+                )
+                after_fence = post_takeover.get("authority", {}).get(
+                    "fence",
+                    {},
+                )
+                if (
+                    post_takeover.get("snapshot_state") != "ACTIVE"
+                    or after_fence.get("holder_id") != target["holder_id"]
+                    or after_fence.get("holder_boot_id") != target["boot_id"]
+                    or not G2.strictly_advanced(source, after_fence)
+                ):
+                    raise ValueError("takeover fence did not advance to target")
+                live_pods = G1.pod_observations(G1.command_json(
+                    command,
+                    "-n",
+                    G1.NAMESPACE,
+                    "get",
+                    "pods",
+                    "-o",
+                    "json",
+                ))
+                controller_pods = [
+                    pod
+                    for pod in live_pods
+                    if pod["app"] == "route-controller"
+                ]
+                if len(controller_pods) != 1:
+                    raise ValueError("route-controller pod is not unique")
+                canonical = snapshot["canonical_json"]
+                probe_result = subprocess.run(
+                    fence_probe_command(
+                        command,
+                        controller_pods[0]["name"],
+                        source,
+                        target,
+                        canonical,
+                    ),
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+                renew_probe = json.loads(probe_result.stdout)
+                if (
+                    renew_probe.get("fenced") is not True
+                    or renew_probe.get("durable_precondition") is not True
+                    or renew_probe.get("current_holder_id")
+                    != target["holder_id"]
+                    or renew_probe.get("current_boot_id") != target["boot_id"]
+                ):
+                    raise ValueError("old-generation Renew was not fenced")
+                after_renew_probe = G1.run_ctl(
+                    routectl,
+                    environment,
+                    "shard",
+                    "--domain",
+                    DOMAIN,
+                    "--shard",
+                    str(SHARD),
+                )
+                if (
+                    after_renew_probe.get("authority", {}).get("fence")
+                    != after_fence
+                    or after_renew_probe.get("authority", {}).get(
+                        "last_transition_id"
+                    )
+                    != post_takeover.get("authority", {}).get(
+                        "last_transition_id"
+                    )
+                ):
+                    raise ValueError(
+                        "old-generation Renew mutated durable Authority"
+                    )
+                start_source(command, source["holder_id"])
+                new_source, recreated_pods = wait_new_source_boot(
+                    command,
+                    routectl,
+                    environment,
+                    source,
+                    old_source_pod["uid"],
+                    expected_source_boot,
+                )
+                stale_target = dict(new_source)
+                stale_arguments = G2.move_arguments(
+                    run_id,
+                    DOMAIN,
+                    SHARD,
+                    99,
+                    source,
+                    stale_target,
+                )
+                stale_code = rejected_code(
+                    routectl,
+                    environment,
+                    stale_arguments,
+                )
+                after_stale = G1.run_ctl(
+                    routectl,
+                    environment,
+                    "shard",
+                    "--domain",
+                    DOMAIN,
+                    "--shard",
+                    str(SHARD),
+                )
+                if (
+                    after_stale.get("authority", {}).get("fence")
+                    != after_fence
+                    or after_stale.get("authority", {}).get(
+                        "last_transition_id"
+                    )
+                    != post_takeover.get("authority", {}).get(
+                        "last_transition_id"
+                    )
+                ):
+                    raise ValueError("stale old-generation probe changed Authority")
+                coherent_snapshot, consumers, final_pods = G1.collect_coherent(
+                    command,
+                    routectl,
+                    environment,
+                    coherence=(
+                        G2.route_coherent
+                        if diagnostic
+                        else G1.coherent
+                    ),
+                )
+                G1.save_observation(
+                    evidence / "final",
+                    coherent_snapshot,
+                    consumers,
+                    final_pods,
+                )
+                (evidence / "takeover.json").write_text(
+                    json.dumps(takeover, sort_keys=True, indent=2) + "\n"
+                )
+                (evidence / "verify.json").write_text(
+                    json.dumps(verify, sort_keys=True, indent=2) + "\n"
+                )
+            finally:
+                G1.stop(forward)
+
+        h5_path = None
+        if not diagnostic:
+            h5_environment = os.environ.copy()
+            h5_environment["DYNAMIC_ROUTE_PARENT_LOCK_FD"] = str(lock.fileno())
+            subprocess.run(
+                [
+                    str(SCRIPT_DIR / "verify-dynamic-h5-product-e2e"),
+                    "--stage",
+                    "final",
+                    "--evidence-label",
+                    H5_EVIDENCE_LABEL,
+                ],
+                cwd=repository,
+                env=h5_environment,
+                pass_fds=(lock.fileno(),),
+                check=True,
+            )
+            h5_path = (
+                lab
+                / "receipts"
+                / (
+                    "dynamic-h5-product-e2e-final-"
+                    f"{H5_EVIDENCE_LABEL}-{run_id}.json"
+                )
+            )
+            h5 = G1.load_json(h5_path)
+            if (
+                h5.get("status") != "DYNAMIC_H5_PRODUCT_E2E_VERIFIED"
+                or h5.get("account_auth_verified") is not True
+            ):
+                raise ValueError("post-G3 H5 account E2E failed")
+        value = {
+            "schema_version": contract["g3_schema"],
+            "status": contract["g3_status"],
+            "run_id": run_id,
+            "namespace": G1.NAMESPACE,
+            "source_head": source_head,
+            "g2_receipt_sha256": G1.sha256(g2_path),
+            "domain": DOMAIN,
+            "shard": SHARD,
+            "early_live_takeover_rejected": True,
+            "early_reject_grpc_code": early_code,
+            "source_pod_uid_before": old_source_pod["uid"],
+            "source_pod_uid_after": source_pod(
+                recreated_pods,
+                source["holder_id"],
+            )["uid"],
+            "source_boot_before": source["holder_boot_id"],
+            "source_boot_after": new_source["boot_id"],
+            "holder_unavailable_proof": True,
+            "authority_active_during_proof": True,
+            "lease_expired_proof_used": False,
+            "plan_id": plan["plan_id"],
+            "before_fence": {
+                "holder_id": source["holder_id"],
+                "holder_boot_id": source["holder_boot_id"],
+                "assignment_revision": source["assignment_revision"],
+                "writer_epoch": source["writer_epoch"],
+                "lease_epoch": source["lease_epoch"],
+            },
+            "after_fence": after_fence,
+            "verify_checks": verify["checks"],
+            "shards_evacuated_before_crash": evacuated,
+            "old_generation_request_rejected": True,
+            "old_generation_reject_grpc_code": stale_code,
+            "old_generation_renew_fenced": True,
+            "old_generation_renew_status": renew_probe["status"],
+            "old_generation_authority_unchanged": True,
+            "old_generation_claim_success": 0,
+            "all_seven_consumers_coherent_after_takeover": True,
+            "h5_business_after_takeover": (
+                "SKIPPED_DIAGNOSTIC" if diagnostic else "PASS"
+            ),
+            "eligible_for_full_functional_qualification": not diagnostic,
+            "capacity_qualified": False,
+            "company_redis_contacted": False,
+            "global_scan_performed": False,
+            "redis_flush_performed": False,
+            "artifacts": {
+                str(path.relative_to(evidence)): G1.sha256(path)
+                for path in sorted(evidence.rglob("*"))
+                if path.is_file()
+            },
+        }
+        if diagnostic:
+            value["eligible_for_formal_g123"] = True
+        if h5_path is not None:
+            value["post_takeover_h5_receipt_sha256"] = G1.sha256(h5_path)
+        G1.write_exclusive(receipt_path, value)
+        print(json.dumps(value, sort_keys=True, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

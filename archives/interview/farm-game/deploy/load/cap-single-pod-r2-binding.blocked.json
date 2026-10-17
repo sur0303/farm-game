@@ -1,0 +1,23 @@
+{
+  "schema_version": "cap-single-pod-l2.profile-binding.v0.1",
+  "binding_id": "R2",
+  "status": "BLOCKED_WAITING_R2_FINAL_CANDIDATE",
+  "task_id": "CAP-SINGLE-POD-L2-R2",
+  "run_id_pattern": "^capsingle-l2-r2-[0-9]{8}T[0-9]{6}Z-[0-9]+$",
+  "manifest_schema_version": "UNBOUND",
+  "manifest_schema_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "profile_schema_version": "UNBOUND",
+  "profile_version": "UNBOUND",
+  "required_metrics_schema_version": "UNBOUND",
+  "stop_conditions_schema_version": "UNBOUND",
+  "verdict_rules_schema_version": "UNBOUND",
+  "environment_schema_version": "UNBOUND",
+  "frozen_identity": {
+    "backend_evidence_head": "UNBOUND",
+    "backend_business_commit": "UNBOUND",
+    "backend_image_digest": "UNBOUND",
+    "h5_commit": "UNBOUND",
+    "h5_image_digest": "UNBOUND",
+    "model_layout": "UNBOUND"
+  }
+}

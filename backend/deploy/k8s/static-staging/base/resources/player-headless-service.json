@@ -1,0 +1,28 @@
+{
+  "apiVersion": "v1",
+  "kind": "Service",
+  "metadata": {
+    "name": "player-svr-headless",
+    "labels": {
+      "app.kubernetes.io/name": "player-svr",
+      "app.kubernetes.io/component": "player-holder",
+      "app.kubernetes.io/part-of": "farm-game"
+    }
+  },
+  "spec": {
+    "type": "ClusterIP",
+    "clusterIP": "None",
+    "publishNotReadyAddresses": false,
+    "selector": {
+      "app.kubernetes.io/name": "player-svr"
+    },
+    "ports": [
+      {
+        "name": "grpc",
+        "port": 9100,
+        "targetPort": "grpc",
+        "protocol": "TCP"
+      }
+    ]
+  }
+}

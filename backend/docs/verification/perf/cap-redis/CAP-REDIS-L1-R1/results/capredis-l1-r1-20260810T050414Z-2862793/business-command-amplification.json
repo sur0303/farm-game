@@ -1,0 +1,83 @@
+{
+  "schema_version": "cap-redis-l1-r1.business-amplification.v1",
+  "measurement_source": "PENDING_ACTUAL_END_TO_END_TRACE",
+  "rows": [
+    {
+      "command": "BUY",
+      "actor_commit": null,
+      "workflow_writes": null,
+      "orders": null,
+      "due": null,
+      "receipts": null,
+      "redis_ops": null,
+      "total_bytes": null,
+      "verdict": "NOT_MEASURED"
+    },
+    {
+      "command": "SELL",
+      "actor_commit": null,
+      "workflow_writes": null,
+      "orders": null,
+      "due": null,
+      "receipts": null,
+      "redis_ops": null,
+      "total_bytes": null,
+      "verdict": "NOT_MEASURED"
+    },
+    {
+      "command": "PLANT",
+      "actor_commit": null,
+      "workflow_writes": null,
+      "orders": null,
+      "due": null,
+      "receipts": null,
+      "redis_ops": null,
+      "total_bytes": null,
+      "verdict": "NOT_MEASURED"
+    },
+    {
+      "command": "HARVEST",
+      "actor_commit": null,
+      "workflow_writes": null,
+      "orders": null,
+      "due": null,
+      "receipts": null,
+      "redis_ops": null,
+      "total_bytes": null,
+      "verdict": "NOT_MEASURED"
+    },
+    {
+      "command": "WATER",
+      "actor_commit": null,
+      "workflow_writes": null,
+      "orders": null,
+      "due": null,
+      "receipts": null,
+      "redis_ops": null,
+      "total_bytes": null,
+      "verdict": "NOT_MEASURED"
+    },
+    {
+      "command": "THEFT",
+      "actor_commit": null,
+      "workflow_writes": null,
+      "orders": null,
+      "due": null,
+      "receipts": null,
+      "redis_ops": null,
+      "total_bytes": null,
+      "verdict": "NOT_MEASURED"
+    },
+    {
+      "command": "CLAIM_TASK",
+      "actor_commit": null,
+      "workflow_writes": null,
+      "orders": null,
+      "due": null,
+      "receipts": null,
+      "redis_ops": null,
+      "total_bytes": null,
+      "verdict": "NOT_MEASURED"
+    }
+  ]
+}

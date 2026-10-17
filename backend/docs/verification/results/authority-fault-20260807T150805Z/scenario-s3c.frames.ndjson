@@ -1,0 +1,15 @@
+{"t":"2026-08-07T07:08:14.281893962Z","dir":"send","type":"ClientHello"}
+{"t":"2026-08-07T07:08:14.283067192Z","dir":"recv","type":"ServerHello","detail":"session=5c3edd70b7c6c411b021d35e123a1f9f epoch=11"}
+{"t":"2026-08-07T07:08:14.283286704Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-join-faulta20260807t150805z-1786086494283104882 command_type=6"}
+{"t":"2026-08-07T07:08:14.284354376Z","dir":"recv","type":"JoinAccepted","detail":"sub=sub-0f4994f7d5fd520c0c4735544ad46674"}
+{"t":"2026-08-07T07:08:14.285396299Z","dir":"recv","type":"FarmSnapshot","detail":"owner=1000001 version=2 empty_plot=2 v=1"}
+{"t":"2026-08-07T07:08:14.285813735Z","dir":"recv","type":"SubscriptionReady"}
+{"t":"2026-08-07T07:08:14.285835515Z","dir":"send","type":"ClientRecoveryComplete"}
+{"t":"2026-08-07T07:08:14.285937017Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-buy-faulta20260807t150805z-1786086494285903934 command_type=2"}
+{"t":"2026-08-07T07:08:14.28841843Z","dir":"recv","type":"BuyApplied"}
+{"t":"2026-08-07T07:08:14.590234977Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-plant-faulta20260807t150805z-1786086494590110863 command_type=4"}
+{"t":"2026-08-07T07:08:15.347425505Z","dir":"recv","type":"RejoinRequired"}
+{"t":"2026-08-07T07:08:15.347881253Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-join-faulta20260807t150805z-1786086495347874019 command_type=6"}
+{"t":"2026-08-07T07:08:15.348774215Z","dir":"recv","type":"JoinAccepted","detail":"sub=sub-8aecd286770953d4379da5fbf47dbf68"}
+{"t":"2026-08-07T07:08:15.349513337Z","dir":"recv","type":"FarmSnapshot","detail":"owner=1000001 version=3 empty_plot=3 v=1"}
+{"t":"2026-08-07T07:08:15.350143975Z","dir":"recv","type":"SubscriptionReady"}

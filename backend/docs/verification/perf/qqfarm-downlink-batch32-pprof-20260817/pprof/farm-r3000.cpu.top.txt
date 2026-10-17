@@ -1,0 +1,39 @@
+File: farm-svr
+Build ID: f974745a158477609fd90e93f0ea42b2c8e8031b
+Type: cpu
+Time: 2026-08-17 12:06:59 CST
+Duration: 12s, Total samples = 13.14s (109.49%)
+Showing nodes accounting for 5.76s, 43.84% of 13.14s total
+Dropped 754 nodes (cum <= 0.07s)
+Showing top 30 nodes out of 404
+      flat  flat%   sum%        cum   cum%
+     1.54s 11.72% 11.72%      1.54s 11.72%  internal/runtime/syscall/linux.Syscall6
+     0.39s  2.97% 14.69%      0.39s  2.97%  runtime.spanClass.sizeclass (inline)
+     0.35s  2.66% 17.35%      0.35s  2.66%  runtime.memclrNoHeapPointers
+     0.32s  2.44% 19.79%      0.32s  2.44%  runtime.memmove
+     0.23s  1.75% 21.54%      0.23s  1.75%  runtime.nextFreeFast (inline)
+     0.21s  1.60% 23.14%      0.21s  1.60%  runtime.heapSetTypeSmallHeader (inline)
+     0.20s  1.52% 24.66%      0.20s  1.52%  internal/runtime/maps.ctrlGroup.matchH2
+     0.19s  1.45% 26.10%      0.46s  3.50%  runtime.scanObject
+     0.19s  1.45% 27.55%      0.68s  5.18%  runtime.tryDeferToSpanScan
+     0.17s  1.29% 28.84%      0.17s  1.29%  runtime.step
+     0.15s  1.14% 29.98%      0.17s  1.29%  runtime.typePointers.next
+     0.14s  1.07% 31.05%      0.14s  1.07%  runtime.(*mspan).moveInlineMarks
+     0.13s  0.99% 32.04%      0.59s  4.49%  google.golang.org/protobuf/internal/impl.(*messageState).Range
+     0.13s  0.99% 33.03%      0.34s  2.59%  runtime.pcvalue
+     0.12s  0.91% 33.94%      0.98s  7.46%  runtime.mallocgcSmallScanNoHeader
+     0.11s  0.84% 34.78%      0.11s  0.84%  aeshashbody
+     0.11s  0.84% 35.62%      0.43s  3.27%  runtime.scanObjectsSmall
+     0.10s  0.76% 36.38%      0.29s  2.21%  google.golang.org/protobuf/internal/impl.(*MessageInfo).marshalAppendPointer
+     0.10s  0.76% 37.14%      0.43s  3.27%  runtime.adjustframe
+     0.10s  0.76% 37.90%      1.88s 14.31%  runtime.mallocgc
+     0.09s  0.68% 38.58%      0.20s  1.52%  google.golang.org/protobuf/internal/impl.(*MessageInfo).sizePointerSlow
+     0.09s  0.68% 39.27%      0.10s  0.76%  runtime.(*mspan).writeHeapBitsSmall
+     0.09s  0.68% 39.95%      0.78s  5.94%  runtime.newobject
+     0.08s  0.61% 40.56%      0.10s  0.76%  runtime.findfunc
+     0.08s  0.61% 41.17%      0.39s  2.97%  runtime.selectgo
+     0.07s  0.53% 41.70%      0.07s  0.53%  crypto/internal/fips140/sha256.blockSHANI
+     0.07s  0.53% 42.24%      0.07s  0.53%  farmgame/internal/storage/redis/rediskey.redisCRC16
+     0.07s  0.53% 42.77%      0.17s  1.29%  internal/runtime/maps.(*Map).getWithoutKeySmallFastStr
+     0.07s  0.53% 43.30%      0.28s  2.13%  runtime.(*stkframe).getStackMap
+     0.07s  0.53% 43.84%      0.10s  0.76%  runtime.findObject

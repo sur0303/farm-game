@@ -1,0 +1,41 @@
+# secrets — 真实连接凭据,绝不入库
+deploy/secrets/*.conf
+deploy/secrets/*.local
+!deploy/secrets/*.example
+
+# build artifacts
+/artifacts/
+/bin/
+/.local-build/
+/farm-gate
+/player-svr
+/farm-svr
+/farm-worker
+/tcaplus-verify
+/deploy/farm-gate/farm-gate
+/deploy/tconnd-responder/tconnd-responder
+/deploy/ws-driver/ws-driver
+*.out
+*.test
+*.prof
+/deploy/tconnd-probe/tconnd-probe
+/tconnd_rundata_timer.xml
+
+# generated protobuf (按需:若选择提交生成代码则删掉此行)
+# *.pb.go
+
+# editor / os
+.DS_Store
+*.swp
+
+# python bytecode — a deploy records whether the worktree was clean, and
+# byte-compiling a script must not downgrade that record
+__pycache__/
+
+# local test binaries (scripts/test-*)
+/.bin/
+.smoke-build/
+docs/verification/results/*/bin/
+docs/verification/results/*/*.log
+docs/verification/results/*/playwright/
+docs/verification/results/*/tmp/

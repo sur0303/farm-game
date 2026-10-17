@@ -1,0 +1,14 @@
+{
+  "verdict": "PASS",
+  "reason": "scenario s3c passed",
+  "steps": {
+    "fresh_join": {
+      "status": "ok",
+      "detail": "fresh snapshot version 3 contains the committed plant (business fact never rolled back)"
+    },
+    "rejoin_required": {
+      "status": "ok",
+      "detail": "received REJOIN_REQUIRED after permanent FARM_CHANGE failure"
+    }
+  }
+}

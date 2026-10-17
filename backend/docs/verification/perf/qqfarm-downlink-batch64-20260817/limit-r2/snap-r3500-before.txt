@@ -1,0 +1,46 @@
+=== top r3500-before 03:52:01 ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-577f645cd8-n8gkf          671m         1012Mi          
+farm-grafana-64f7f46898-z58tr       1m           49Mi            
+farm-prometheus-5966b58fdf-6xrnv    5m           72Mi            
+farm-redis-0                        181m         100Mi           
+farm-redis-1                        161m         88Mi            
+farm-redis-2                        136m         74Mi            
+farm-redis-3                        54m          66Mi            
+farm-redis-4                        54m          90Mi            
+farm-redis-5                        52m          63Mi            
+farm-svr-0                          729m         1961Mi          
+farm-worker-a-8c9dcbf44-4kncl       41m          15Mi            
+farm-worker-b-5fdcbff857-b8njs      30m          15Mi            
+player-svr-0                        481m         1472Mi          
+route-controller-7555ccf646-fz5bg   9m           13Mi            
+=== restarts ===
+farm-gate-577f645cd8-n8gkf r=0 ready=True
+farm-grafana-64f7f46898-z58tr r=0 ready=True
+farm-prometheus-5966b58fdf-6xrnv r=0 ready=True
+farm-redis-0 r=0 ready=True
+farm-redis-1 r=0 ready=True
+farm-redis-2 r=0 ready=True
+farm-redis-3 r=0 ready=True
+farm-redis-4 r=0 ready=True
+farm-redis-5 r=0 ready=True
+farm-svr-0 r=0 ready=True
+farm-worker-a-8c9dcbf44-4kncl r=0 ready=True
+farm-worker-b-5fdcbff857-b8njs r=0 ready=True
+player-svr-0 r=0 ready=True
+route-controller-7555ccf646-fz5bg r=0 ready=True
+ws-stress-join-114432-kvrpt r=0 ready=False
+ws-stress-join-114530-vnjk5 r=0 ready=False
+ws-stress-join-114611-rjksz r=0 ready=False
+ws-stress-join-115113-z27rv r=0 ready=False
+ws-stress-join-115139-pbj6q r=0 ready=False
+=== farm metrics ===
+farm_downlink_lanes_current 1
+farm_downlink_queue_full_total 8594
+go_goroutines 29403
+=== player metrics ===
+go_goroutines 29301
+=== gate metrics ===
+farmgate_downlink_writer_queue_bytes 0
+farmgate_downlink_writer_queue_items 0
+go_goroutines 71

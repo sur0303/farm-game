@@ -1,0 +1,11 @@
+{
+  "schema_version": "farm-gate-lease-renew-stress/v1",
+  "status": "INCONCLUSIVE",
+  "command": "./scripts/test-lease-renew-stress",
+  "requested_topology": "1 owner + 199 viewers with real Redis/player-svr/farm-svr/farm-gate",
+  "real_redis_executed": false,
+  "exit_code": 2,
+  "reason": "required deploy/secrets/redis.conf.local was not present in this worktree environment",
+  "mock_substitution": false,
+  "log": "lease-renew-stress-real.log"
+}

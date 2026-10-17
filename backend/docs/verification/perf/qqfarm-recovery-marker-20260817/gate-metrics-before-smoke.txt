@@ -1,0 +1,2 @@
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_slow_client_kick_total 0

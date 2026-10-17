@@ -1,0 +1,23 @@
+{
+  "schema_version": "cap-redis-l1-r1.attempts.v1",
+  "harness_code_commit": "239b9d5fbfea9fa7863e889417866edab385e827",
+  "harness_binary_sha256": "0eb983059c9171889a9fb4f89b22dda20a8fc649bd2f218d61a8142641031678",
+  "attempts": [
+    {
+      "run_id": "capredis-l1-r1-20260810T024809Z-1853273",
+      "classification": "VALID_HARNESS_SMOKE",
+      "verdict": "PASS",
+      "conclusion_eligible": false,
+      "reason": "all 24 primitive cells passed only at uniform concurrency 1; this is harness viability, not L1 capacity evidence"
+    },
+    {
+      "run_id": "capredis-l1-r1-20260810T024828Z-1874556",
+      "classification": "VALID_CORRECTNESS_STOP",
+      "verdict": "FAIL_CORRECTNESS",
+      "conclusion_eligible": true,
+      "reason": "uniform FriendPair activation at concurrency 10 produced 10 ErrFriendReconcile observations; pressure stopped before warmup/formal rounds"
+    }
+  ],
+  "development_attempts_before_the_frozen_harness": "EXCLUDED_AND_NOT_RETAINED",
+  "baseline_eligible": false
+}

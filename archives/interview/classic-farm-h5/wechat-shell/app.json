@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/game/game",
+    "pages/share/share"
+  ],
+  "window": {
+    "navigationBarTitleText": "经典农场",
+    "navigationBarBackgroundColor": "#f5efe4",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f5efe4"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

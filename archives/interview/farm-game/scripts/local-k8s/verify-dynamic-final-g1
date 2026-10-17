@@ -1,0 +1,807 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import fcntl
+import hashlib
+import json
+import os
+import re
+import socket
+import subprocess
+import tempfile
+import time
+from pathlib import Path
+
+NAMESPACE = "farm-route-dynamic"
+KUBE_CONTEXT = "farm-l2-r2"
+EXPECTED_SERVER = "https://127.0.0.1:6443"
+EXPECTED_APPS = {
+    "route-controller": 1,
+    "player-svr": 2,
+    "farm-svr": 2,
+    "farm-worker-a": 1,
+    "farm-worker-b": 1,
+    "farm-gate": 1,
+    "farm-h5": 1,
+}
+CONSUMER_PORTS = {
+    "player-svr": 9101,
+    "farm-svr": 9091,
+    "farm-worker-a": 9201,
+    "farm-worker-b": 9201,
+    "farm-gate": 8080,
+}
+H5_EVIDENCE_LABEL = "final-g1-post-deadline"
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def load_json(path: Path) -> dict:
+    return json.loads(path.read_text())
+
+
+def write_exclusive(path: Path, value: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o640)
+    try:
+        with os.fdopen(descriptor, "w") as stream:
+            json.dump(value, stream, sort_keys=True, indent=2)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+    except BaseException:
+        path.unlink(missing_ok=True)
+        raise
+
+
+def git_output(repository: Path, *arguments: str) -> str:
+    return subprocess.run(
+        ["git", *arguments],
+        cwd=repository,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+
+
+def kubectl_command(kubeconfig: Path) -> list[str]:
+    return [
+        "kubectl",
+        "--kubeconfig",
+        str(kubeconfig),
+        "--context",
+        KUBE_CONTEXT,
+    ]
+
+
+def command_json(command: list[str], *arguments: str) -> dict:
+    result = subprocess.run(
+        [*command, *arguments],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return json.loads(result.stdout)
+
+
+def verify_cluster(command: list[str]) -> None:
+    config = command_json(command, "config", "view", "--minify", "-o", "json")
+    contexts = config.get("contexts", [])
+    clusters = config.get("clusters", [])
+    if (
+        len(contexts) != 1
+        or contexts[0].get("name") != KUBE_CONTEXT
+        or len(clusters) != 1
+        or clusters[0].get("cluster", {}).get("server") != EXPECTED_SERVER
+    ):
+        raise ValueError("lab cluster identity mismatch")
+
+
+def pod_observations(pods: dict) -> list[dict]:
+    result = []
+    for item in pods.get("items", []):
+        labels = item.get("metadata", {}).get("labels", {})
+        app = labels.get("app.kubernetes.io/name", "")
+        if app not in EXPECTED_APPS:
+            continue
+        statuses = item.get("status", {}).get("containerStatuses", [])
+        init_statuses = item.get("status", {}).get("initContainerStatuses", [])
+        result.append({
+            "app": app,
+            "name": item.get("metadata", {}).get("name", ""),
+            "uid": item.get("metadata", {}).get("uid", ""),
+            "ready": bool(statuses) and all(
+                bool(status.get("ready")) for status in statuses
+            ),
+            "restarts": sum(
+                int(status.get("restartCount", 0)) for status in statuses
+            ),
+            "init_restarts": sum(
+                int(status.get("restartCount", 0)) for status in init_statuses
+            ),
+        })
+    return sorted(result, key=lambda value: value["name"])
+
+
+def require_healthy_pods(observations: list[dict]) -> None:
+    counts = {
+        app: sum(1 for value in observations if value["app"] == app)
+        for app in EXPECTED_APPS
+    }
+    if counts != EXPECTED_APPS:
+        raise ValueError(f"pod topology mismatch: {counts}")
+    failed = [
+        value
+        for value in observations
+        if not value["ready"]
+        or value["restarts"] != 0
+        or value["init_restarts"] != 0
+    ]
+    if failed:
+        raise ValueError(f"pod readiness/restart mismatch: {failed}")
+
+
+def active_deadlines(snapshot_output: dict) -> list[int]:
+    snapshot = snapshot_output.get("canonical_json", {})
+    deadlines = []
+    for domain in ("player", "farm", "farm_worker"):
+        table = snapshot.get(domain, {})
+        if table.get("shard_count") != 4 or len(table.get("routes", [])) != 4:
+            raise ValueError(f"{domain} is not a complete four-shard table")
+        for route in table["routes"]:
+            if route.get("state") != "ACTIVE":
+                raise ValueError(f"{domain} has a non-ACTIVE route")
+            deadline = int(route.get("lease_expire_at_ms", 0))
+            if deadline <= 0:
+                raise ValueError(f"{domain} has an invalid lease deadline")
+            deadlines.append(deadline)
+    return deadlines
+
+
+def prometheus_scalar(metrics: str, name: str) -> int:
+    values = []
+    for line in metrics.splitlines():
+        if line.startswith("#"):
+            continue
+        if line.startswith(name + " ") or line.startswith(name + "{"):
+            try:
+                value = float(line.rsplit(None, 1)[-1])
+            except (ValueError, IndexError):
+                continue
+            if value.is_integer():
+                values.append(int(value))
+    if len(values) != 1:
+        raise ValueError(f"metric {name} missing or ambiguous")
+    return values[0]
+
+
+def exec_http(
+    command: list[str],
+    pod: str,
+    port: int,
+    path: str,
+) -> str:
+    result = subprocess.run(
+        [
+            *command,
+            "-n",
+            NAMESPACE,
+            "exec",
+            pod,
+            "--",
+            "wget",
+            "-q",
+            "-T",
+            "5",
+            "-O",
+            "-",
+            f"http://127.0.0.1:{port}{path}",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout
+
+
+def consumer_observation(
+    command: list[str],
+    observations: list[dict],
+) -> dict:
+    result = {}
+    for pod in observations:
+        app = pod["app"]
+        if app not in CONSUMER_PORTS:
+            continue
+        metrics = exec_http(
+            command,
+            pod["name"],
+            CONSUMER_PORTS[app],
+            "/metrics",
+        )
+        readyz_raw = exec_http(
+            command,
+            pod["name"],
+            CONSUMER_PORTS[app],
+            "/readyz",
+        )
+        readyz = json.loads(readyz_raw)
+        value = {
+            "app": app,
+            "metrics": metrics,
+            "readyz": readyz,
+            "revision": prometheus_scalar(
+                metrics,
+                "farm_actor_route_snapshot_revision",
+            ),
+        }
+        if app.startswith("farm-worker-"):
+            value.update({
+                "worker_assignment_revision": prometheus_scalar(
+                    metrics,
+                    "farm_opportunity_wakeup_assignment_revision",
+                ),
+                "worker_owned_shards": prometheus_scalar(
+                    metrics,
+                    "farm_opportunity_wakeup_owned_shards",
+                ),
+                "worker_assignment_ready": prometheus_scalar(
+                    metrics,
+                    "farm_opportunity_wakeup_assignment_ready",
+                ),
+                "worker_watch_gaps": prometheus_scalar(
+                    metrics,
+                    "farm_opportunity_wakeup_assignment_watch_gaps",
+                ),
+                "worker_full_reloads": prometheus_scalar(
+                    metrics,
+                    "farm_opportunity_wakeup_assignment_full_reloads",
+                ),
+                "worker_remote_reconnects": prometheus_scalar(
+                    metrics,
+                    "farm_actor_route_assignment_reconnects_total",
+                ),
+                "worker_remote_resyncs": prometheus_scalar(
+                    metrics,
+                    "farm_actor_route_assignment_resyncs_total",
+                ),
+                "direct_mode": prometheus_scalar(
+                    metrics,
+                    'farm_friend_opportunity_hint_transport_mode{mode="direct"}',
+                ),
+            })
+        elif app == "farm-svr":
+            value["narrow_mode"] = prometheus_scalar(
+                metrics,
+                'farm_opportunity_header_read_mode{mode="narrow"}',
+            )
+        result[pod["name"]] = value
+    if len(result) != 7:
+        raise ValueError(f"expected seven route consumers, got {len(result)}")
+    return result
+
+
+def coherent(snapshot: dict, consumers: dict) -> bool:
+    revision = int(snapshot.get("revision", 0))
+    if revision <= 0:
+        return False
+    worker_count = 0
+    worker_owned_shards = 0
+    for value in consumers.values():
+        if value["revision"] != revision:
+            return False
+        if value["app"].startswith("farm-worker-"):
+            if (
+                value["worker_assignment_revision"] != revision
+                or value["worker_owned_shards"] < 0
+                or value["worker_assignment_ready"] != 1
+                or value["direct_mode"] != 1
+                or value["readyz"].get("ready") is not True
+                or value["readyz"].get("route_projection_fresh") is not True
+            ):
+                return False
+            worker_count += 1
+            worker_owned_shards += int(value["worker_owned_shards"])
+        if value["app"] == "farm-svr" and value["narrow_mode"] != 1:
+            return False
+        route_runtime = value["readyz"].get("route_runtime")
+        if route_runtime is not None and (
+            route_runtime.get("snapshot_revision") != revision
+            or route_runtime.get("assignment_state") != "WATCHING"
+            or route_runtime.get("assignment_healthy") is not True
+            or route_runtime.get("process_ready") is not True
+        ):
+            return False
+    # A planned migration deliberately unbalances a domain, so the fleet must
+    # own every FARM_WORKER shard rather than each Worker owning a fixed share.
+    expected_worker_shards = int(
+        snapshot.get("canonical_json", {})
+        .get("farm_worker", {})
+        .get("shard_count", 0)
+    )
+    return (
+        worker_count == 2
+        and expected_worker_shards > 0
+        and worker_owned_shards == expected_worker_shards
+    )
+
+
+def available_port() -> int:
+    listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        listener.bind(("127.0.0.1", 0))
+        return int(listener.getsockname()[1])
+    finally:
+        listener.close()
+
+
+def wait_tcp(port: int, process: subprocess.Popen, timeout: float = 15.0) -> None:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            raise RuntimeError(f"port-forward exited before port {port} was ready")
+        try:
+            with socket.create_connection(("127.0.0.1", port), timeout=0.2):
+                return
+        except OSError:
+            time.sleep(0.1)
+    raise TimeoutError(f"port {port} did not become ready")
+
+
+def stop(process: subprocess.Popen | None) -> None:
+    if process is None or process.poll() is not None:
+        return
+    process.terminate()
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait(timeout=5)
+
+
+def start_controller_forward(
+    command: list[str],
+    evidence: Path,
+    name: str,
+) -> tuple[subprocess.Popen, int]:
+    port = available_port()
+    log = (evidence / f"{name}-controller-port-forward.log").open("w")
+    process = subprocess.Popen(
+        [
+            *command,
+            "-n",
+            NAMESPACE,
+            "port-forward",
+            "svc/route-controller",
+            f"{port}:9443",
+        ],
+        stdout=log,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    log.close()
+    wait_tcp(port, process)
+    return process, port
+
+
+def routectl_environment(tls: Path, port: int) -> dict:
+    environment = os.environ.copy()
+    environment.update({
+        "ROUTE_CONTROLLER_TARGET": f"127.0.0.1:{port}",
+        "ROUTE_CONTROLLER_SERVER_NAME":
+            f"route-controller.{NAMESPACE}.svc.cluster.local",
+        "ROUTE_CONTROLLER_EXPECTED_SERVER_IDENTITY":
+            f"route-controller.{NAMESPACE}.svc.cluster.local",
+        "ROUTECTL_TLS_CERT": str(tls / "route-operator.crt"),
+        "ROUTECTL_TLS_KEY": str(tls / "route-operator.key"),
+        "ROUTECTL_TLS_CA": str(tls / "ca.crt"),
+        "ROUTECTL_RPC_TIMEOUT": "30s",
+    })
+    return environment
+
+
+def run_ctl(binary: Path, environment: dict, *arguments: str) -> dict:
+    result = subprocess.run(
+        [str(binary), *arguments],
+        env=environment,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return json.loads(result.stdout)
+
+
+def collect_coherent(
+    command: list[str],
+    binary: Path,
+    environment: dict,
+    attempts: int = 180,
+    minimum_revision: int | None = None,
+    coherence=None,
+) -> tuple[dict, dict, list[dict]]:
+    predicate = coherent if coherence is None else coherence
+    last_error = None
+    for _ in range(attempts):
+        try:
+            pods = pod_observations(command_json(
+                command,
+                "-n",
+                NAMESPACE,
+                "get",
+                "pods",
+                "-o",
+                "json",
+            ))
+            require_healthy_pods(pods)
+            before = run_ctl(binary, environment, "snapshot")
+            consumers = consumer_observation(command, pods)
+            after = run_ctl(binary, environment, "snapshot")
+            if (
+                before.get("revision") == after.get("revision")
+                and (
+                    minimum_revision is None
+                    or int(after.get("revision", 0)) > minimum_revision
+                )
+                and predicate(after, consumers)
+            ):
+                return after, consumers, pods
+        except (
+            json.JSONDecodeError,
+            subprocess.CalledProcessError,
+            ValueError,
+        ) as error:
+            last_error = error
+        time.sleep(1)
+    raise TimeoutError(
+        "seven consumers did not converge on one healthy snapshot revision"
+    ) from last_error
+
+
+def save_observation(
+    root: Path,
+    snapshot: dict,
+    consumers: dict,
+    pods: list[dict],
+) -> None:
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "snapshot.json").write_text(
+        json.dumps(snapshot, sort_keys=True, indent=2) + "\n"
+    )
+    (root / "pods.json").write_text(
+        json.dumps(pods, sort_keys=True, indent=2) + "\n"
+    )
+    metrics_root = root / "metrics"
+    readyz_root = root / "readyz"
+    metrics_root.mkdir()
+    readyz_root.mkdir()
+    for pod, value in consumers.items():
+        (metrics_root / f"{pod}.txt").write_text(value["metrics"])
+        (readyz_root / f"{pod}.json").write_text(
+            json.dumps(value["readyz"], sort_keys=True, indent=2) + "\n"
+        )
+
+
+def restart_observed(before: dict, after: dict) -> bool:
+    for pod, previous in before.items():
+        current = after.get(pod)
+        if current is None or current["revision"] <= previous["revision"]:
+            return False
+        if previous["app"] in ("player-svr", "farm-svr"):
+            old_runtime = previous["readyz"].get("route_runtime", {})
+            new_runtime = current["readyz"].get("route_runtime", {})
+            if (
+                int(new_runtime.get("assignment_reconnects", 0))
+                <= int(old_runtime.get("assignment_reconnects", 0))
+                or int(new_runtime.get("assignment_resyncs", 0))
+                <= int(old_runtime.get("assignment_resyncs", 0))
+            ):
+                return False
+        if previous["app"].startswith("farm-worker-"):
+            if (
+                current["worker_remote_reconnects"]
+                <= previous["worker_remote_reconnects"]
+                or current["worker_remote_resyncs"]
+                <= previous["worker_remote_resyncs"]
+            ):
+                return False
+    return True
+
+
+def main() -> int:
+    repository = Path(__file__).resolve().parents[2]
+    lab = Path(os.environ.get("FARM_L2_LAB_ROOT", "/data/farm-l2-r2"))
+    run_id = os.environ.get("ROUTE_RUN_ID", "")
+    h5_root = os.environ.get("H5_ROOT", "")
+    if re.fullmatch(r"[a-z0-9][a-z0-9-]{0,62}", run_id) is None:
+        raise SystemExit("verify-dynamic-final-g1: ROUTE_RUN_ID required")
+    if not h5_root:
+        raise SystemExit("verify-dynamic-final-g1: H5_ROOT required")
+    if git_output(repository, "status", "--porcelain"):
+        raise SystemExit("verify-dynamic-final-g1: source worktree must be clean")
+    source_head = git_output(repository, "rev-parse", "HEAD")
+    kubeconfig = Path(os.environ.get(
+        "KUBECONFIG",
+        str(lab / "runtime" / "kubeconfig"),
+    ))
+    command = kubectl_command(kubeconfig)
+    receipt_path = (
+        lab / "receipts" / f"dynamic-route-final-g1-{run_id}.json"
+    )
+    evidence = lab / "evidence" / f"dynamic-route-final-g1-{run_id}"
+    if receipt_path.exists() or evidence.exists():
+        raise SystemExit("verify-dynamic-final-g1: immutable output exists")
+    predecessors = {
+        "apply": lab / "receipts" / f"dynamic-route-apply-{run_id}.json",
+        "mode": lab / "receipts" / f"dynamic-opportunity-mode-final-{run_id}.json",
+        "h5": lab / "receipts" / f"dynamic-h5-product-e2e-final-{run_id}.json",
+        "traffic": lab / "receipts" / f"dynamic-opportunity-traffic-final-{run_id}.json",
+    }
+    expected_status = {
+        "apply": "APPLIED_READY_NOT_G1_VERIFIED",
+        "mode": "DYNAMIC_OPPORTUNITY_FINAL_ACTIVATED_NOT_TRAFFIC_VERIFIED",
+        "h5": "DYNAMIC_H5_PRODUCT_E2E_VERIFIED",
+        "traffic": "DYNAMIC_OPPORTUNITY_FINAL_TRAFFIC_VERIFIED",
+    }
+    for name, path in predecessors.items():
+        value = load_json(path)
+        if (
+            value.get("run_id") != run_id
+            or value.get("source_head") != source_head
+            or value.get("status") != expected_status[name]
+        ):
+            raise SystemExit(
+                f"verify-dynamic-final-g1: {name} receipt mismatch"
+            )
+
+    lock_path = lab / "runtime" / "dynamic-route-formal-run.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("a+") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise SystemExit(
+                "verify-dynamic-final-g1: another formal run owns the lock"
+            ) from error
+        verify_cluster(command)
+        evidence.mkdir(parents=True)
+        tls = lab / "runtime" / "tls" / "dynamic-route" / run_id
+        with tempfile.TemporaryDirectory(prefix=f"final-g1-{run_id}-") as temporary:
+            routectl = Path(temporary) / "routectl"
+            subprocess.run(
+                [
+                    "go",
+                    "build",
+                    "-buildvcs=false",
+                    "-trimpath",
+                    "-o",
+                    str(routectl),
+                    "./cmd/routectl",
+                ],
+                cwd=repository,
+                check=True,
+            )
+            forward = None
+            try:
+                forward, port = start_controller_forward(
+                    command,
+                    evidence,
+                    "baseline",
+                )
+                ctl_environment = routectl_environment(tls, port)
+                baseline_snapshot, baseline_consumers, baseline_pods = (
+                    collect_coherent(
+                        command,
+                        routectl,
+                        ctl_environment,
+                    )
+                )
+                save_observation(
+                    evidence / "baseline",
+                    baseline_snapshot,
+                    baseline_consumers,
+                    baseline_pods,
+                )
+                baseline_deadline = min(active_deadlines(baseline_snapshot))
+                while int(time.time() * 1000) <= baseline_deadline:
+                    pods = pod_observations(command_json(
+                        command,
+                        "-n",
+                        NAMESPACE,
+                        "get",
+                        "pods",
+                        "-o",
+                        "json",
+                    ))
+                    require_healthy_pods(pods)
+                    time.sleep(1)
+                deadline_crossed_at_ms = int(time.time() * 1000)
+                pre_restart_snapshot, pre_restart_consumers, pre_restart_pods = (
+                    collect_coherent(
+                        command,
+                        routectl,
+                        ctl_environment,
+                    )
+                )
+                save_observation(
+                    evidence / "pre-controller-restart",
+                    pre_restart_snapshot,
+                    pre_restart_consumers,
+                    pre_restart_pods,
+                )
+                old_controller = next(
+                    value
+                    for value in pre_restart_pods
+                    if value["app"] == "route-controller"
+                )
+                subprocess.run(
+                    [
+                        *command,
+                        "-n",
+                        NAMESPACE,
+                        "delete",
+                        "pod",
+                        "-l",
+                        "app.kubernetes.io/name=route-controller",
+                        "--wait=true",
+                        "--timeout=120s",
+                    ],
+                    check=True,
+                )
+                stop(forward)
+                forward = None
+                deadline = time.monotonic() + 180
+                while time.monotonic() < deadline:
+                    pods = pod_observations(command_json(
+                        command,
+                        "-n",
+                        NAMESPACE,
+                        "get",
+                        "pods",
+                        "-o",
+                        "json",
+                    ))
+                    try:
+                        require_healthy_pods(pods)
+                    except ValueError:
+                        time.sleep(1)
+                        continue
+                    controller = next(
+                        value
+                        for value in pods
+                        if value["app"] == "route-controller"
+                    )
+                    if controller["uid"] != old_controller["uid"]:
+                        break
+                    time.sleep(1)
+                else:
+                    raise TimeoutError("controller did not recreate ready")
+                forward, port = start_controller_forward(
+                    command,
+                    evidence,
+                    "post-restart",
+                )
+                ctl_environment = routectl_environment(tls, port)
+                final_snapshot, final_consumers, final_pods = collect_coherent(
+                    command,
+                    routectl,
+                    ctl_environment,
+                    minimum_revision=int(pre_restart_snapshot["revision"]),
+                )
+                save_observation(
+                    evidence / "final",
+                    final_snapshot,
+                    final_consumers,
+                    final_pods,
+                )
+                if not restart_observed(
+                    pre_restart_consumers,
+                    final_consumers,
+                ):
+                    raise ValueError(
+                        "consumer reconnect/full-resync evidence missing"
+                    )
+            finally:
+                stop(forward)
+
+        h5_environment = os.environ.copy()
+        h5_environment["DYNAMIC_ROUTE_PARENT_LOCK_FD"] = str(lock.fileno())
+        subprocess.run(
+            [
+                str(repository / "scripts/local-k8s/verify-dynamic-h5-product-e2e"),
+                "--stage",
+                "final",
+                "--evidence-label",
+                H5_EVIDENCE_LABEL,
+            ],
+            cwd=repository,
+            env=h5_environment,
+            pass_fds=(lock.fileno(),),
+            check=True,
+        )
+        h5_post_path = (
+            lab
+            / "receipts"
+            / (
+                "dynamic-h5-product-e2e-final-"
+                f"{H5_EVIDENCE_LABEL}-{run_id}.json"
+            )
+        )
+        h5_post = load_json(h5_post_path)
+        if (
+            h5_post.get("status") != "DYNAMIC_H5_PRODUCT_E2E_VERIFIED"
+            or h5_post.get("evidence_label") != H5_EVIDENCE_LABEL
+            or h5_post.get("account_auth_verified") is not True
+        ):
+            raise ValueError("post-deadline H5 account E2E failed")
+        final_pods_now = pod_observations(command_json(
+            command,
+            "-n",
+            NAMESPACE,
+            "get",
+            "pods",
+            "-o",
+            "json",
+        ))
+        require_healthy_pods(final_pods_now)
+        if {
+            value["name"]: value["uid"]
+            for value in final_pods_now
+        } != {
+            value["name"]: value["uid"]
+            for value in final_pods
+        }:
+            raise ValueError("pod identity drift during post-deadline H5 E2E")
+
+        artifacts = {
+            str(path.relative_to(evidence)): sha256(path)
+            for path in sorted(evidence.rglob("*"))
+            if path.is_file()
+        }
+        value = {
+            "schema_version": "farm-dynamic-route-final-g1-receipt.v1",
+            "status": "FINAL_PRODUCT_G1_REMOTE_WATCH_PASS",
+            "run_id": run_id,
+            "namespace": NAMESPACE,
+            "source_head": source_head,
+            "baseline_revision": int(baseline_snapshot["revision"]),
+            "baseline_min_active_deadline_ms": baseline_deadline,
+            "deadline_crossed_at_ms": deadline_crossed_at_ms,
+            "pre_restart_revision": int(pre_restart_snapshot["revision"]),
+            "final_revision": int(final_snapshot["revision"]),
+            "all_seven_go_consumers_same_complete_revision": True,
+            "controller_restart_performed": True,
+            "controller_recreated": True,
+            "full_resync_observed": True,
+            "worker_remote_reconnect_resync_observed": True,
+            "all_consumer_revisions_advanced_after_restart": True,
+            "final_mode": {
+                "header_read_mode": "narrow",
+                "hint_transport": "direct",
+            },
+            "h5_business_after_deadline": "PASS",
+            "account_auth_verified_after_deadline": True,
+            "local_resolve_hot_path_ok": True,
+            "local_resolve_evidence":
+                "complete local snapshots remained usable across old deadline and controller restart",
+            "tls_acl_observed": True,
+            "eligible_for_g2": True,
+            "capacity_qualified": False,
+            "network_policy_enforcement": "NOT_CLAIMED",
+            "company_redis_contacted": False,
+            "global_scan_performed": False,
+            "redis_flush_performed": False,
+            "predecessor_receipt_sha256": {
+                name: sha256(path) for name, path in predecessors.items()
+            },
+            "post_deadline_h5_receipt_sha256": sha256(h5_post_path),
+            "artifacts": artifacts,
+        }
+        write_exclusive(receipt_path, value)
+        print(json.dumps(value, sort_keys=True, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

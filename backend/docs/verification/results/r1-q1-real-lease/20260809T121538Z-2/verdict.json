@@ -1,0 +1,12 @@
+{
+  "docker_socket_used": false,
+  "flushall_used": false,
+  "mock_pass": false,
+  "r1_4_commit": "1ec3dcd166a7449b40aa934ee7324154474b3c05",
+  "reason": "loopback socket unavailable during dynamic port allocation",
+  "round_a": "INCONCLUSIVE",
+  "round_b": "INCONCLUSIVE",
+  "schema_version": "r1-q1-real-lease-verdict/v1",
+  "source_head": "UNAVAILABLE",
+  "status": "INCONCLUSIVE"
+}

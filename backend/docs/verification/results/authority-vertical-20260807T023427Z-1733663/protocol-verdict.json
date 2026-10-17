@@ -1,0 +1,36 @@
+{
+  "finished_at": "2026-08-07T02:34:48Z",
+  "frames": 14,
+  "steps": {
+    "bootstrap": {
+      "status": "ok"
+    },
+    "buy": {
+      "status": "ok"
+    },
+    "hello": {
+      "status": "ok"
+    },
+    "join": {
+      "status": "ok"
+    },
+    "login": {
+      "status": "ok"
+    },
+    "plant": {
+      "status": "ok",
+      "detail": "plot=0 cycle=sid1_sF8ost8I6_jBMfX0dkezeA30qBKtmHi5dkHHGqKvdzg mature_at_ms=1786070098733 farm_version=1"
+    },
+    "premature_reject": {
+      "status": "fail",
+      "detail": "premature harvest status=REJECTED code=ERROR_CODE_UNSPECIFIED"
+    },
+    "recovery_complete": {
+      "status": "ok"
+    },
+    "register": {
+      "status": "ok"
+    }
+  },
+  "verdict": "FAIL"
+}

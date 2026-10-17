@@ -1,0 +1,9 @@
+=== RUN   TestLiveRedis
+    live_test.go:59: live redis OK: legacy session hash + farm online set verified
+--- PASS: TestLiveRedis (0.00s)
+PASS
+ok  	farmgame/internal/storage/redis/rediskey	0.010s
+=== RUN   TestLiveRedisBlobStore
+--- PASS: TestLiveRedisBlobStore (0.01s)
+PASS
+ok  	farmgame/internal/storage/blobstore	0.016s

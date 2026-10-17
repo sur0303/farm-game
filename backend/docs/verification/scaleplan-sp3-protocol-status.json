@@ -1,0 +1,111 @@
+{
+  "schema_version": "scaleplan-sp3-protocol-status-v1",
+  "worktree": "farm-game-scaleplan-sp3-protocols-20260812",
+  "branch": "codex/scaleplan-sp3-protocols-20260812",
+  "base_commit": "b16c0c8f0ab495d7c60a71566cbb9aec84238b3c",
+  "g21_runtime_identity": "2f16f7c6db3f6e9d8ecb76513cbdf3bd27724361",
+  "protocol_blockers": {
+    "SERVING_TO_READY_ZERO_SHARD_LIFECYCLE": {
+      "status": "PASS"
+    },
+    "DURABLE_MANAGER_WIDE_PLACEMENT_EXCLUSION": {
+      "status": "PASS"
+    },
+    "POD_WORKLOAD_ORDINAL_BOOT_IDENTITY_BINDING": {
+      "status": "PASS",
+      "independent_review": {
+        "verdict": "PASS",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0,
+        "required_fixes": 0
+      },
+      "checks": {
+        "scoped_tests": "PASS",
+        "focused_50x": "PASS",
+        "race": "PASS",
+        "vet": "PASS",
+        "go_lua_identity_grammar": "PASS",
+        "lua_malformed_no_write": "PASS",
+        "compose_contract": "PASS",
+        "static_manifest_freeze": "PASS",
+        "git_diff_check": "PASS",
+        "formal_perf_lock": "ABSENT"
+      }
+    },
+    "ROUTEPLAN_EXACT_GET_AND_RETENTION_ALIGNMENT": {
+      "status": "PASS",
+      "independent_review": {
+        "verdict": "PASS",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0,
+        "required_fixes": 0,
+        "reviewed_diff_sha256": "7a620a0ca9904bc76420f9755297a49793cc94175ddf8e93f7c1e95ac60e3be7"
+      },
+      "checks": {
+        "full_go_test": "PASS",
+        "focused_50x": "PASS",
+        "race": "PASS",
+        "vet": "PASS",
+        "exact_terminal_get": "PASS",
+        "canonical_plan_id_grammar": "PASS",
+        "routeplan_v1_v2_compatibility": "PASS",
+        "redis_retention_migration": "PASS",
+        "post_observation_workload_ownership": "PASS",
+        "git_diff_check": "PASS",
+        "formal_perf_lock": "ABSENT"
+      }
+    },
+    "BLOCKED_TERMINATION_QUIESCENCE_AND_PROOF_OWNERSHIP": {
+      "status": "PASS",
+      "independent_review": {
+        "verdict": "PASS",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0,
+        "required_fixes": 0,
+        "reviewed_code_bundle_sha256": "577dc566093dfde071a7b23b3b1abdadaabfa45ebec6f1e8821961589a0d5734"
+      },
+      "checks": {
+        "full_go_test": "PASS",
+        "focused_50x": "PASS",
+        "race": "PASS",
+        "vet": "PASS",
+        "repository_owned_mutation_barrier": "PASS",
+        "proof_fence_terminal_commit_ownership": "PASS",
+        "canonical_whole_plan_quiescence": "PASS",
+        "repository_linearization_expiry": "PASS",
+        "durable_receipt_and_proof_replay": "PASS",
+        "atomic_workload_ownership_release": "PASS",
+        "git_diff_check": "PASS",
+        "formal_perf_lock": "ABSENT"
+      }
+    }
+  },
+  "sp3_compatibility_review": {
+    "verdict": "SP3_0_PASS_READY_TO_PLAN_ADAPTERS",
+    "reviewed_head": "c06ae6a552bfb3c27f8d5283dc3ae7111c1799f4",
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "adapter_planning_authorized": true,
+    "adapter_implementation_authorized": false,
+    "ready_for_sp3": false
+  },
+  "production": {
+    "adapter": "NOT_IMPLEMENTED",
+    "trusted_kubernetes_identity_join": "NOT_IMPLEMENTED",
+    "kubernetes": "NOT_RUN",
+    "external_redis": "NOT_RUN",
+    "routeplan": "NOT_RUN",
+    "performance_sampling": "NOT_RUN",
+    "supports_30m_dau": false
+  },
+  "repository_actions": {
+    "push": "NOT_PERFORMED",
+    "merge": "NOT_PERFORMED",
+    "rebase_integration": "NOT_PERFORMED",
+    "tag": "NOT_PERFORMED"
+  }
+}

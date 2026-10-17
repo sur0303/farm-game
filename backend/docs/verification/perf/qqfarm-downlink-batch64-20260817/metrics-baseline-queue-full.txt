@@ -1,0 +1,3 @@
+# HELP farm_downlink_queue_full_total Items rejected by a full per-Gate downlink lane.
+# TYPE farm_downlink_queue_full_total counter
+farm_downlink_queue_full_total 0

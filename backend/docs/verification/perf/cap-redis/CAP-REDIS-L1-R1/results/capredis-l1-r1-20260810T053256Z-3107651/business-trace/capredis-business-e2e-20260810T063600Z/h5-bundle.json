@@ -1,0 +1,31 @@
+{
+  "mode": "PREBUILT_STATIC_BUNDLE",
+  "files": [
+    {
+      "path": "assets/index-DU1o2CST.css",
+      "bytes": 37262,
+      "sha256": "6d753914f3f093547b905bd9cf2207bdd0f9ba1bf9335617327d2207928fe4f1"
+    },
+    {
+      "path": "assets/index-Jxft-9jg.js",
+      "bytes": 306315,
+      "sha256": "1dbd88ef4d01927ad983a090c7ad37bbd539e3da17bf99e2126a69b82b0da735"
+    },
+    {
+      "path": "assets/staging-auth-provider-C73-fSMK.js",
+      "bytes": 1766,
+      "sha256": "96a7c8c2f92fa1418036707910d2f885f277236477e4d5e8072ce708ae845d30"
+    },
+    {
+      "path": "assets/wechat-auth-provider-DW8HtApv.js",
+      "bytes": 2334,
+      "sha256": "0e655ccc5348867be295575160250fcfc6a625514ee8368f34b24353e5c68a72"
+    },
+    {
+      "path": "index.html",
+      "bytes": 482,
+      "sha256": "cf408a8cd46b538515c7d7a303742936131f85754cbeb05523a8b9b4a29fad60"
+    }
+  ],
+  "aggregate_sha256": "937b99ee5233047389d4373eeeb777d419e95a1e09897418f562028747310e95"
+}

@@ -1,0 +1,288 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: farm-gate
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-gate
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: farm-gate
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+    - name: downlink
+      port: 9092
+      targetPort: downlink
+    - name: control
+      port: 9093
+      targetPort: control
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: farm-gate-headless
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-gate
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/name: farm-gate
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+    - name: downlink
+      port: 9092
+      targetPort: downlink
+    - name: control
+      port: 9093
+      targetPort: control
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: farm-gate-verifier
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-gate
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: farm-gate
+  ports:
+    - name: verifier-mtls
+      port: 19200
+      targetPort: verifier-mtls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: farm-gate-public
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-gate
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+spec:
+  # UC forbids this namespace from creating a new external CLB. Keep the
+  # public NodePort as the approved kube-proxy load-balancing entrypoint; it
+  # distributes new Login/WSS TCP connections across ready Gate endpoints.
+  type: NodePort
+  externalTrafficPolicy: Cluster
+  sessionAffinity: None
+  selector:
+    app.kubernetes.io/name: farm-gate
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+      nodePort: 31880
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: farm-gate
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-gate
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+spec:
+  serviceName: farm-gate-headless
+  podManagementPolicy: Parallel
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: farm-gate
+  template:
+    metadata:
+      labels:
+        app: farm-gate
+        app.kubernetes.io/name: farm-gate
+        app.kubernetes.io/component: gateway
+        app.kubernetes.io/part-of: farm-game
+        farm.io/redis-client: "true"
+      annotations:
+        farm.io/activation-status: DYNAMIC_REMOTE_WATCH_4X4X4
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: /metrics
+    spec:
+      priorityClassName: high-cpu-priority
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets:
+        - name: uc-registry
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+      initContainers:
+        - name: wait-redis
+          image: redis:7-alpine
+          command: ["sh", "-c", "until redis-cli -h farm-redis ping | grep -q PONG; do sleep 1; done"]
+      containers:
+        - name: farm-gate
+          image: mirrors.tencent.com/uc-backend/farm-route-runtime@sha256:7cce9e1b9ed27c8318180b1b14afb18130cb54035fbae9b77a8edd8f683fde6e
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: farm-platform
+          env:
+            - name: FARM_SERVICE
+              value: farm-gate
+            - name: GATEWAY_LISTEN
+              value: ":8080"
+            - name: GATEWAY_DOWNLINK_LISTEN
+              value: ":9092"
+            - name: GATE_CONTROL_LISTEN
+              value: ":9093"
+            - name: GATEWAY_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            # Keep pprof available for post-load diagnosis.
+            - name: GATE_PPROF_ENABLED
+              value: "1"
+            - name: GATE_BACKEND_MAX_INFLIGHT
+              value: "1536"
+            - name: GATE_BACKEND_ADMISSION_WAIT
+              value: 500ms
+            - name: GATE_OPPORTUNITY_HTTP_MAX_INFLIGHT
+              value: "256"
+            - name: GATE_DOWNLINK_WRITER_MAX_ITEMS
+              value: "256"
+            - name: GATE_DOWNLINK_WRITER_MAX_BYTES
+              value: "1048576"
+            - name: GATE_DOWNLINK_HINT_MAX_ITEMS
+              value: "32"
+            - name: GATE_DOWNLINK_HINT_MAX_BYTES
+              value: "65536"
+            - name: GATE_DOWNLINK_DRAIN_QUANTUM
+              value: "64"
+            - name: GATE_VERIFIER_LISTEN
+              value: ":19200"
+            - name: GATE_VERIFIER_TLS_CERT
+              value: /etc/farm/route-control/gate-verifier.crt
+            - name: GATE_VERIFIER_TLS_KEY
+              value: /etc/farm/route-control/gate-verifier.key
+            - name: GATE_VERIFIER_CLIENT_CA
+              value: /etc/farm/route-control/ca.crt
+            - name: GATE_VERIFIER_ALLOWED_CLIENT_IDENTITY
+              value: route-controller.developer_026-qqfarm.svc.cluster.local
+            - name: FARM_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: redis-url
+            - name: FARM_AUTHORITY_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: authority-redis-url
+            - name: FARM_RUNTIME_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: runtime-redis-url
+            - name: FARM_PROJECTION_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: projection-redis-url
+            - name: FARM_REDIS_CLUSTER
+              value: "1"
+            # Gate handles the cold-login Redis fan-out independently from
+            # Holder workloads. Keep the larger pool Gate-local so a login
+            # burst does not wait behind the default go-redis pool size.
+            - name: FARM_REDIS_CLUSTER_URLS
+              value: "redis://farm-redis-0.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0?pool_size=64,redis://farm-redis-1.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0?pool_size=64,redis://farm-redis-2.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0?pool_size=64"
+            - name: PERMIT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: permit-secret
+            - name: HTTP_SESSION_COOKIE_KEYRING
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: http-session-cookie-keyring
+            - name: WEB_LOGIN_RATE_LIMIT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: web-login-rate-limit-secret
+            - name: LOAD_TEST_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: load-test-token-secret
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: downlink
+              containerPort: 9092
+            - name: control
+              containerPort: 9093
+            - name: verifier-mtls
+              containerPort: 19200
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 36
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "2"
+              memory: 4Gi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+          volumeMounts:
+            - name: route-control-tls
+              mountPath: /etc/farm/route-control
+              readOnly: true
+      volumes:
+        - name: route-control-tls
+          secret:
+            secretName: farm-route-dynamic-tls
+            defaultMode: 0440
+            items:
+              - key: ca.crt
+                path: ca.crt
+              - key: route-client.crt
+                path: route-client.crt
+              - key: route-client.key
+                path: route-client.key
+              - key: gate-verifier.crt
+                path: gate-verifier.crt
+              - key: gate-verifier.key
+                path: gate-verifier.key

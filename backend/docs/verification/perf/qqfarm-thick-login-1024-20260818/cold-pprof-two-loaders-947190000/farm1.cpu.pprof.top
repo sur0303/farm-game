@@ -1,0 +1,39 @@
+File: farm-svr
+Build ID: ffca9b336f4ed02ff98b4a0969503ed0381e1583
+Type: cpu
+Time: 2026-08-18 11:59:02 CST
+Duration: 20s, Total samples = 5.09s (25.45%)
+Showing nodes accounting for 2.82s, 55.40% of 5.09s total
+Dropped 426 nodes (cum <= 0.03s)
+Showing top 30 nodes out of 407
+      flat  flat%   sum%        cum   cum%
+     0.46s  9.04%  9.04%      0.46s  9.04%  internal/runtime/syscall/linux.Syscall6
+     0.34s  6.68% 15.72%      0.34s  6.68%  runtime.memmove
+     0.24s  4.72% 20.43%      0.45s  8.84%  runtime.scanObject
+     0.19s  3.73% 24.17%      0.19s  3.73%  runtime.spanClass.sizeclass (inline)
+     0.16s  3.14% 27.31%      0.16s  3.14%  runtime.futex
+     0.14s  2.75% 30.06%      0.40s  7.86%  runtime.scanObjectsSmall
+     0.13s  2.55% 32.61%      0.13s  2.55%  runtime.memclrNoHeapPointers
+     0.11s  2.16% 34.77%      0.31s  6.09%  runtime.tryDeferToSpanScan
+     0.09s  1.77% 36.54%      0.09s  1.77%  runtime.nextFreeFast (inline)
+     0.09s  1.77% 38.31%      0.09s  1.77%  runtime.typePointers.nextFast (inline)
+     0.08s  1.57% 39.88%      0.14s  2.75%  runtime.selectgo
+     0.08s  1.57% 41.45%      0.08s  1.57%  runtime.typePointers.next
+     0.06s  1.18% 42.63%      0.07s  1.38%  runtime.bulkBarrierPreWrite
+     0.05s  0.98% 43.61%      0.10s  1.96%  runtime.(*unwinder).resolveInternal
+     0.05s  0.98% 44.60%      0.05s  0.98%  runtime.extractHeapBitsSmall
+     0.05s  0.98% 45.58%      0.05s  0.98%  time.runtimeNow
+     0.04s  0.79% 46.37%      0.04s  0.79%  context.parentCancelCtx
+     0.04s  0.79% 47.15%      0.12s  2.36%  google.golang.org/protobuf/internal/impl.(*MessageInfo).sizePointerSlow
+     0.04s  0.79% 47.94%      0.05s  0.98%  runtime.(*mspan).writeHeapBitsSmall
+     0.04s  0.79% 48.72%      0.04s  0.79%  runtime.(*spanSet).push
+     0.04s  0.79% 49.51%      0.05s  0.98%  runtime.findObject
+     0.04s  0.79% 50.29%      0.19s  3.73%  runtime.newobject
+     0.04s  0.79% 51.08%      0.05s  0.98%  runtime.step
+     0.04s  0.79% 51.87%      0.13s  2.55%  runtime.sweepone
+     0.03s  0.59% 52.46%      0.03s  0.59%  aeshashbody
+     0.03s  0.59% 53.05%      0.04s  0.79%  google.golang.org/grpc/internal/transport.(*http2Client).createHeaderFields
+     0.03s  0.59% 53.63%      0.03s  0.59%  internal/runtime/atomic.(*Uint32).Add (inline)
+     0.03s  0.59% 54.22%      0.03s  0.59%  internal/runtime/maps.(*Iter).Next
+     0.03s  0.59% 54.81%      0.03s  0.59%  internal/runtime/maps.ctrlGroup.matchH2
+     0.03s  0.59% 55.40%      0.03s  0.59%  internal/sync.(*Mutex).Lock

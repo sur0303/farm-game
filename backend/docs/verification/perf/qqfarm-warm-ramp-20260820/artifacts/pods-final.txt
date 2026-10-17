@@ -1,0 +1,16 @@
+NAME                                READY   STATUS    RESTARTS       AGE     IP              NODE            NOMINATED NODE   READINESS GATES
+farm-gate-0                         1/1     Running   0              110m    198.18.0.173    198.18.0.88    <none>           <none>
+farm-grafana-b9c5f6766-wtrjj        1/1     Running   0              3h44m   198.18.0.174    198.18.0.175    <none>           <none>
+farm-h5-694c9ccb9b-7cdpb            1/1     Running   0              14h     198.18.0.176   198.18.0.177    <none>           <none>
+farm-prometheus-5966b58fdf-6xrnv    1/1     Running   0              3d13h   198.18.0.31    198.18.0.32    <none>           <none>
+farm-redis-0                        1/1     Running   0              8h      198.18.0.178     198.18.0.179    <none>           <none>
+farm-redis-1                        1/1     Running   0              8h      198.18.0.180    198.18.0.181   <none>           <none>
+farm-redis-2                        1/1     Running   0              8h      198.18.0.182      198.18.0.183    <none>           <none>
+farm-route-bootstrap                1/1     Running   0              50m     198.18.0.184    198.18.0.54    <none>           <none>
+farm-svr-0                          1/1     Running   1 (111m ago)   111m    198.18.0.185      198.18.0.186    <none>           <none>
+farm-svr-1                          1/1     Running   1 (111m ago)   111m    198.18.0.187     198.18.0.140    <none>           <none>
+farm-worker-a-7fbff778b7-8gcg9      1/1     Running   0              110m    198.18.0.188     198.18.0.93   <none>           <none>
+farm-worker-b-7d64b88ccd-dmsks      1/1     Running   0              110m    198.18.0.189     198.18.0.190    <none>           <none>
+player-svr-0                        1/1     Running   1 (111m ago)   111m    198.18.0.191    198.18.0.192   <none>           <none>
+player-svr-1                        1/1     Running   1 (111m ago)   111m    198.18.0.193    198.18.0.194   <none>           <none>
+route-controller-7d587674d8-phkql   1/1     Running   0              110m    198.18.0.195     198.18.0.93   <none>           <none>

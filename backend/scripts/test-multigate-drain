@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+H5_DIR=$(cd "$ROOT_DIR/../classic-farm-h5" && pwd)
+REDIS_CONFIG="${FARM_REDIS_CONFIG:-$ROOT_DIR/deploy/secrets/redis.conf.local}"
+BUILD_CACHE="${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache}"
+
+if [[ ! -f "$REDIS_CONFIG" ]]; then
+  echo "missing Redis config: $REDIS_CONFIG" >&2
+  exit 2
+fi
+
+read_config_value() {
+  local key="$1"
+  sed -n -E "s/^[[:space:]]*${key}:[[:space:]]*(.*[^[:space:]])[[:space:]]*$/\\1/p" "$REDIS_CONFIG" | head -n 1
+}
+
+uri_encode() {
+  local input="$1"
+  local output=""
+  local char encoded index
+  LC_ALL=C
+  for ((index = 0; index < ${#input}; index++)); do
+    char="${input:index:1}"
+    case "$char" in
+      [a-zA-Z0-9.~_-]) output+="$char" ;;
+      *) printf -v encoded '%%%02X' "'$char"; output+="$encoded" ;;
+    esac
+  done
+  printf '%s' "$output"
+}
+
+redis_host=$(read_config_value host)
+redis_port=$(read_config_value port)
+redis_password=$(read_config_value password)
+redis_db=$(read_config_value db)
+redis_db="${redis_db:-0}"
+if [[ -z "$redis_host" || -z "$redis_port" || -z "$redis_password" ]]; then
+  echo "Redis config must contain host, port and password" >&2
+  exit 2
+fi
+redis_url="redis://:$(uri_encode "$redis_password")@${redis_host}:${redis_port}/${redis_db}"
+
+tmp_dir=$(mktemp -d)
+player_pid=""
+farm_pid=""
+gate_a_pid=""
+gate_b_pid=""
+proxy_pid=""
+cleanup() {
+  for pid in "$proxy_pid" "$gate_b_pid" "$gate_a_pid" "$farm_pid" "$player_pid"; do
+    if [[ -n "$pid" ]]; then kill "$pid" 2>/dev/null || true; fi
+  done
+  for pid in "$proxy_pid" "$gate_b_pid" "$gate_a_pid" "$farm_pid" "$player_pid"; do
+    if [[ -n "$pid" ]]; then wait "$pid" 2>/dev/null || true; fi
+  done
+  if [[ "${MULTIGATE_KEEP_TMP:-0}" == "1" ]]; then
+    echo "kept tmp dir for inspection: $tmp_dir" >&2
+  else
+    rm -rf "$tmp_dir"
+  fi
+}
+trap cleanup EXIT INT TERM
+
+mkdir -p "$BUILD_CACHE"
+for service in farm-svr farm-gate multigate-proxy player-svr; do
+  GOCACHE="$BUILD_CACHE" CGO_ENABLED=0 go build -trimpath -o "$tmp_dir/$service" "./cmd/$service"
+done
+PERMIT_SECRET_VALUE="${PERMIT_SECRET:-$(openssl rand -hex 32)}"
+
+# player-svr 与 farm-svr 共用同一套 multigate 固定前缀,脚本自包含启动,
+# 不再需要外部预先运行 player-svr。
+PLAYER_LISTEN=127.0.0.1:19110 \
+PLAYER_HEALTH_LISTEN=127.0.0.1:19111 \
+FARM_REDIS_URL="$redis_url" \
+PLAYER_STORE_PREFIX=farm:v121:multigate:player \
+PERMIT_SECRET="$PERMIT_SECRET_VALUE" \
+"$tmp_dir/player-svr" >"$tmp_dir/player.log" 2>&1 &
+player_pid=$!
+
+for _ in $(seq 1 80); do
+  if curl -fsS http://127.0.0.1:19111/readyz >/dev/null 2>&1; then break; fi
+  sleep 0.25
+done
+curl -fsS http://127.0.0.1:19111/readyz >/dev/null
+
+FARM_LISTEN=127.0.0.1:19300 \
+FARM_HEALTH_LISTEN=127.0.0.1:19301 \
+PLAYER_ADDR=127.0.0.1:19110 \
+GATEWAY_DOWNLINK_ROUTES=gate-a=127.0.0.1:19392,gate-b=127.0.0.1:19492 \
+FARM_REDIS_URL="$redis_url" \
+FARM_STORE_PREFIX=farm:v121:multigate:farm \
+WORKFLOW_STORE_PREFIX=farm:v121:multigate:workflow \
+PERMIT_SECRET="$PERMIT_SECRET_VALUE" \
+"$tmp_dir/farm-svr" >"$tmp_dir/farm.log" 2>&1 &
+farm_pid=$!
+
+for _ in $(seq 1 80); do
+  if curl -fsS http://127.0.0.1:19301/readyz >/dev/null 2>&1; then break; fi
+  sleep 0.25
+done
+curl -fsS http://127.0.0.1:19301/readyz >/dev/null
+
+start_gate() {
+  local gateway_id="$1"
+  local http_port="$2"
+  local downlink_port="$3"
+  local control_port="$4"
+  local log_file="$5"
+  GATEWAY_LISTEN="127.0.0.1:${http_port}" \
+  GATEWAY_DOWNLINK_LISTEN="127.0.0.1:${downlink_port}" \
+  GATE_CONTROL_LISTEN="127.0.0.1:${control_port}" \
+  GATEWAY_ID="$gateway_id" \
+  GATE_TRANSPORT=websocket \
+  GATE_WS_PATH=/ws \
+  GATE_WS_ALLOWED_ORIGINS=127.0.0.1:5175,localhost:5175 \
+  PLAYER_ADDR=127.0.0.1:19110 \
+  FARM_ADDR=127.0.0.1:19300 \
+  LOGIC_HEALTH_ADDR=http://127.0.0.1:19301 \
+  FARM_REDIS_URL="$redis_url" \
+  SHARE_STORE_PREFIX=farm:v121:multigate:share \
+  DEMO_PLATFORM_TOKEN=multigate-platform-token \
+  DEMO_PLAYER_ID=10003 \
+  PERMIT_SECRET="$PERMIT_SECRET_VALUE" \
+  GATE_WS_DRAIN_WAIT=3s \
+  GATE_WS_SHUTDOWN_TIMEOUT=8s \
+  GATE_WS_METRICS=1 \
+  WSS_ENDPOINT=ws://127.0.0.1:18580/ws \
+  "$tmp_dir/farm-gate" >"$log_file" 2>&1 &
+  echo "$!"
+}
+
+gate_a_pid=$(start_gate gate-a 18380 19392 18390 "$tmp_dir/gate-a.log")
+gate_b_pid=$(start_gate gate-b 18480 19492 18490 "$tmp_dir/gate-b.log")
+
+MULTIGATE_PROXY_LISTEN=127.0.0.1:18580 \
+MULTIGATE_UPSTREAMS=http://127.0.0.1:18380,http://127.0.0.1:18480 \
+"$tmp_dir/multigate-proxy" >"$tmp_dir/proxy.log" 2>&1 &
+proxy_pid=$!
+
+for endpoint in 18380 18480 18580; do
+  for _ in $(seq 1 80); do
+    if curl -fsS "http://127.0.0.1:${endpoint}/readyz" >/dev/null 2>&1; then break; fi
+    sleep 0.25
+  done
+  curl -fsS "http://127.0.0.1:${endpoint}/readyz" >/dev/null
+done
+
+(
+  cd "$H5_DIR"
+  FARM_GATE_A_PID="$gate_a_pid" \
+  VITE_DEMO_PLATFORM_TOKEN=multigate-platform-token \
+  npm run e2e:multigate
+)
+
+echo "multi-Gate drain passed: browser Gate A -> DrainNotice/1012 -> proxy -> Gate B -> RecoveryBarrier"

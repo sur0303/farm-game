@@ -1,0 +1,642 @@
+syntax = "proto3";
+
+package logicrpc;
+
+option go_package = "farmgame/api/gen/logicrpc;logicrpcpb";
+
+import "common/envelope.proto";
+import "common/enums.proto";
+import "player/player.proto";
+import "farm/farm.proto";
+import "public/commands.proto";
+
+// ── 合同 29 §3.1:TrustedCommandContext 唯一字段定义 ──────────────
+// 绝不能从客户端透传后直接信任;由 Gate 从本地受信 Session 在 ADMITTED 瞬间
+// 填充(不可变快照)。FirstHop 信任的是内部 RPC 连接的受信服务身份(合同 29 §3.5),
+// 上下文只做结构校验,不做逐命令签名(短期签名 Internal Permit 是未来可选项)。
+message TrustedCommandContext {
+  SessionPermitSnapshot session = 1;
+  // 恢复屏障在 ADMITTED 瞬间是否完成(26 §6 的恢复面随 W2/W3 接线,当前恒 false)。
+  bool recovery_complete_at_admission = 2;
+  // 要求当前 FarmSubscription 的命令必须携带;JOIN_FARM 时不得存在(29 §3.4)。
+  FarmAdmissionContext farm_context = 3;
+  // JOIN_FARM 必须携带;普通农场命令不得存在(29 §3.4)。
+  JoinAdmissionContext join_attempt = 4;
+}
+
+message SessionPermitSnapshot {
+  uint64 player_id = 1;
+  uint64 active_session_epoch = 2;
+  string gateway_id = 3;
+  string gateway_boot_id = 4;
+  string connection_id = 5;
+  uint64 connection_generation = 6;
+  uint64 session_route_revision = 7;
+  int64 admitted_at_unix_ms = 8;
+}
+
+message FarmAdmissionContext {
+  uint64 admitted_farm_id = 1;
+  string admitted_subscription_id = 2;
+}
+
+message JoinAdmissionContext {
+  string join_attempt_id = 1;
+  uint64 target_farm_id = 2;
+  // Gate has revoked the previous local subscription before this Join. The
+  // FarmActor must not reuse a still-cleaning-up Presence from the same
+  // transport; it must create a new server-issued subscription fence.
+  bool force_fresh = 3;
+}
+
+// ── 合同 29 §4:DispatchContext 与 ActorRouteHeader 唯一字段定义 ──
+enum RouteMode {
+  ROUTE_MODE_UNSPECIFIED = 0;
+  ROUTE_MODE_ACTOR_AFFINITY = 1;
+  ROUTE_MODE_SERVICE_LB = 2;
+  ROUTE_MODE_NONE = 3;
+}
+
+enum RouteDomain {
+  ROUTE_DOMAIN_UNSPECIFIED = 0;
+  ROUTE_DOMAIN_PLAYER = 1;
+  ROUTE_DOMAIN_FARM = 2;
+}
+
+// ActorRouteHeader 完全由服务端 ActorRouteClient 生成,不接受客户端提供。
+// 它是调用方观察到的 Assignment 缓存快照,不是写权本身(29 §4.3);
+// 当前静态单 Holder 部署下 expected_* 允许为空,Holder 本地 Lease/WriterEpoch
+// 校验仍是最终裁决。
+message ActorRouteHeader {
+  RouteDomain route_domain = 1;
+  uint64 actor_id = 2;
+  uint32 virtual_shard = 3;
+  uint64 shard_revision = 4;
+  string expected_holder_id = 5;
+  string expected_holder_boot_id = 6;
+  uint64 expected_writer_epoch = 7;
+  optional uint64 source_snapshot_revision = 8;
+  string source_instance_id = 9;
+  string source_boot_id = 10;
+  // LeaseEpoch is part of the actor Route Fence. Snapshot deadline refreshes
+  // may advance the complete snapshot revision without changing this fence.
+  uint64 expected_lease_epoch = 11;
+  // A deadline-only compatibility check may accept an observed newer snapshot
+  // only when its lease deadline is not shorter than the caller's observation.
+  optional uint64 expected_lease_until_ms = 12;
+}
+
+message DispatchContext {
+  RouteMode route_mode = 1;
+  // ACTOR_AFFINITY 必须存在;SERVICE_LB/NONE 不得伪造(29 §4.0)。
+  ActorRouteHeader actor_route = 2;
+}
+
+// ExecuteCommandRequest 是 Gateway → Logic 的统一命令执行请求。
+// request_id/operation_id/command_type 在 command 内;trace 属于本外层(29 §3.1)。
+message ExecuteCommandRequest {
+  common.ClientCommandEnvelope command = 1;
+  TrustedCommandContext trusted = 2;
+  DispatchContext dispatch = 3;
+  string trace_id = 4;
+}
+
+// ── 合同 29 §9.1:内部响应 oneof,路由反馈与业务错误分离 ──────────
+// 内部响应不携带客户端可伪造的操作者身份;Gate 用原请求的
+// request_id/operation_id/command_type 与本结果组装公网 CommandResultEnvelope。
+message ExecuteCommandResponse {
+  oneof outcome {
+    BusinessCommandOutcome business = 1;
+    RouteRejection route_rejection = 2;
+  }
+}
+
+message ErrorDetail {
+  common.ErrorCode error_code = 1;
+  string error_message = 2;
+}
+
+// RetryDirective 内部镜像,取值与公网 28 §2.3 枚举一一对应。
+enum RetryDirective {
+  RETRY_DIRECTIVE_UNSPECIFIED = 0;
+  NONE = 1;
+  RETRY_SAME_OPERATION = 2;
+  POLL_OPERATION_RESULT = 3;
+  FRESH_JOIN = 4;
+  RECONNECT = 5;
+  REAUTHENTICATE = 6;
+  FRESH_JOIN_THEN_RETRY = 7;
+  REFRESH_AUTHORITY_STATE = 8;
+}
+
+message BusinessCommandOutcome {
+  common.CommandStatus status = 1;
+  ErrorDetail error = 2;              // status 非成功类时存在
+  RetryDirective retry_directive = 3; // 可选,当前不强制填充
+  uint32 retry_after_ms = 4;
+  bytes result_payload = 5;
+  // [设计] 保留现网 CommandResultEnvelope.farm_version 语义,避免 Gate 解析 Typed
+  // Payload;32 号评审决定是否下沉到 Typed Result。
+  uint64 farm_version = 6;
+
+  oneof outcome_context {
+    JoinAcceptedMetadata join_accepted = 10;
+  }
+}
+
+// JOIN_FARM 的 Execution-Accept 元数据。subscription_id 由 Hub 签发，
+// join_attempt_id 必须逐字回显 Gate 的 JoinAdmissionContext；Gate 依靠这组
+// 字段在公开 ACCEPTED 入队后构造 ArmSnapshot Fence。
+message JoinAcceptedMetadata {
+  uint64 target_farm_id = 1;
+  string subscription_id = 2;
+  string join_attempt_id = 3;
+  // Holder accepts the initial Subscription Lease for at most this duration.
+  // Gate derives a conservative monotonic deadline from the RPC start time;
+  // this is a duration, never an absolute cross-machine timestamp.
+  uint32 accepted_subscription_ttl_ms = 4;
+}
+
+enum RouteRejectReason {
+  ROUTE_REJECT_UNSPECIFIED = 0;
+  ROUTE_REJECT_REDIRECT = 1;
+  ROUTE_REJECT_SHARD_DRAINING = 2;
+  ROUTE_REJECT_STALE_ASSIGNMENT = 3;
+  ROUTE_REJECT_STALE_WRITER_EPOCH = 4;
+  ROUTE_REJECT_ROUTE_UNAVAILABLE = 5;
+}
+
+// RouteRejection 只携带路由纠正信息;接收方仍需从 AssignmentProvider 验证(29 §9.2)。
+// 路由成功不返回本结构,响应必须进入 business 分支。
+message RouteRejection {
+  RouteRejectReason reason = 1;
+  RouteDomain route_domain = 2;
+  uint64 actor_id = 3;
+  uint64 shard_revision = 4;
+  string holder_id = 5;
+  string holder_boot_id = 6;
+  uint64 writer_epoch = 7;
+}
+
+// ── 合同 29 §8.1:Join Snapshot/清理请求绑定的真实连接目标 Fence ──
+// W6C:供 W2 的 Join RPC 家族与 W5 的 BatchRenewSubscriptions 共用。
+message DownlinkTargetFence {
+  uint64 target_player_id = 1;
+  string gateway_id = 2;
+  string gateway_boot_id = 3;
+  string connection_id = 4;
+  uint64 connection_generation = 5;
+  uint64 session_epoch = 6;
+  uint64 session_route_revision = 7;
+}
+
+// SubscriptionFence 是 Subscription 标识三元组(26 HC-ACCESS-32、29 §8)。
+// join_attempt_id 由 Gate 生成,与 operation_id 分离。
+message SubscriptionFence {
+  uint64 farm_id = 1;
+  string subscription_id = 2;
+  string join_attempt_id = 3;
+}
+
+enum ArmSnapshotStatus {
+  ARM_SNAPSHOT_STATUS_UNSPECIFIED = 0;
+  ARM_SNAPSHOT_ARMED = 1;
+  ARM_SNAPSHOT_ALREADY_ARMED = 2;
+  ARM_SNAPSHOT_NOT_FOUND = 3;
+  ARM_SNAPSHOT_STALE_FENCE = 4;
+  ARM_SNAPSHOT_UNAVAILABLE = 5;
+}
+
+message ArmSnapshotRequest {
+  SubscriptionFence subscription = 1;
+  DownlinkTargetFence target = 2;
+  public.PublicProfileView owner_public_profile = 3;
+}
+
+message ArmSnapshotResponse {
+  ArmSnapshotStatus status = 1;
+  optional uint64 snapshot_version = 2;
+}
+
+enum JoinCallbackStatus {
+  JOIN_CALLBACK_STATUS_UNSPECIFIED = 0;
+  JOIN_CALLBACK_ADVANCED = 1;
+  JOIN_CALLBACK_ALREADY_APPLIED = 2;
+  JOIN_CALLBACK_STALE_FENCE = 3;
+  JOIN_CALLBACK_INVALID_RANGE = 4;
+  JOIN_CALLBACK_UNAVAILABLE = 5;
+}
+
+message SnapshotQueueAcceptedRequest {
+  SubscriptionFence subscription = 1;
+  uint64 snapshot_version = 2;
+  DownlinkTargetFence target = 3;
+}
+
+message SnapshotQueueAcceptedResponse {
+  JoinCallbackStatus status = 1;
+  uint64 ready_cut_version = 2;
+}
+
+message CatchupBatchQueueAcceptedRequest {
+  SubscriptionFence subscription = 1;
+  uint64 from_version = 2;
+  uint64 through_version = 3;
+  DownlinkTargetFence target = 4;
+}
+
+message CatchupBatchQueueAcceptedResponse {
+  JoinCallbackStatus status = 1;
+  uint64 accepted_through_version = 2;
+}
+
+enum DeliveryStatus {
+  DELIVERY_STATUS_UNSPECIFIED = 0;
+  DELIVERY_QUEUE_ACCEPTED = 1;
+  DELIVERY_STALE_FENCE = 2;
+  DELIVERY_QUEUE_FULL = 3;
+  DELIVERY_UNAVAILABLE = 4;
+}
+
+message ActivateSubscriptionRequest {
+  SubscriptionFence subscription = 1;
+  uint64 ready_through_version = 2;
+  DownlinkTargetFence target = 3;
+}
+
+message ActivateSubscriptionResponse {
+  DeliveryStatus status = 1;
+  uint64 ready_through_version = 2;
+}
+
+enum CleanupReason {
+  CLEANUP_REASON_UNSPECIFIED = 0;
+  CLEANUP_REASON_DISCONNECT = 1;
+  CLEANUP_REASON_SWITCH_FARM = 2;
+  CLEANUP_REASON_SESSION_REPLACED = 3;
+  CLEANUP_REASON_JOIN_FAILED = 4;
+  CLEANUP_REASON_SUBSCRIPTION_LEASE_EXPIRED = 5;
+}
+
+message CleanupSubscriptionRequest {
+  SubscriptionFence subscription = 1;
+  DownlinkTargetFence target = 2;
+  CleanupReason reason = 3;
+}
+
+message CleanupSubscriptionResponse { bool removed = 1; }
+
+enum CancelJoinReason {
+  CANCEL_JOIN_REASON_UNSPECIFIED = 0;
+  CANCEL_JOIN_REASON_ACCEPTED_UNKNOWN = 1;
+  CANCEL_JOIN_REASON_PENDING_TIMEOUT = 2;
+  CANCEL_JOIN_REASON_CONNECTION_CLOSED = 3;
+}
+
+message CancelJoinAttemptRequest {
+  uint64 target_farm_id = 1;
+  string join_attempt_id = 2;
+  string join_operation_id = 3;
+  optional string subscription_id = 4;
+  DownlinkTargetFence target = 5;
+  CancelJoinReason reason = 6;
+}
+
+enum CancelJoinAttemptStatus {
+  CANCEL_JOIN_ATTEMPT_STATUS_UNSPECIFIED = 0;
+  CANCEL_JOIN_ATTEMPT_CANCELLED = 1;
+  CANCEL_JOIN_ATTEMPT_STALE_FENCE = 2;
+  CANCEL_JOIN_ATTEMPT_ALREADY_PROGRESSED = 3;
+  CANCEL_JOIN_ATTEMPT_UNAVAILABLE = 4;
+}
+
+message CancelJoinAttemptResponse {
+  CancelJoinAttemptStatus status = 1;
+  optional string subscription_id = 2;
+}
+
+// Subscription Lease is independent from SessionRoute Lease. Gate batches
+// existing Pending/Active subscriptions by the current FARM Holder. A renew
+// entry may only extend an exact, already-existing Hub Presence.
+message SubscriptionLeaseEntry {
+  uint64 target_farm_id = 1;
+  string subscription_id = 2;
+  string join_attempt_id = 3;
+  DownlinkTargetFence target = 4;
+  uint32 requested_ttl_ms = 5;
+}
+
+message BatchRenewSubscriptionsRequest {
+  string source_gateway_id = 1;
+  string source_gateway_boot_id = 2;
+  repeated SubscriptionLeaseEntry entries = 3;
+}
+
+enum SubscriptionLeaseStatus {
+  SUBSCRIPTION_LEASE_UNSPECIFIED = 0;
+  SUBSCRIPTION_LEASE_RENEWED = 1;
+  SUBSCRIPTION_LEASE_NOT_FOUND = 2;
+  SUBSCRIPTION_LEASE_STALE_FENCE = 3;
+  SUBSCRIPTION_LEASE_CLOSED = 4;
+  SUBSCRIPTION_LEASE_ROUTE_STALE = 5;
+  SUBSCRIPTION_LEASE_UNAVAILABLE = 6;
+}
+
+message SubscriptionLeaseResult {
+  uint64 target_farm_id = 1;
+  string subscription_id = 2;
+  string join_attempt_id = 3;
+  SubscriptionLeaseStatus status = 4;
+  uint32 accepted_ttl_ms = 5;
+  // Diagnostic only. Gate correctness must not compare this wall-clock value
+  // with its own clock.
+  optional int64 server_time_ms = 6;
+}
+
+message BatchRenewSubscriptionsResponse {
+  repeated SubscriptionLeaseResult results = 1;
+}
+
+enum FarmOpportunityReadStatus {
+  FARM_OPPORTUNITY_READ_STATUS_UNSPECIFIED = 0;
+  FARM_OPPORTUNITY_READ_STATUS_FOUND = 1;
+  FARM_OPPORTUNITY_READ_STATUS_NOT_FOUND = 2;
+  FARM_OPPORTUNITY_READ_STATUS_UNKNOWN = 3;
+}
+
+// Read-only Header coarse filter. The owner id equals the Farm actor id in
+// the P0 friend-opportunity path; this RPC never activates FarmActor.
+message BatchReadFarmOpportunityHeaderRequest {
+  repeated uint64 owner_player_ids = 1;
+}
+
+message FarmOpportunityHeaderReadResult {
+  uint64 owner_player_id = 1;
+  FarmOpportunityReadStatus status = 2;
+  uint64 source_farm_version = 3;
+  int64 next_opportunity_at_ms = 4;
+}
+
+message BatchReadFarmOpportunityHeaderResponse {
+  repeated FarmOpportunityHeaderReadResult results = 1;
+}
+
+message BatchEvaluateFarmOpportunityRequest {
+  uint64 viewer_player_id = 1;
+  repeated uint64 owner_player_ids = 2;
+  int64 trusted_now_ms = 3;
+}
+
+message FarmOpportunityTheftTarget {
+  uint32 plot_id = 1;
+  string crop_cycle_id = 2;
+}
+
+message FarmOpportunityReadResult {
+  uint64 owner_player_id = 1;
+  FarmOpportunityReadStatus status = 2;
+  uint32 action_mask = 3;
+  uint64 opportunity_revision = 4;
+  repeated FarmOpportunityTheftTarget eligible_theft_targets = 5;
+}
+
+message BatchEvaluateFarmOpportunityResponse {
+  repeated FarmOpportunityReadResult results = 1;
+}
+
+// LogicService 是 Gateway → Logic 的主入口(交接文档 §4.7)。
+service LogicService {
+  // ExecuteCommand 承载全部 P0a 客户端命令;Logic 内按 command_type 分发,
+  // 按路由键定位 PlayerFarmActor 串行执行。
+  rpc ExecuteCommand(ExecuteCommandRequest) returns (ExecuteCommandResponse);
+  rpc ArmSnapshot(ArmSnapshotRequest) returns (ArmSnapshotResponse);
+  rpc SnapshotQueueAccepted(SnapshotQueueAcceptedRequest) returns (SnapshotQueueAcceptedResponse);
+  rpc CatchupBatchQueueAccepted(CatchupBatchQueueAcceptedRequest) returns (CatchupBatchQueueAcceptedResponse);
+  rpc CancelJoinAttempt(CancelJoinAttemptRequest) returns (CancelJoinAttemptResponse);
+  rpc CleanupSubscription(CleanupSubscriptionRequest) returns (CleanupSubscriptionResponse);
+  rpc BatchRenewSubscriptions(BatchRenewSubscriptionsRequest) returns (BatchRenewSubscriptionsResponse);
+  rpc BatchReadFarmOpportunityHeader(BatchReadFarmOpportunityHeaderRequest) returns (BatchReadFarmOpportunityHeaderResponse);
+  // Read-only Header/Facts evaluation. This method never activates FarmActor.
+  rpc BatchEvaluateFarmOpportunity(BatchEvaluateFarmOpportunityRequest) returns (BatchEvaluateFarmOpportunityResponse);
+}
+
+enum GateKickStatus {
+  GATE_KICK_STATUS_UNSPECIFIED = 0;
+  KICKED = 1;
+  STALE_TARGET = 2;
+  TARGET_NOT_FOUND = 3;
+}
+
+// KickSessionRequest always carries the old route returned by the atomic
+// SessionAuthority activation. The target Gate must compare every fence field.
+message KickSessionRequest {
+  uint64 player_id = 1;
+  uint64 active_session_epoch = 2;
+  string gateway_id = 3;
+  string gateway_boot_id = 4;
+  string connection_id = 5;
+  uint64 connection_generation = 6;
+  uint64 route_revision = 7;
+}
+
+message KickSessionResponse {
+  GateKickStatus status = 1;
+}
+
+// GateControlService is an internal best-effort control plane. Its failure
+// never rolls back a SessionRoute that has already become active in Redis.
+service GateControlService {
+  rpc KickSession(KickSessionRequest) returns (KickSessionResponse);
+}
+
+message EnsureOwnerInitializedRequest {
+  uint64 player_id = 1;
+  string bootstrap_id = 2;
+  string display_name = 3;
+  uint32 avatar_id = 4;
+}
+message OwnerReady {
+  uint64 owner_id = 1;
+  uint64 record_version = 2;
+  uint64 farm_version = 3;
+}
+message EnsureOwnerInitializedResponse {
+  OwnerReady owner = 1;
+  // home_bootstrap 是 HTTP 登录附带的可选首页投影(合同 31:登录响应可携带与
+  // GET_PLAYER_BOOTSTRAP 相同语义的 GetPlayerBootstrapResult)。投影或邮件
+  // 降级失败时必须省略本字段,登录本身不得失败;旧客户端/Reconnect/跨日刷新
+  // 仍通过 GET_PLAYER_BOOTSTRAP RecoveryRequery 获取。
+  public.GetPlayerBootstrapResult home_bootstrap = 2;
+}
+
+service BootstrapService {
+  rpc EnsureOwnerInitialized(EnsureOwnerInitializedRequest) returns (EnsureOwnerInitializedResponse);
+}
+
+// PlayerParticipantService exposes idempotent LOCAL_DURABLE participant steps
+// used by farm-svr workflows. Clients never call these methods directly.
+message ReserveItemRequest {
+  uint64 player_id = 1;
+  string reservation_id = 2;
+  int32 item_id = 3;
+  int64 count = 4;
+  bytes payload_hash = 5;
+}
+message ReservationResponse {
+  common.CommandStatus status = 1;
+  common.ErrorCode error_code = 2;
+  player.PrivateState private_state = 3;
+}
+message CommitReservationRequest {
+  uint64 player_id = 1;
+  string reservation_id = 2;
+}
+message ReleaseReservationRequest {
+  uint64 player_id = 1;
+  string reservation_id = 2;
+}
+message GrantItemRequest {
+  uint64 player_id = 1;
+  string operation_id = 2;
+  int32 item_id = 3;
+  int64 count = 4;
+  int64 exp = 5;
+  bytes payload_hash = 6;
+}
+message GrantItemResponse {
+  common.CommandStatus status = 1;
+  common.ErrorCode error_code = 2;
+  player.PrivateState private_state = 3;
+}
+message ApplyRewardRequest {
+  uint64 player_id = 1;
+  string operation_id = 2;
+  int32 item_id = 3;
+  int64 item_count = 4;
+  int64 coin_delta = 5;
+  int64 exp_delta = 6;
+  bytes payload_hash = 7;
+  int32 codex_crop_definition_id = 8;
+}
+message ApplyRewardResponse {
+  common.CommandStatus status = 1;
+  common.ErrorCode error_code = 2;
+  player.PrivateState private_state = 3;
+}
+message GetPrivateStateRequest { uint64 player_id = 1; }
+message GetPrivateStateResponse { player.PrivateState private_state = 1; }
+
+message GetPublicProfileRequest { uint64 player_id = 1; }
+message GetPublicProfileResponse { public.PublicProfileView public_profile = 1; }
+message BatchGetPublicProfilesRequest { repeated uint64 player_ids = 1; }
+message BatchGetPublicProfilesResponse { repeated public.PublicProfileView public_profiles = 1; }
+
+service PlayerParticipantService {
+  rpc ReserveItem(ReserveItemRequest) returns (ReservationResponse);
+  rpc CommitReservation(CommitReservationRequest) returns (ReservationResponse);
+  rpc ReleaseReservation(ReleaseReservationRequest) returns (ReservationResponse);
+  rpc GrantItem(GrantItemRequest) returns (GrantItemResponse);
+  rpc ApplyReward(ApplyRewardRequest) returns (ApplyRewardResponse);
+  rpc GetPrivateState(GetPrivateStateRequest) returns (GetPrivateStateResponse);
+  rpc GetPublicProfile(GetPublicProfileRequest) returns (GetPublicProfileResponse);
+  rpc BatchGetPublicProfiles(BatchGetPublicProfilesRequest) returns (BatchGetPublicProfilesResponse);
+}
+
+message DownlinkItem {
+  string item_id = 1;
+  string subscription_id = 2;
+  string connection_id = 3;
+  uint64 presence_epoch = 4;
+  bytes frame = 5;
+  uint64 transport_generation = 6;
+  // The Gate instance that owns connection_id. Logic must route the item to
+  // this instance instead of assuming one process-global downlink endpoint.
+  string gateway_id = 7;
+  // Join barrier fence. Both fields are populated only for the authoritative
+  // FARM_SNAPSHOT produced by JOIN_FARM. Gate must match them against its
+  // PendingJoin before the snapshot can promote a subscription to ACTIVE.
+  string join_operation_id = 8;
+  uint64 target_farm_id = 9;
+  // W2A 的显式 Join Fence。旧 8/9 字段仅用于迁移期观测，不能再作为
+  // Snapshot/Delta/Ready 的最终准入依据。
+  SubscriptionFence join_fence = 10;
+  DownlinkTargetFence target_fence = 11;
+  uint64 snapshot_version = 12;
+  uint64 from_version = 13;
+  uint64 through_version = 14;
+}
+enum DownlinkItemStatus {
+  DOWNLINK_ITEM_STATUS_UNSPECIFIED = 0;
+  QUEUE_ACCEPTED = 1;
+  CONNECTION_NOT_FOUND = 2;
+  QUEUE_FULL = 3;
+  STALE_SUBSCRIPTION = 4;
+  STALE_CONNECTION = 5;
+  UNAVAILABLE = 6;
+}
+message DeliverBatchRequest { repeated DownlinkItem items = 1; }
+message DeliverBatchItemResult { string item_id = 1; DownlinkItemStatus status = 2; }
+message DeliverBatchResponse { repeated DeliverBatchItemResult results = 1; }
+
+service GatewayDownlinkService {
+  rpc DeliverBatch(DeliverBatchRequest) returns (DeliverBatchResponse);
+  rpc ActivateSubscription(ActivateSubscriptionRequest) returns (ActivateSubscriptionResponse);
+}
+
+// ── 内部可信命令(Worker → Actor Router)──────────────────────
+// 这些不在客户端命令目录,由 Worker 用可信内部身份发起(交接文档 §5.5)。
+
+message GrantLootRequest {
+  string settlement_id = 1;
+  uint64 visitor_id = 2;      // 路由键
+  int32 amount = 3;
+  int32 item_id = 4;
+}
+message GrantLootResponse { common.CommandStatus status = 1; }
+
+message CompleteTheftRequest {
+  string settlement_id = 1;
+  uint64 target_owner_id = 2; // 路由键
+}
+message CompleteTheftResponse { common.CommandStatus status = 1; }
+
+// MarkGrantedRequest 由 Worker 在确认访客 LootReceipt 已持久化后调用,
+// 把目标 Settlement 从 TARGET_COMMITTED 推进到 GRANTED。CompleteTheft 的前置。
+message MarkGrantedRequest {
+  string settlement_id = 1;
+  uint64 target_owner_id = 2; // 路由键
+}
+message MarkGrantedResponse { common.CommandStatus status = 1; }
+
+// WorkerCallbackService 是 Worker → Logic/Actor 的可信回调入口。
+service WorkerCallbackService {
+  rpc GrantLoot(GrantLootRequest) returns (GrantLootResponse);
+  rpc MarkGranted(MarkGrantedRequest) returns (MarkGrantedResponse);
+  rpc CompleteTheft(CompleteTheftRequest) returns (CompleteTheftResponse);
+}
+
+// FarmWorkflowService lets farm-worker inspect the authoritative FarmRecord
+// receipt/settlement before deciding whether to commit, grant or compensate.
+message InspectFarmOperationRequest {
+  uint64 farm_id = 1;
+  string operation_id = 2;
+}
+message InspectFarmOperationResponse {
+  common.CommandStatus status = 1;
+  common.ErrorCode error_code = 2;
+  farm.FarmSettlement settlement = 3;
+}
+message CompleteFarmOperationRequest {
+  uint64 farm_id = 1;
+  string operation_id = 2;
+  bytes private_state = 3;
+}
+message CompleteFarmOperationResponse {
+  common.CommandStatus status = 1;
+  common.ErrorCode error_code = 2;
+}
+
+service FarmWorkflowService {
+  rpc InspectFarmOperation(InspectFarmOperationRequest) returns (InspectFarmOperationResponse);
+  rpc CompleteFarmOperation(CompleteFarmOperationRequest) returns (CompleteFarmOperationResponse);
+}

@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: farm-gate
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: farm-gate
+  template:
+    metadata:
+      labels:
+        app: farm-gate
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: farm-gate
+          # Replace with the immutable image digest produced by the release pipeline.
+          image: farm-gate:replace-with-release-digest
+          ports:
+            - { name: http, containerPort: 8080 }
+            - { name: downlink, containerPort: 9092 }
+          env:
+            - { name: GATE_TRANSPORT, value: websocket }
+            - { name: GATEWAY_LISTEN, value: ":8080" }
+            - { name: GATEWAY_DOWNLINK_LISTEN, value: ":9092" }
+            - { name: ACTOR_AUTHORITY_MODE, value: authority }
+            - { name: SHARE_TOKEN_TTL_PROFILE, value: share-token-ttl-v1 }
+            - { name: FRIEND_LIMIT_PROFILE, value: friend-limit-v1 }
+            - { name: GATE_WS_DRAIN_WAIT, value: 20s }
+            - { name: GATE_WS_SHUTDOWN_TIMEOUT, value: 10s }
+            - { name: GATE_PREAUTH_MAX_CONNECTIONS, value: "4096" }
+            - { name: GATE_PREAUTH_MAX_CONNECTIONS_PER_IP, value: "64" }
+            - { name: GATE_PREAUTH_MAX_FRAMES_PER_CONNECTION, value: "1" }
+            - { name: GATE_PREAUTH_MAX_BYTES_PER_CONNECTION, value: "65536" }
+            - { name: GATE_PREAUTH_MAX_BYTES_PER_IP, value: "1048576" }
+            - { name: GATE_PREAUTH_MAX_BYTES_POD, value: "67108864" }
+            - { name: GATE_PREAUTH_HELLO_TIMEOUT, value: 10s }
+            - { name: HTTP_SESSION_COOKIE_ACTIVE_VERSION, value: "2" }
+            - { name: WEB_LOGIN_RATE_LIMIT_PREFIX, value: "farm:prod:web-login-limit" }
+            - { name: WEB_LOGIN_IP_BURST, value: "30" }
+            - { name: WEB_LOGIN_IP_WINDOW, value: "1m" }
+            - { name: WEB_LOGIN_DEVICE_BURST, value: "10" }
+            - { name: WEB_LOGIN_DEVICE_WINDOW, value: "1m" }
+            - name: WEB_LOGIN_RATE_LIMIT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: farm-gate-auth
+                  key: web-login-rate-limit-secret
+            - name: PERMIT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: farm-gate-auth
+                  key: permit-secret
+            - name: HTTP_SESSION_COOKIE_KEYRING
+              valueFrom:
+                secretKeyRef:
+                  name: farm-gate-auth
+                  key: http-session-cookie-keyring
+          readinessProbe:
+            httpGet: { path: /readyz, port: http }
+            periodSeconds: 2
+            timeoutSeconds: 1
+            failureThreshold: 1
+          livenessProbe:
+            httpGet: { path: /healthz, port: http }
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          lifecycle:
+            preStop:
+              # PID 1 handles SIGTERM by turning readiness false, queuing
+              # DrainNotice, sending 1012, and waiting for the drain budget.
+              exec: { command: ["/bin/sh", "-c", "kill -TERM 1"] }
+          resources:
+            requests: { cpu: 250m, memory: 256Mi }
+            limits: { cpu: "1", memory: 1Gi }
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: farm-gate
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: farm-gate

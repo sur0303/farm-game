@@ -1,0 +1,32 @@
+{
+  "finished_at": "2026-08-07T02:27:44Z",
+  "frames": 14,
+  "steps": {
+    "bootstrap": {
+      "status": "ok"
+    },
+    "buy": {
+      "status": "ok"
+    },
+    "hello": {
+      "status": "ok"
+    },
+    "join": {
+      "status": "ok"
+    },
+    "login": {
+      "status": "ok"
+    },
+    "plant": {
+      "status": "fail",
+      "detail": "read tcp 127.0.0.1:47690-\u003e127.0.0.1:37343: i/o timeout"
+    },
+    "recovery_complete": {
+      "status": "ok"
+    },
+    "register": {
+      "status": "ok"
+    }
+  },
+  "verdict": "FAIL"
+}

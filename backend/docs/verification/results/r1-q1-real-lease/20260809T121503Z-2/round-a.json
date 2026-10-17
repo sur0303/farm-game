@@ -1,0 +1,10 @@
+{
+  "checks": {},
+  "failures": [
+    "missing artifacts: round-a-client.json, round-a-gate-before.prom, round-a-gate-after.prom, round-a-farm-a-before.prom, round-a-farm-a-after.prom, round-a-proxy-a.json",
+    "orchestrator exited before both rounds completed (status=1)"
+  ],
+  "round": "A",
+  "schema_version": "r1-q1-real-lease-round/v1",
+  "status": "INCONCLUSIVE"
+}

@@ -1,0 +1,54 @@
+{
+  "codex-luna-primary": {
+    "runner": "codex-cli",
+    "model": "GPT-5.6 Luna Max",
+    "cli_model": "gpt-5.6-luna",
+    "reasoning_effort": "max",
+    "role": "writer",
+    "write_mode": "workspace-write",
+    "fresh_session": false
+  },
+  "codex-luna-review": {
+    "runner": "codex-cli",
+    "model": "GPT-5.6 Luna Max",
+    "cli_model": "gpt-5.6-luna",
+    "reasoning_effort": "max",
+    "role": "reviewer",
+    "write_mode": "read-only",
+    "fresh_session": true
+  },
+  "cursor-grok45-fixer": {
+    "runner": "cursor-cli",
+    "model": "Grok 4.5 High Fast",
+    "cli_model": "cursor-grok-4.5-high-fast",
+    "role": "fixer",
+    "write_mode": "workspace-write",
+    "fresh_session": true
+  },
+  "codex-sol-xhigh-diagnose": {
+    "runner": "codex-cli",
+    "model": "GPT-5.6 Sol",
+    "cli_model": "gpt-5.6-sol",
+    "reasoning_effort": "xhigh",
+    "role": "diagnoser",
+    "write_mode": "read-only",
+    "fresh_session": true
+  },
+  "codex-sol-high-diagnose": {
+    "runner": "codex-cli",
+    "model": "GPT-5.6 Sol High",
+    "cli_model": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "role": "diagnoser",
+    "write_mode": "read-only",
+    "fresh_session": true
+  },
+  "codebuddy-kimi-k3-backup": {
+    "runner": "codebuddy-cli",
+    "model": "Kimi K3 High",
+    "cli_model": "kimi-k3-ioa",
+    "role": "backup",
+    "write_mode": "workspace-write",
+    "fresh_session": true
+  }
+}

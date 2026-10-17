@@ -1,0 +1,308 @@
+name: farm-game-local
+
+# Local H5 integration uses Direct FarmGate WebSocket and the company-managed
+# persistent Redis as the current business database. Load FARM_REDIS_URL or
+# FARM_REDIS_CLUSTER_URLS from deploy/secrets/redis.conf.local through
+# scripts/company-redis-compose.sh;
+# credentials must never be committed to this file. Company intranet routes
+# are installed in the host namespace, so this local-only Compose uses host
+# networking and explicit loopback service addresses.
+services:
+  player-svr:
+    build:
+      context: ..
+      dockerfile: Dockerfile.prebuilt
+      args:
+        SERVICE: player-svr
+    network_mode: host
+    volumes:
+      # 静态路由 snapshot(默认挂载但不启用;验证 holder fencing 时 export
+      # ACTOR_ROUTE_SNAPSHOT=/app/route-snapshot.json + ACTOR_HOLDER_POD=player-svr-0)
+      - "./route-snapshot.player.json:/app/route-snapshot.json:ro"
+      # A2 TaskDomain requires Asia/Shanghai; Alpine image lacks tzdata and apk is unreachable.
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+    environment:
+      PLAYER_LISTEN: ":19100"
+      PLAYER_HEALTH_LISTEN: ":19101"
+      ACTOR_AUTHORITY_MODE: "${ACTOR_AUTHORITY_MODE:-legacy}"
+      # RT1B-3C-B seam: true composes NewMembershipRuntime (per-shard scheduler
+      # is the sole renew owner); false keeps the legacy runRenewal path.
+      AUTHORITY_MEMBERSHIP_MODE: "${AUTHORITY_MEMBERSHIP_MODE:-false}"
+      ACTOR_ASSIGNMENT_MODE: "${ACTOR_ASSIGNMENT_MODE:-static}"
+      FARM_REDIS_URL: "${FARM_REDIS_URL:-}"
+      FARM_REDIS_CLUSTER_URLS: "${FARM_REDIS_CLUSTER_URLS:-}"
+      FARM_AUTHORITY_REDIS_URL: "${FARM_AUTHORITY_REDIS_URL:-}"
+      FARM_RUNTIME_REDIS_URL: "${FARM_RUNTIME_REDIS_URL:-}"
+      FARM_PROJECTION_REDIS_URL: "${FARM_PROJECTION_REDIS_URL:-}"
+      REDIS_WORKLOAD_METRICS: "${REDIS_WORKLOAD_METRICS:-false}"
+      REDIS_NAMESPACE_ENVIRONMENT: "${REDIS_NAMESPACE_ENVIRONMENT:-dev}"
+      REDIS_NAMESPACE_ZONE: "${REDIS_NAMESPACE_ZONE:-z1}"
+      PLAYER_STORE_PREFIX: "${PLAYER_STORE_PREFIX:-farm:v118:primary:player}"
+      WORKFLOW_STORE_PREFIX: "${WORKFLOW_STORE_PREFIX:-farm:v121:m1:workflow}"
+      FARM_ADDR: "127.0.0.1:19000"
+      REDIS_PHYSICAL_PROFILE_VERSION: "${REDIS_PHYSICAL_PROFILE_VERSION:-redis-physical-v1}"
+      REDIS_AUTHORITY_LAYOUT_VERSION: "${REDIS_AUTHORITY_LAYOUT_VERSION:-v1}"
+      REDIS_WORKFLOW_LAYOUT_VERSION: "${REDIS_WORKFLOW_LAYOUT_VERSION:-v1}"
+      REDIS_WORKFLOW_HASH_VERSION: "${REDIS_WORKFLOW_HASH_VERSION:-1}"
+      REDIS_WORKFLOW_BUCKET_COUNT: "${REDIS_WORKFLOW_BUCKET_COUNT:-256}"
+      ACTOR_AUTHORITY_LEASE_TTL: "${ACTOR_AUTHORITY_LEASE_TTL:-55s}"
+      ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN: "${ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN:-3s}"
+      ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL: "${ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL:-5s}"
+      PERMIT_SECRET: "${PERMIT_SECRET:-local-secret-do-not-use-in-prod}"
+      ACTOR_ROUTE_SNAPSHOT: "${PLAYER_ACTOR_ROUTE_SNAPSHOT:-/app/route-snapshot.json}"
+      ACTOR_HOLDER_POD: "${PLAYER_ACTOR_HOLDER_POD:-foe2e-player}"
+      ACTOR_HOLDER_BOOT_ID: "${PLAYER_ACTOR_HOLDER_BOOT_ID:-foe2e-player-boot-1}"
+      # 阶段 6 Player Mailbox 空闲回收;E2E 验证回落时用短 timeout 覆盖。
+      PLAYER_MAILBOX_IDLE_TIMEOUT: "${PLAYER_MAILBOX_IDLE_TIMEOUT:-5m}"
+      PLAYER_MAILBOX_IDLE_SWEEP_INTERVAL: "${PLAYER_MAILBOX_IDLE_SWEEP_INTERVAL:-30s}"
+      PLAYER_MAILBOX_IDLE_MAX_PER_SWEEP: "${PLAYER_MAILBOX_IDLE_MAX_PER_SWEEP:-256}"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:19101/readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  farm-svr:
+    build:
+      context: ..
+      dockerfile: Dockerfile.prebuilt
+      args:
+        SERVICE: farm-svr
+    network_mode: host
+    volumes:
+      - "./route-snapshot.player.json:/app/route-snapshot.json:ro"
+    depends_on:
+      player-svr:
+        condition: service_healthy
+    environment:
+      FARM_LISTEN: ":19000"
+      FARM_HEALTH_LISTEN: ":19001"
+      ACTOR_AUTHORITY_MODE: "${ACTOR_AUTHORITY_MODE:-legacy}"
+      # RT1B-3C-B seam: true composes NewMembershipRuntime (per-shard scheduler
+      # is the sole renew owner); false keeps the legacy runRenewal path.
+      AUTHORITY_MEMBERSHIP_MODE: "${AUTHORITY_MEMBERSHIP_MODE:-false}"
+      ACTOR_ASSIGNMENT_MODE: "${ACTOR_ASSIGNMENT_MODE:-static}"
+      ACTOR_ROUTE_SNAPSHOT: "${FARM_ACTOR_ROUTE_SNAPSHOT:-/app/route-snapshot.json}"
+      ACTOR_HOLDER_POD: "${FARM_ACTOR_HOLDER_POD:-foe2e-farm}"
+      ACTOR_HOLDER_BOOT_ID: "${FARM_ACTOR_HOLDER_BOOT_ID:-foe2e-farm-boot-1}"
+      PLAYER_ADDR: "127.0.0.1:19100"
+      GATEWAY_DOWNLINK_ADDR: "127.0.0.1:9092"
+      FARM_REDIS_URL: "${FARM_REDIS_URL:-}"
+      FARM_REDIS_CLUSTER_URLS: "${FARM_REDIS_CLUSTER_URLS:-}"
+      FARM_AUTHORITY_REDIS_URL: "${FARM_AUTHORITY_REDIS_URL:-}"
+      FARM_RUNTIME_REDIS_URL: "${FARM_RUNTIME_REDIS_URL:-}"
+      FARM_PROJECTION_REDIS_URL: "${FARM_PROJECTION_REDIS_URL:-}"
+      REDIS_WORKLOAD_METRICS: "${REDIS_WORKLOAD_METRICS:-false}"
+      REDIS_NAMESPACE_ENVIRONMENT: "${REDIS_NAMESPACE_ENVIRONMENT:-dev}"
+      REDIS_NAMESPACE_ZONE: "${REDIS_NAMESPACE_ZONE:-z1}"
+      FARM_STORE_PREFIX: "${FARM_STORE_PREFIX:-farm:v118:primary:farm}"
+      WORKFLOW_STORE_PREFIX: "${WORKFLOW_STORE_PREFIX:-farm:v121:m1:workflow}"
+      REDIS_PHYSICAL_PROFILE_VERSION: "${REDIS_PHYSICAL_PROFILE_VERSION:-redis-physical-v1}"
+      REDIS_AUTHORITY_LAYOUT_VERSION: "${REDIS_AUTHORITY_LAYOUT_VERSION:-v1}"
+      REDIS_WORKFLOW_LAYOUT_VERSION: "${REDIS_WORKFLOW_LAYOUT_VERSION:-v1}"
+      REDIS_WORKFLOW_HASH_VERSION: "${REDIS_WORKFLOW_HASH_VERSION:-1}"
+      REDIS_WORKFLOW_BUCKET_COUNT: "${REDIS_WORKFLOW_BUCKET_COUNT:-256}"
+      ACTOR_AUTHORITY_LEASE_TTL: "${ACTOR_AUTHORITY_LEASE_TTL:-55s}"
+      ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN: "${ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN:-3s}"
+      ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL: "${ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL:-5s}"
+      FARM_CROP_MATURE_AFTER: "${FARM_CROP_MATURE_AFTER:-10s}"
+      FARM_OPPORTUNITY_WAKEUP_ATTACH_ENABLED: "${FARM_OPPORTUNITY_WAKEUP_ATTACH_ENABLED:-false}"
+      FARM_OPPORTUNITY_HEADER_READ_MODE: "${FARM_OPPORTUNITY_HEADER_READ_MODE:-full}"
+      FARM_OPPORTUNITY_HEADER_FULL_FALLBACK: "${FARM_OPPORTUNITY_HEADER_FULL_FALLBACK:-8}"
+      # Actor activation load-storm gates; override for load tests.
+      MAX_CONCURRENT_ACTOR_LOADS: "${MAX_CONCURRENT_ACTOR_LOADS:-64}"
+      MAX_PENDING_ACTOR_LOADS: "${MAX_PENDING_ACTOR_LOADS:-256}"
+      ACTIVATION_RATE_PER_SEC: "${ACTIVATION_RATE_PER_SEC:-1000}"
+      DOWNLINK_LANE_QUEUE_SIZE: "${DOWNLINK_LANE_QUEUE_SIZE:-256}"
+      DOWNLINK_BATCH_SIZE: "${DOWNLINK_BATCH_SIZE:-32}"
+      DOWNLINK_RPC_TIMEOUT: "${DOWNLINK_RPC_TIMEOUT:-2s}"
+      DOWNLINK_LANE_IDLE_TIMEOUT: "${DOWNLINK_LANE_IDLE_TIMEOUT:-1m}"
+      DOWNLINK_MAX_CONCURRENT_RPCS: "${DOWNLINK_MAX_CONCURRENT_RPCS:-16}"
+      DOWNLINK_MAX_LANES: "${DOWNLINK_MAX_LANES:-1024}"
+      FARM_EVENT_LANE_SIZE: "${FARM_EVENT_LANE_SIZE:-128}"
+      GATE_BOOT_LEASE_PREFIX: "${GATE_BOOT_LEASE_PREFIX:-farm:v03:gate-boot-lease}"
+      GATE_BOOT_REAPER_INTERVAL: "${GATE_BOOT_REAPER_INTERVAL:-5s}"
+      GATE_BOOT_REAPER_CHECK_TIMEOUT: "${GATE_BOOT_REAPER_CHECK_TIMEOUT:-2s}"
+      # 阶段 6 自动 idle passivation;E2E 验证回落时用短 timeout 覆盖。
+      FARM_ACTOR_IDLE_TIMEOUT: "${FARM_ACTOR_IDLE_TIMEOUT:-5m}"
+      FARM_ACTOR_IDLE_BUCKET_WIDTH: "${FARM_ACTOR_IDLE_BUCKET_WIDTH:-30s}"
+      FARM_ACTOR_IDLE_SWEEP_INTERVAL: "${FARM_ACTOR_IDLE_SWEEP_INTERVAL:-30s}"
+      FARM_ACTOR_IDLE_MAX_PER_SWEEP: "${FARM_ACTOR_IDLE_MAX_PER_SWEEP:-256}"
+      FARM_ACTOR_IDLE_BLOCKED_RETRY_DELAY: "${FARM_ACTOR_IDLE_BLOCKED_RETRY_DELAY:-5s}"
+      PERMIT_SECRET: "${PERMIT_SECRET:-local-secret-do-not-use-in-prod}"
+      THEFT_PRF_MODE: "${THEFT_PRF_MODE:-demo}"
+    healthcheck:
+      # Legacy local mode: TheftIngress is not composed, so /readyz always 503s.
+      # Use /healthz for local smoke; production readiness still checks /readyz.
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:19001/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  farm-worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile.prebuilt
+      args:
+        SERVICE: farm-worker
+    network_mode: host
+    volumes:
+      # The opportunity wakeup worker needs the same immutable shard geometry
+      # as the online services.  This is test-only static discovery; holder
+      # ownership is still fenced by the authority records in Redis.
+      - "./route-snapshot.player.json:/app/route-snapshot.json:ro"
+    depends_on:
+      player-svr:
+        condition: service_healthy
+      farm-svr:
+        condition: service_healthy
+    environment:
+      FARM_REDIS_URL: "${FARM_REDIS_URL:-}"
+      FARM_REDIS_CLUSTER_URLS: "${FARM_REDIS_CLUSTER_URLS:-}"
+      FARM_AUTHORITY_REDIS_URL: "${FARM_AUTHORITY_REDIS_URL:-}"
+      FARM_RUNTIME_REDIS_URL: "${FARM_RUNTIME_REDIS_URL:-}"
+      FARM_PROJECTION_REDIS_URL: "${FARM_PROJECTION_REDIS_URL:-}"
+      REDIS_WORKLOAD_METRICS: "${REDIS_WORKLOAD_METRICS:-false}"
+      ACTOR_ROUTE_SNAPSHOT: "${ACTOR_ROUTE_SNAPSHOT:-/app/route-snapshot.json}"
+      REDIS_NAMESPACE_ENVIRONMENT: "${REDIS_NAMESPACE_ENVIRONMENT:-dev}"
+      REDIS_NAMESPACE_ZONE: "${REDIS_NAMESPACE_ZONE:-z1}"
+      WORKFLOW_STORE_PREFIX: "${WORKFLOW_STORE_PREFIX:-farm:v121:m1:workflow}"
+      REDIS_PHYSICAL_PROFILE_VERSION: "${REDIS_PHYSICAL_PROFILE_VERSION:-redis-physical-v1}"
+      REDIS_AUTHORITY_LAYOUT_VERSION: "${REDIS_AUTHORITY_LAYOUT_VERSION:-v1}"
+      REDIS_WORKFLOW_LAYOUT_VERSION: "${REDIS_WORKFLOW_LAYOUT_VERSION:-v1}"
+      REDIS_WORKFLOW_HASH_VERSION: "${REDIS_WORKFLOW_HASH_VERSION:-1}"
+      REDIS_WORKFLOW_BUCKET_COUNT: "${REDIS_WORKFLOW_BUCKET_COUNT:-256}"
+      PLAYER_ADDR: "127.0.0.1:19100"
+      FARM_ADDR: "127.0.0.1:19000"
+      WORKER_HEALTH_LISTEN: ":19201"
+      WORKER_POLL_INTERVAL: "${WORKER_POLL_INTERVAL:-1s}"
+      SOURCE_ORDER_WORKER_BUCKETS_PER_ROUND: "${SOURCE_ORDER_WORKER_BUCKETS_PER_ROUND:-256}"
+      SOURCE_ORDER_WORKER_IDLE_MAX_INTERVAL: "${SOURCE_ORDER_WORKER_IDLE_MAX_INTERVAL:-4s}"
+      SOURCE_ORDER_DUE_OBSERVE_INTERVAL: "${SOURCE_ORDER_DUE_OBSERVE_INTERVAL:-10s}"
+      WORKER_CLAIM_LEASE: "${WORKER_CLAIM_LEASE:-5s}"
+      WORKER_OPERATION_TIMEOUT: "${WORKER_OPERATION_TIMEOUT:-3s}"
+      FARM_OPPORTUNITY_WAKEUP_ENABLED: "${FARM_OPPORTUNITY_WAKEUP_ENABLED:-false}"
+      FARM_OPPORTUNITY_WAKEUP_SHADOW: "${FARM_OPPORTUNITY_WAKEUP_SHADOW:-false}"
+      FARM_OPPORTUNITY_WAKEUP_POLL_INTERVAL: "${FARM_OPPORTUNITY_WAKEUP_POLL_INTERVAL:-1s}"
+      FARM_OPPORTUNITY_WAKEUP_LEASE: "${FARM_OPPORTUNITY_WAKEUP_LEASE:-5s}"
+      FARM_OPPORTUNITY_WAKEUP_CLAIM_LIMIT: "${FARM_OPPORTUNITY_WAKEUP_CLAIM_LIMIT:-64}"
+      FARM_OPPORTUNITY_WAKEUP_DISCOVERY_LIMIT: "${FARM_OPPORTUNITY_WAKEUP_DISCOVERY_LIMIT:-256}"
+      FARM_OPPORTUNITY_WAKEUP_MAX_CONCURRENT: "${FARM_OPPORTUNITY_WAKEUP_MAX_CONCURRENT:-4}"
+      FARM_OPPORTUNITY_WAKEUP_ROUND_TIME_BUDGET: "${FARM_OPPORTUNITY_WAKEUP_ROUND_TIME_BUDGET:-800ms}"
+      FARM_WORKER_ASSIGNMENT_MODE: "${FARM_WORKER_ASSIGNMENT_MODE:-static}"
+      FARM_WORKER_OWNED_SHARDS: "${FARM_WORKER_OWNED_SHARDS:-}"
+      FARM_OPPORTUNITY_HINT_TRANSPORT: "${FARM_OPPORTUNITY_HINT_TRANSPORT:-pubsub}"
+      GATEWAY_DOWNLINK_ROUTES: "${GATEWAY_DOWNLINK_ROUTES:-farm-gate-local=127.0.0.1:9092}"
+      PERMIT_SECRET: "${PERMIT_SECRET:-local-secret-do-not-use-in-prod}"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:19201/readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  farm-gate:
+    build:
+      context: ..
+      dockerfile: Dockerfile.prebuilt
+      args:
+        SERVICE: farm-gate
+    network_mode: host
+    depends_on:
+      player-svr:
+        condition: service_healthy
+      farm-svr:
+        # Gate must expose its downlink listener while farm-svr is becoming
+        # ready; requiring farm-svr health here creates a startup window where
+        # Logic can only dial a not-yet-started Gate.
+        condition: service_started
+    environment:
+      GATEWAY_LISTEN: ":8080"
+      GATEWAY_ID: "farm-gate-local"
+      FARM_APP_PROFILE: "${FARM_APP_PROFILE:-local}"
+      ACTOR_AUTHORITY_MODE: "${ACTOR_AUTHORITY_MODE:-legacy}"
+      FRIENDSHIP_SERVICE_MODE: "${FRIENDSHIP_SERVICE_MODE:-remote_player}"
+      FARM_OPPORTUNITY_HINT_DIAGNOSTICS: "${FARM_OPPORTUNITY_HINT_DIAGNOSTICS:-false}"
+      GATEWAY_DOWNLINK_LISTEN: ":9092"
+      GATE_CONTROL_LISTEN: ":9093"
+      GATE_CONTROL_TARGETS: "${GATE_CONTROL_TARGETS:-}"
+      ACTOR_ASSIGNMENT_MODE: "${ACTOR_ASSIGNMENT_MODE:-static}"
+      GATE_TRANSPORT: "websocket"
+      GATE_WS_PATH: "/ws"
+      GATE_WS_ALLOWED_ORIGINS: "${GATE_WS_ALLOWED_ORIGINS:-127.0.0.1:5174,localhost:5174,127.0.0.1:5175,localhost:5175,127.0.0.1:5184,localhost:5184,198.18.0.6:5174}"
+      GATE_HTTP_TRUSTED_PROXIES: "${GATE_HTTP_TRUSTED_PROXIES:-}"
+      PLAYER_ADDR: "127.0.0.1:19100"
+      FARM_ADDR: "127.0.0.1:19000"
+      LOGIC_HEALTH_ADDR: "http://127.0.0.1:19001"
+      FARM_REDIS_URL: "${FARM_REDIS_URL:-}"
+      FARM_REDIS_CLUSTER_URLS: "${FARM_REDIS_CLUSTER_URLS:-}"
+      FARM_AUTHORITY_REDIS_URL: "${FARM_AUTHORITY_REDIS_URL:-}"
+      FARM_RUNTIME_REDIS_URL: "${FARM_RUNTIME_REDIS_URL:-}"
+      FARM_PROJECTION_REDIS_URL: "${FARM_PROJECTION_REDIS_URL:-}"
+      REDIS_WORKLOAD_METRICS: "${REDIS_WORKLOAD_METRICS:-false}"
+      REDIS_NAMESPACE_ENVIRONMENT: "${REDIS_NAMESPACE_ENVIRONMENT:-dev}"
+      REDIS_NAMESPACE_ZONE: "${REDIS_NAMESPACE_ZONE:-z1}"
+      WEB_ACCOUNT_STORE_PREFIX: "${WEB_ACCOUNT_STORE_PREFIX:-farm:v122:primary:web-account}"
+      WEB_ACCOUNT_PLAYER_ID_BASE: "${WEB_ACCOUNT_PLAYER_ID_BASE:-1000000}"
+      WEB_LOGIN_RATE_LIMIT_PREFIX: "${WEB_LOGIN_RATE_LIMIT_PREFIX:-farm:v03:web-login-limit}"
+      WEB_LOGIN_IP_BURST: "${WEB_LOGIN_IP_BURST:-30}"
+      WEB_LOGIN_IP_WINDOW: "${WEB_LOGIN_IP_WINDOW:-1m}"
+      WEB_LOGIN_DEVICE_BURST: "${WEB_LOGIN_DEVICE_BURST:-10}"
+      WEB_LOGIN_DEVICE_WINDOW: "${WEB_LOGIN_DEVICE_WINDOW:-1m}"
+      WEB_LOGIN_RATE_LIMIT_SECRET: "${WEB_LOGIN_RATE_LIMIT_SECRET:-}"
+      DEMO_PLATFORM_TOKEN: "${DEMO_PLATFORM_TOKEN:-demo-platform-token}"
+      DEMO_PLAYER_ID: "${DEMO_PLAYER_ID:-10001}"
+      # A second explicit development identity is required for real share/friend
+      # testing. Browser profiles are not identities: each one must present a
+      # different platform token, just as two production users would.
+      DEMO_SECONDARY_PLATFORM_TOKEN: "${DEMO_SECONDARY_PLATFORM_TOKEN:-demo-platform-token-b}"
+      DEMO_SECONDARY_PLAYER_ID: "${DEMO_SECONDARY_PLAYER_ID:-10002}"
+      HTTP_SESSION_TTL: "${HTTP_SESSION_TTL:-2h}"
+      HTTP_SESSION_COOKIE_SECURE: "0"
+      HTTP_SESSION_COOKIE_ACTIVE_VERSION: "${HTTP_SESSION_COOKIE_ACTIVE_VERSION:-1}"
+      HTTP_SESSION_COOKIE_KEYRING: "${HTTP_SESSION_COOKIE_KEYRING:-}"
+      SHARE_STORE_PREFIX: "${SHARE_STORE_PREFIX:-farm:v121:m2:primary:share}"
+      # Null numeric values only forward an explicit host override; farm-gate derives absent values from the profile.
+      SHARE_TOKEN_TTL_PROFILE: "${SHARE_TOKEN_TTL_PROFILE:-share-token-ttl-v1}"
+      SHARE_TOKEN_TTL:
+      FRIEND_LIMIT_PROFILE: "${FRIEND_LIMIT_PROFILE:-friend-limit-v1}"
+      FRIEND_LIMIT:
+      MAX_FRAME_BYTES: "${MAX_FRAME_BYTES:-1048576}"
+      PERMIT_SECRET: "${PERMIT_SECRET:-local-secret-do-not-use-in-prod}"
+      GATEWAY_TICKET_TTL: "${GATEWAY_TICKET_TTL:-60s}"
+      GATE_ROUTE_LEASE_TTL: "${GATE_ROUTE_LEASE_TTL:-30s}"
+      GATE_BOOT_LEASE_PREFIX: "${GATE_BOOT_LEASE_PREFIX:-farm:v03:gate-boot-lease}"
+      GATE_BOOT_LEASE_TTL: "${GATE_BOOT_LEASE_TTL:-15s}"
+      GATE_BOOT_LEASE_RENEW_TIMEOUT: "${GATE_BOOT_LEASE_RENEW_TIMEOUT:-3s}"
+      INITIAL_RULE_VERSION: "${INITIAL_RULE_VERSION:-1}"
+      GATE_WS_METRICS: "1"
+      GATE_WS_RATE_PER_SEC: "${GATE_WS_RATE_PER_SEC:-10}"
+      GATE_WS_RATE_BURST: "${GATE_WS_RATE_BURST:-20}"
+      GATE_WS_MAX_CONNS: "${GATE_WS_MAX_CONNS:-0}"
+      GATE_WS_COMMAND_QUEUE_SIZE: "${GATE_WS_COMMAND_QUEUE_SIZE:-16}"
+      GATE_DOWNLINK_WRITER_MAX_ITEMS: "${GATE_DOWNLINK_WRITER_MAX_ITEMS:-256}"
+      GATE_DOWNLINK_WRITER_MAX_BYTES: "${GATE_DOWNLINK_WRITER_MAX_BYTES:-1048576}"
+      GATE_DOWNLINK_HINT_MAX_ITEMS: "${GATE_DOWNLINK_HINT_MAX_ITEMS:-32}"
+      GATE_DOWNLINK_HINT_MAX_BYTES: "${GATE_DOWNLINK_HINT_MAX_BYTES:-65536}"
+      GATE_DOWNLINK_DRAIN_QUANTUM: "${GATE_DOWNLINK_DRAIN_QUANTUM:-64}"
+      GATE_PREAUTH_MAX_CONNECTIONS: "${GATE_PREAUTH_MAX_CONNECTIONS:-4096}"
+      GATE_PREAUTH_MAX_CONNECTIONS_PER_IP: "${GATE_PREAUTH_MAX_CONNECTIONS_PER_IP:-64}"
+      GATE_PREAUTH_MAX_FRAMES_PER_CONNECTION: "${GATE_PREAUTH_MAX_FRAMES_PER_CONNECTION:-1}"
+      GATE_PREAUTH_MAX_BYTES_PER_CONNECTION: "${GATE_PREAUTH_MAX_BYTES_PER_CONNECTION:-65536}"
+      GATE_PREAUTH_MAX_BYTES_PER_IP: "${GATE_PREAUTH_MAX_BYTES_PER_IP:-1048576}"
+      GATE_PREAUTH_MAX_BYTES_POD: "${GATE_PREAUTH_MAX_BYTES_POD:-67108864}"
+      GATE_PREAUTH_HELLO_TIMEOUT: "${GATE_PREAUTH_HELLO_TIMEOUT:-10s}"
+      GATE_BACKEND_MAX_INFLIGHT: "${GATE_BACKEND_MAX_INFLIGHT:-1024}"
+      GATE_BACKEND_RPC_TIMEOUT: "${GATE_BACKEND_RPC_TIMEOUT:-3s}"
+      # Compatibility/observation mode is the first rollout. Set to 1 only
+      # after farm_gate_legacy_implicit_bind_total remains zero.
+      STRICT_PENDING_JOIN_FENCE: "${STRICT_PENDING_JOIN_FENCE:-0}"
+      # Disabled when empty. cmd/ws-stress must receive the same explicit
+      # test-only secret; this is not a production authentication path.
+      LOAD_TEST_TOKEN_SECRET: "${LOAD_TEST_TOKEN_SECRET:-}"
+      # This is the browser-visible endpoint returned by /api/v1/dev/session.
+      WSS_ENDPOINT: "${WSS_ENDPOINT:-ws://localhost:8080/ws}"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20

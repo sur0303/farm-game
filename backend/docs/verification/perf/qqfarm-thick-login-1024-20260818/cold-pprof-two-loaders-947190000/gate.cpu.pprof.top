@@ -1,0 +1,39 @@
+File: farm-gate
+Build ID: 9779c951ae4449b8e6332ce45bc4fad420eb518e
+Type: cpu
+Time: 2026-08-18 11:59:02 CST
+Duration: 20s, Total samples = 11.21s (56.05%)
+Showing nodes accounting for 5.24s, 46.74% of 11.21s total
+Dropped 786 nodes (cum <= 0.06s)
+Showing top 30 nodes out of 442
+      flat  flat%   sum%        cum   cum%
+     2.40s 21.41% 21.41%      2.40s 21.41%  internal/runtime/syscall/linux.Syscall6
+     0.25s  2.23% 23.64%      0.25s  2.23%  runtime.spanClass.sizeclass (inline)
+     0.17s  1.52% 25.16%      0.17s  1.52%  runtime.memclrNoHeapPointers
+     0.16s  1.43% 26.58%      0.16s  1.43%  runtime.memmove
+     0.15s  1.34% 27.92%      0.45s  4.01%  google.golang.org/protobuf/internal/impl.(*MessageInfo).unmarshalPointerEager
+     0.15s  1.34% 29.26%      0.18s  1.61%  runtime.step
+     0.14s  1.25% 30.51%      0.14s  1.25%  internal/runtime/maps.ctrlGroup.matchH2
+     0.14s  1.25% 31.76%      0.39s  3.48%  runtime.pcvalue
+     0.14s  1.25% 33.01%      0.31s  2.77%  runtime.selectgo
+     0.13s  1.16% 34.17%      0.13s  1.16%  aeshashbody
+     0.13s  1.16% 35.33%      0.13s  1.16%  runtime.nextFreeFast (inline)
+     0.12s  1.07% 36.40%      0.12s  1.07%  runtime.futex
+     0.11s  0.98% 37.38%      0.15s  1.34%  internal/sync.(*Mutex).Lock (inline)
+     0.11s  0.98% 38.36%      0.12s  1.07%  runtime.findObject
+     0.08s  0.71% 39.07%      0.53s  4.73%  runtime.newobject
+     0.08s  0.71% 39.79%      0.38s  3.39%  runtime.tryDeferToSpanScan
+     0.07s  0.62% 40.41%      0.08s  0.71%  encoding/json.appendCompact
+     0.07s  0.62% 41.03%      0.07s  0.62%  runtime.(*mspan).writeHeapBitsSmall
+     0.07s  0.62% 41.66%      0.29s  2.59%  runtime.(*unwinder).resolveInternal
+     0.06s  0.54% 42.19%      0.06s  0.54%  farmgame/internal/gateway/leasebatch.itemHeap[go.shape.struct { farmgame/internal/gateway/command.route farmgame/internal/gateway/session.ActiveRoute; farmgame/internal/gateway/command.deadline time.Time }].Less
+     0.06s  0.54% 42.73%      0.11s  0.98%  internal/runtime/maps.(*Map).getWithoutKeySmallFastStr
+     0.06s  0.54% 43.26%      0.24s  2.14%  runtime.(*stkframe).getStackMap
+     0.06s  0.54% 43.80%      0.06s  0.54%  time.runtimeNow
+     0.05s  0.45% 44.25%      0.44s  3.93%  internal/poll.(*FD).Read
+     0.05s  0.45% 44.69%      0.08s  0.71%  runtime.(*waitq).dequeue
+     0.05s  0.45% 45.14%      0.06s  0.54%  runtime.makeSpanClass (inline)
+     0.05s  0.45% 45.58%      0.31s  2.77%  runtime.mallocgcSmallNoscan
+     0.05s  0.45% 46.03%      0.17s  1.52%  runtime.netpoll
+     0.04s  0.36% 46.39%      0.55s  4.91%  bufio.(*Reader).fill
+     0.04s  0.36% 46.74%      0.07s  0.62%  bufio.(*Writer).Write

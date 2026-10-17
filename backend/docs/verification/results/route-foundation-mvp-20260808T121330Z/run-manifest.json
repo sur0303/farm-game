@@ -1,0 +1,41 @@
+{
+  "checkpoint": "CP-ROUTE-FOUNDATION-MVP-PREMERGE",
+  "branch": "premerge/route-foundation-mvp-20260808",
+  "integration_base": "1ae95ceba0040f7ed788537f312d2125ce209498",
+  "merged_rt1b_3d_final_head": "6bede089bb96e8052e693adeba10bac488f2f8bb",
+  "tested_merge_commit": "112c2a4dfdb35b7dcc7dfb0ebd416c2bdc3db222",
+  "merge_parent_1": "1ae95ceba0040f7ed788537f312d2125ce209498",
+  "merge_parent_2": "6bede089bb96e8052e693adeba10bac488f2f8bb",
+  "final_head_recording": "branch ref after evidence-only commit; integration merge requires controller approval",
+  "redis_profile": "company-proxy",
+  "redis_endpoint": "redacted",
+  "assignment_mode": "static",
+  "remote_watch": "OFF",
+  "started_at": "2026-08-08T12:13:30Z",
+  "finished_at": "2026-08-08T12:21:20Z",
+  "static_gates": {
+    "go_test_all": "PASS",
+    "race_authoritycomposition_redis_authority_logic_authority_player_rfobs": "PASS",
+    "go_vet_all": "PASS",
+    "go_build_cmd_all": "PASS",
+    "git_diff_check": "PASS_AFTER_TWO_HISTORICAL_HANDOFF_EOF_WHITESPACE_CLEANUPS",
+    "git_fsck": "PASS",
+    "new_git_blobs_over_1m": 0,
+    "preexisting_worktree_files_over_1m": 2,
+    "secret_endpoint_scan": "PASS_NO_CREDENTIAL_OR_REAL_ENDPOINT; expected loopback/test-denial/source-construction/placeholders only"
+  },
+  "live_gates": {
+    "q2r2a": "PASS_9_SEMANTIC_TESTS_1_CLUSTER_PROFILE_SKIP",
+    "q2r2b1": "PASS_S1_S2A_S2B_S3_S4",
+    "q2r2b2": "PASS_N1_THROUGH_N6",
+    "rfobs1_h1": "PASS_DIRECT_LOCAL_FENCE_4_RENEW_REPLIES_DROPPED_SAME_GENERATION_RECOVERED",
+    "rfobs1_h2": "PASS_DIRECT_LOCAL_FENCE_SAME_GENERATION_RECOVERED",
+    "rfobs1_h3": "PASS_DIRECT_LOCAL_DEADLINE_FAIL_CLOSED_NO_FATAL"
+  },
+  "effective_recovery_budget_ms": 2163,
+  "exact_key_cleanup": "PASS",
+  "global_scan": false,
+  "global_script_flush": false,
+  "integration_merge": "NOT_PERFORMED_AWAITING_USER_APPROVAL",
+  "overall": "PASS"
+}

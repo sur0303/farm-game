@@ -1,0 +1,38 @@
+{
+  "apiVersion": "networking.k8s.io/v1",
+  "kind": "Ingress",
+  "metadata": {
+    "name": "farm-staging-web",
+    "annotations": {
+      "farm.io/local-only": "true"
+    }
+  },
+  "spec": {
+    "ingressClassName": "traefik",
+    "tls": [
+      {
+        "hosts": ["farm.l2.local"],
+        "secretName": "farm-local-tls"
+      }
+    ],
+    "rules": [
+      {
+        "host": "farm.l2.local",
+        "http": {
+          "paths": [
+            {
+              "path": "/",
+              "pathType": "Prefix",
+              "backend": {
+                "service": {
+                  "name": "farm-h5",
+                  "port": {"name": "http"}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+job.batch/ws-stress-thick-login-181849 created
+job=ws-stress-thick-login-181849
+job.batch/ws-stress-thick-login-181849 condition met
+2026/08/17 10:18:50 ws-stress HTTP=http://farm-gate:8080 WSS=ws://farm-gate:8080/ws conns=1 rate=1/s duration=10s scenario=thick-login run_id=dkr54xy9wgt4
+{
+  "run_id": "dkr54xy9wgt4",
+  "cell_run_id": "dkr54xy9wgt4",
+  "scenario": "thick-login",
+  "auth_mode": "load_test_token",
+  "configured_connections": 1,
+  "player_start": 944000000,
+  "connect_rate_per_second": 1,
+  "configured_duration_seconds": 10,
+  "started_at": "2026-08-17T10:18:50.493277416Z",
+  "finished_at": "2026-08-17T10:18:51.522993498Z",
+  "attempted": 1,
+  "ready": 0,
+  "active_at_end": 0,
+  "peak_active": 1,
+  "login_errors": 0,
+  "connect_errors": 0,
+  "hello_errors": 0,
+  "join_errors": 0,
+  "scenario_attempted": 0,
+  "scenario_succeeded": 0,
+  "scenario_errors": 0,
+  "unexpected_disconnects": 0,
+  "ready_rate": 0,
+  "elapsed_ms": 1029.430978,
+  "ready_p50_ms": 0,
+  "ready_p95_ms": 0,
+  "ready_p99_ms": 0,
+  "ready_max_ms": 0,
+  "login_p50_ms": 17.327295,
+  "login_p95_ms": 17.327295,
+  "hello_p50_ms": 4.502665,
+  "hello_p95_ms": 4.502665,
+  "scenario_p95_ms": 0,
+  "failure_reasons": {
+    "thick_login: bootstrap: status=UNAVAILABLE code=ERR_INTERNAL message=authoritystore: attached work conflict": 1
+  },
+  "git_sha": "unknown",
+  "test_environment": "developer_026-qqfarm",
+  "thick_login": {
+    "bootstrap_errors": 1,
+    "friend_startup_errors": 0,
+    "profiles_loaded": 0,
+    "task_summaries_loaded": 0,
+    "mail_summaries_loaded": 0,
+    "compendium_summaries_loaded": 0,
+    "pet_summaries_loaded": 0,
+    "task_claimable_total": 0,
+    "daily_task_rows_loaded": 0,
+    "mail_red_point_players": 0,
+    "friend_opportunity_loaded": 0,
+    "friend_opportunity_found": 0,
+    "friend_opportunity_none": 0,
+    "bootstrap_p50_ms": 0,
+    "bootstrap_p95_ms": 0,
+    "friend_startup_p50_ms": 0,
+    "friend_startup_p95_ms": 0
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://classic-farm.invalid/schemas/cap-single-pod-l2-r1-manifest-v0.1.json",
+  "title": "CAP-SINGLE-POD-L2-R2 run manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "task_id",
+    "run_id",
+    "service",
+    "profile_name",
+    "phase",
+    "frozen_identity",
+    "harness_identity",
+    "profile_version",
+    "profile_hash",
+    "contract_hashes",
+    "images",
+    "machine",
+    "cgroups",
+    "topology",
+    "redis",
+    "load_generator",
+    "fixture",
+    "planned_load",
+    "started_at",
+    "random_seed"
+  ],
+  "properties": {
+    "schema_version": {"const": "cap-single-pod-l2-r2.run-manifest.v0.1"},
+    "task_id": {"const": "CAP-SINGLE-POD-L2-R2"},
+    "run_id": {"type": "string", "pattern": "^capsingle-l2-r1-[0-9]{8}T[0-9]{6}Z-[0-9]+$"},
+    "service": {"enum": ["gate", "player", "farm", "worker"]},
+    "profile_name": {"type": "string", "minLength": 1, "maxLength": 96},
+    "phase": {"enum": ["PRECHECK", "OBSERVABILITY_QUALIFICATION", "LOAD_GENERATOR_QUALIFICATION", "SMOKE", "WARMUP", "STAIRCASE", "SAFE_TIER_CANDIDATE", "FORMAL_1", "COOLDOWN_1", "FORMAL_2", "COOLDOWN_2", "FORMAL_3", "INDEPENDENT_REVIEW"]},
+    "frozen_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backend_evidence_head", "backend_business_commit", "backend_image_digest", "h5_commit", "h5_image_digest", "model_layout"],
+      "properties": {
+        "backend_evidence_head": {"const": "d1899ecab8d71248062ffd70eb4e42048e394a38"},
+        "backend_business_commit": {"const": "93a66ce76d509d86e8cac8e1d87563d084eba821"},
+        "backend_image_digest": {"const": "sha256:9498736750d89ece6cc511acf3f7fa243218ac1a2ce64f2806580f898a053ab7"},
+        "h5_commit": {"const": "525c4d324100b17a891f02797c4880fa9a02f70a"},
+        "h5_image_digest": {"const": "sha256:9bfdedaa70f7cbf8bac86bb25cc2ff62dba1cf7832fb5d8f66c72c1f113486fd"},
+        "model_layout": {"const": "R1:authority-v1+workflow-v1+friend-v1;Model-Field-V2-disabled"}
+      }
+    },
+    "harness_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["harness_commit", "harness_binary_sha256", "design_review_head", "harness_review_head"],
+      "properties": {
+        "harness_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "harness_binary_sha256": {"$ref": "#/$defs/sha256"},
+        "design_review_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "harness_review_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    },
+    "profile_version": {"const": "CAP-SINGLE-POD-L2-R2-v0.1"},
+    "profile_hash": {"$ref": "#/$defs/sha256"},
+    "contract_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract", "profile", "stop_conditions", "required_metrics", "verdict_rules", "environment_validity"],
+      "properties": {
+        "contract": {"$ref": "#/$defs/sha256"},
+        "profile": {"$ref": "#/$defs/sha256"},
+        "stop_conditions": {"$ref": "#/$defs/sha256"},
+        "required_metrics": {"$ref": "#/$defs/sha256"},
+        "verdict_rules": {"$ref": "#/$defs/sha256"},
+        "environment_validity": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "images": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["measured_service", "h5", "redis"],
+      "properties": {
+        "measured_service": {
+          "allOf": [
+            {"$ref": "#/$defs/image"},
+            {"properties": {"digest": {"const": "sha256:9498736750d89ece6cc511acf3f7fa243218ac1a2ce64f2806580f898a053ab7"}}}
+          ]
+        },
+        "h5": {
+          "allOf": [
+            {"$ref": "#/$defs/image"},
+            {"properties": {"digest": {"const": "sha256:9bfdedaa70f7cbf8bac86bb25cc2ff62dba1cf7832fb5d8f66c72c1f113486fd"}}}
+          ]
+        },
+        "redis": {
+          "allOf": [
+            {"$ref": "#/$defs/image"},
+            {"properties": {"digest": {"const": "sha256:2a51817f79255c8b69f86a974459c2e0359aff81417d80158f2b9e541e6f4b33"}}}
+          ]
+        },
+        "support_services": {"type": "array", "items": {"$ref": "#/$defs/image"}}
+      }
+    },
+    "machine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spec_hash", "kernel", "cpu_model", "logical_cpus", "memory_bytes", "docker_server", "go_version"],
+      "properties": {
+        "spec_hash": {"$ref": "#/$defs/sha256"},
+        "kernel": {"type": "string", "minLength": 1},
+        "cpu_model": {"type": "string", "minLength": 1},
+        "logical_cpus": {"type": "integer", "minimum": 16},
+        "memory_bytes": {"type": "integer", "minimum": 17179869184},
+        "docker_server": {"type": "string", "minLength": 1},
+        "go_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "cgroups": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["measured_service", "load_generator", "redis", "support_services"],
+      "properties": {
+        "measured_service": {"$ref": "#/$defs/cgroup"},
+        "load_generator": {"$ref": "#/$defs/cgroup"},
+        "redis": {"$ref": "#/$defs/cgroup"},
+        "support_services": {"type": "array", "items": {"$ref": "#/$defs/cgroup"}}
+      }
+    },
+    "topology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["measured_service_replicas", "support_service_replicas", "route_snapshot_hash", "route_snapshot_created_at", "route_lease_remaining_ms_at_start", "lease_profile_hash", "server_config_hash", "dependency_endpoint_hashes"],
+      "properties": {
+        "measured_service_replicas": {"const": 1},
+        "support_service_replicas": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0, "maximum": 4}},
+        "route_snapshot_hash": {"$ref": "#/$defs/sha256"},
+        "route_snapshot_created_at": {"type": "string", "format": "date-time"},
+        "route_lease_remaining_ms_at_start": {"type": "integer", "minimum": 1800000},
+        "lease_profile_hash": {"$ref": "#/$defs/sha256"},
+        "server_config_hash": {"$ref": "#/$defs/sha256"},
+        "dependency_endpoint_hashes": {"type": "object", "additionalProperties": {"$ref": "#/$defs/sha256"}}
+      }
+    },
+    "redis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_version", "config_hash", "endpoint_hash", "namespace_hash", "loopback", "ephemeral"],
+      "properties": {
+        "profile_version": {"const": "redis-physical-v1"},
+        "config_hash": {"$ref": "#/$defs/sha256"},
+        "endpoint_hash": {"$ref": "#/$defs/sha256"},
+        "namespace_hash": {"$ref": "#/$defs/sha256"},
+        "loopback": {"const": true},
+        "ephemeral": {"const": true}
+      }
+    },
+    "load_generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["binary_sha256", "qualification_evidence_hash", "separate_cgroup", "headroom_factor_proven", "arrival_model"],
+      "properties": {
+        "binary_sha256": {"$ref": "#/$defs/sha256"},
+        "qualification_evidence_hash": {"$ref": "#/$defs/sha256"},
+        "separate_cgroup": {"const": true},
+        "headroom_factor_proven": {"type": "number", "minimum": 1.5},
+        "arrival_model": {"const": "open_loop_monotonic_scheduler"}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture_id_hash", "fixture_content_hash", "setup_completed_before_measurement"],
+      "properties": {
+        "fixture_id_hash": {"$ref": "#/$defs/sha256"},
+        "fixture_content_hash": {"$ref": "#/$defs/sha256"},
+        "setup_completed_before_measurement": {"const": true}
+      }
+    },
+    "planned_load": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tier", "targets", "ramp_seconds", "hold_seconds"],
+      "properties": {
+        "tier": {"type": "integer", "minimum": 0},
+        "targets": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/loadTarget"}},
+        "ramp_seconds": {"type": "integer", "minimum": 0},
+        "hold_seconds": {"type": "integer", "minimum": 1}
+      }
+    },
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": ["string", "null"], "format": "date-time"},
+    "random_seed": {"type": "integer", "const": 2026081002}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest", "runtime_id"],
+      "properties": {
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "runtime_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "loadTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": {"enum": ["connections", "arrivals_per_second", "frames_per_second", "egress_bytes_per_second", "handshakes_per_second", "active_actors", "subscriptions", "fanout_per_second", "backlog", "work_steps_per_second", "due_claims_per_second"]},
+        "value": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "cgroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "cgroup_path_hash", "container_id_hash", "cpu_quota", "memory_limit_bytes", "pids_limit", "swap_disabled"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z0-9-]{1,64}$"},
+        "cgroup_path_hash": {"$ref": "#/$defs/sha256"},
+        "container_id_hash": {"$ref": "#/$defs/sha256"},
+        "cpu_quota": {"type": "number", "exclusiveMinimum": 0},
+        "memory_limit_bytes": {"type": "integer", "minimum": 536870912},
+        "pids_limit": {"type": "integer", "minimum": 128},
+        "swap_disabled": {"const": true}
+      }
+    }
+  }
+}

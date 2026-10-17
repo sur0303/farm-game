@@ -1,0 +1,8 @@
+[
+  {"op":"replace","path":"/spec/replicas","value":1},
+  {"op":"add","path":"/spec/template/metadata/annotations","value":{"farm.io/activation-status":"RENDER_ONLY_NOT_AUTHORITY_INITIALIZED"}},
+  {"op":"replace","path":"/spec/template/spec/topologySpreadConstraints/1/whenUnsatisfiable","value":"ScheduleAnyway"},
+  {"op":"remove","path":"/spec/template/spec/affinity/podAntiAffinity/requiredDuringSchedulingIgnoredDuringExecution"},
+  {"op":"add","path":"/spec/template/spec/affinity/podAntiAffinity/preferredDuringSchedulingIgnoredDuringExecution","value":[{"weight":100,"podAffinityTerm":{"labelSelector":{"matchLabels":{"app.kubernetes.io/name":"farm-worker"}},"topologyKey":"kubernetes.io/hostname"}}]},
+  {"op":"replace","path":"/spec/template/spec/containers/0/resources","value":{"requests":{"cpu":"1","memory":"2Gi"},"limits":{"cpu":"1","memory":"2Gi"}}}
+]

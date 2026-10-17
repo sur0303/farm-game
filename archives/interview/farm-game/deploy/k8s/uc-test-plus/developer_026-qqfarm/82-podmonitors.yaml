@@ -1,0 +1,104 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: farm-gate
+  namespace: developer_026-qqfarm
+  labels:
+    release: po
+    app.kubernetes.io/name: farm-gate
+    app.kubernetes.io/part-of: farm-game
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: farm-gate
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 5s
+  podTargetLabels:
+    - app.kubernetes.io/name
+    - app.kubernetes.io/component
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: farm-player
+  namespace: developer_026-qqfarm
+  labels:
+    release: po
+    app.kubernetes.io/name: farm-player
+    app.kubernetes.io/part-of: farm-game
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: player-svr
+  podMetricsEndpoints:
+    - port: health
+      path: /metrics
+      interval: 5s
+  podTargetLabels:
+    - app.kubernetes.io/name
+    - app.kubernetes.io/component
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: farm-farm
+  namespace: developer_026-qqfarm
+  labels:
+    release: po
+    app.kubernetes.io/name: farm-farm
+    app.kubernetes.io/part-of: farm-game
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: farm-svr
+  podMetricsEndpoints:
+    - port: health
+      path: /metrics
+      interval: 5s
+  podTargetLabels:
+    - app.kubernetes.io/name
+    - app.kubernetes.io/component
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: farm-worker
+  namespace: developer_026-qqfarm
+  labels:
+    release: po
+    app.kubernetes.io/name: farm-worker
+    app.kubernetes.io/part-of: farm-game
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: farm-worker
+  podMetricsEndpoints:
+    - port: health
+      path: /metrics
+      interval: 5s
+  podTargetLabels:
+    - app.kubernetes.io/name
+    - app.kubernetes.io/component
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: farm-route-controller
+  namespace: developer_026-qqfarm
+  labels:
+    release: po
+    app.kubernetes.io/name: farm-route-controller
+    app.kubernetes.io/part-of: farm-game
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: route-controller
+  podMetricsEndpoints:
+    - port: metrics
+      path: /metrics
+      interval: 5s
+  podTargetLabels:
+    - app.kubernetes.io/name
+    - app.kubernetes.io/component

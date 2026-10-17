@@ -1,0 +1,7 @@
+run_id=fusion-20260811-1s-b2
+redis=company-managed
+topology=random-loopback-real-processes
+friends=300
+plots=2
+horizon_ms=30000
+variants=B2

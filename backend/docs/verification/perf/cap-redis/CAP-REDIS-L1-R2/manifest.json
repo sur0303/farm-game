@@ -1,0 +1,39 @@
+{
+  "authorization": {
+    "h5_identity": "EXACT",
+    "handoff_sha256": "2e6f08c771ea55467907b03708c97cad0b3cdb4efd41bf3ccfbd436f9bea30f9",
+    "heavy_evidence_inheritance": "PASS",
+    "product_diff_from_0187051": 0,
+    "ready_for_cap_redis_l1_r2": true,
+    "reviewer_receipt_sha256": "e751bd8ba4834862be392b892fd8a5dc0c5beded4f736c1421adc002b0a4dd05"
+  },
+  "container_cpu_limit": "4",
+  "container_memory_limit": "4g",
+  "cpu_governor": "unavailable",
+  "frozen_identity": {
+    "backend_business_commit": "5ce43715363eea4f18e0925b6992429785053261",
+    "backend_evidence_head": "5ce43715363eea4f18e0925b6992429785053261",
+    "backend_image_digest": "sha256:672cf6862dcf06a4a5bfbb6146263b98bf04de930b113f7eb8fd8e8efb3493e9",
+    "h5_commit": "60707faaa30797a8d739af6686186fd8f113626a",
+    "h5_image_digest": "sha256:2d4fcba11bc0fdd83e49f97e1cca11bc190e0434b9a93dc5a2cf2672c380faa3",
+    "task_id": "CAP-REDIS-L1-R2"
+  },
+  "lease_profile_hash": "acb6428cca9364ba3eb0d2aeaaca9d3a7a488444515b6f2bdd0ba77ed2acb464",
+  "machine_spec": {
+    "cpu_model": "AMD EPYC 7K62 48-Core Processor",
+    "docker_server": "29.3.1",
+    "go_version": "go1.26.3-X:nodwarf5 linux/amd64",
+    "kernel": "Linux 6.6.119-49.20.tl4.x86_64 #1 SMP Sat May  2 07:46:47 CST 2026 x86_64 GNU/Linux",
+    "logical_cpus": "32",
+    "memory_bytes": "66879913984"
+  },
+  "machine_spec_hash": "b411797bb948b74a8c08e8a3dfa186d98316662a0f450503985f43e4a09a75a1",
+  "model_layout_version": "R2:authority-v1+workflow-v1+friend-authority-v1;Model-Field-V2-runtime-enabled;legacy-relationship-roster-removed",
+  "profile_hash": "46592a3874444f0fd92a2f725b7d3830091c4bd690f7001d9a12780a98150bd8",
+  "random_seed": 2026081002,
+  "redis_config_hash": "62bbe51e7ff885f80952f3ef742ec245b771510300b4af740cab9bb5a52079b9",
+  "redis_min_idle_conns": 400,
+  "redis_pool_size": 400,
+  "route_snapshot_hash": "5bf44b113a1a0cb2f49edce4a3139dfab15a33955f6d90f8e6af7498b2175980",
+  "schema_version": "cap-redis-l1-r2.v1"
+}

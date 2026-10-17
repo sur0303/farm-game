@@ -1,0 +1,305 @@
+--- 04:47:34 gate=farm-gate-6d664d9846-8nfks
+pod=farm-gate-6d664d9846-8nfks
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-8nfks   792m         753Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   344m         2267Mi          
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   742m         2667Mi          
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   140m         1546Mi          
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   287m         2239Mi          
+pod=ws-stress-cold-thick-login-124657-29368-8shmv
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-29368-8shmv   561m         144Mi           
+pod=ws-stress-cold-thick-login-124657-32124-2fw57
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-32124-2fw57   485m         143Mi           
+pod=ws-stress-cold-thick-login-124657-3490-2tfmr
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-3490-2tfmr   645m         149Mi           
+pod=ws-stress-cold-thick-login-124657-6427-95b8n
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-6427-95b8n   612m         128Mi           
+--- 04:47:40 gate=farm-gate-6d664d9846-8nfks
+pod=farm-gate-6d664d9846-8nfks
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-8nfks   792m         753Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   344m         2267Mi          
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   742m         2667Mi          
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   140m         1546Mi          
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   287m         2239Mi          
+pod=ws-stress-cold-thick-login-124657-29368-8shmv
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-29368-8shmv   561m         144Mi           
+pod=ws-stress-cold-thick-login-124657-32124-2fw57
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-32124-2fw57   485m         143Mi           
+pod=ws-stress-cold-thick-login-124657-3490-2tfmr
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-3490-2tfmr   645m         149Mi           
+pod=ws-stress-cold-thick-login-124657-6427-95b8n
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-6427-95b8n   612m         128Mi           
+--- 04:47:46 gate=farm-gate-6d664d9846-8nfks
+pod=farm-gate-6d664d9846-8nfks
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-8nfks   792m         753Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   344m         2267Mi          
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   742m         2667Mi          
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   140m         1546Mi          
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   287m         2239Mi          
+pod=ws-stress-cold-thick-login-124657-29368-8shmv
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-29368-8shmv   561m         144Mi           
+pod=ws-stress-cold-thick-login-124657-32124-2fw57
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-32124-2fw57   485m         143Mi           
+pod=ws-stress-cold-thick-login-124657-3490-2tfmr
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-3490-2tfmr   645m         149Mi           
+pod=ws-stress-cold-thick-login-124657-6427-95b8n
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-6427-95b8n   612m         128Mi           
+--- 04:47:52 gate=farm-gate-6d664d9846-8nfks
+pod=farm-gate-6d664d9846-8nfks
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-8nfks   1087m        597Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   367m         2737Mi          
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   578m         2669Mi          
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   502m         2711Mi          
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   341m         2701Mi          
+pod=ws-stress-cold-thick-login-124657-29368-8shmv
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-29368-8shmv   1970m        274Mi           
+pod=ws-stress-cold-thick-login-124657-32124-2fw57
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-32124-2fw57   1961m        238Mi           
+pod=ws-stress-cold-thick-login-124657-3490-2tfmr
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-3490-2tfmr   1982m        199Mi           
+pod=ws-stress-cold-thick-login-124657-6427-95b8n
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-6427-95b8n   1865m        212Mi           
+--- 04:47:58 gate=farm-gate-6d664d9846-8nfks
+pod=farm-gate-6d664d9846-8nfks
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-8nfks   1087m        597Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   367m         2737Mi          
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   578m         2669Mi          
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   502m         2711Mi          
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   341m         2701Mi          
+pod=ws-stress-cold-thick-login-124657-29368-8shmv
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-29368-8shmv   1970m        274Mi           
+pod=ws-stress-cold-thick-login-124657-32124-2fw57
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-32124-2fw57   1961m        238Mi           
+pod=ws-stress-cold-thick-login-124657-3490-2tfmr
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-3490-2tfmr   1982m        199Mi           
+pod=ws-stress-cold-thick-login-124657-6427-95b8n
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-6427-95b8n   1865m        212Mi           
+--- 04:48:03 gate=farm-gate-6d664d9846-8nfks
+pod=farm-gate-6d664d9846-8nfks
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-8nfks   1087m        597Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   367m         2737Mi          
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   578m         2669Mi          
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   502m         2711Mi          
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   341m         2701Mi          
+pod=ws-stress-cold-thick-login-124657-29368-8shmv
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-29368-8shmv   1970m        274Mi           
+pod=ws-stress-cold-thick-login-124657-32124-2fw57
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-32124-2fw57   1961m        238Mi           
+pod=ws-stress-cold-thick-login-124657-3490-2tfmr
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-3490-2tfmr   1982m        199Mi           
+pod=ws-stress-cold-thick-login-124657-6427-95b8n
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-6427-95b8n   1865m        212Mi           
+--- 04:48:09 gate=farm-gate-6d664d9846-8nfks
+pod=farm-gate-6d664d9846-8nfks
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-8nfks   1087m        597Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   367m         2737Mi          
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   578m         2669Mi          
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   502m         2711Mi          
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   341m         2701Mi          
+pod=ws-stress-cold-thick-login-124657-29368-8shmv
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-29368-8shmv   1970m        274Mi           
+pod=ws-stress-cold-thick-login-124657-32124-2fw57
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-32124-2fw57   1961m        238Mi           
+pod=ws-stress-cold-thick-login-124657-3490-2tfmr
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-3490-2tfmr   1982m        199Mi           
+pod=ws-stress-cold-thick-login-124657-6427-95b8n
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-6427-95b8n   1865m        212Mi           
+--- 04:48:15 gate=farm-gate-6d664d9846-8nfks
+pod=farm-gate-6d664d9846-8nfks
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-8nfks   1087m        597Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   367m         2737Mi          
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   578m         2669Mi          
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   502m         2711Mi          
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   341m         2701Mi          
+pod=ws-stress-cold-thick-login-124657-29368-8shmv
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-29368-8shmv   1970m        274Mi           
+pod=ws-stress-cold-thick-login-124657-32124-2fw57
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-32124-2fw57   1961m        238Mi           
+pod=ws-stress-cold-thick-login-124657-3490-2tfmr
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-3490-2tfmr   1982m        199Mi           
+pod=ws-stress-cold-thick-login-124657-6427-95b8n
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-6427-95b8n   1865m        212Mi           
+--- 04:48:21 gate=farm-gate-6d664d9846-8nfks
+pod=farm-gate-6d664d9846-8nfks
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-8nfks   772m         514Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   433m         3332Mi          
+pod=player-svr-1
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/player-svr-1" not found
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   311m         3312Mi          
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   259m         3054Mi          
+pod=ws-stress-cold-thick-login-124657-29368-8shmv
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-29368-8shmv   1535m        125Mi           
+pod=ws-stress-cold-thick-login-124657-32124-2fw57
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-32124-2fw57   1661m        96Mi            
+pod=ws-stress-cold-thick-login-124657-3490-2tfmr
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-3490-2tfmr   1601m        120Mi           
+pod=ws-stress-cold-thick-login-124657-6427-95b8n
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-6427-95b8n   1799m        69Mi            
+--- 04:48:26 gate=farm-gate-6d664d9846-8nfks
+pod=farm-gate-6d664d9846-8nfks
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-8nfks   772m         514Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   433m         3332Mi          
+pod=player-svr-1
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/player-svr-1" not found
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   311m         3312Mi          
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   259m         3054Mi          
+pod=ws-stress-cold-thick-login-124657-29368-8shmv
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-29368-8shmv   1535m        125Mi           
+pod=ws-stress-cold-thick-login-124657-32124-2fw57
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-32124-2fw57   1661m        96Mi            
+pod=ws-stress-cold-thick-login-124657-3490-2tfmr
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-3490-2tfmr   1601m        120Mi           
+pod=ws-stress-cold-thick-login-124657-6427-95b8n
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-6427-95b8n   1799m        69Mi            
+--- 04:48:32 gate=farm-gate-6d664d9846-8nfks
+pod=farm-gate-6d664d9846-8nfks
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-8nfks   772m         514Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   433m         3332Mi          
+pod=player-svr-1
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/player-svr-1" not found
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   311m         3312Mi          
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   259m         3054Mi          
+pod=ws-stress-cold-thick-login-124657-29368-8shmv
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-29368-8shmv   1535m        125Mi           
+pod=ws-stress-cold-thick-login-124657-32124-2fw57
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-32124-2fw57   1661m        96Mi            
+pod=ws-stress-cold-thick-login-124657-3490-2tfmr
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-3490-2tfmr   1601m        120Mi           
+pod=ws-stress-cold-thick-login-124657-6427-95b8n
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-124657-6427-95b8n   1799m        69Mi            

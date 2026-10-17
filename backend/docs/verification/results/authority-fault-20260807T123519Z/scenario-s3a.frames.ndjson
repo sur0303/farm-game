@@ -1,0 +1,8 @@
+{"t":"2026-08-07T04:35:27.185592675Z","dir":"send","type":"ClientHello"}
+{"t":"2026-08-07T04:35:27.186876312Z","dir":"recv","type":"ServerHello","detail":"session=c178b3b4050bb75e4e5f51798dccfb93 epoch=24"}
+{"t":"2026-08-07T04:35:27.18705047Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-join-faulta20260807t123519z-1786077327186908353 command_type=6"}
+{"t":"2026-08-07T04:35:27.191238097Z","dir":"recv","type":"JoinAccepted","detail":"sub=sub-7bf70bb751a5a88c9e560a14fd42ab9c"}
+{"t":"2026-08-07T04:35:27.194689187Z","dir":"recv","type":"FarmSnapshot","detail":"owner=1000001 version=0 empty_plot=0 v=1"}
+{"t":"2026-08-07T04:35:27.196102168Z","dir":"recv","type":"SubscriptionReady"}
+{"t":"2026-08-07T04:35:27.19615621Z","dir":"send","type":"ClientRecoveryComplete"}
+{"t":"2026-08-07T04:35:27.197039112Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-plant-faulta20260807t123519z-1786077327196955015 command_type=4"}

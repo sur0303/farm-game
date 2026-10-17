@@ -1,0 +1,54 @@
+{
+  "schema": "farm-game.q1-perf-profile.v1",
+  "task_id": "Q1-PERF-BASELINE-V1",
+  "description": "Full repeatable pre-hardening profile. This is not a 30M DAU capacity proof.",
+  "baseline_eligible": true,
+  "redis_mode": "ephemeral_local",
+  "safety": {
+    "allow_shared_redis": false,
+    "allow_flushall": false,
+    "namespace_prefix": "q1perf-",
+    "max_drop_ratio": 0.02,
+    "max_arrival_lag_ms": 250,
+    "load_generator_cpu_stop_percent": 85,
+    "external_redis_qps_delta_stop_ratio": 0.20,
+    "cleanup": "destroy_exact_ephemeral_container"
+  },
+  "profiles": {
+    "product_correctness_anchor": {
+      "enabled": true,
+      "playwright_h5_witnesses": 2,
+      "go_protocol_bots": 1,
+      "checks": ["hero", "task_claim", "F1", "F2", "F3", "authority_oracle"]
+    },
+    "hot_farm_theft": {
+      "enabled": true,
+      "connections_per_case": 200,
+      "cases": ["baseline", "slow_reader"],
+      "expected_success": 10,
+      "expected_no_effect_or_rejected": 189
+    },
+    "gate_connection_staircase": {
+      "enabled": true,
+      "model": "open_arrival",
+      "stages": [
+        {"name": "connections-200", "connections": 200, "arrival_rate_per_second": 100, "duration_seconds": 20},
+        {"name": "connections-500", "connections": 500, "arrival_rate_per_second": 200, "duration_seconds": 20},
+        {"name": "connections-1000", "connections": 1000, "arrival_rate_per_second": 300, "duration_seconds": 25},
+        {"name": "connections-2000", "connections": 2000, "arrival_rate_per_second": 400, "duration_seconds": 30},
+        {"name": "connections-5000", "connections": 5000, "arrival_rate_per_second": 500, "duration_seconds": 40}
+      ]
+    },
+    "mixed_business_staircase": {
+      "enabled": true,
+      "model": "open_arrival",
+      "supported_operations": ["REGISTER", "LOGIN", "JOIN", "GET_PLAYER_BOOTSTRAP", "BUY", "PLANT"],
+      "closed_anchor_operations": ["SELL", "UNLOCK_PLOT", "WATER", "THEFT", "CLAIM_TASK", "FRIEND_LIST", "OPERATION_RESULT"],
+      "stages": [
+        {"name": "mix-low", "duration_seconds": 20, "join_connections": 100, "join_rate_per_second": 10, "plant_connections": 20, "plant_rate_per_second": 2},
+        {"name": "mix-medium", "duration_seconds": 25, "join_connections": 250, "join_rate_per_second": 25, "plant_connections": 50, "plant_rate_per_second": 5},
+        {"name": "mix-high", "duration_seconds": 30, "join_connections": 600, "join_rate_per_second": 60, "plant_connections": 120, "plant_rate_per_second": 12}
+      ]
+    }
+  }
+}

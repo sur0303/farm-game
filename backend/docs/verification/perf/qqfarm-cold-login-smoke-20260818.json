@@ -1,0 +1,81 @@
+job.batch/ws-stress-cold-thick-login-133213-12363 created
+job=ws-stress-cold-thick-login-133213-12363
+load_pod=ws-stress-cold-thick-login-133213-12363-jr8gs started_at=2026-08-18T05:32:16Z
+job.batch/ws-stress-cold-thick-login-133213-12363 condition met
+2026/08/18 05:32:16 ws-stress HTTP=http://farm-gate:8080 WSS=ws://farm-gate:8080/ws conns=100 rate=10/s duration=1m30s scenario=cold-thick-login run_id=dkrto2r2k7y8
+2026/08/18 05:32:16 cold ID pool start=969000000 size=1000 launch_duration=1m0s
+{
+  "run_id": "dkrto2r2k7y8",
+  "cell_run_id": "dkrto2r2k7y8",
+  "scenario": "cold-thick-login",
+  "auth_mode": "load_test_token",
+  "configured_connections": 100,
+  "player_start": 969000000,
+  "connect_rate_per_second": 10,
+  "configured_duration_seconds": 90,
+  "started_at": "2026-08-18T05:32:16.498493778Z",
+  "finished_at": "2026-08-18T05:33:16.531715981Z",
+  "attempted": 601,
+  "ready": 0,
+  "active_at_end": 0,
+  "peak_active": 1,
+  "login_errors": 23,
+  "connect_errors": 0,
+  "hello_errors": 0,
+  "join_errors": 578,
+  "scenario_attempted": 0,
+  "scenario_succeeded": 0,
+  "scenario_errors": 0,
+  "unexpected_disconnects": 0,
+  "ready_rate": 0,
+  "elapsed_ms": 60032.720495,
+  "launch_elapsed_ms": 60000.766154,
+  "launch_qps": 10.016538763146007,
+  "ready_p50_ms": 0,
+  "ready_p95_ms": 0,
+  "ready_p99_ms": 0,
+  "ready_max_ms": 0,
+  "login_p50_ms": 14.621,
+  "login_p95_ms": 28.550214,
+  "hello_p50_ms": 8.697395,
+  "hello_p95_ms": 9.960135,
+  "scenario_p95_ms": 0,
+  "failure_reasons": {
+    "friend_opportunity: join rejected: status=UNAVAILABLE code=ERR_INTERNAL message=actor route: stale route": 578,
+    "login: login status 401: {\"error\":\"unauthorized\",\"error_code\":\"ERR_UNAUTHENTICATED\"}\n": 23,
+    "thick_login: join: join rejected: status=UNAVAILABLE code=ERR_INTERNAL message=actor route: stale route": 578
+  },
+  "git_sha": "unknown",
+  "test_environment": "developer_026-qqfarm",
+  "thick_login": {
+    "bootstrap_errors": 0,
+    "friend_startup_errors": 578,
+    "friend_startup_retries": 0,
+    "profiles_loaded": 578,
+    "task_summaries_loaded": 578,
+    "mail_summaries_loaded": 578,
+    "compendium_summaries_loaded": 578,
+    "pet_summaries_loaded": 578,
+    "task_claimable_total": 578,
+    "daily_task_rows_loaded": 1734,
+    "mail_red_point_players": 0,
+    "friend_opportunity_loaded": 0,
+    "friend_opportunity_attempted": 578,
+    "friend_opportunity_completed": 578,
+    "friend_opportunity_found": 0,
+    "friend_opportunity_none": 0,
+    "bootstrap_p50_ms": 22.990233,
+    "bootstrap_p95_ms": 37.771877,
+    "friend_startup_p50_ms": 0,
+    "friend_startup_p95_ms": 0,
+    "friend_startup_p99_ms": 0,
+    "friend_startup_max_ms": 0,
+    "friend_opportunity_p50_ms": 0,
+    "friend_opportunity_p95_ms": 0,
+    "friend_opportunity_p99_ms": 0,
+    "friend_opportunity_max_ms": 0,
+    "friend_opportunity_success_rate": 0
+  }
+}
+
+smoke_id_range=969000000-969000999

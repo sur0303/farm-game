@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Shell boundary for the bounded authority/CP-B smoke harness helpers.
+set -Eeuo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+HELPER="$ROOT_DIR/scripts/authority-smoke-harness.py"
+
+bash -n "$ROOT_DIR/scripts/run-authority-vertical-smoke"
+bash -n "$ROOT_DIR/scripts/run-cp-vertical-b-smoke"
+bash -n "$ROOT_DIR/scripts/run-theft-200-wss-hot-farm"
+PYTHONDONTWRITEBYTECODE=1 python3 "$ROOT_DIR/scripts/test_authority_smoke_harness.py"
+
+[[ "$(PYTHONDONTWRITEBYTECODE=1 python3 "$HELPER" validate-horizon --horizon-seconds 3600)" == "3600" ]]
+if PYTHONDONTWRITEBYTECODE=1 python3 "$HELPER" validate-horizon --horizon-seconds "" >/dev/null 2>&1; then
+  echo "empty route horizon unexpectedly accepted" >&2
+  exit 1
+fi
+
+set +e
+invalid_horizon_output="$(THEFT_HOT_ROUTE_HORIZON_SECONDS='' "$ROOT_DIR/scripts/run-theft-200-wss-hot-farm" 2>&1)"
+invalid_horizon_status=$?
+set -e
+[[ "$invalid_horizon_status" -eq 2 ]]
+[[ "$invalid_horizon_output" == *INCONCLUSIVE_ENVIRONMENT* ]]
+
+PORT_OUTPUT="$(PYTHONDONTWRITEBYTECODE=1 python3 "$HELPER" allocate-ports --count 10)"
+mapfile -t PORTS <<<"$PORT_OUTPUT"
+[[ "${#PORTS[@]}" -eq 10 ]]
+declare -A SEEN=()
+for port in "${PORTS[@]}"; do
+  [[ "$port" =~ ^[0-9]+$ ]]
+  (( 10#$port >= 1024 && 10#$port <= 65535 ))
+  [[ -z "${SEEN[$port]:-}" ]]
+  SEEN[$port]=1
+done
+
+echo "PASS: authority vertical smoke harness contracts"

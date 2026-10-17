@@ -1,0 +1,26 @@
+{
+  "apiVersion": "monitoring.coreos.com/v1",
+  "kind": "ServiceMonitor",
+  "metadata": {
+    "name": "player-svr",
+    "labels": {
+      "app.kubernetes.io/part-of": "farm-game",
+      "farm.io/monitoring-profile": "staging-v1"
+    }
+  },
+  "spec": {
+    "selector": {
+      "matchLabels": {
+        "app.kubernetes.io/name": "player-svr"
+      }
+    },
+    "endpoints": [
+      {
+        "port": "health",
+        "path": "/metrics",
+        "interval": "15s",
+        "scrapeTimeout": "5s"
+      }
+    ]
+  }
+}

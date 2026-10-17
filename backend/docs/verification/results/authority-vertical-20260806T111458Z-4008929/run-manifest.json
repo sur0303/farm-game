@@ -1,0 +1,9 @@
+{
+  "run_id": "authority-vertical-20260806T111458Z-4008929",
+  "backend_commit": "6284422122639a8a9b42bab5219a70e6bf05888f",
+  "h5_commit": "9a204fc0e74e2c2ba9d5e74e03e9ece4e35f6b7d",
+  "mode": "authority",
+  "assignment_source": "static",
+  "legacy_fallback": false,
+  "finished_at": "2026-08-06T11:15:13Z"
+}

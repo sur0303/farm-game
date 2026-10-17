@@ -1,0 +1,37 @@
+{
+  "image": "mirrors.tencent.com/uc-backend/farm-ws-stress@sha256:8e66feebce2b741c04c00744089dd47b09eb9c6ec3c2d1f30ba1e1351973008f",
+  "command": "KUBE_CONTEXT=uc-test-plus WS_STRESS_IMAGE=<image> bash deploy/k8s/uc-test-plus/developer_026-qqfarm/run-ws-stress.sh thick-login 1 1 10s 930120000",
+  "run_id": "dkquzuvvgsxh",
+  "scenario": "thick-login",
+  "test_environment": "developer_026-qqfarm",
+  "attempted": 1,
+  "ready": 1,
+  "login_errors": 0,
+  "connect_errors": 0,
+  "hello_errors": 0,
+  "join_errors": 0,
+  "unexpected_disconnects": 0,
+  "thick_login": {
+    "bootstrap_errors": 0,
+    "friend_startup_errors": 0,
+    "profiles_loaded": 1,
+    "task_summaries_loaded": 1,
+    "mail_summaries_loaded": 1,
+    "compendium_summaries_loaded": 1,
+    "pet_summaries_loaded": 1,
+    "task_claimable_total": 1,
+    "daily_task_rows_loaded": 3,
+    "mail_red_point_players": 1,
+    "friend_opportunity_loaded": 1,
+    "friend_opportunity_found": 0,
+    "friend_opportunity_none": 1,
+    "bootstrap_p50_ms": 12.637235,
+    "bootstrap_p95_ms": 12.637235,
+    "friend_startup_p50_ms": 15.182676,
+    "friend_startup_p95_ms": 15.182676
+  },
+  "notes": [
+    "This is the opportunity-only thick-login path; it does not request the friend roster endpoint.",
+    "The player range starts at 930120000 and was not reused from the earlier smoke runs."
+  ]
+}

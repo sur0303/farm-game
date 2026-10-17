@@ -1,0 +1,49 @@
+{
+  "finished_at": "2026-08-07T03:55:19Z",
+  "frames": 19,
+  "steps": {
+    "bootstrap": {
+      "status": "ok"
+    },
+    "bootstrap_refresh": {
+      "status": "ok",
+      "detail": "inventory map[2001:500] (produce landed), coin 90 unchanged"
+    },
+    "buy": {
+      "status": "ok"
+    },
+    "grow": {
+      "status": "ok"
+    },
+    "harvest": {
+      "status": "ok"
+    },
+    "hello": {
+      "status": "ok"
+    },
+    "join": {
+      "status": "ok"
+    },
+    "login": {
+      "status": "ok"
+    },
+    "plant": {
+      "status": "ok",
+      "detail": "plot=0 cycle=sid1_dmh0PaU5NTIZtTzdFDZ6OlqYKjtGAIYVhYvBWNJVC40 mature_at_ms=1786074917360 farm_version=1"
+    },
+    "premature_reject": {
+      "status": "ok"
+    },
+    "recovery_complete": {
+      "status": "ok"
+    },
+    "recovery_once": {
+      "status": "ok",
+      "detail": "ClientRecoveryComplete sent exactly once"
+    },
+    "register": {
+      "status": "ok"
+    }
+  },
+  "verdict": "PASS"
+}

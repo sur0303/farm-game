@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package settlement;
+
+option go_package = "farmgame/api/gen/settlement;settlementpb";
+
+import "common/enums.proto";
+
+// OperationResult 是近期幂等结果(交接文档 §11.4)。相同 operation_id 到达后
+// 先查此处;存在即返回,不重新执行。热窗口有时间/数量上限,过期后归档并留墓碑。
+message OperationResult {
+  string operation_id = 1;
+  common.CommandStatus status = 2;
+  common.ErrorCode error_code = 3;
+  int64 committed_at = 4;
+  bytes result_payload = 5;   // 结果快照(供重放查询返回)
+}
+
+// TheftSettlementState 是偷菜跨玩家流程的持久状态机(目标 Owner 侧)。
+enum TheftSettlementState {
+  THEFT_STATE_UNSPECIFIED = 0;
+  TARGET_COMMITTED = 1;   // 目标产量已扣减,不可回退,待访客到账
+  GRANTED = 2;            // 访客已到账(由 Worker 观察 LootReceipt 后推进)
+  COMPLETED = 3;          // CompleteTheft 已闭合
+}
+
+// TheftSettlement 记录一次偷菜的跨 Owner 流程(存于目标 Owner 的 OwnerCore)。
+message TheftSettlement {
+  string settlement_id = 1;      // = 发起的 operation_id
+  uint64 visitor_id = 2;          // 访客 Owner
+  uint64 target_owner_id = 3;
+  string crop_cycle_id = 4;
+  int32 amount = 5;              // 本次偷取量
+  TheftSettlementState state = 6;
+  int64 created_at = 7;
+  int64 next_retry_at = 8;       // Worker 重试调度
+}
+
+// LootReceipt 是访客 Owner 侧证明某次偷菜奖励已到账的幂等事实。
+// GrantLoot 重复投递由 settlement_id 吸收(交接文档 §5.5)。
+message LootReceipt {
+  string settlement_id = 1;
+  int32 amount = 2;
+  int32 item_id = 3;
+  int64 granted_at = 4;
+}
+
+// OutboxKind 是待异步执行任务的类型。
+enum OutboxKind {
+  OUTBOX_KIND_UNSPECIFIED = 0;
+  GRANT_LOOT = 1;        // 通知访客 Owner 到账
+  COMPLETE_THEFT = 2;    // 闭合目标 Settlement
+  NOTIFY_MATURE = 3;     // 成熟提醒(尽力)
+}
+
+// PendingOutbox 是与业务状态共同提交、等待异步执行的持久任务(交接文档 §9.8)。
+// 内容与状态存于 OwnerCore,索引/消息只负责发现,不是权威进度。
+message PendingOutbox {
+  string outbox_id = 1;
+  OutboxKind kind = 2;
+  string settlement_id = 3;      // 关联结算(如适用)
+	uint64 target_owner_id = 4;    // 任务目标 Owner
+  int32 attempts = 5;
+  int64 next_retry_at = 6;
+  bytes payload = 7;
+}

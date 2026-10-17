@@ -1,0 +1,22 @@
+{
+  "schema_version": "cap-redis-l1-r1.summary.v1",
+  "task_id": "CAP-REDIS-L1-R1",
+  "purpose": "current_r1_integration_redis_and_serialization_baseline",
+  "baseline_eligible": false,
+  "supports_30m_dau": false,
+  "frozen_identity": {
+    "task_id": "CAP-REDIS-L1-R1",
+    "backend_business_commit": "64b37d181828cf5b87dc65873d4370bc69f8a416",
+    "backend_evidence_head": "9c2c924eedb0d58d373e7241aacdd18b46ffeb52",
+    "h5_commit": "525c4d324100b17a891f02797c4880fa9a02f70a",
+    "backend_image_digest": "sha256:a273cd38f4cd06c3ab872094fd4a5e82a7d606d9c4d3b69b2f6c91de393135a9",
+    "h5_image_digest": "sha256:9bfdedaa70f7cbf8bac86bb25cc2ff62dba1cf7832fb5d8f66c72c1f113486fd"
+  },
+  "profile_hash": "eb4ee6ee0a69b760423495eb42bf3778d0e69309ac55be6eb161df52efff7729",
+  "warmup_rounds": 0,
+  "formal_rounds": 0,
+  "aggregates": [],
+  "observability_required_gaps": [],
+  "verdict": "SMOKE_PASS",
+  "verdict_reasons": []
+}

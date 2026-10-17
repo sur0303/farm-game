@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package task;
+
+option go_package = "farmgame/api/gen/task;taskpb";
+
+// TaskState is monotonic. A claimed task is never made claimable again in
+// the current P0 contract; periodic tasks can add a period key later.
+enum TaskState {
+  TASK_STATE_UNSPECIFIED = 0;
+  ACTIVE = 1;
+  CLAIMABLE = 2;
+  CLAIMED = 3;
+}
+
+message TaskInstance {
+  int32 task_definition_id = 1;
+  int64 progress = 2;
+  int64 target = 3;
+  TaskState state = 4;
+  int64 updated_at_ms = 5;
+}
+
+// TaskDomainInstance is the bounded physical representation of the frozen
+// internal/player/task.Instance. It is deliberately separate from the legacy
+// TaskInstance above: model:task must retain task_id/period/config/reward
+// identity and cannot use the old five-field compatibility carrier as a
+// second task state machine.
+message TaskDomainInstance {
+  string instance_id = 1;
+  string task_id = 2;
+  int32 category = 3;
+  int32 kind = 4;
+  int32 metric = 5;
+  uint64 definition_version = 6;
+  string period_id = 7;
+  uint64 config_version = 8;
+  int64 target = 9;
+  int64 progress = 10;
+  int32 state = 11;
+  TaskRewardBundle reward = 12;
+  string reward_hash = 13;
+  string first_witness_id = 14;
+  int64 claimed_at_ms = 15;
+}
+
+message TaskItemGrant {
+  int32 item_id = 1;
+  int64 count = 2;
+}
+
+message TaskPetUnlockGrant {
+  int32 pet_id = 1;
+  uint64 pet_config_version = 2;
+  uint64 grant_definition_version = 3;
+}
+
+message TaskRewardBundle {
+  int64 coin = 1;
+  int64 exp = 2;
+  repeated TaskItemGrant items = 3;
+  TaskPetUnlockGrant pet_unlock = 4;
+}
+
+// TaskDomainState is the model:task boundary frozen by contracts 31/34.
+// It contains only bounded task truth: three daily instances, one current
+// growth instance, cumulative indicators, versions and the red-point count.
+// Operation/Participant receipts remain in their dedicated receipt fields.
+message TaskDomainState {
+  string daily_period_id = 1;
+  uint64 daily_config_version = 2;
+  repeated TaskDomainInstance daily_tasks = 3;
+  uint32 growth_cursor = 4;
+  TaskDomainInstance current_growth = 5;
+  int64 total_harvest_count = 6;
+  int32 highest_level = 7;
+  uint64 task_state_version = 8;
+  int32 claimable_count = 9;
+  uint64 growth_chain_version = 10;
+}

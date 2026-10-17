@@ -1,0 +1,4 @@
+gateway_id=farm-gate
+gate_routes=farm-gate=farm-gate.developer_026-qqfarm.svc.cluster.local:9092
+farm_routes=farm-gate=farm-gate.developer_026-qqfarm.svc.cluster.local:9092
+probe=PASS

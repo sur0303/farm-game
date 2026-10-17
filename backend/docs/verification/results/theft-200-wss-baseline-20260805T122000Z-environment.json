@@ -1,0 +1,1 @@
+{"case":"baseline","redis_image":"redis:7.4-alpine","redis_url_redacted":"redis://127.0.0.1:<dynamic>/0","wss":true,"tls_terminator":"caddy-internal-ca","player_start":920000000}

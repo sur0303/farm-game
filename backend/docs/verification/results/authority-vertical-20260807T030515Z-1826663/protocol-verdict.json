@@ -1,0 +1,45 @@
+{
+  "finished_at": "2026-08-07T03:05:48Z",
+  "frames": 19,
+  "steps": {
+    "bootstrap": {
+      "status": "ok"
+    },
+    "bootstrap_refresh": {
+      "status": "fail",
+      "detail": "harvest reward not converged: coin 100 -\u003e 90"
+    },
+    "buy": {
+      "status": "ok"
+    },
+    "grow": {
+      "status": "ok"
+    },
+    "harvest": {
+      "status": "ok"
+    },
+    "hello": {
+      "status": "ok"
+    },
+    "join": {
+      "status": "ok"
+    },
+    "login": {
+      "status": "ok"
+    },
+    "plant": {
+      "status": "ok",
+      "detail": "plot=0 cycle=sid1_3JDa9DzbbUyz6dt1cS3DFW7mlVFWR6f10IYMC5jLBpg mature_at_ms=1786071946648 farm_version=1"
+    },
+    "premature_reject": {
+      "status": "ok"
+    },
+    "recovery_complete": {
+      "status": "ok"
+    },
+    "register": {
+      "status": "ok"
+    }
+  },
+  "verdict": "FAIL"
+}

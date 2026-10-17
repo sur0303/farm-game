@@ -1,0 +1,181 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: route-controller
+  labels:
+    app.kubernetes.io/name: route-controller
+    app.kubernetes.io/part-of: farm-game
+spec:
+  selector:
+    app.kubernetes.io/name: route-controller
+  ports:
+    - name: grpc-mtls
+      port: 9443
+      targetPort: grpc-mtls
+    - name: health
+      port: 8081
+      targetPort: health
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: farm-gate-verifier
+  labels:
+    app.kubernetes.io/name: farm-gate
+    app.kubernetes.io/part-of: farm-game
+spec:
+  selector:
+    app.kubernetes.io/name: farm-gate
+  ports:
+    - name: verifier-mtls
+      port: 19200
+      targetPort: verifier-mtls
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: route-controller
+  labels:
+    app.kubernetes.io/name: route-controller
+    app.kubernetes.io/component: route-control
+    app.kubernetes.io/part-of: farm-game
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: route-controller
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: route-controller
+        app.kubernetes.io/component: route-control
+        app.kubernetes.io/part-of: farm-game
+        farm.io/redis-client: "true"
+      annotations:
+        farm.io/activation-status: LOCAL_BOOTSTRAP_REQUIRES_3TTL_PROOF
+    spec:
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: route-controller
+          image: registry.example.invalid/farm-game-runtime:static-staging-candidate
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: farm-staging-platform
+          env:
+            - name: FARM_SERVICE
+              value: route-controller
+            - name: ROUTE_CONTROLLER_LISTEN
+              value: :9443
+            - name: ROUTE_CONTROLLER_HEALTH_LISTEN
+              value: :8081
+            - name: ROUTE_CONTROLLER_ID
+              value: route-controller
+            - name: ROUTE_CONTROLLER_BOOT
+              value: __CONTROLLER_BOOT__
+            - name: ROUTE_CONTROLLER_REALM
+              value: classic-farm-local-l2-r2
+            - name: FARM_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-staging-secrets
+                  key: redis-url
+            - name: FARM_REDIS_CLUSTER_URLS
+              valueFrom:
+                secretKeyRef:
+                  name: farm-staging-secrets
+                  key: redis-cluster-urls
+                  optional: true
+            - name: ROUTE_CONTROLLER_TLS_CERT
+              value: /etc/farm/route-control/route-controller.crt
+            - name: ROUTE_CONTROLLER_TLS_KEY
+              value: /etc/farm/route-control/route-controller.key
+            - name: ROUTE_CONTROLLER_TLS_CA
+              value: /etc/farm/route-control/ca.crt
+            - name: ROUTE_CONTROLLER_HOLDER_CLIENT_CERT
+              value: /etc/farm/route-control/route-controller.crt
+            - name: ROUTE_CONTROLLER_HOLDER_CLIENT_KEY
+              value: /etc/farm/route-control/route-controller.key
+            - name: ROUTE_CONTROLLER_HOLDER_CLIENT_CA
+              value: /etc/farm/route-control/ca.crt
+            - name: ROUTE_CONTROLLER_GATE_VERIFIER_CLIENT_CERT
+              value: /etc/farm/route-control/route-controller.crt
+            - name: ROUTE_CONTROLLER_GATE_VERIFIER_CLIENT_KEY
+              value: /etc/farm/route-control/route-controller.key
+            - name: ROUTE_CONTROLLER_GATE_VERIFIER_CLIENT_CA
+              value: /etc/farm/route-control/ca.crt
+            - name: ROUTE_CONTROLLER_GATE_VERIFIER_PEERS
+              value: '[{"name":"farm-gate","address":"farm-gate-verifier.farm-l2-r2.svc.cluster.local:19200","server_name":"farm-gate-verifier.farm-l2-r2.svc.cluster.local","expected_identity":"farm-gate-verifier.farm-l2-r2.svc.cluster.local"}]'
+            - name: ROUTE_CONTROLLER_ALLOWED_CLIENT_IDENTITIES
+              value: route-client.farm-l2-r2.local
+            - name: ROUTE_CONTROLLER_PLAN_READ_IDENTITIES
+              value: route-client.farm-l2-r2.local
+            - name: ROUTE_CONTROLLER_OPERATOR_IDENTITIES
+              value: route-client.farm-l2-r2.local
+            - name: ROUTE_CONTROLLER_SINGLE_CONTROLLER_ATTESTATION
+              value: single-replica-recreate-no-overlap-v1
+            - name: ROUTE_CONTROLLER_LEASE_PROJECTION_MODE
+              value: all-active
+            - name: ROUTE_CONTROLLER_LEASE_PROJECTION_INTERVAL
+              value: 5s
+            - name: ROUTE_CONTROLLER_LEASE_PROJECTION_MINIMUM_REMAINING
+              value: 15s
+            - name: ROUTE_CONTROLLER_LEASE_PROJECTION_WAVE_TIMEOUT
+              value: 30s
+          ports:
+            - name: grpc-mtls
+              containerPort: 9443
+            - name: health
+              containerPort: 8081
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: health
+            periodSeconds: 2
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: health
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: health
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          volumeMounts:
+            - name: route-control-tls
+              mountPath: /etc/farm/route-control
+              readOnly: true
+          resources:
+            # k3s uses cpu-manager full-pcpus-only on this 2-thread/core host.
+            requests:
+              cpu: "2"
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+      volumes:
+        - name: route-control-tls
+          secret:
+            secretName: farm-route-control-tls
+            defaultMode: 288

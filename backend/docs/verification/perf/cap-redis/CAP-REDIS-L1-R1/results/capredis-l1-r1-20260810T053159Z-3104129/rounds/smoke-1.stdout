@@ -1,0 +1,1 @@
+CAP_REDIS_ROUND=capredis-l1-r1-20260810T053159Z-3104129-smoke-1 VERDICT=PASS CELLS=24 OUTPUT=/data/home/developer_026/CodeBuddy/20260519141303/farm-game/docs/verification/perf/cap-redis/CAP-REDIS-L1-R1/results/capredis-l1-r1-20260810T053159Z-3104129/rounds/smoke-1.json

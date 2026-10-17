@@ -1,0 +1,922 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+from dataclasses import dataclass
+from pathlib import Path
+
+NAMESPACE = "farm-route-dynamic"
+KUBE_CONTEXT = "farm-l2-r2"
+EXPECTED_SERVER = "https://127.0.0.1:6443"
+EXPECTED_APPS = {
+    "route-controller": 1,
+    "player-svr": 2,
+    "farm-svr": 2,
+    "farm-worker-a": 1,
+    "farm-worker-b": 1,
+    "farm-gate": 1,
+    "farm-h5": 1,
+}
+
+
+@dataclass(frozen=True)
+class ModeStage:
+    name: str
+    header_mode: str
+    hint_mode: str
+    predecessor: str
+    status: str
+
+
+STAGES = {
+    "compatibility": ModeStage(
+        "compatibility",
+        "full",
+        "pubsub",
+        "apply",
+        "DYNAMIC_OPPORTUNITY_COMPATIBILITY_ACTIVATED_NOT_TRAFFIC_VERIFIED",
+    ),
+    "shadow": ModeStage(
+        "shadow",
+        "narrow-shadow",
+        "shadow-direct",
+        "compatibility",
+        "DYNAMIC_OPPORTUNITY_SHADOW_ACTIVATED_NOT_TRAFFIC_VERIFIED",
+    ),
+    "final": ModeStage(
+        "final",
+        "narrow",
+        "direct",
+        "shadow",
+        "DYNAMIC_OPPORTUNITY_FINAL_ACTIVATED_NOT_TRAFFIC_VERIFIED",
+    ),
+}
+
+EXPECTED_FINAL_PRODUCTION_MODES = {
+    "hint_transport": "direct",
+    "header_read_mode": "narrow",
+    "schedule_due_index": "dedicated_only",
+    "friend_navigation": "navigator-v3",
+    "candidate_window": "top-k",
+    "wakeup": "active",
+    "wakeup_poll_interval": "1s",
+    "worker_assignment": "route",
+    "actor_persistence": "authority",
+    "authority_membership": "composed",
+    "friendship_deployment": "remote_player",
+    "gate_transport": "websocket",
+    "presence_cleanup": "enabled",
+    "redis_logical_domains": ["authority", "runtime", "projection"],
+    "theft_prf_mode": "production",
+}
+
+EXPECTED_PLATFORM_MODES = {
+    "FARM_APP_PROFILE": "showcase",
+    "FARM_SCHEDULE_DUE_INDEX_MODE": "dedicated_only",
+    "FARM_SCHEDULE_DUE_INDEX_DEDICATED_READY": "true",
+    "FARM_FRIEND_NAVIGATION_V3_ENABLED": "1",
+    "FRIEND_NAVIGATION_WINDOW_MODE": "top-k",
+    "FRIEND_NAVIGATION_WINDOW_SIZE": "32",
+    "FARM_OPPORTUNITY_WAKEUP_ENABLED": "true",
+    "FARM_OPPORTUNITY_WAKEUP_POLL_INTERVAL": "1s",
+    "FARM_OPPORTUNITY_WAKEUP_ASSIGNMENT_MODE": "route",
+    "ACTOR_AUTHORITY_MODE": "authority",
+    "AUTHORITY_MEMBERSHIP_MODE": "composed",
+    "FRIENDSHIP_SERVICE_MODE": "remote_player",
+    "GATE_TRANSPORT": "websocket",
+    "GATE_BOOT_REAPER_MODE": "enabled",
+    "THEFT_PRF_MODE": "production",
+}
+
+
+class TrafficNotReady(ValueError):
+    pass
+
+
+class TrafficViolation(ValueError):
+    pass
+
+
+def behavior_status(stage: str) -> str:
+    return f"DYNAMIC_OPPORTUNITY_{stage.upper()}_TRAFFIC_VERIFIED"
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def load_json(path: Path) -> dict:
+    return json.loads(path.read_text())
+
+
+def write_exclusive(path: Path, value: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    descriptor = os.open(path, flags, 0o640)
+    try:
+        with os.fdopen(descriptor, "w") as stream:
+            json.dump(value, stream, sort_keys=True, indent=2)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+    except BaseException:
+        path.unlink(missing_ok=True)
+        raise
+
+
+def metric_value(
+    text: str,
+    name: str,
+    expected_labels: dict[str, str] | None = None,
+) -> float:
+    expected_labels = expected_labels or {}
+    pattern = re.compile(
+        rf"^{re.escape(name)}(?:\{{(?P<labels>[^}}]*)\}})?\s+"
+        r"(?P<value>[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?)$"
+    )
+    for raw_line in text.splitlines():
+        match = pattern.match(raw_line.strip())
+        if match is None:
+            continue
+        labels = dict(
+            re.findall(r'([a-zA-Z_][a-zA-Z0-9_]*)="((?:\\.|[^"])*)"', match["labels"] or "")
+        )
+        if all(labels.get(key) == value for key, value in expected_labels.items()):
+            return float(match["value"])
+    raise ValueError(f"metric missing: {name} {expected_labels}")
+
+
+def summarize_pods(value: dict) -> list[dict]:
+    summary = []
+    counts: dict[str, int] = {}
+    for pod in value.get("items", []):
+        app = pod.get("metadata", {}).get("labels", {}).get("app.kubernetes.io/name", "")
+        counts[app] = counts.get(app, 0) + 1
+        statuses = pod.get("status", {}).get("containerStatuses", [])
+        init_statuses = pod.get("status", {}).get("initContainerStatuses", [])
+        summary.append({
+            "name": pod["metadata"]["name"],
+            "uid": pod["metadata"]["uid"],
+            "app": app,
+            "ready": bool(statuses) and all(item.get("ready") for item in statuses),
+            "restarts": sum(item.get("restartCount", 0) for item in statuses),
+            "init_restarts": sum(item.get("restartCount", 0) for item in init_statuses),
+        })
+    if counts != EXPECTED_APPS:
+        raise ValueError(f"workload cardinality mismatch: {counts}")
+    if any(not item["ready"] for item in summary):
+        raise ValueError("not all workload Pods are Ready")
+    if any(item["restarts"] or item["init_restarts"] for item in summary):
+        raise ValueError("workload restart observed")
+    return sorted(summary, key=lambda item: item["name"])
+
+
+def validate_mode_transition(
+    requested: ModeStage,
+    current_stage: str,
+    current_header: str,
+    current_hint: str,
+) -> None:
+    if current_stage not in STAGES:
+        raise ValueError(f"unknown live opportunity stage: {current_stage}")
+    current = STAGES[current_stage]
+    if (current_header, current_hint) != (current.header_mode, current.hint_mode):
+        raise ValueError("live opportunity mode pair is internally inconsistent")
+    if requested.name == "compatibility":
+        if current_stage != "compatibility":
+            raise ValueError("compatibility verification cannot move the ladder")
+        return
+    if requested.name == current_stage:
+        return
+    if requested.predecessor != current_stage:
+        raise ValueError(
+            f"illegal opportunity mode transition: {current_stage}->{requested.name}"
+        )
+
+
+def behavior_deltas(
+    stage: ModeStage,
+    baseline: dict,
+    current: dict,
+) -> dict[str, float]:
+    if set(baseline) != set(current):
+        raise ValueError("opportunity behavior Pod observation set drift")
+
+    def delta(metric: str, *, workers: bool) -> float:
+        names = [
+            name
+            for name, value in current.items()
+            if ("hint_transport" in value) == workers
+        ]
+        total = 0.0
+        for name in names:
+            before = float(baseline[name].get(metric, 0))
+            after = float(current[name].get(metric, 0))
+            if after < before:
+                raise TrafficViolation(
+                    f"opportunity metric regressed: {name} {metric}"
+                )
+            total += after - before
+        return total
+
+    result = {
+        "header_mode_calls": delta("mode_calls_total", workers=False),
+        "pubsub_published": delta("pubsub_published_total", workers=True),
+        "pubsub_errors": delta("pubsub_errors_total", workers=True),
+        "direct_suppressed": delta("direct_suppressed_total", workers=True),
+        "direct_accepted": delta("direct_accepted_total", workers=True),
+        "direct_unavailable": delta("direct_unavailable_total", workers=True),
+        "direct_connection_not_found": delta(
+            "direct_connection_not_found_total",
+            workers=True,
+        ),
+        "direct_queue_full": delta("direct_queue_full_total", workers=True),
+    }
+    if result["header_mode_calls"] <= 0:
+        raise TrafficNotReady("Header mode received no product traffic")
+    if result["pubsub_errors"] != 0:
+        raise TrafficViolation("Pub/Sub publication error observed")
+    if stage.name == "compatibility":
+        if result["pubsub_published"] <= 0:
+            raise TrafficNotReady(
+                "compatibility Pub/Sub path received no traffic"
+            )
+    elif stage.name == "shadow":
+        if (
+            result["pubsub_published"] <= 0
+            or result["direct_suppressed"] <= 0
+        ):
+            raise TrafficNotReady("shadow dual-path traffic evidence missing")
+    elif stage.name == "final":
+        if result["pubsub_published"] != 0:
+            raise TrafficViolation(
+                "final traffic unexpectedly used the Pub/Sub path"
+            )
+        if result["direct_accepted"] <= 0:
+            raise TrafficNotReady("final direct traffic has not been accepted")
+    if any(
+        result[name] != 0
+        for name in (
+            "direct_unavailable",
+            "direct_connection_not_found",
+            "direct_queue_full",
+        )
+    ):
+        raise TrafficViolation("direct Hint negative delivery outcome observed")
+    mismatch = sum(
+        float(value.get("shadow_mismatch_total", 0))
+        for value in current.values()
+        if "header_read_mode" in value
+    )
+    if mismatch != 0:
+        raise TrafficViolation("Header shadow mismatch must remain zero")
+    result["shadow_mismatch_total"] = mismatch
+    return result
+
+
+class Kubectl:
+    def __init__(self, kubeconfig: Path):
+        self.command = [
+            "kubectl",
+            "--kubeconfig",
+            str(kubeconfig),
+            "--context",
+            KUBE_CONTEXT,
+            "--request-timeout=30s",
+        ]
+
+    def output(self, *arguments: str) -> str:
+        return subprocess.check_output(
+            [*self.command, *arguments],
+            text=True,
+            timeout=35,
+        )
+
+    def json(self, *arguments: str) -> dict:
+        return json.loads(self.output(*arguments))
+
+    def verify_identity(self) -> None:
+        if self.output("config", "current-context").strip() != KUBE_CONTEXT:
+            raise ValueError("refusing non-lab context")
+        value = self.json("config", "view", "--minify", "-o", "json")
+        contexts = value.get("contexts", [])
+        clusters = value.get("clusters", [])
+        if (
+            len(contexts) != 1
+            or contexts[0].get("context", {}).get("cluster") != "default"
+            or len(clusters) != 1
+            or clusters[0].get("cluster", {}).get("server") != EXPECTED_SERVER
+        ):
+            raise ValueError("lab cluster identity mismatch")
+
+    def config_map(self) -> dict:
+        return self.json(
+            "-n",
+            NAMESPACE,
+            "get",
+            "configmap",
+            "farm-opportunity-mode",
+            "-o",
+            "json",
+        )
+
+    def platform_config_map(self) -> dict:
+        return self.json(
+            "-n",
+            NAMESPACE,
+            "get",
+            "configmap",
+            "farm-staging-platform",
+            "-o",
+            "json",
+        )
+
+    def patch_data(self, data: dict[str, str]) -> None:
+        patch = json.dumps({
+            "data": data,
+        }, sort_keys=True, separators=(",", ":"))
+        subprocess.run(
+            [
+                *self.command,
+                "-n",
+                NAMESPACE,
+                "patch",
+                "configmap",
+                "farm-opportunity-mode",
+                "--type=merge",
+                "-p",
+                patch,
+            ],
+            check=True,
+            timeout=35,
+        )
+
+    def patch_mode(self, stage: ModeStage) -> None:
+        self.patch_data({
+            "header-read-mode": stage.header_mode,
+            "hint-transport": stage.hint_mode,
+            "stage": stage.name,
+        })
+
+    def pods(self) -> list[dict]:
+        return summarize_pods(
+            self.json("-n", NAMESPACE, "get", "pod", "-o", "json")
+        )
+
+    def metrics(self, pod: str, port: int) -> str:
+        path = (
+            f"/api/v1/namespaces/{NAMESPACE}/pods/"
+            f"{pod}:{port}/proxy/metrics"
+        )
+        return self.output("get", "--raw", path)
+
+
+def verify_platform_modes(kubectl: Kubectl) -> dict:
+    config_map = kubectl.platform_config_map()
+    data = config_map.get("data", {})
+    observed = {
+        name: data.get(name)
+        for name in EXPECTED_PLATFORM_MODES
+    }
+    if observed != EXPECTED_PLATFORM_MODES:
+        raise ValueError(
+            f"final production platform modes mismatch: {observed}"
+        )
+    return config_map
+
+
+def verify_live_modes(
+    kubectl: Kubectl,
+    target: ModeStage,
+    before: list[dict],
+    timeout_seconds: int = 150,
+) -> tuple[dict, list[dict], dict]:
+    before_uids = {item["name"]: item["uid"] for item in before}
+    deadline = time.monotonic() + timeout_seconds
+    consecutive = 0
+    last_error: Exception | None = None
+    while time.monotonic() < deadline:
+        try:
+            config_map = kubectl.config_map()
+            data = config_map.get("data", {})
+            if (
+                data.get("stage"),
+                data.get("header-read-mode"),
+                data.get("hint-transport"),
+            ) != (target.name, target.header_mode, target.hint_mode):
+                raise ValueError("projected opportunity ConfigMap has not converged")
+            after = kubectl.pods()
+            after_uids = {item["name"]: item["uid"] for item in after}
+            if after_uids != before_uids:
+                raise ValueError("Pod UID drift during opportunity mode switch")
+            observations: dict[str, dict[str, float | str]] = {}
+            for item in after:
+                if item["app"] == "farm-svr":
+                    metrics = kubectl.metrics(item["name"], 9091)
+                    active = metric_value(
+                        metrics,
+                        "farm_opportunity_header_read_mode",
+                        {"mode": target.header_mode},
+                    )
+                    if active != 1:
+                        raise ValueError(f"{item['name']} Header mode did not converge")
+                    observations[item["name"]] = {
+                        "header_read_mode": target.header_mode,
+                        "active": active,
+                        "mode_calls_total": metric_value(
+                            metrics,
+                            "farm_opportunity_header_read_calls_total",
+                            {"mode": target.header_mode},
+                        ),
+                        "shadow_mismatch_total": metric_value(
+                            metrics,
+                            "farm_opportunity_header_read_shadow_mismatch_total",
+                        ),
+                    }
+                elif item["app"] in {"farm-worker-a", "farm-worker-b"}:
+                    metrics = kubectl.metrics(item["name"], 9201)
+                    active = metric_value(
+                        metrics,
+                        "farm_friend_opportunity_hint_transport_mode",
+                        {"mode": target.hint_mode},
+                    )
+                    if active != 1:
+                        raise ValueError(f"{item['name']} Hint mode did not converge")
+                    observations[item["name"]] = {
+                        "hint_transport": target.hint_mode,
+                        "active": active,
+                        "pubsub_published_total": metric_value(
+                            metrics,
+                            "farm_friend_opportunity_hint_pubsub_published_total",
+                        ),
+                        "pubsub_errors_total": metric_value(
+                            metrics,
+                            "farm_friend_opportunity_hint_pubsub_errors_total",
+                        ),
+                        "direct_accepted_total": metric_value(
+                            metrics,
+                            "farm_friend_opportunity_hint_direct_accepted_total",
+                        ),
+                        "direct_suppressed_total": metric_value(
+                            metrics,
+                            "farm_friend_opportunity_hint_direct_suppressed_total",
+                        ),
+                        "direct_unavailable_total": metric_value(
+                            metrics,
+                            "farm_friend_opportunity_hint_direct_unavailable_total",
+                        ),
+                        "direct_connection_not_found_total": metric_value(
+                            metrics,
+                            "farm_friend_opportunity_hint_direct_connection_not_found_total",
+                        ),
+                        "direct_queue_full_total": metric_value(
+                            metrics,
+                            "farm_friend_opportunity_hint_direct_queue_full_total",
+                        ),
+                    }
+            if len(observations) != 4:
+                raise ValueError("mode observation Pod cardinality mismatch")
+            consecutive += 1
+            if consecutive >= 3:
+                return config_map, after, observations
+        except (
+            json.JSONDecodeError,
+            KeyError,
+            OSError,
+            subprocess.SubprocessError,
+            ValueError,
+        ) as error:
+            last_error = error
+            consecutive = 0
+        time.sleep(2)
+    raise TimeoutError(f"opportunity mode convergence failed: {last_error}")
+
+
+def verify_traffic_behavior(
+    kubectl: Kubectl,
+    target: ModeStage,
+    baseline_pods: list[dict],
+    baseline: dict,
+) -> tuple[dict, list[dict], dict, dict[str, float]]:
+    deadline = time.monotonic() + 90
+    last_not_ready: TrafficNotReady | None = None
+    while time.monotonic() < deadline:
+        try:
+            config_map, current_pods, current = verify_live_modes(
+                kubectl,
+                target,
+                baseline_pods,
+                timeout_seconds=20,
+            )
+        except TimeoutError:
+            last_not_ready = TrafficNotReady(
+                "live mode metrics are temporarily unavailable"
+            )
+            continue
+        try:
+            deltas = behavior_deltas(target, baseline, current)
+            return config_map, current_pods, current, deltas
+        except TrafficNotReady as error:
+            last_not_ready = error
+            time.sleep(2)
+    raise TimeoutError(
+        f"opportunity traffic evidence did not converge: {last_not_ready}"
+    )
+
+
+def preflight_receipts(
+    lab: Path,
+    run_id: str,
+    requested: ModeStage,
+    source_head: str,
+) -> tuple[Path, Path, Path]:
+    profile_path = lab / "receipts" / f"dynamic-route-profile-{run_id}.json"
+    apply_path = lab / "receipts" / f"dynamic-route-apply-{run_id}.json"
+    if requested.predecessor == "apply":
+        predecessor_path = apply_path
+    else:
+        predecessor_path = (
+            lab
+            / "receipts"
+            / f"dynamic-opportunity-mode-{requested.predecessor}-{run_id}.json"
+        )
+    profile = load_json(profile_path)
+    apply = load_json(apply_path)
+    predecessor = load_json(predecessor_path)
+    if (
+        profile.get("status") != "MATERIALIZED_NOT_APPLIED"
+        or profile.get("source_head") != source_head
+        or profile.get("run_id") != run_id
+        or profile.get("final_production_modes") != EXPECTED_FINAL_PRODUCTION_MODES
+    ):
+        raise ValueError("profile/source/run/final-product binding mismatch")
+    if (
+        apply.get("status") != "APPLIED_READY_NOT_G1_VERIFIED"
+        or apply.get("source_head") != source_head
+        or apply.get("run_id") != run_id
+    ):
+        raise ValueError("apply/source/run binding mismatch")
+    if requested.predecessor != "apply" and (
+        predecessor.get("status") != STAGES[requested.predecessor].status
+        or predecessor.get("source_head") != source_head
+        or predecessor.get("run_id") != run_id
+    ):
+        raise ValueError("opportunity predecessor receipt mismatch")
+    if requested.predecessor != "apply":
+        behavior_path = (
+            lab
+            / "receipts"
+            / f"dynamic-opportunity-traffic-{requested.predecessor}-{run_id}.json"
+        )
+        behavior = load_json(behavior_path)
+        if (
+            behavior.get("status") != behavior_status(requested.predecessor)
+            or behavior.get("source_head") != source_head
+            or behavior.get("run_id") != run_id
+        ):
+            raise ValueError("opportunity predecessor traffic receipt mismatch")
+    return profile_path, apply_path, predecessor_path
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--stage",
+        required=True,
+        choices=tuple(STAGES),
+    )
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--dry-run", action="store_true")
+    mode.add_argument("--apply", action="store_true")
+    mode.add_argument("--verify-traffic", action="store_true")
+    arguments = parser.parse_args()
+
+    lab = Path(os.environ.get("FARM_L2_LAB_ROOT", "/data/farm-l2-r2"))
+    kubeconfig = Path(
+        os.environ.get("KUBECONFIG", str(lab / "runtime" / "kubeconfig"))
+    )
+    run_id = os.environ.get("ROUTE_RUN_ID", "")
+    if re.fullmatch(r"[a-z0-9][a-z0-9-]{0,62}", run_id) is None:
+        raise SystemExit("patch-dynamic-opportunity-mode: ROUTE_RUN_ID required")
+    repository = Path(__file__).resolve().parents[2]
+    if subprocess.check_output(
+        ["git", "-C", str(repository), "status", "--porcelain"],
+        text=True,
+        timeout=30,
+    ).strip():
+        raise SystemExit(
+            "patch-dynamic-opportunity-mode: source worktree must be clean"
+        )
+    source_head = subprocess.check_output(
+        ["git", "-C", str(repository), "rev-parse", "HEAD"],
+        text=True,
+        timeout=30,
+    ).strip()
+    requested = STAGES[arguments.stage]
+    receipt_stem = (
+        "dynamic-opportunity-traffic"
+        if arguments.verify_traffic
+        else "dynamic-opportunity-mode"
+    )
+    receipt_path = lab / "receipts" / f"{receipt_stem}-{requested.name}-{run_id}.json"
+    if receipt_path.exists():
+        raise SystemExit(
+            "patch-dynamic-opportunity-mode: immutable receipt exists"
+        )
+    profile_path, apply_path, predecessor_path = preflight_receipts(
+        lab,
+        run_id,
+        requested,
+        source_head,
+    )
+    if arguments.dry_run:
+        print(json.dumps({
+            "run_id": run_id,
+            "stage": requested.name,
+            "header_read_mode": requested.header_mode,
+            "hint_transport": requested.hint_mode,
+            "predecessor_receipt_sha256": sha256(predecessor_path),
+            "operation": "verify-traffic" if arguments.verify_traffic else "activate",
+            "live_stage_inspected": False,
+            "mutation_if_predecessor_is_live": (
+                requested.name != "compatibility"
+                and not arguments.verify_traffic
+            ),
+        }, sort_keys=True, indent=2))
+        return 0
+
+    lock_path = lab / "runtime" / "dynamic-route-formal-run.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("a+") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise SystemExit(
+                "patch-dynamic-opportunity-mode: another formal run owns the lock"
+            ) from error
+        kubectl = Kubectl(kubeconfig)
+        kubectl.verify_identity()
+        platform_config_map = verify_platform_modes(kubectl)
+        platform_metadata = platform_config_map.get("metadata", {})
+        if arguments.verify_traffic:
+            activation_path = (
+                lab
+                / "receipts"
+                / f"dynamic-opportunity-mode-{requested.name}-{run_id}.json"
+            )
+            activation = load_json(activation_path)
+            if (
+                activation.get("status") != requested.status
+                or activation.get("source_head") != source_head
+                or activation.get("run_id") != run_id
+                or activation.get("traffic_behavior_verified") is not False
+            ):
+                raise ValueError("opportunity activation receipt mismatch")
+            baseline_pods = activation.get("pods_after")
+            baseline = activation.get("observations")
+            if not isinstance(baseline_pods, list) or not isinstance(baseline, dict):
+                raise ValueError("opportunity activation observations missing")
+            try:
+                config_map, current_pods, current, deltas = (
+                    verify_traffic_behavior(
+                        kubectl,
+                        requested,
+                        baseline_pods,
+                        baseline,
+                    )
+                )
+            except TrafficViolation as error:
+                write_exclusive(receipt_path, {
+                    "schema_version": "farm-dynamic-opportunity-traffic-receipt.v1",
+                    "status": "DYNAMIC_OPPORTUNITY_TRAFFIC_FAILED_EVIDENCE_RETAINED",
+                    "run_id": run_id,
+                    "namespace": NAMESPACE,
+                    "source_head": source_head,
+                    "stage": requested.name,
+                    "header_read_mode": requested.header_mode,
+                    "hint_transport": requested.hint_mode,
+                    "profile_receipt_sha256": sha256(profile_path),
+                    "apply_receipt_sha256": sha256(apply_path),
+                    "activation_receipt_sha256": sha256(activation_path),
+                    "predecessor_receipt_sha256": sha256(predecessor_path),
+                    "failure_type": type(error).__name__,
+                    "eligible_for_next_mode": False,
+                    "eligible_for_product_g1": False,
+                    "capacity_qualified": False,
+                    "company_redis_contacted": False,
+                    "redis_flush_performed": False,
+                    "global_scan_performed": False,
+                })
+                raise
+            h5_path = lab / "receipts" / f"dynamic-h5-image-{run_id}.json"
+            h5 = load_json(h5_path)
+            contracts = h5.get("product_contract_tests")
+            if (
+                h5.get("status") != "PUBLISHED_LOCAL_DYNAMIC_H5_NOT_DEPLOYED"
+                or h5.get("run_id") != run_id
+                or h5.get("build_mode") != "web"
+                or h5.get("handoff_validation", {}).get("environment") != "production"
+                or not isinstance(contracts, dict)
+                or len(contracts) != 6
+                or not all(
+                    isinstance(value, dict) and value.get("passed") is True
+                    for value in contracts.values()
+                )
+            ):
+                raise ValueError("H5 product contract evidence mismatch")
+            h5_runtime_path = (
+                lab
+                / "receipts"
+                / f"dynamic-h5-product-e2e-{requested.name}-{run_id}.json"
+            )
+            h5_runtime = load_json(h5_runtime_path)
+            if (
+                h5_runtime.get("status") != "DYNAMIC_H5_PRODUCT_E2E_VERIFIED"
+                or h5_runtime.get("run_id") != run_id
+                or h5_runtime.get("source_head") != source_head
+                or h5_runtime.get("stage") != requested.name
+                or h5_runtime.get("header_read_mode") != requested.header_mode
+                or h5_runtime.get("hint_transport") != requested.hint_mode
+                or h5_runtime.get("account_auth_verified") is not True
+                or h5_runtime.get("packaged_h5_image_loaded") is not True
+                or h5_runtime.get("local_test_tls")
+                != "ephemeral_self_signed_farm.dynamic.local"
+                or h5_runtime.get("h5_build_mode") != "web"
+                or h5_runtime.get("h5_image_receipt_sha256") != sha256(h5_path)
+                or h5_runtime.get("activation_receipt_sha256")
+                != sha256(activation_path)
+            ):
+                raise ValueError("H5 runtime account product E2E evidence mismatch")
+            value = {
+                "schema_version": "farm-dynamic-opportunity-traffic-receipt.v1",
+                "status": behavior_status(requested.name),
+                "run_id": run_id,
+                "namespace": NAMESPACE,
+                "source_head": source_head,
+                "stage": requested.name,
+                "header_read_mode": requested.header_mode,
+                "hint_transport": requested.hint_mode,
+                "profile_receipt_sha256": sha256(profile_path),
+                "apply_receipt_sha256": sha256(apply_path),
+                "activation_receipt_sha256": sha256(activation_path),
+                "predecessor_receipt_sha256": sha256(predecessor_path),
+                "h5_image_receipt_sha256": sha256(h5_path),
+                "h5_product_contract_tests": contracts,
+                "h5_runtime_product_e2e": "VERIFIED",
+                "h5_runtime_product_e2e_receipt_sha256": sha256(h5_runtime_path),
+                "h5_runtime_account_auth_verified": True,
+                "h5_runtime_packaged_image_loaded": True,
+                "config_map_uid": config_map["metadata"]["uid"],
+                "config_map_resource_version": config_map["metadata"]["resourceVersion"],
+                "platform_config_map_uid": platform_metadata.get("uid"),
+                "platform_config_map_resource_version": platform_metadata.get("resourceVersion"),
+                "final_production_modes": EXPECTED_FINAL_PRODUCTION_MODES,
+                "pods": current_pods,
+                "pod_uid_drift": False,
+                "restart_count": 0,
+                "controller_overlap": False,
+                "traffic_behavior_verified": True,
+                "behavior_deltas": deltas,
+                "observations": current,
+                "wrong_fence_runtime_injection": "NOT_RUN",
+                "eligible_for_next_mode": requested.name != "final",
+                "eligible_for_product_g1": False,
+                "capacity_qualified": False,
+                "company_redis_contacted": False,
+                "redis_flush_performed": False,
+                "global_scan_performed": False,
+            }
+            write_exclusive(receipt_path, value)
+            print(json.dumps(value, sort_keys=True, indent=2))
+            return 0
+        before_config = kubectl.config_map()
+        before_data = before_config.get("data", {})
+        validate_mode_transition(
+            requested,
+            before_data.get("stage", ""),
+            before_data.get("header-read-mode", ""),
+            before_data.get("hint-transport", ""),
+        )
+        before_pods = kubectl.pods()
+        mutated = False
+        try:
+            if (
+                requested.name != "compatibility"
+                and before_data.get("stage") != requested.name
+            ):
+                kubectl.patch_mode(requested)
+                mutated = True
+            config_map, after_pods, observations = verify_live_modes(
+                kubectl,
+                requested,
+                before_pods,
+            )
+            mismatch = sum(
+                item.get("shadow_mismatch_total", 0)
+                for item in observations.values()
+            )
+            if requested.name in {"shadow", "final"} and mismatch != 0:
+                raise ValueError("shadow mismatch must remain zero")
+            value = {
+                "schema_version": "farm-dynamic-opportunity-mode-receipt.v1",
+                "status": requested.status,
+                "run_id": run_id,
+                "namespace": NAMESPACE,
+                "source_head": source_head,
+                "stage": requested.name,
+                "header_read_mode": requested.header_mode,
+                "hint_transport": requested.hint_mode,
+                "profile_receipt_sha256": sha256(profile_path),
+                "apply_receipt_sha256": sha256(apply_path),
+                "predecessor_receipt_sha256": sha256(predecessor_path),
+                "config_map_uid": config_map["metadata"]["uid"],
+                "config_map_resource_version": config_map["metadata"]["resourceVersion"],
+                "platform_config_map_uid": platform_metadata.get("uid"),
+                "platform_config_map_resource_version": platform_metadata.get("resourceVersion"),
+                "final_production_modes": EXPECTED_FINAL_PRODUCTION_MODES,
+                "pods_before": before_pods,
+                "pods_after": after_pods,
+                "pod_uid_drift": False,
+                "restart_count": 0,
+                "controller_overlap": False,
+                "activation_verified": True,
+                "traffic_behavior_verified": False,
+                "observations": observations,
+                "shadow_mismatch_total": mismatch,
+                "gate_downlink_transport_security": "PLAINTEXT_LOCAL_LAB_ONLY",
+                "company_redis_contacted": False,
+                "redis_flush_performed": False,
+                "global_scan_performed": False,
+                "eligible_for_product_fixture": requested.name == "final",
+                "eligible_for_product_g1": False,
+                "capacity_qualified": False,
+            }
+            write_exclusive(receipt_path, value)
+            print(json.dumps(value, sort_keys=True, indent=2))
+        except Exception as error:
+            rollback_verified: bool | None = None
+            if mutated:
+                try:
+                    kubectl.patch_data(before_data)
+                    verify_live_modes(
+                        kubectl,
+                        STAGES[before_data["stage"]],
+                        before_pods,
+                    )
+                    rollback_verified = True
+                except Exception:
+                    rollback_verified = False
+            failure = {
+                "schema_version": "farm-dynamic-opportunity-mode-receipt.v1",
+                "status": "DYNAMIC_OPPORTUNITY_MODE_FAILED_EVIDENCE_RETAINED",
+                "run_id": run_id,
+                "namespace": NAMESPACE,
+                "source_head": source_head,
+                "stage": requested.name,
+                "header_read_mode": requested.header_mode,
+                "hint_transport": requested.hint_mode,
+                "profile_receipt_sha256": sha256(profile_path),
+                "apply_receipt_sha256": sha256(apply_path),
+                "predecessor_receipt_sha256": sha256(predecessor_path),
+                "failure_type": type(error).__name__,
+                "config_map_mutated": mutated,
+                "rollback_attempted": mutated,
+                "rollback_verified": rollback_verified,
+                "pods_before": before_pods,
+                "eligible_for_product_fixture": False,
+                "eligible_for_product_g1": False,
+                "capacity_qualified": False,
+                "company_redis_contacted": False,
+                "redis_flush_performed": False,
+                "global_scan_performed": False,
+            }
+            # A diagnosed formal failure consumes this run/stage identity even
+            # after rollback. Only an interrupted attempt that wrote no receipt
+            # may use the same-stage orphan recovery path above.
+            if not receipt_path.exists():
+                write_exclusive(receipt_path, failure)
+            raise
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except (
+        json.JSONDecodeError,
+        KeyError,
+        OSError,
+        subprocess.SubprocessError,
+        TimeoutError,
+        ValueError,
+    ) as error:
+        print(f"patch-dynamic-opportunity-mode: {error}", file=sys.stderr)
+        raise SystemExit(1)

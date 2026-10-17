@@ -1,0 +1,43 @@
+context=uc-test-plus cluster=uc-test-plus namespace=developer_026-qqfarm namespace_uid=7824c6fb-0ae3-42e3-bccb-101b433147ca
+repo=/data/home/developer_026/CodeBuddy/20260519141303/farm-game-scaleplan-local-kind-qqfarm-20260816 branch=codex/scaleplan-local-kind-qqfarm-r1 commit=9b970a00b600b58a9dca64d196f3715ca5b80dc1
+ M cmd/farm-svr/main.go
+ M cmd/friend-opportunity-perf-fixture/main.go
+ M cmd/player-svr/friendship.go
+ M cmd/route-controller/holder_discovery_runtime.go
+ M cmd/ws-stress/main.go
+ M cmd/ws-stress/main_test.go
+ M deploy/k8s/uc-test-plus/developer_026-qqfarm/10-redis.yaml
+ M deploy/k8s/uc-test-plus/developer_026-qqfarm/20-config.yaml
+ M deploy/k8s/uc-test-plus/developer_026-qqfarm/26-route-controller.yaml
+ M deploy/k8s/uc-test-plus/developer_026-qqfarm/30-player-svr.yaml
+ M deploy/k8s/uc-test-plus/developer_026-qqfarm/40-farm-svr.yaml
+ M deploy/k8s/uc-test-plus/developer_026-qqfarm/50-farm-gate.yaml
+ M deploy/k8s/uc-test-plus/developer_026-qqfarm/run-ws-stress.sh
+ M docs/verification/perf/qqfarm-login-join-and-connection-capacity-20260816.md
+ M internal/friend/navigation_repository.go
+ M internal/friend/opportunity.go
+ M internal/friend/opportunity_test.go
+ M internal/friend/read.go
+ M internal/friend/read_test.go
+ M internal/friend/redis_friend_index.go
+ M internal/friend/redis_friend_index_test.go
+ M internal/friendshipservice/service.go
+ M internal/friendshipservice/stateless_test.go
+ M internal/gateway/command/gate.go
+ M internal/gateway/command/recovery_admission_test.go
+ M internal/logic/downlink/dispatcher.go
+ M internal/logic/downlink/dispatcher_test.go
+ M internal/scaleplan/executor.go
+?? .a9-r22-bins-2/
+?? .a9-r23-bins/
+?? .a9-r24-bins/
+?? docs/verification/perf/qqfarm-batch64-loadtest-handoff-20260817.md
+?? docs/verification/perf/qqfarm-clean-join-vs-opportunity-20260817/
+?? docs/verification/perf/qqfarm-downlink-batch32-pprof-20260817/
+?? docs/verification/perf/qqfarm-downlink-batch64-20260817/
+?? docs/verification/perf/qqfarm-opportunity-only-20260817-r2.json
+?? docs/verification/perf/qqfarm-opportunity-pprof-20260817/
+?? docs/verification/perf/qqfarm-recovery-marker-20260817/
+farm-worker-a_boot=farm-worker-a-60b45f25aecdd662fb511b74512c6dd7
+farm-worker-b_boot=farm-worker-b-6f895d79c68356098c66682f6b47e236
+preflight=PASS require_ready=0

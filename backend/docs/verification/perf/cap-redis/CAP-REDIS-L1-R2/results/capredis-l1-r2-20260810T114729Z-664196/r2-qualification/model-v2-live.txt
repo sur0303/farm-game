@@ -1,0 +1,5 @@
+=== RUN   TestCAPRedisR2ModelV2MigrationAndSparseCommit
+    r2_qualification_live_test.go:131: R2_MODEL_V2_PASS domains=2 migrations=2 sparse_v1=2 sparse_v2=2 v1_fallback=0 namespace_residual=0
+--- PASS: TestCAPRedisR2ModelV2MigrationAndSparseCommit (0.08s)
+PASS
+ok  	farmgame/cmd/cap-redis	0.093s

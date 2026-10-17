@@ -1,0 +1,13 @@
+page {
+  background: #f5efe4;
+  color: #2f3a2f;
+}
+
+.page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

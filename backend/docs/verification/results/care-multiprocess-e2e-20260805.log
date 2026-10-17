@@ -1,0 +1,23 @@
+2026/08/05 14:48:38.912457 PO1 E2E using external Redis at 198.18.0.14:6380 (namespace=cdkgt5gxceirw)
+2026/08/05 14:48:43 player-svr using company persistent Redis for workflow records
+2026/08/05 14:48:43 player-svr authority mode enabled holder=po1-player boot=po1-player-dkgt5gxceirw snapshot=/tmp/po1-final-online-plant-3011851393/route-snapshot.json
+2026/08/05 14:48:43 player-svr listening on 127.0.0.1:41003, version=0.0.0-dev
+2026/08/05 14:48:43 farm-svr using company persistent Redis for friend/workflow records
+2026/08/05 14:48:43 farm-svr authority mode enabled holder=po1-farm boot=po1-farm-dkgt5gxceirw snapshot=/tmp/po1-final-online-plant-3011851393/route-snapshot.json
+2026/08/05 14:48:43 GateBootReaper mode=disabled; subscription lifecycle owned by BatchRenew leases (contract 26 section 11.5)
+2026/08/05 14:48:43 using routed player participants across 1 endpoints
+2026/08/05 14:48:43 Care direct dispatcher enabled on shared Authority SourceOrder/WorkLease
+2026/08/05 14:48:43 friend Pair Authority ActionAdmission enabled for CARE
+2026/08/05 14:48:43 using single farm-gate downlink at 127.0.0.1:45795
+2026/08/05 14:48:43 farm-svr listening on 127.0.0.1:37167, version=0.0.0-dev
+2026/08/05 14:48:43.385623 CARE raw evidence: backend=real Redis (198.18.0.14:6380 external=true ns=cdkgt5gxceirw), processes=farm-svr/player-svr/farm-worker(authority), mocks=GatewayDownlink capture only
+2026/08/05 14:48:43 worker actor routing enabled with 2 connections
+2026/08/05 14:48:43 CareRewardOrder authority recovery enabled with bounded FARM bucket scans
+2026/08/05 14:48:43 farm-worker shared generic recovery enabled for PLANT and HARVEST
+2026/08/05 14:48:43 farm-worker running, worker_id=po1-e2e-worker boot_id=po1-e2e-worker-dkgt5gxceirw version=0.0.0-dev
+2026/08/05 14:48:43 recovery round combined={Claimed:1 Resumed:1 Completed:1 Retried:0 LeaseLost:0 Skipped:0 Failed:0} legacy={Claimed:0 Resumed:0 Completed:0 Retried:0 LeaseLost:0 Skipped:0 Failed:0}
+2026/08/05 14:48:43.663274 CARE raw evidence: planted crop_cycle_id=sid1_dW9w7Dgh5X-wzcg3elwJNddOKH6O_UW3mikDX-YGVLk incident_id=sid1_uWz-4gGgX3hQgCZshHTLj9CSZXOGMEgYe8mb3-9AYRY
+2026/08/05 14:48:43.664916 CARE raw evidence: waiting 11s for WATER incident due window
+2026/08/05 14:48:54.673164 CARE raw evidence: public CareResult order=sid1__3EvEIcK2fdlR8-r4l11glJbkDACKYPqj63F4BFQ09M farm_version=2 plot_version=3
+2026/08/05 14:48:54.776244 CARE raw evidence: CareRewardOrder COMPLETED; carer exp before=0 after=1
+2026/08/05 14:48:54.776279 CARE E2E PASS: real Redis -> multi-process farm/player/worker(authority) -> owner CARE public CareResult -> CareRewardOrder COMPLETED

@@ -1,0 +1,12 @@
+{"t":"2026-08-07T07:07:50.036164176Z","dir":"send","type":"ClientHello"}
+{"t":"2026-08-07T07:07:50.037671905Z","dir":"recv","type":"ServerHello","detail":"session=532bbeed6fe3b72c0c50d8ee3042196d epoch=4"}
+{"t":"2026-08-07T07:07:50.037904824Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-join-faulta20260807t150742z-1786086470037724074 command_type=6"}
+{"t":"2026-08-07T07:07:50.042268122Z","dir":"recv","type":"JoinAccepted","detail":"sub=sub-acad22ae2fff044f2bb090da621d1016"}
+{"t":"2026-08-07T07:07:50.045476455Z","dir":"recv","type":"FarmSnapshot","detail":"owner=1000001 version=0 empty_plot=0 v=1"}
+{"t":"2026-08-07T07:07:50.047824126Z","dir":"recv","type":"SubscriptionReady"}
+{"t":"2026-08-07T07:07:50.047872036Z","dir":"send","type":"ClientRecoveryComplete"}
+{"t":"2026-08-07T07:07:50.047994878Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-buy-faulta20260807t150742z-1786086470047975201 command_type=2"}
+{"t":"2026-08-07T07:07:50.051025515Z","dir":"recv","type":"BuyApplied"}
+{"t":"2026-08-07T07:07:50.052490846Z","dir":"send","type":"ClientCommand","detail":"operation_id=fault-plant-faulta20260807t150742z-1786086470052411166 command_type=4"}
+{"t":"2026-08-07T07:07:50.077281387Z","dir":"recv","type":"PlantApplied","detail":"plot=0"}
+{"t":"2026-08-07T07:07:50.344071946Z","dir":"recv","type":"FarmChange","detail":"plot=0 phase=GROWING cycle=sid1_7qPBmnK5F_ZRK1bL0gDHVs42ucBbOCAensv56p9pNDY plot_version=2"}

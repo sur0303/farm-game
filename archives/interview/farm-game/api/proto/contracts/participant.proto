@@ -1,0 +1,185 @@
+syntax = "proto3";
+
+package contracts;
+
+option go_package = "farmgame/api/gen/contracts;contractspb";
+
+import "contracts/identity.proto";
+import "logicrpc/logic_service.proto";
+
+// ── SCB-1 Participant 统一外壳(合同 29 §6/§7)─────────────────────
+// 本文件是 CoordinatorWorkContext/InternalCallerContext/ParticipantRequest/
+// ParticipantResponse 的唯一 Proto 权威。field number 一次性分配;演进只能
+// 追加新号码并把退役号码标 reserved。Gate、H5、GM 和普通 Service LB 查询
+// 接口均不能调用本文件的两个服务(29 §7.7)。
+
+// 合同 29 §7.8 冻结的十五个 Participant 命令。稳定名称与 ParticipantStep
+// 前 15 项一一对应;Catalog 注册完整性由 internal/contracts 测试保证。
+enum ParticipantCommandType {
+  PARTICIPANT_COMMAND_TYPE_UNSPECIFIED = 0;
+  PARTICIPANT_COMMAND_TYPE_RESERVE_UNLOCK_COIN = 1;
+  PARTICIPANT_COMMAND_TYPE_COMMIT_PLOT_UNLOCK = 2;
+  PARTICIPANT_COMMAND_TYPE_COMMIT_UNLOCK_COIN_RESERVATION = 3;
+  PARTICIPANT_COMMAND_TYPE_RELEASE_UNLOCK_COIN_RESERVATION = 4;
+  PARTICIPANT_COMMAND_TYPE_RESERVE_SEED = 5;
+  PARTICIPANT_COMMAND_TYPE_COMMIT_PLANT = 6;
+  PARTICIPANT_COMMAND_TYPE_COMMIT_SEED_RESERVATION = 7;
+  PARTICIPANT_COMMAND_TYPE_RELEASE_SEED_RESERVATION = 8;
+  PARTICIPANT_COMMAND_TYPE_COMMIT_HARVEST = 9;
+  PARTICIPANT_COMMAND_TYPE_GRANT_HARVEST_REWARD = 10;
+  PARTICIPANT_COMMAND_TYPE_DECIDE_THEFT = 11;
+  PARTICIPANT_COMMAND_TYPE_SETTLE_THEFT_VISITOR = 12;
+  PARTICIPANT_COMMAND_TYPE_CREDIT_GUARD_INCOME = 13;
+  PARTICIPANT_COMMAND_TYPE_APPLY_CARE_REWARD = 14;
+  PARTICIPANT_COMMAND_TYPE_APPLY_GUARD_SNAPSHOT = 15;
+}
+
+// 合同 29 §6.2:Workflow/Order 正常首次推进。授权依据是已可靠创建的
+// Work + operation_id + participant_step,不是玩家是否在线。
+message CoordinatorWorkContext {
+  WorkAddress work = 1;
+  uint64 expected_work_version = 2;
+  ParticipantStep participant_step = 3;
+  string participant_invocation_id = 4;
+  string operation_id = 5;
+  uint64 subject_player_id = 6;
+  uint32 remaining_budget_ms = 7;
+  // 与既有 ExecuteCommandRequest 一致,trace 只携带 opaque trace_id。
+  string trace_id = 8;
+}
+
+// 合同 29 §7.4:Worker 恢复调用身份。lease_epoch 只是 Worker 自报数字,
+// 必须由 WorkerRecoveryIngress 向 Work Repository 按可信时间复核。
+enum InternalCallerType {
+  INTERNAL_CALLER_TYPE_UNSPECIFIED = 0;
+  INTERNAL_CALLER_TYPE_WORKER_RECOVERY = 1;
+}
+
+message InternalCallerContext {
+  InternalCallerType caller_type = 1;
+  string caller_instance_id = 2;
+  string caller_boot_id = 3;
+  WorkAddress work = 4;
+  uint64 expected_work_version = 5;
+  ParticipantStep participant_step = 6;
+  string participant_invocation_id = 7;
+  string lease_owner_token = 8;
+  uint64 lease_epoch = 9;
+  uint32 remaining_budget_ms = 10;
+  string trace_id = 11;
+}
+
+// 合同 29 §7.6:Participant RPC 统一外壳。正常在线命令不会由 Gate 直接
+// 构造本消息;必须先进入 FirstHop,由 Coordinator/DirectDispatcher 创建
+// 可靠 Work 后再调用 Participant。
+// SourceOrderCommitProofStatement is a short-lived source-holder attestation
+// for the CARE/HARVEST Coordinator Direct path. It is not client authority:
+// the destination reconstructs every business binding from ParticipantRequest,
+// authenticates the exact holder/boot/key tuple, and verifies the current
+// source route generation locally. WorkerRecoveryIngress never accepts it.
+// In shadow mode Redis remains authoritative and is compared with this proof.
+// In explicit prefer mode only a fully valid proof may bypass source Redis;
+// invalid/missing/stale proofs are rejected before execution so the durable
+// Worker recovery path can verify Redis under its lease.
+message SourceOrderCommitProofStatement {
+  WorkAddress work = 1;
+  uint64 work_version = 2;
+  string operation_id = 3;
+  uint64 subject_player_id = 4;
+  bytes payload_hash = 5;
+  int64 due_at_ms = 6;
+  string source_realm = 7;
+  string authority_layout_version = 8;
+  string source_holder_id = 9;
+  string source_holder_boot_id = 10;
+  uint64 assignment_revision = 11;
+  uint64 writer_epoch = 12;
+  uint64 lease_epoch = 13;
+  int64 lease_until_ms = 14;
+  uint64 source_record_version = 15;
+  int64 committed_at_ms = 16;
+  int64 expires_at_ms = 17;
+  logicrpc.RouteDomain destination_route_domain = 18;
+  uint64 destination_actor_id = 19;
+  ParticipantStep destination_step = 20;
+  string destination_invocation_id = 21;
+}
+
+message SourceOrderCommitProof {
+  uint32 schema_version = 1;
+  SourceOrderCommitProofStatement statement = 2;
+  string key_id = 3;
+  bytes signature = 4;
+}
+
+// CreatedSourceOrderEnvelope carries the exact immutable order only after the
+// source Participant Authority commit returned definitively committed. It is a
+// Direct latency hint; Redis SourceOrder/DueIndex remain recovery authority.
+message CreatedSourceOrderEnvelope {
+  WorkAddress work = 1;
+  uint64 work_version = 2;
+  string operation_id = 3;
+  uint64 subject_player_id = 4;
+  bytes typed_payload = 5;
+  bytes payload_hash = 6;
+  int64 due_at_ms = 7;
+}
+
+message ParticipantRequest {
+  logicrpc.ActorRouteHeader route_header = 1;
+  oneof caller_context {
+    CoordinatorWorkContext coordinator = 2;
+    InternalCallerContext recovery = 3;
+  }
+  ParticipantCommandType participant_command = 4;
+  // 按 ParticipantCommandCatalog 登记的 Typed Step Schema 编码;
+  // 禁止直接复用原始公网命令 bytes(29 §7.6)。
+  bytes typed_payload = 5;
+  // Only the internal Coordinator Direct CARE/HARVEST path may set this
+  // additive proof. It is rejected on WorkerRecoveryIngress.
+  SourceOrderCommitProof source_order_commit_proof = 6;
+}
+
+// 合同 29 §7.7:TIMEOUT_UNKNOWN 不是 Participant 终态,必须进入第 30 号
+// Unknown 解析;Route/WorkVersion/Lease/过载等执行前失败不伪装成
+// PARTICIPANT_REJECTED。
+enum ParticipantOutcome {
+  PARTICIPANT_OUTCOME_UNSPECIFIED = 0;
+  PARTICIPANT_OUTCOME_APPLIED = 1;
+  PARTICIPANT_OUTCOME_REJECTED = 2;
+  PARTICIPANT_OUTCOME_NO_CHANGE = 3;
+  PARTICIPANT_OUTCOME_TIMEOUT_UNKNOWN = 4;
+}
+
+message ParticipantFailure {
+  // 使用内部业务错误注册表的稳定 ErrorCode,不使用自由字符串。
+  logicrpc.ErrorDetail error = 1;
+  bool retryable_after_resolution = 2;
+}
+
+// 合同 29 §7.7:ParticipantReceipt 必须与业务效果原子保存
+// (invocation_id, step_payload_hash, outcome, typed_result, result_hash)。
+message ParticipantResponse {
+  ParticipantCommandType participant_command = 1;
+  string participant_invocation_id = 2;
+  ParticipantOutcome outcome = 3;
+  // true 只表示本次 RPC 未再次执行领域变更,从原 Receipt 返回原结果。
+  bool replayed_from_receipt = 4;
+  bytes typed_result = 5;
+  bytes participant_result_hash = 6;
+  optional ParticipantFailure failure = 7;
+  uint64 committed_record_version = 8;
+  CreatedSourceOrderEnvelope created_source_order = 9;
+}
+
+// 合同 29 §7.7:两个 Unary 入口复用同一 ParticipantCommandCatalog,不能
+// 形成两套业务实现。
+service CoordinatorParticipantService {
+  // 只接受 CoordinatorWorkContext,供 Coordinator/DirectDispatcher 快速推进。
+  rpc ExecuteStep(ParticipantRequest) returns (ParticipantResponse);
+}
+
+service WorkerRecoveryIngress {
+  // 只接受 InternalCallerContext,并在 Mailbox 前校验当前 Work Lease。
+  rpc ResumeStep(ParticipantRequest) returns (ParticipantResponse);
+}

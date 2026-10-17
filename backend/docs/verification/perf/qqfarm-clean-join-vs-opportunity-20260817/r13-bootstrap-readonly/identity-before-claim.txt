@@ -1,0 +1,6 @@
+===== identity-before-claim =====
+player-svr-0 phase=Running uid=9da08fc9-1b8e-4dea-a9ff-722dbb6212a4 restarts=0
+farm-svr-0 phase=Running uid=0727ae66-5982-423e-a2e6-5c3a22fdce7c restarts=0
+farm-worker-a pod=farm-worker-a-8c9dcbf44-smwvh phase=Running uid=71512cf2-a673-4c26-94d9-9228eda17360 restarts=0 boot=farm-worker-a-60b45f25aecdd662fb511b74512c6dd7
+farm-worker-b pod=farm-worker-b-5fdcbff857-rtlxz phase=Running uid=d340fe77-7492-419b-a614-c55cee8b65a7 restarts=0 boot=farm-worker-b-6f895d79c68356098c66682f6b47e236
+gate pod=farm-gate-5b5b595d85-9h5fz phase=Running uid=3168682c-381b-4db1-9c1c-4b26bbdf0b02 restarts=0

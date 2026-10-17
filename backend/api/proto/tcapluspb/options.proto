@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+// 本文件是 TcaplusDB 表选项扩展的最小副本(字段号与官方
+// tcaplusservice.optionv1.proto 一致:60000~60006 on MessageOptions)。
+// 用于让本项目的表定义 message 声明主键/索引/分片/自定义属性,
+// 从而被 TcaplusDB 识别为业务数据表。仅取本项目 P0 用到的字段。
+package tcaplusservice;
+
+option go_package = "farmgame/api/gen/tcapluspb;tcapluspb";
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.MessageOptions {
+  optional string tcaplus_primary_key = 60000;  // 主键字段名列表,逗号分隔,最多 4 个
+  repeated string tcaplus_index       = 60001;  // 二级索引 "索引名(字段)"
+  optional string tcaplus_sharding_key = 60005; // 分片键
+  optional string tcaplus_customattr  = 60006;  // 自定义属性,如 "TableType=LIST;ListNum=10000"
+}

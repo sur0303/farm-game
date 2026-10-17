@@ -1,0 +1,85 @@
+{
+  "baseline_state": "CORRECTNESS_ANCHOR_PASS",
+  "chain": {
+    "T0_fault_plan_armed": {
+      "note": "the B0 fault controller has no plan-id field; future evidence records UTC read-back observations",
+      "observed_at": "2026-08-09T12:27:25.756349Z",
+      "plan_id": null,
+      "proven": true
+    },
+    "T10_snapshot_contains_committed_fact": {
+      "proven": true
+    },
+    "T1_h5_operation_on_wire": {
+      "crop_cycle_ids": [
+        "sid1_t1XVhIywRpXletGRjSi03pox2MLA5TJPkXqHHuxNDkY"
+      ],
+      "operation_ids": [
+        "f8b1e82e-f0ab-4991-b32d-7f0170b38ac3"
+      ],
+      "proven": true,
+      "target_farm_ids": [
+        "1000002"
+      ]
+    },
+    "T2_authority_commit": {
+      "matching_order_count": 1,
+      "proven": true
+    },
+    "T3_farm_change_generated": {
+      "proven": true,
+      "unique_item_count": 1
+    },
+    "T4_downlink_item_constructed": {
+      "item_ids": [
+        "sub-aa27def50e1a0afc737725c1c88c0673:change:5"
+      ],
+      "proven": true
+    },
+    "T5_proxy_observed_farm_change": {
+      "delivery_attempt_count": 4,
+      "proven": true
+    },
+    "T6_fault_injected": {
+      "injection_attempt_count": 4,
+      "proven": true
+    },
+    "T8_rejoin_required": {
+      "count": 1,
+      "proven": true
+    },
+    "T9_h5_fresh_join": {
+      "proven": true
+    }
+  },
+  "classification": "F3_CHAIN_PASS",
+  "contract_detail": null,
+  "decisive_evidence": "the same tapped Theft operation is bound to a durable order, injected FarmChange failure, REJOIN_REQUIRED, fresh Join, and converged H5 fact",
+  "evidence_files": {
+    "browser": "browser-verdict.json",
+    "plan": "fault-plan-observations.ndjson",
+    "proxy_events": "protocol-events.ndjson",
+    "redis_dump": "theft-redis-dump.json",
+    "wire_tap": "ws-frame-tap.ndjson"
+  },
+  "facts": {
+    "browser_verdict": "PASS",
+    "fail_farm_change_count": 4,
+    "matching_redis_order_count": 1,
+    "post_arm_farm_change_count": 4,
+    "post_arm_proxy_event_count": 14,
+    "proxy_traffic_event_count": 52,
+    "rejoin_required_count": 2,
+    "tapped_theft_command_count": 1,
+    "target_bound_fail_farm_change_count": 4,
+    "target_bound_post_arm_farm_change_count": 4,
+    "target_bound_rejoin_required_count": 1,
+    "target_subscription_ids": [
+      "sub-207d4ef18e2c56db90cb3741d4157d8b",
+      "sub-ccfcdb0f2d655fd094303d264e951a14"
+    ]
+  },
+  "generated_at": "2026-08-09T12:27:51.732027Z",
+  "schema": "farm-game.q1-perf-evidence.v1",
+  "task": "Q1-F3-FAULT-CHAIN-TRIAGE"
+}

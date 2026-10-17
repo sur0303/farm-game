@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "farmgame/api/gen/common;commonpb";
+
+import "common/control.proto";
+import "common/envelope.proto";
+
+// FarmFrame 是公网 WSS 唯一顶层消息(28 §2,L2-PROTO-01/02/04/11):
+// 一个 WebSocket Binary Message 只承载一个 FarmFrame;稳定消息大类用顶层
+// oneof 区分,业务命令不进入大 oneof,统一走 ClientCommandEnvelope
+// .command_type + bytes payload。连接级 protocol_version 与 sequence 属于
+// 本层,不重复进入业务命令信封。
+//
+// 字段号冻结说明(P1B 唯一物理闸门):protocol_version=1 沿用;旧
+// kind/connection_seq/body 的 deprecated 编译兼容窗口已由 P1B-CONSUMERS-2
+// 删除并 reserved,消息大类与连接序号的唯一运行时来源是 frame_body oneof
+// 与 sequence。oneof 成员使用 10~14 与 16;sequence 使用 8。
+message FarmFrame {
+  uint32 protocol_version = 1;
+
+  // 旧 kind/connection_seq/body 已删除(P1B-CONSUMERS-2);任何实现不得复用。
+  reserved 2, 3, 15;
+  reserved "kind", "connection_seq", "body";
+  reserved 4, 5, 6, 7;
+  reserved "server_seq", "operation_id", "error_code", "timeout_ms";
+
+  // sequence 按"每条 WSS 连接、每个方向"从 1 开始严格 +1(28 §2.5,
+  // L2-PROTO-11/30)。它只做连接协议检测,不承担业务幂等。
+  uint64 sequence = 8;
+
+  oneof frame_body {
+    ClientHello client_hello = 10;
+    ServerHello server_hello = 11;
+    ClientCommandEnvelope client_command = 12;
+    CommandResultEnvelope command_result = 13;
+    ServerPushEnvelope server_push = 14;
+    ControlFrame control = 16;
+  }
+}

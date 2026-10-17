@@ -1,0 +1,15 @@
+{
+  "apiVersion": "policy/v1",
+  "kind": "PodDisruptionBudget",
+  "metadata": {
+    "name": "farm-svr"
+  },
+  "spec": {
+    "maxUnavailable": 1,
+    "selector": {
+      "matchLabels": {
+        "app.kubernetes.io/name": "farm-svr"
+      }
+    }
+  }
+}

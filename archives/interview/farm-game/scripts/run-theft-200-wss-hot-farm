@@ -1,0 +1,373 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+RESULT_DIR=${THEFT_HOT_RESULT_DIR:-"$ROOT_DIR/docs/verification/results"}
+STAMP=${THEFT_HOT_RUN_STAMP:-$(date -u +%Y%m%dT%H%M%SZ)}
+PLAYER_START=${THEFT_HOT_PLAYER_START:-920000000}
+REDIS_IMAGE=${THEFT_HOT_REDIS_IMAGE:-redis:7.4-alpine}
+HARNESS_HELPER="$ROOT_DIR/scripts/authority-smoke-harness.py"
+if [[ -v THEFT_HOT_ROUTE_HORIZON_SECONDS ]]; then
+  ROUTE_HORIZON_REQUESTED="$THEFT_HOT_ROUTE_HORIZON_SECONDS"
+else
+  ROUTE_HORIZON_REQUESTED=3600
+fi
+if ! ROUTE_HORIZON_SECONDS="$(python3 "$HARNESS_HELPER" validate-horizon \
+  --horizon-seconds "$ROUTE_HORIZON_REQUESTED")"; then
+  printf 'INCONCLUSIVE_ENVIRONMENT: invalid theft hot route horizon\n' >&2
+  exit 2
+fi
+THEFT_HOT_DRAIN_TIMEOUT_SECONDS=${THEFT_HOT_DRAIN_TIMEOUT_SECONDS:-60}
+if [[ ! "$THEFT_HOT_DRAIN_TIMEOUT_SECONDS" =~ ^[1-9][0-9]*$ ]] ||
+  (( 10#$THEFT_HOT_DRAIN_TIMEOUT_SECONDS < 10 || 10#$THEFT_HOT_DRAIN_TIMEOUT_SECONDS > 120 )); then
+  printf 'INCONCLUSIVE_ENVIRONMENT: theft hot drain timeout must be in [10,120] seconds\n' >&2
+  exit 2
+fi
+BUILD_DIR=$(mktemp -d /tmp/theft-hot-build.XXXXXX)
+CASE_DIR=""
+REDIS_CONTAINER=""
+PIDS=()
+
+cleanup_case() {
+  local pid
+  for pid in "${PIDS[@]:-}"; do
+    if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then
+      kill "$pid" 2>/dev/null || true
+    fi
+  done
+  for pid in "${PIDS[@]:-}"; do
+    if [[ -n "$pid" ]]; then
+      wait "$pid" 2>/dev/null || true
+    fi
+  done
+  PIDS=()
+  if [[ -n "$REDIS_CONTAINER" ]]; then
+    docker rm -f "$REDIS_CONTAINER" >/dev/null 2>&1 || true
+    REDIS_CONTAINER=""
+  fi
+}
+
+cleanup_all() {
+  cleanup_case
+  if [[ -n "$BUILD_DIR" && -d "$BUILD_DIR" ]]; then
+    rm -rf -- "$BUILD_DIR"
+  fi
+}
+trap cleanup_all EXIT INT TERM
+
+wait_http() {
+  local url=$1
+  local attempts=${2:-100}
+  local index
+  for ((index=0; index<attempts; index++)); do
+    if curl -fsS "$url" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 0.1
+  done
+  printf 'readiness timeout: %s\n' "$url" >&2
+  return 1
+}
+
+wait_worker_pair_due_zero() {
+  local ready_url=$1
+  local witness=$2
+  local case_name=$3
+  local last="$CASE_DIR/worker-drain-last.json"
+  local deadline=$((SECONDS + 10#$THEFT_HOT_DRAIN_TIMEOUT_SECONDS))
+  while (( SECONDS < deadline )); do
+    if curl -sS "$ready_url" >"$last" 2>/dev/null && python3 - "$last" <<'PY'
+import json, pathlib, sys
+snapshot = json.loads(pathlib.Path(sys.argv[1]).read_text())
+families = {item.get("family"): item for item in snapshot.get("families", [])}
+for name in ("CARE", "THEFT"):
+    item = families.get(name)
+    if not item or item.get("due_depth_available") is not True or item.get("due_depth") != 0:
+        raise SystemExit(1)
+PY
+    then
+      cp "$last" "$witness"
+      printf 'case=%s pair_due_residual=0 witness=%s\n' "$case_name" "$witness"
+      return 0
+    fi
+    sleep 0.2
+  done
+  [[ -f "$last" ]] && cp "$last" "$witness"
+  printf 'FAIL_CORRECTNESS: Pair CARE/THEFT due residual did not reach proven zero case=%s timeout_seconds=%s\n' \
+    "$case_name" "$THEFT_HOT_DRAIN_TIMEOUT_SECONDS" >&2
+  return 1
+}
+
+start_process() {
+  local log_path=$1
+  shift
+  "$@" >"$log_path" 2>&1 &
+  PIDS+=("$!")
+}
+
+mkdir -p "$RESULT_DIR"
+cd "$ROOT_DIR"
+
+printf 'building production processes and test drivers...\n'
+GOCACHE=${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache} go build -trimpath -buildvcs=false -o "$BUILD_DIR/player-svr" ./cmd/player-svr
+GOCACHE=${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache} go build -trimpath -buildvcs=false -o "$BUILD_DIR/farm-svr" ./cmd/farm-svr
+GOCACHE=${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache} go build -trimpath -buildvcs=false -o "$BUILD_DIR/farm-worker" ./cmd/farm-worker
+GOCACHE=${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache} go build -trimpath -buildvcs=false -o "$BUILD_DIR/farm-gate" ./cmd/farm-gate
+GOCACHE=${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache} go build -trimpath -buildvcs=false -o "$BUILD_DIR/ws-stress" ./cmd/ws-stress
+GOCACHE=${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache} go build -trimpath -buildvcs=false -o "$BUILD_DIR/theft-hot-audit" ./cmd/theft-hot-audit
+
+run_case() {
+  local case_name=$1
+  local slow_reader=$2
+  local namespace="th${case_name:0:1}${STAMP,,}"
+  namespace=${namespace//[^a-z0-9-]/}
+  namespace=${namespace:0:32}
+  local run_id="${case_name}-${STAMP}"
+  local profile="theft-hot-${case_name}-v1"
+  local workflow_prefix="theft-hot:${case_name}:${STAMP}:workflow"
+  local share_prefix="theft-hot:${case_name}:${STAMP}:share"
+  local web_prefix="theft-hot:${case_name}:${STAMP}:web"
+  local gate_lease_prefix="theft-hot:${case_name}:${STAMP}:gate-lease"
+  local player_holder="theft-hot-${case_name}-player"
+  local farm_holder="theft-hot-${case_name}-farm"
+  local player_boot="${player_holder}-${STAMP}"
+  local farm_boot="${farm_holder}-${STAMP}"
+  local load_secret
+  load_secret=$(od -An -N32 -tx1 /dev/urandom | tr -d ' \n')
+  local permit_secret="theft-hot-permit-${case_name}-${STAMP}"
+
+  CASE_DIR=$(mktemp -d "/tmp/theft-hot-${case_name}.XXXXXX")
+  local route="$CASE_DIR/route.json"
+  local caddy_data="$CASE_DIR/caddy-data"
+  local case_prefix="$RESULT_DIR/theft-200-wss-${case_name}-${STAMP}"
+  local driver_json="${case_prefix}-driver.json"
+  local audit_json="${case_prefix}-audit.json"
+  local route_horizon_witness="${case_prefix}-route-horizon.json"
+  local worker_drain_witness="${case_prefix}-worker-drain.json"
+  local redis_port
+
+  REDIS_CONTAINER="theft-hot-${case_name}-${STAMP,,}-$RANDOM"
+  docker run -d --rm --name "$REDIS_CONTAINER" -p 127.0.0.1::6379 "$REDIS_IMAGE" \
+    redis-server --save '' --appendonly no --latency-tracking yes >"${case_prefix}-redis-container-id.log"
+  redis_port=$(docker port "$REDIS_CONTAINER" 6379/tcp | head -1)
+  redis_port=${redis_port##*:}
+  local redis_url="redis://127.0.0.1:${redis_port}/0"
+  for _ in $(seq 1 100); do
+    if docker exec "$REDIS_CONTAINER" redis-cli ping 2>/dev/null | grep -q PONG; then
+      break
+    fi
+    sleep 0.1
+  done
+
+  # Select the application/Caddy endpoints only after Docker has bound and
+  # answered on its dynamic Redis host port. All nine reservations stay live
+  # through the complete set validation, so Redis cannot be assigned one of
+  # these just-released ports.
+  local port_count=9 port_output
+  if ! port_output="$(python3 "$HARNESS_HELPER" allocate-ports --count "$port_count")"; then
+    printf 'INCONCLUSIVE_ENVIRONMENT: bounded theft hot endpoint port allocation failed case=%s\n' "$case_name" >&2
+    return 2
+  fi
+  local -a endpoint_ports=()
+  mapfile -t endpoint_ports <<<"$port_output"
+  if [[ "${#endpoint_ports[@]}" -ne "$port_count" ]]; then
+    printf 'INCONCLUSIVE_ENVIRONMENT: theft hot endpoint port count mismatch case=%s\n' "$case_name" >&2
+    return 2
+  fi
+  declare -A seen_endpoint_ports=()
+  local endpoint_port
+  for endpoint_port in "${endpoint_ports[@]}"; do
+    if [[ ! "$endpoint_port" =~ ^[0-9]+$ ]] || (( 10#$endpoint_port < 1024 || 10#$endpoint_port > 65535 )); then
+      printf 'INCONCLUSIVE_ENVIRONMENT: invalid theft hot endpoint port case=%s\n' "$case_name" >&2
+      return 2
+    fi
+    if [[ -n "${seen_endpoint_ports[$endpoint_port]:-}" ]]; then
+      printf 'INCONCLUSIVE_ENVIRONMENT: duplicate theft hot endpoint port case=%s\n' "$case_name" >&2
+      return 2
+    fi
+    seen_endpoint_ports[$endpoint_port]=1
+  done
+  local player_port="${endpoint_ports[0]}"
+  local farm_port="${endpoint_ports[1]}"
+  local player_health="${endpoint_ports[2]}"
+  local farm_health="${endpoint_ports[3]}"
+  local worker_health="${endpoint_ports[4]}"
+  local gate_http="${endpoint_ports[5]}"
+  local gate_downlink="${endpoint_ports[6]}"
+  local gate_control="${endpoint_ports[7]}"
+  local wss_port="${endpoint_ports[8]}"
+  unset port_output endpoint_ports seen_endpoint_ports
+
+  "$BUILD_DIR/theft-hot-audit" -mode authority -redis-url "$redis_url" -namespace "$namespace" \
+    -realm "theft-hot-${case_name}" -profile "$profile" -workflow-prefix "$workflow_prefix" \
+    -run-id "$run_id" -owner "$PLAYER_START" -visitors 199 \
+    -player-endpoint "127.0.0.1:${player_port}" -farm-endpoint "127.0.0.1:${farm_port}" \
+    -player-holder "$player_holder" -farm-holder "$farm_holder" -player-boot "$player_boot" -farm-boot "$farm_boot" \
+    -route-out "$route" -json-out "${case_prefix}-authority.json" >"${case_prefix}-authority.log" 2>&1
+
+  local route_deadline_ms
+  if ! route_deadline_ms="$(python3 "$HARNESS_HELPER" refresh-route \
+    --route "$route" \
+    --witness "$route_horizon_witness" \
+    --horizon-seconds "$ROUTE_HORIZON_SECONDS")"; then
+    printf 'INCONCLUSIVE_TEST_HARNESS: static route horizon refresh rejected case=%s\n' "$case_name" >&2
+    return 2
+  fi
+  if [[ ! "$route_deadline_ms" =~ ^[0-9]+$ ]]; then
+    printf 'INCONCLUSIVE_TEST_HARNESS: invalid static route deadline case=%s\n' "$case_name" >&2
+    return 2
+  fi
+  printf 'case=%s route_horizon_seconds=%s route_deadline_ms=%s witness=%s\n' \
+    "$case_name" "$ROUTE_HORIZON_SECONDS" "$route_deadline_ms" "$route_horizon_witness"
+
+  local common_authority=(
+    "ACTOR_AUTHORITY_MODE=authority" "ACTOR_ROUTE_SNAPSHOT=$route"
+    "ACTOR_AUTHORITY_LEASE_TTL=55s" "ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN=3s" "ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL=5s"
+    "REDIS_PHYSICAL_PROFILE_VERSION=$profile" "REDIS_NAMESPACE_ENVIRONMENT=$namespace" "REDIS_NAMESPACE_ZONE=local"
+    "REDIS_AUTHORITY_LAYOUT_VERSION=v1" "REDIS_WORKFLOW_LAYOUT_VERSION=v1" "REDIS_WORKFLOW_HASH_VERSION=1"
+    "REDIS_WORKFLOW_BUCKET_COUNT=256" "FARM_REDIS_URL=$redis_url" "WORKFLOW_STORE_PREFIX=$workflow_prefix"
+  )
+
+  start_process "${case_prefix}-player.log" env "${common_authority[@]}" \
+    "ACTOR_HOLDER_POD=$player_holder" "ACTOR_HOLDER_BOOT_ID=$player_boot" \
+    "PLAYER_LISTEN=127.0.0.1:${player_port}" "PLAYER_HEALTH_LISTEN=127.0.0.1:${player_health}" \
+    "$BUILD_DIR/player-svr"
+
+  start_process "${case_prefix}-farm.log" env "${common_authority[@]}" \
+    "ACTOR_HOLDER_POD=$farm_holder" "ACTOR_HOLDER_BOOT_ID=$farm_boot" \
+    "FARM_LISTEN=127.0.0.1:${farm_port}" "FARM_HEALTH_LISTEN=127.0.0.1:${farm_health}" \
+    "PLAYER_ADDR=127.0.0.1:${player_port}" "GATEWAY_DOWNLINK_ADDR=127.0.0.1:${gate_downlink}" \
+    "PERMIT_SECRET=$permit_secret" \
+    "THEFT_PRF_MODE=test" "THEFT_PRF_HMAC_SECRET=theft-hot-prf-secret-20260805-at-least-32-bytes" \
+    "GATE_BOOT_REAPER_MODE=disabled" "FARM_SUBSCRIPTION_LEASE_INITIAL_TTL=60s" "FARM_SUBSCRIPTION_LEASE_MAX_EXTENSION=60s" \
+    "FARM_CROP_MATURE_AFTER=2s" "MAX_CONCURRENT_ACTOR_LOADS=256" "MAX_PENDING_ACTOR_LOADS=512" \
+    "ACTIVATION_RATE_PER_SEC=5000" "DOWNLINK_LANE_QUEUE_SIZE=512" "DOWNLINK_BATCH_SIZE=64" \
+    "$BUILD_DIR/farm-svr"
+
+  wait_http "http://127.0.0.1:${player_health}/readyz"
+  wait_http "http://127.0.0.1:${farm_health}/readyz"
+
+  start_process "${case_prefix}-worker.log" env \
+    "ACTOR_AUTHORITY_MODE=legacy" "ACTOR_ROUTE_SNAPSHOT=$route" "FARM_REDIS_URL=$redis_url" \
+    "WORKFLOW_STORE_PREFIX=$workflow_prefix" "REDIS_PHYSICAL_PROFILE_VERSION=$profile" \
+    "REDIS_NAMESPACE_ENVIRONMENT=$namespace" "REDIS_NAMESPACE_ZONE=local" "REDIS_AUTHORITY_LAYOUT_VERSION=v1" \
+    "REDIS_WORKFLOW_LAYOUT_VERSION=v1" "REDIS_WORKFLOW_HASH_VERSION=1" "REDIS_WORKFLOW_BUCKET_COUNT=256" \
+    "PLAYER_ADDR=127.0.0.1:${player_port}" "FARM_ADDR=127.0.0.1:${farm_port}" \
+    "WORKER_ID=theft-hot-${case_name}-worker" "WORKER_BOOT_ID=theft-hot-${case_name}-worker-${STAMP}" \
+    "WORKER_LEASE_TOKEN=theft-hot-${case_name}-lease-${STAMP}" "WORKER_POLL_INTERVAL=20ms" \
+    "WORKER_CLAIM_LIMIT=256" "WORKER_CLAIM_LEASE=5s" "WORKER_OPERATION_TIMEOUT=3s" \
+    "WORKER_PARTICIPANT_BUDGET_MS=5000" "WORKER_HEALTH_LISTEN=127.0.0.1:${worker_health}" \
+    "$BUILD_DIR/farm-worker"
+  wait_http "http://127.0.0.1:${worker_health}/readyz"
+
+  start_process "${case_prefix}-gate.log" env \
+    "GATEWAY_LISTEN=127.0.0.1:${gate_http}" "GATEWAY_ID=theft-hot-${case_name}-gate" \
+    "GATEWAY_DOWNLINK_LISTEN=127.0.0.1:${gate_downlink}" "GATE_CONTROL_LISTEN=127.0.0.1:${gate_control}" \
+    "GATE_TRANSPORT=websocket" "GATE_WS_PATH=/ws" "GATE_WS_METRICS=1" "GATE_WS_RATE_PER_SEC=10000" \
+    "GATE_WS_RATE_BURST=20000" "GATE_WS_MAX_CONNS=1000" "GATE_PREAUTH_MAX_CONNECTIONS=1000" \
+    "GATE_PREAUTH_MAX_CONNECTIONS_PER_IP=512" "GATE_WS_COMMAND_QUEUE_SIZE=64" \
+    "ACTOR_ROUTE_SNAPSHOT=$route" "PLAYER_ADDR=127.0.0.1:${player_port}" "FARM_ADDR=127.0.0.1:${farm_port}" \
+    "LOGIC_HEALTH_ADDR=http://127.0.0.1:${farm_health}" "FARM_REDIS_URL=$redis_url" \
+    "SHARE_STORE_PREFIX=$share_prefix" "WEB_ACCOUNT_STORE_PREFIX=$web_prefix" \
+    "GATE_BOOT_LEASE_PREFIX=$gate_lease_prefix" "WEB_LOGIN_IP_BURST=2000" "WEB_LOGIN_DEVICE_BURST=20" \
+    "LOAD_TEST_TOKEN_SECRET=$load_secret" "PERMIT_SECRET=$permit_secret" "WSS_ENDPOINT=wss://localhost:${wss_port}/ws" \
+    "$BUILD_DIR/farm-gate"
+  wait_http "http://127.0.0.1:${gate_http}/readyz"
+
+  mkdir -p "$caddy_data"
+  start_process "${case_prefix}-caddy.log" env "XDG_DATA_HOME=$caddy_data" "XDG_CONFIG_HOME=$CASE_DIR/caddy-config" \
+    caddy reverse-proxy --from "https://localhost:${wss_port}" --to "http://127.0.0.1:${gate_http}" --internal-certs --disable-redirects --access-log
+  local ca_file="$caddy_data/caddy/pki/authorities/local/root.crt"
+  for _ in $(seq 1 100); do
+    if [[ -s "$ca_file" ]] && curl -fsS --cacert "$ca_file" "https://localhost:${wss_port}/readyz" >/dev/null 2>&1; then
+      break
+    fi
+    sleep 0.1
+  done
+  [[ -s "$ca_file" ]]
+  curl -fsS --cacert "$ca_file" "https://localhost:${wss_port}/readyz" >/dev/null
+
+  "$BUILD_DIR/theft-hot-audit" -mode prepare -redis-url "$redis_url" -namespace "$namespace" \
+    -realm "theft-hot-${case_name}" -profile "$profile" -workflow-prefix "$workflow_prefix" \
+    -run-id "$run_id" -owner "$PLAYER_START" -visitors 199 -prepare-concurrency 1 \
+    -http-url "http://127.0.0.1:${gate_http}" -load-secret "$load_secret" \
+    -json-out "${case_prefix}-fixture.json" >"${case_prefix}-fixture.log" 2>&1
+
+  docker exec "$REDIS_CONTAINER" redis-cli CONFIG RESETSTAT >/dev/null
+  docker exec "$REDIS_CONTAINER" redis-cli LATENCY RESET >/dev/null
+
+  LOAD_TEST_TOKEN_SECRET=$load_secret "$BUILD_DIR/ws-stress" -scenario theft-hot -conns 200 -rate 200 -duration 45s \
+    -player-start "$PLAYER_START" -shared-farm "$PLAYER_START" -http-url "http://127.0.0.1:${gate_http}" \
+    -ws-url "wss://localhost:${wss_port}/ws" -tls-ca "$ca_file" -theft-prepare-crop=true \
+    -theft-maturity-wait 11s -theft-expected-changes 10 -theft-terminal-timeout 25s \
+    -theft-poll-interval 50ms -theft-retry=true -theft-slow-reader="$slow_reader" \
+    -json-out "$driver_json" >"${case_prefix}-driver.log" 2>&1 &
+  local driver_pid=$!
+  PIDS+=("$driver_pid")
+  local pid_csv
+  pid_csv=$(IFS=,; printf '%s' "${PIDS[*]}")
+
+  (
+    while kill -0 "$driver_pid" 2>/dev/null; do
+      printf 'sample_time=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)"
+      ps -o pid=,pcpu=,rss=,nlwp=,comm= -p "$pid_csv" 2>/dev/null || true
+      for endpoint in "${gate_http}:gate" "${farm_health}:farm" "${player_health}:player" "${worker_health}:worker"; do
+        local_port=${endpoint%%:*}
+        local_name=${endpoint##*:}
+        printf 'metrics_service=%s\n' "$local_name"
+        curl -fsS "http://127.0.0.1:${local_port}/metrics" 2>/dev/null | \
+          grep -E '^(farmgate_ws_(conn_active|conn_total|conn_rejected_total|slow_client_kick_total)|farmgate_downlink_(bindings_active|delivered_total)|farm_actor_(mailbox_max_depth|user_mailbox_oldest_wait_seconds|mailbox_rejected_total|user_mailbox_rejected_total)|go_(goroutines|memstats_alloc_bytes))' || true
+      done
+      sleep 0.25
+    done
+  ) >"${case_prefix}-runtime-samples.log" 2>&1 &
+  local monitor_pid=$!
+  PIDS+=("$monitor_pid")
+
+  local driver_status=0
+  wait "$driver_pid" || driver_status=$?
+  wait "$monitor_pid" || true
+  if ((driver_status != 0)); then
+    printf 'ws-stress failed status=%d; preserving %s\n' "$driver_status" "$case_prefix" >&2
+    return "$driver_status"
+  fi
+
+  wait_worker_pair_due_zero "http://127.0.0.1:${worker_health}/readyz" "$worker_drain_witness" "$case_name"
+
+  for endpoint in "${gate_http}:gate" "${farm_health}:farm" "${player_health}:player" "${worker_health}:worker"; do
+    local_port=${endpoint%%:*}
+    local_name=${endpoint##*:}
+    curl -fsS "http://127.0.0.1:${local_port}/metrics" >"${case_prefix}-${local_name}-metrics.prom"
+  done
+  docker exec "$REDIS_CONTAINER" redis-cli --json LATENCY HISTOGRAM >"${case_prefix}-redis-latency-histogram.json"
+  docker exec "$REDIS_CONTAINER" redis-cli --json INFO commandstats | tr -d '\r' >"${case_prefix}-redis-commandstats.json"
+
+  "$BUILD_DIR/theft-hot-audit" -mode audit -redis-url "$redis_url" -namespace "$namespace" \
+    -realm "theft-hot-${case_name}" -profile "$profile" -workflow-prefix "$workflow_prefix" \
+    -run-id "$run_id" -owner "$PLAYER_START" -visitors 199 -driver-json "$driver_json" \
+    -json-out "$audit_json" >"${case_prefix}-audit.log" 2>&1
+
+  docker logs "$REDIS_CONTAINER" >"${case_prefix}-redis.log" 2>&1
+  printf '{"case":"%s","redis_image":"%s","redis_url_redacted":"redis://127.0.0.1:<dynamic>/0","wss":true,"tls_terminator":"caddy-internal-ca","player_start":%s}\n' \
+    "$case_name" "$REDIS_IMAGE" "$PLAYER_START" >"${case_prefix}-environment.json"
+
+  printf 'case=%s driver=%s audit=%s\n' "$case_name" "$driver_json" "$audit_json"
+  cleanup_case
+  rm -rf -- "$CASE_DIR"
+  CASE_DIR=""
+}
+
+case ${THEFT_HOT_CASES:-both} in
+  baseline) run_case baseline false ;;
+  slow) run_case slow true ;;
+  both)
+    run_case baseline false
+    run_case slow true
+    ;;
+  *)
+    printf 'THEFT_HOT_CASES must be baseline, slow, or both\n' >&2
+    exit 2
+    ;;
+esac
+
+printf 'completed theft 200-WSS evidence stamp=%s results=%s\n' "$STAMP" "$RESULT_DIR"

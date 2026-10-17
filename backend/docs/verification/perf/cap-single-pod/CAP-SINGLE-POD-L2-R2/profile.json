@@ -1,0 +1,369 @@
+{
+  "schema_version": "cap-single-pod-l2-r2.profile.v0.1",
+  "profile_version": "CAP-SINGLE-POD-L2-R2-v0.1",
+  "task_id": "CAP-SINGLE-POD-L2-R2",
+  "classification": {
+    "purpose": "r2_dynamic_route_final_candidate_single_pod_capacity_control",
+    "global_baseline_eligible": false,
+    "supports_30m_dau": false,
+    "product_acceptance_eligible": false,
+    "acceptance_verdict_carried_by": "dyn-friend-r70-formal-20260813"
+  },
+  "frozen_identity": {
+    "backend_evidence_head": "6f239b136e0943ec0dc30e3c92644974fc2b3454",
+    "backend_business_commit": "5ce43715363eea4f18e0925b6992429785053261",
+    "backend_image_digest": "sha256:06bd1f8a3a9ab31a84e8c0480ddee959116aeca8db21e19cc42d4181a471f2c9",
+    "h5_commit": "fc7be57174e9ff4f18e6dfeb5fc1610d681172cf",
+    "h5_image_digest": "sha256:63cd2271c7d433ea3b0eb6724797ea60e558bdeb20f3d3f3dc7a08c010f63601",
+    "model_layout": "R2:authority-v1+workflow-v1;actors-written-v1;Model-Field-V2-read-supported-write-disabled"
+  },
+  "subtrain_order": [
+    "gate",
+    "player",
+    "farm",
+    "worker"
+  ],
+  "execution_order": [
+    "PRECHECK",
+    "OBSERVABILITY_QUALIFICATION",
+    "LOAD_GENERATOR_QUALIFICATION",
+    "SMOKE",
+    "WARMUP",
+    "STAIRCASE",
+    "SAFE_TIER_CANDIDATE",
+    "FORMAL_1",
+    "COOLDOWN_1",
+    "FORMAL_2",
+    "COOLDOWN_2",
+    "FORMAL_3",
+    "INDEPENDENT_REVIEW"
+  ],
+  "durations_seconds": {
+    "precheck_max": 600,
+    "smoke": 300,
+    "warmup": 600,
+    "staircase_ramp": 120,
+    "staircase_hold": 600,
+    "controlled_drain_max": 300,
+    "formal": 1200,
+    "cooldown": 300,
+    "sample_interval": 1,
+    "queue_slope_window": 60
+  },
+  "arrival_model": {
+    "type": "open_loop_monotonic_scheduler",
+    "feedback_throttling": false,
+    "planned_and_actual_separate": true,
+    "late_arrival_policy": "launch_only_if_lag_at_or_below_50ms_otherwise_record_scheduled_unsent",
+    "catch_up_burst_allowed": false,
+    "maximum_launch_lag_ms": 50,
+    "scheduled_but_unsent_is_failure_evidence": true,
+    "random_seed": 2026081002
+  },
+  "resource_limits": {
+    "measured_service": {
+      "replicas": 1,
+      "cpu_quota": "4",
+      "memory_limit": "4GiB",
+      "memory_swap": "disabled",
+      "pids_limit": 4096,
+      "ulimit_nofile_soft": 1048576,
+      "ulimit_nofile_hard": 1048576,
+      "gomaxprocs": 4,
+      "gogc": 100,
+      "gomemlimit": "3584MiB"
+    },
+    "redis_dependency": {
+      "image": "redis:7.4-alpine",
+      "image_id": "sha256:2a51817f79255c8b69f86a974459c2e0359aff81417d80158f2b9e541e6f4b33",
+      "cpu_quota": "4",
+      "memory_limit": "4GiB",
+      "maxmemory": "3gb",
+      "maxmemory_policy": "noeviction",
+      "persistence": "disabled",
+      "bind": "127.0.0.1-only-ephemeral"
+    },
+    "load_generator": {
+      "cpu_quota": "8",
+      "memory_limit": "8GiB",
+      "pids_limit": 16384,
+      "separate_cgroup": true,
+      "same_process_as_measured_service": false
+    },
+    "support_services": {
+      "cpu_quota_each": "4",
+      "memory_limit_each": "4GiB",
+      "must_not_be_first_bottleneck": true
+    }
+  },
+  "lease_profile": {
+    "actor_shard_requested_ttl": "4h",
+    "actor_shard_renew_interval": "5m",
+    "actor_shard_safety_margin": "15m",
+    "route_snapshot_max_age_at_run_start": "30m",
+    "minimum_route_lease_remaining_at_run_start": "phase_duration_plus_30m",
+    "session_route_initial_lease": "2h",
+    "session_route_renew_interval": "30m",
+    "subscription_initial_lease": "30s",
+    "subscription_renew_interval_max": "10s",
+    "static_route_expiry_during_measurement_allowed": false
+  },
+  "load_generator_qualification": {
+    "minimum_actual_to_planned_ratio": 0.98,
+    "minimum_headroom_over_safe_candidate": 1.5,
+    "preferred_headroom_over_safe_candidate": 2.0,
+    "initial_qualification_target": "1.5x_each_profile_frozen_maximum_initial_tier",
+    "extended_tier_requires_requalification": true,
+    "candidate_must_not_exceed_qualified_load_divided_by": 1.5,
+    "cpu_sustained_max_percent": 70,
+    "arrival_lag_p99_max_ms": 50,
+    "arrival_lag_slope_must_not_grow": true,
+    "socket_error_slope_must_not_grow": true
+  },
+  "safe_tier_rules": {
+    "tier_actual_to_planned_minimum": 0.95,
+    "formal_actual_to_planned_minimum": 0.98,
+    "measured_cpu_target_percent": [
+      60,
+      70
+    ],
+    "queue_slope_max_per_second": 0.0,
+    "correctness_violations": 0,
+    "dependency_first_bottleneck": false,
+    "load_generator_first_bottleneck": false,
+    "definition": "last stable tier before the first repeatable nonlinear knee",
+    "knee_definition": "first tier with repeatable nonlinear latency, queue, CPU, GC, or actual-load deterioration"
+  },
+  "analysis": {
+    "queue_slope_method": "ordinary_least_squares_over_60_second_windows",
+    "queue_slope_minimum_samples": 55,
+    "positive_queue_slope_requires_lower_95ci_above_zero": true,
+    "positive_queue_slope_minimum_net_item_growth": 5,
+    "latency_knee_requires_consecutive_windows": 2,
+    "resource_knee_requires_consecutive_windows": 2,
+    "known_owned_cgroups_excluded_from_host_background_metric": true
+  },
+  "services": {
+    "gate": {
+      "measured_binary": "farm-gate",
+      "safe_constants": [
+        "safe_connections_per_gate",
+        "safe_handshakes_per_second",
+        "safe_frames_per_second",
+        "safe_egress_bytes_per_second",
+        "safe_session_lease_entries_per_second",
+        "safe_subscription_lease_entries_per_second"
+      ],
+      "profiles": [
+        "login_ticket_wss_hello",
+        "bootstrap_join_ready",
+        "steady_ping_pong",
+        "lease_renew_batches",
+        "farm_change_snapshot_delta",
+        "slow_reader",
+        "controlled_gate_drain"
+      ],
+      "support_topology": {
+        "player-svr": 1,
+        "farm-svr": 1,
+        "farm-worker": 1,
+        "redis": 1
+      },
+      "injection_paths": {
+        "public_protocol": "real_http_wss_gate",
+        "downlink": "real_gate_downlink_rpc"
+      },
+      "connection_tiers": [
+        200,
+        500,
+        1000,
+        2000,
+        5000,
+        10000
+      ],
+      "tier_extension_multiplier": 1.5,
+      "hold_must_cover_lease_cycles": 3
+    },
+    "player": {
+      "measured_binary": "player-svr",
+      "safe_constants": [
+        "safe_player_turns_per_second",
+        "safe_active_player_actors",
+        "safe_player_activations_per_second",
+        "safe_player_commit_bytes_per_second"
+      ],
+      "profiles": [
+        "uniform_hot_actors",
+        "cold_actor_activation",
+        "single_hot_player",
+        "participant_steps"
+      ],
+      "business_mix": [
+        "BUY",
+        "SELL",
+        "CLAIM_TASK",
+        "BOOTSTRAP",
+        "PLANT_PLAYER_STEP",
+        "HARVEST_PLAYER_STEP",
+        "CARE_PLAYER_STEP",
+        "THEFT_PLAYER_STEP"
+      ],
+      "support_topology": {
+        "farm-gate": 1,
+        "farm-svr": 1,
+        "farm-worker": 1,
+        "redis": 1
+      },
+      "injection_paths": {
+        "public_commands": "real_gate_wss",
+        "participant_steps": "typed_internal_rpc_with_production_validation"
+      },
+      "arrival_rate_tiers_per_second": [
+        50,
+        100,
+        200,
+        400,
+        800,
+        1200,
+        1800,
+        2700
+      ],
+      "active_actor_tiers": [
+        100,
+        500,
+        1000,
+        5000,
+        10000,
+        25000
+      ]
+    },
+    "farm": {
+      "measured_binary": "farm-svr",
+      "safe_constants": [
+        "safe_farm_turns_per_second",
+        "safe_join_per_second",
+        "safe_active_farm_actors",
+        "safe_farm_change_fanout_per_second",
+        "safe_subscriptions_per_farm_pod"
+      ],
+      "profiles": [
+        "uniform_farms",
+        "cold_farm_activation",
+        "single_hot_farm_200",
+        "ten_hot_farms_200",
+        "slow_clients",
+        "multi_gate_distribution"
+      ],
+      "business_mix": [
+        "JOIN",
+        "PLANT",
+        "HARVEST",
+        "WATER",
+        "THEFT",
+        "FARM_CHANGE_FANOUT"
+      ],
+      "support_topology": {
+        "farm-gate": 1,
+        "player-svr": 1,
+        "farm-worker": 1,
+        "redis": 1
+      },
+      "injection_paths": {
+        "public_commands": "real_gate_wss",
+        "participant_steps": "typed_internal_rpc_with_production_validation",
+        "fanout": "real_gate_downlink_rpc"
+      },
+      "arrival_rate_tiers_per_second": [
+        25,
+        50,
+        100,
+        200,
+        400,
+        600,
+        900,
+        1350
+      ],
+      "active_farm_tiers": [
+        100,
+        500,
+        1000,
+        5000,
+        10000
+      ],
+      "hot_farm_visitors": 200,
+      "hot_farm_count_tiers": [
+        1,
+        10
+      ]
+    },
+    "worker": {
+      "measured_binary": "farm-worker",
+      "safe_constants": [
+        "safe_work_steps_per_second",
+        "safe_due_claims_per_second",
+        "safe_due_drain_per_second",
+        "safe_backlog_per_worker"
+      ],
+      "profiles": [
+        "plant",
+        "harvest",
+        "care",
+        "theft",
+        "friend_action_dispatch",
+        "result_publish",
+        "mixed_family_fairness"
+      ],
+      "support_topology": {
+        "player-svr": 1,
+        "farm-svr": 1,
+        "redis": 1
+      },
+      "injection_paths": {
+        "fixture": "exact_due_records_created_before_measurement",
+        "execution": "production_worker_claim_and_participant_rpc"
+      },
+      "backlog_tiers": [
+        100,
+        1000,
+        10000,
+        30000,
+        100000
+      ],
+      "arrival_rate_tiers_per_second": [
+        25,
+        50,
+        100,
+        200,
+        400,
+        800,
+        1200
+      ],
+      "family_starvation_allowed": false
+    }
+  },
+  "witnesses": {
+    "go_protocol_bots": "primary_scale_driver",
+    "playwright_pages": [
+      2,
+      4
+    ],
+    "playwright_role": "real_page_correctness_witness_only",
+    "playwright_cgroup": "load_generator",
+    "authority_probe": true,
+    "client_state_oracle": true,
+    "fault_controller": true,
+    "evidence_reporter": true
+  },
+  "output_files": [
+    "run-manifest.json",
+    "planned-vs-actual.json",
+    "resource-samples.ndjson",
+    "latency-histograms.json",
+    "queue-slope.json",
+    "correctness-verdict.json",
+    "environment-verdict.json",
+    "service-capacity-result.json",
+    "evidence-hash-index.json",
+    "run-report.md"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "name": "classic-farm-h5",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --mode web",
+    "dev:staging": "vite --mode staging",
+    "dev:wechat": "vite --mode wechat",
+    "dev:web": "vite --mode web",
+    "build": "tsc --noEmit && vite build --mode web",
+    "build:staging": "tsc --noEmit && vite build --mode staging",
+    "build:wechat": "tsc --noEmit && vite build --mode wechat",
+    "build:web": "tsc --noEmit && vite build --mode web",
+    "audit:build": "node scripts/audit-build.mjs",
+    "gen:proto": "node scripts/gen-proto.mjs",
+    "validate:handoff": "node scripts/validate-handoff.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "playwright test --config playwright.web.config.ts",
+    "e2e:staging": "playwright test --config playwright.staging.config.ts",
+    "e2e:web": "playwright test --config playwright.web.config.ts",
+    "e2e:multigate": "playwright test --config playwright.multigate.config.ts",
+    "e2e:workflow": "FARM_WORKFLOW_E2E=1 playwright test --config playwright.workflow.config.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.10.0",
+    "ts-proto": "^2.12.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.1.0",
+    "vitest": "^3.0.5"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.13.0"
+  }
+}

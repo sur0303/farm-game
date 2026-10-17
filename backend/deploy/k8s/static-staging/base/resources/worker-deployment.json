@@ -1,0 +1,225 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "farm-worker",
+    "labels": {
+      "app.kubernetes.io/name": "farm-worker",
+      "app.kubernetes.io/component": "recovery-worker",
+      "app.kubernetes.io/part-of": "farm-game",
+      "farm.io/route-mode": "static"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "revisionHistoryLimit": 3,
+    "strategy": {
+      "type": "RollingUpdate",
+      "rollingUpdate": {
+        "maxUnavailable": 0,
+        "maxSurge": 1
+      }
+    },
+    "selector": {
+      "matchLabels": {
+        "app.kubernetes.io/name": "farm-worker"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app.kubernetes.io/name": "farm-worker",
+          "app.kubernetes.io/component": "recovery-worker",
+          "app.kubernetes.io/part-of": "farm-game",
+          "farm.io/route-mode": "static",
+          "farm.io/redis-client": "true"
+        }
+      },
+      "spec": {
+        "terminationGracePeriodSeconds": 45,
+        "securityContext": {
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        },
+        "topologySpreadConstraints": [
+          {
+            "maxSkew": 1,
+            "topologyKey": "topology.kubernetes.io/zone",
+            "whenUnsatisfiable": "ScheduleAnyway",
+            "labelSelector": {
+              "matchLabels": {
+                "app.kubernetes.io/name": "farm-worker"
+              }
+            }
+          },
+          {
+            "maxSkew": 1,
+            "topologyKey": "kubernetes.io/hostname",
+            "whenUnsatisfiable": "DoNotSchedule",
+            "labelSelector": {
+              "matchLabels": {
+                "app.kubernetes.io/name": "farm-worker"
+              }
+            }
+          }
+        ],
+        "affinity": {
+          "podAntiAffinity": {
+            "requiredDuringSchedulingIgnoredDuringExecution": [
+              {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app.kubernetes.io/name": "farm-worker"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              }
+            ]
+          }
+        },
+        "containers": [
+          {
+            "name": "farm-worker",
+            "image": "registry.example.invalid/farm-game-runtime:static-staging-candidate",
+            "imagePullPolicy": "IfNotPresent",
+            "envFrom": [
+              {
+                "configMapRef": {
+                  "name": "farm-staging-platform"
+                }
+              }
+            ],
+            "env": [
+              {
+                "name": "FARM_SERVICE",
+                "value": "farm-worker"
+              },
+              {
+                "name": "POD_NAME",
+                "valueFrom": {
+                  "fieldRef": {
+                    "fieldPath": "metadata.name"
+                  }
+                }
+              },
+              {
+                "name": "POD_UID",
+                "valueFrom": {
+                  "fieldRef": {
+                    "fieldPath": "metadata.uid"
+                  }
+                }
+              },
+              {
+                "name": "WORKER_ID",
+                "value": "$(POD_NAME)"
+              },
+              {
+                "name": "WORKER_BOOT_ID",
+                "value": "$(POD_UID)"
+              },
+              {
+                "name": "FARM_REDIS_URL",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "farm-staging-secrets",
+                    "key": "redis-url"
+                  }
+                }
+              },
+              {
+                "name": "FARM_REDIS_CLUSTER_URLS",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "farm-staging-secrets",
+                    "key": "redis-cluster-urls",
+                    "optional": true
+                  }
+                }
+              }
+            ],
+            "ports": [
+              {
+                "name": "health",
+                "containerPort": 9201,
+                "protocol": "TCP"
+              }
+            ],
+            "startupProbe": {
+              "httpGet": {
+                "path": "/healthz",
+                "port": "health"
+              },
+              "periodSeconds": 5,
+              "timeoutSeconds": 2,
+              "failureThreshold": 36
+            },
+            "readinessProbe": {
+              "httpGet": {
+                "path": "/readyz",
+                "port": "health"
+              },
+              "periodSeconds": 5,
+              "timeoutSeconds": 3,
+              "failureThreshold": 2
+            },
+            "livenessProbe": {
+              "httpGet": {
+                "path": "/healthz",
+                "port": "health"
+              },
+              "periodSeconds": 10,
+              "timeoutSeconds": 2,
+              "failureThreshold": 6
+            },
+            "lifecycle": {
+              "preStop": {
+                "exec": {
+                  "command": [
+                    "/bin/sh",
+                    "-c",
+                    "kill -TERM 1"
+                  ]
+                }
+              }
+            },
+            "volumeMounts": [
+              {
+                "name": "farm-static-route",
+                "mountPath": "/etc/farm/routes",
+                "readOnly": true
+              }
+            ],
+            "resources": {
+              "requests": {
+                "cpu": "250m",
+                "memory": "384Mi"
+              },
+              "limits": {
+                "cpu": "1",
+                "memory": "1Gi"
+              }
+            }
+          }
+        ],
+        "volumes": [
+          {
+            "name": "farm-static-route",
+            "configMap": {
+              "name": "farm-static-route",
+              "items": [
+                {
+                  "key": "route-snapshot.json",
+                  "path": "route-snapshot.json",
+                  "mode": 420
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

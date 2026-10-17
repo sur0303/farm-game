@@ -1,0 +1,588 @@
+syntax = "proto3";
+
+package contracts;
+
+option go_package = "farmgame/api/gen/contracts;contractspb";
+
+// ── SCB-1 Typed Step Payload/Result 与跨边界 Snapshot(合同 29 §7.9～§7.14A、
+// 32/33/36/37)────────────────────────────────────────────────────
+// 本文件只登记跨进程共享的不可变语义 Schema,不包含任何业务裁决。
+// 规则:
+// 1. 字段声明顺序即 Canonical Hash 的语义字段顺序(29 §7.11);
+// 2. field number 一次性分配,演进只能追加新号码并 reserved 退役号码;
+// 3. Hash 字段为 SHA-256 的 32 字节原始值;
+// 4. 跨边界 Snapshot(如 CropRuleSnapshot/ActionPermitSnapshot/
+//    GuardSnapshot/CareResolutionSnapshot/CompendiumUnlockSnapshot)
+//    在本文件有且只有一份 Schema,禁止第二份定义;
+// 5. 客户端可提交的等级、价格、时间、随机结果或余额不得出现在 Payload 中。
+
+enum CareType {
+  CARE_TYPE_UNSPECIFIED = 0;
+  CARE_TYPE_WATER = 1;
+  CARE_TYPE_REMOVE_PEST = 2;
+}
+
+enum CareScheduleMode {
+  CARE_SCHEDULE_MODE_UNSPECIFIED = 0;
+  CARE_SCHEDULE_MODE_FIXED_OFFSET = 1;
+  CARE_SCHEDULE_MODE_DETERMINISTIC_RANDOM_WINDOW = 2;
+}
+
+enum FriendActionScope {
+  FRIEND_ACTION_SCOPE_UNSPECIFIED = 0;
+  FRIEND_ACTION_SCOPE_CARE = 1;
+  FRIEND_ACTION_SCOPE_THEFT = 2;
+}
+
+enum CareContext {
+  CARE_CONTEXT_UNSPECIFIED = 0;
+  CARE_CONTEXT_OWNER = 1;
+  CARE_CONTEXT_FRIEND = 2;
+}
+
+enum GuardInterceptPolicy {
+  GUARD_INTERCEPT_POLICY_UNSPECIFIED = 0;
+  GUARD_INTERCEPT_POLICY_FULL_GROSS = 1;
+}
+
+enum TheftOutcome {
+  THEFT_OUTCOME_UNSPECIFIED = 0;
+  THEFT_OUTCOME_STOLEN = 1;
+  THEFT_OUTCOME_BLOCKED_BY_GUARD = 2;
+  // 32 §6.5:为将来部分截留预留,当前 P0 不产生。
+  THEFT_OUTCOME_PARTIALLY_BLOCKED = 3;
+}
+
+enum GuardApplyStatus {
+  GUARD_APPLY_STATUS_UNSPECIFIED = 0;
+  GUARD_APPLY_STATUS_APPLIED = 1;
+  GUARD_APPLY_STATUS_SUPERSEDED = 2;
+}
+
+// Reservation 终态(29 §7.9.3/§7.9.4)。与旧 player.ReservationState 的映射
+// 属于后续接线任务,本文件不合并两套枚举。
+enum ReservationTerminalState {
+  RESERVATION_TERMINAL_STATE_UNSPECIFIED = 0;
+  RESERVATION_TERMINAL_STATE_CONSUMED = 1;
+  RESERVATION_TERMINAL_STATE_RELEASED = 2;
+}
+
+// ── 跨边界不可变 Snapshot ─────────────────────────────────────────
+
+// 合同 29 §7.10:Plant 时由 FirstHop 冻结的服务端规则对象;客户端只能提交
+// farm/plot/crop 和期望版本。
+message CompendiumUnlockRuleSnapshot {
+  uint32 crop_definition_id = 1;
+  bool unlock_eligible = 2;
+  optional string activity_id = 3;
+  uint64 catalog_version_at_plant = 4;
+  uint64 definition_version_at_plant = 5;
+}
+
+message StealPlanTemplate {
+  uint64 policy_version = 1;
+  uint32 total_cap_ratio_bp = 2;
+  repeated uint32 slot_ratio_bp = 3;
+}
+
+message CarePlanIncidentTemplate {
+  CareType care_type = 1;
+  uint32 ordinal = 2;
+  CareScheduleMode schedule_mode = 3;
+  optional int64 fixed_offset_ms = 4;
+  optional int64 random_window_start_ms = 5;
+  optional int64 random_window_end_ms = 6;
+  optional uint64 random_algorithm_version = 7;
+}
+
+message CarePlanTemplate {
+  uint64 care_rule_version = 1;
+  repeated CarePlanIncidentTemplate incidents = 2;
+}
+
+message CropRuleSnapshot {
+  uint32 schema_version = 1;
+  uint32 crop_definition_id = 2;
+  uint64 crop_rule_version = 3;
+  uint32 seed_item_id = 4;
+  uint32 harvest_item_id = 5;
+  int64 grow_duration_ms = 6;
+  uint64 base_yield = 7;
+  uint64 harvest_exp = 8;
+  uint64 crop_unit_coin_value = 9;
+  bool legacy_seed_plantable = 10;
+  CompendiumUnlockRuleSnapshot compendium_rule = 11;
+  StealPlanTemplate steal_plan_template = 12;
+  CarePlanTemplate care_plan_template = 13;
+}
+
+// 合同 29 §7.10.2:FarmActor 从模板生成并提交的运行事实。
+message StealPlanSnapshot {
+  uint64 policy_version = 1;
+  uint32 total_cap_ratio_bp = 2;
+  uint64 total_cap_quantity = 3;
+  repeated uint32 slot_ratio_bp = 4;
+  repeated uint64 slot_quantity = 5;
+}
+
+message CareIncidentSnapshot {
+  string incident_id = 1;
+  CareType care_type = 2;
+  uint32 ordinal = 3;
+  int64 due_at_ms = 4;
+  optional int64 resolved_at_ms = 5;
+  optional uint64 resolved_by_player_id = 6;
+}
+
+message CarePlanSnapshot {
+  uint64 care_rule_version = 1;
+  repeated CareIncidentSnapshot incidents = 2;
+}
+
+// 合同 37/29 §7.10.2:Plant 冻结、Harvest 原样传递,任何恢复不得改写。
+message CompendiumUnlockSnapshot {
+  uint32 crop_definition_id = 1;
+  bool unlock_eligible = 2;
+  uint64 planted_by_player_id = 3;
+  optional string activity_id = 4;
+  uint64 catalog_version_at_plant = 5;
+  uint64 definition_version_at_plant = 6;
+}
+
+// 合同 37/29 §7.12.2:与 ParticipantReceipt/StoredOperationOutcome 同步保存
+// 的原结果;重复恢复必须返回首次提交时的值,不按当前集合重算。
+message CompendiumUnlockDelta {
+  bool newly_unlocked = 1;
+  optional uint32 crop_definition_id = 2;
+  uint64 compendium_revision_after = 3;
+}
+
+// 合同 29 §7.13:好友 Care/Theft 的内部 ActionPermit;不是客户端 Token,
+// H5 不能提交或复用。
+message ActionPermitSnapshot {
+  string permit_id = 1;
+  uint64 visitor_player_id = 2;
+  uint64 owner_player_id = 3;
+  uint64 target_farm_id = 4;
+  string operation_id = 5;
+  FriendActionScope action_scope = 6;
+  uint64 friend_relation_epoch = 7;
+  bytes canonical_payload_hash = 8;
+  bytes target_binding_hash = 9;
+  int64 issued_at_authority_ms = 10;
+  int64 expire_at_authority_ms = 11;
+  int64 execution_accepted_at_authority_ms = 12;
+}
+
+// 合同 36/29 §7.13.1:守护规则不在 Plant 时冻结;FarmActor 使用裁决时已
+// 同步生效的当前 GuardSnapshot。
+message GuardRuleSnapshot {
+  uint64 pet_config_version = 1;
+  uint64 guard_rule_version = 2;
+  uint32 trigger_probability_bp = 3;
+  GuardInterceptPolicy intercept_policy = 4;
+  uint64 random_algorithm_version = 5;
+  uint64 random_key_version = 6;
+}
+
+message GuardSnapshot {
+  uint32 schema_version = 1;
+  uint64 guard_version = 2;
+  optional uint32 active_guard_pet_id = 3;
+  int64 guard_until_ms = 4;
+  GuardRuleSnapshot guard_rule = 5;
+  bytes snapshot_hash = 6;
+}
+
+// 合同 29 §7.13.1:random_draw_bp 为私有审计字段,不下发公网。
+message GuardDecisionSnapshot {
+  string theft_attempt_id = 1;
+  uint64 guard_version = 2;
+  uint64 guard_rule_version = 3;
+  uint32 trigger_probability_bp = 4;
+  GuardInterceptPolicy intercept_policy = 5;
+  uint64 random_algorithm_version = 6;
+  uint64 random_key_version = 7;
+  uint32 random_draw_bp = 8;
+  bool guard_triggered = 9;
+  uint64 gross_stolen_quantity = 10;
+  uint64 guard_lost_quantity = 11;
+  uint64 net_received_quantity = 12;
+  uint64 crop_unit_coin_value = 13;
+  uint64 guard_coin_value = 14;
+}
+
+// 合同 29 §7.13.1:theft_decision_hash 对除自身之外的全部语义字段计算。
+message TheftTargetDecision {
+  string workflow_id = 1;
+  string settlement_id = 2;
+  string theft_attempt_id = 3;
+  uint64 visitor_player_id = 4;
+  uint64 owner_player_id = 5;
+  uint64 farm_id = 6;
+  uint32 plot_id = 7;
+  string crop_cycle_id = 8;
+  uint32 reward_item_id = 9;
+  uint32 steal_slot_index = 10;
+  uint32 applied_slot_ratio_bp = 11;
+  uint64 gross_stolen_quantity = 12;
+  uint64 guard_lost_quantity = 13;
+  uint64 net_received_quantity = 14;
+  uint64 crop_unit_coin_value = 15;
+  uint64 guard_coin_value = 16;
+  TheftOutcome theft_outcome = 17;
+  uint64 crop_rule_version = 18;
+  GuardDecisionSnapshot guard_decision_snapshot = 19;
+  bytes theft_decision_hash = 20;
+}
+
+// 合同 29 §7.12.1:harvest_decision_hash 对除自身之外的全部语义字段计算,
+// 包括从 CropCycle 原样复制的 compendium_unlock_snapshot。
+message HarvestDecision {
+  string workflow_id = 1;
+  uint64 owner_player_id = 2;
+  uint64 farm_id = 3;
+  uint32 plot_id = 4;
+  string crop_cycle_id = 5;
+  uint32 crop_definition_id = 6;
+  uint32 reward_item_id = 7;
+  uint64 reward_quantity = 8;
+  uint64 reward_exp = 9;
+  uint64 crop_rule_version = 10;
+  CompendiumUnlockSnapshot compendium_unlock_snapshot = 11;
+  bytes harvest_decision_hash = 12;
+}
+
+// 合同 29 §7.14.1:Farm 提交时冻结;异步 APPLY_CARE_REWARD 不得重新读取
+// 当前配置计算另一份奖励。
+message CareResolutionSnapshot {
+  uint64 source_farm_id = 1;
+  uint64 source_owner_player_id = 2;
+  uint64 carer_player_id = 3;
+  uint32 plot_id = 4;
+  string crop_cycle_id = 5;
+  string incident_id = 6;
+  CareType care_type = 7;
+  CareContext care_context = 8;
+  int64 resolved_at_ms = 9;
+  uint64 committed_plot_version = 10;
+  uint64 committed_farm_version = 11;
+  uint64 care_reward_rule_version = 12;
+  uint64 reward_exp = 13;
+  bool friend_interaction_eligible = 14;
+  bytes care_resolution_hash = 15;
+}
+
+// ── UnlockPlot(29 §7.9)───────────────────────────────────────────
+
+message ReserveUnlockCoinPayload {
+  uint64 player_id = 1;
+  uint64 farm_id = 2;
+  uint32 plot_id = 3;
+  string reservation_id = 4;
+  uint32 required_player_level = 5;
+  uint64 amount_normal_coin = 6;
+  uint64 unlock_rule_version = 7;
+  bytes unlock_rule_snapshot_hash = 8;
+}
+
+message ReserveUnlockCoinResult {
+  string reservation_id = 1;
+  uint64 reserved_amount_normal_coin = 2;
+  uint64 available_normal_coin_after = 3;
+  uint32 player_level_at_reserve = 4;
+  uint64 player_record_version = 5;
+}
+
+message CommitPlotUnlockPayload {
+  uint64 owner_player_id = 1;
+  uint64 farm_id = 2;
+  uint32 plot_id = 3;
+  uint64 expected_plot_version = 4;
+  uint64 expected_unlock_rule_version = 5;
+  uint32 unlock_order = 6;
+  optional uint32 predecessor_plot_id = 7;
+  string reservation_id = 8;
+  bytes reserve_unlock_result_hash = 9;
+  bytes unlock_rule_snapshot_hash = 10;
+  // These values are frozen by the coordinator from the authoritative rule;
+  // participants never derive price/eligibility from a client request.
+  uint32 required_player_level = 11;
+  uint64 amount_normal_coin = 12;
+}
+
+message CommitPlotUnlockResult {
+  uint64 farm_id = 1;
+  uint32 plot_id = 2;
+  uint64 applied_unlock_rule_version = 3;
+  uint64 committed_plot_version = 4;
+  uint64 committed_farm_version = 5;
+  bytes unlock_decision_hash = 6;
+  // Persist the exact opportunity header produced by the same Farm authority
+  // candidate. This lets a holder rebuild continuity after an unlock receipt
+  // without re-evaluating historical crop time.
+  uint64 opportunity_source_farm_version = 7;
+  uint64 opportunity_dirty_generation = 8;
+  int64 opportunity_next_at_ms = 9;
+  uint32 opportunity_candidate_mask = 10;
+}
+
+message CommitUnlockCoinReservationPayload {
+  uint64 player_id = 1;
+  uint64 farm_id = 2;
+  uint32 plot_id = 3;
+  string reservation_id = 4;
+  uint64 amount_normal_coin = 5;
+  bytes commit_plot_unlock_result_hash = 6;
+}
+
+message CommitUnlockCoinReservationResult {
+  string reservation_id = 1;
+  ReservationTerminalState reservation_state = 2;
+  uint64 normal_coin_balance = 3;
+  uint64 player_record_version = 4;
+}
+
+message ReleaseUnlockCoinReservationPayload {
+  uint64 player_id = 1;
+  uint64 farm_id = 2;
+  uint32 plot_id = 3;
+  string reservation_id = 4;
+  uint64 amount_normal_coin = 5;
+  // 诊断字段:释放来源(FARM_REJECTED/FARM_NO_CHANGE),不参与状态机裁决。
+  string release_reason = 6;
+  bytes terminal_farm_result_hash = 7;
+}
+
+message ReleaseUnlockCoinReservationResult {
+  string reservation_id = 1;
+  ReservationTerminalState reservation_state = 2;
+  uint64 available_normal_coin_after = 3;
+  uint64 player_record_version = 4;
+}
+
+// ── Plant(29 §7.10)───────────────────────────────────────────────
+
+message ReserveSeedPayload {
+  uint64 player_id = 1;
+  uint64 farm_id = 2;
+  uint32 plot_id = 3;
+  string reservation_id = 4;
+  uint32 crop_definition_id = 5;
+  uint32 seed_item_id = 6;
+  uint32 quantity = 7;
+  uint64 crop_rule_version = 8;
+  bytes crop_rule_snapshot_hash = 9;
+}
+
+message ReserveSeedResult {
+  string reservation_id = 1;
+  uint32 seed_item_id = 2;
+  uint32 reserved_quantity = 3;
+  uint32 available_seed_quantity_after = 4;
+  uint64 player_record_version = 5;
+}
+
+message CommitPlantPayload {
+  uint64 owner_player_id = 1;
+  uint64 farm_id = 2;
+  uint32 plot_id = 3;
+  uint64 expected_plot_version = 4;
+  string reservation_id = 5;
+  bytes reserve_seed_result_hash = 6;
+  string crop_cycle_id = 7;
+  CropRuleSnapshot crop_rule_snapshot = 8;
+  bytes crop_rule_snapshot_hash = 9;
+}
+
+message CommitPlantResult {
+  uint64 farm_id = 1;
+  uint32 plot_id = 2;
+  string crop_cycle_id = 3;
+  uint32 crop_definition_id = 4;
+  uint64 applied_crop_rule_version = 5;
+  int64 plant_at_ms = 6;
+  int64 mature_at_ms = 7;
+  uint64 committed_plot_version = 8;
+  uint64 committed_farm_version = 9;
+  bytes plant_decision_hash = 10;
+}
+
+message CommitSeedReservationPayload {
+  uint64 player_id = 1;
+  uint64 farm_id = 2;
+  uint32 plot_id = 3;
+  string crop_cycle_id = 4;
+  string reservation_id = 5;
+  bytes commit_plant_result_hash = 6;
+}
+
+message CommitSeedReservationResult {
+  string reservation_id = 1;
+  ReservationTerminalState reservation_state = 2;
+  uint32 seed_item_id = 3;
+  uint32 available_seed_quantity = 4;
+  uint64 player_record_version = 5;
+}
+
+message ReleaseSeedReservationPayload {
+  uint64 player_id = 1;
+  uint64 farm_id = 2;
+  uint32 plot_id = 3;
+  string reservation_id = 4;
+  uint32 seed_item_id = 5;
+  uint32 quantity = 6;
+  string release_reason = 7;
+  bytes terminal_farm_result_hash = 8;
+}
+
+message ReleaseSeedReservationResult {
+  string reservation_id = 1;
+  ReservationTerminalState reservation_state = 2;
+  uint32 seed_item_id = 3;
+  uint32 available_seed_quantity_after = 4;
+  uint64 player_record_version = 5;
+}
+
+// ── Harvest(29 §7.12)─────────────────────────────────────────────
+
+message CommitHarvestPayload {
+  uint64 owner_player_id = 1;
+  uint64 farm_id = 2;
+  uint32 plot_id = 3;
+  string crop_cycle_id = 4;
+  uint64 expected_plot_version = 5;
+}
+
+message CommitHarvestResult {
+  HarvestDecision harvest_decision = 1;
+  uint64 committed_plot_version = 2;
+  uint64 committed_farm_version = 3;
+  uint64 farm_record_version = 4;
+}
+
+message GrantHarvestRewardPayload {
+  uint64 player_id = 1;
+  bytes commit_harvest_result_hash = 2;
+  HarvestDecision harvest_decision = 3;
+}
+
+message GrantHarvestRewardResult {
+  string crop_cycle_id = 1;
+  uint32 reward_item_id = 2;
+  uint64 granted_quantity = 3;
+  uint64 inventory_quantity_after = 4;
+  uint64 granted_exp = 5;
+  uint32 player_level_after = 6;
+  uint64 harvest_count_after = 7;
+  CompendiumUnlockDelta compendium_unlock_delta = 8;
+  uint64 player_record_version = 9;
+}
+
+// ── Theft(29 §7.13)───────────────────────────────────────────────
+
+message DecideTheftPayload {
+  uint64 visitor_player_id = 1;
+  uint64 owner_player_id = 2;
+  uint64 farm_id = 3;
+  uint32 plot_id = 4;
+  string crop_cycle_id = 5;
+  string theft_attempt_id = 6;
+  string settlement_id = 7;
+  ActionPermitSnapshot action_permit_snapshot = 8;
+  bytes action_permit_snapshot_hash = 9;
+}
+
+message DecideTheftResult {
+  TheftTargetDecision theft_target_decision = 1;
+  uint64 committed_plot_version = 2;
+  uint64 committed_farm_version = 3;
+  uint64 farm_record_version = 4;
+}
+
+message SettleTheftVisitorPayload {
+  uint64 visitor_player_id = 1;
+  bytes decide_theft_result_hash = 2;
+  TheftTargetDecision theft_target_decision = 3;
+}
+
+message SettleTheftVisitorResult {
+  string settlement_id = 1;
+  uint32 reward_item_id = 2;
+  uint64 granted_net_quantity = 3;
+  uint64 inventory_quantity_after = 4;
+  bool friend_interaction_fact_committed = 5;
+  bool friend_interaction_task_advanced = 6;
+  uint64 player_record_version = 7;
+}
+
+message CreditGuardIncomePayload {
+  uint64 owner_player_id = 1;
+  bytes decide_theft_result_hash = 2;
+  bytes settle_visitor_result_hash = 3;
+  TheftTargetDecision theft_target_decision = 4;
+}
+
+message CreditGuardIncomeResult {
+  string settlement_id = 1;
+  uint64 credited_normal_coin = 2;
+  uint64 normal_coin_balance_after = 3;
+  uint64 player_record_version = 4;
+}
+
+// ── CareReward(29 §7.14)──────────────────────────────────────────
+
+message ApplyCareRewardPayload {
+  uint64 carer_player_id = 1;
+  string care_reward_order_id = 2;
+  CareResolutionSnapshot care_resolution_snapshot = 3;
+  bytes care_resolution_hash = 4;
+}
+
+message ApplyCareRewardResult {
+  string care_reward_order_id = 1;
+  string incident_id = 2;
+  uint64 granted_exp = 3;
+  uint64 player_exp_after = 4;
+  uint32 player_level_after = 5;
+  bool friend_interaction_fact_committed = 6;
+  bool friend_interaction_task_advanced = 7;
+  // 按 resolved_at_ms 与任务配置时区计算,不使用奖励实际投递时间。
+  string task_period_key = 8;
+  uint64 player_record_version = 9;
+}
+
+// ── GuardSync(29 §7.14A / 36)─────────────────────────────────────
+
+message ApplyGuardSnapshotPayload {
+  string order_id = 1;
+  uint64 source_player_id = 2;
+  uint64 target_farm_id = 3;
+  GuardSnapshot guard_snapshot = 4;
+  bytes snapshot_hash = 5;
+}
+
+message ApplyGuardSnapshotResult {
+  uint64 guard_version = 1;
+  bytes snapshot_hash = 2;
+  GuardApplyStatus apply_status = 3;
+  uint64 committed_record_version = 4;
+  bool public_appearance_changed = 5;
+  // 仅公开外观实际变化时存在(29 §7.14A)。
+  optional uint64 committed_farm_version = 6;
+}
+
+// ── PlayerMail claim projection (29 §7.16 / 35 §2.6) ───────────
+//
+// This is the typed payload of the source-local
+// MAIL_CLAIM_PROJECTION_ORDER.  The asset grant and MailClaimReceipt have
+// already committed in PlayerAuthority before this payload can exist.  The
+// worker may only use it to update the rebuildable mailbox projection; it
+// can never grant assets or make a claim decision.
+message ApplyMailClaimProjectionPayload {
+  uint64 recipient_player_id = 1;
+  string mail_id = 2;
+  string claim_receipt_ref = 3;
+  string claim_material_hash = 4;
+  int64 claimed_at_ms = 5;
+}

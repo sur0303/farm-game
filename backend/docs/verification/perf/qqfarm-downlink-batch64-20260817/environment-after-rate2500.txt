@@ -1,0 +1,23 @@
+NAME                                READY   STATUS      RESTARTS   AGE     IP              NODE            NOMINATED NODE   READINESS GATES
+farm-gate-577f645cd8-n8gkf          1/1     Running     0          2m21s   198.18.0.139     198.18.0.140    <none>           <none>
+farm-grafana-64f7f46898-z58tr       1/1     Running     0          24h     198.18.0.29     198.18.0.30    <none>           <none>
+farm-prometheus-5966b58fdf-6xrnv    1/1     Running     0          24h     198.18.0.31    198.18.0.32    <none>           <none>
+farm-redis-0                        1/1     Running     0          18h     198.18.0.81    198.18.0.82    <none>           <none>
+farm-redis-1                        1/1     Running     0          18h     198.18.0.83     198.18.0.36   <none>           <none>
+farm-redis-2                        1/1     Running     0          18h     198.18.0.84    198.18.0.24    <none>           <none>
+farm-redis-3                        1/1     Running     0          18h     198.18.0.85     198.18.0.22   <none>           <none>
+farm-redis-4                        1/1     Running     0          18h     198.18.0.86    198.18.0.30    <none>           <none>
+farm-redis-5                        1/1     Running     0          18h     198.18.0.87    198.18.0.88    <none>           <none>
+farm-svr-0                          1/1     Running     0          6m14s   198.18.0.141   198.18.0.77   <none>           <none>
+farm-worker-a-8c9dcbf44-4kncl       1/1     Running     0          2m48s   198.18.0.142    198.18.0.24    <none>           <none>
+farm-worker-b-5fdcbff857-b8njs      1/1     Running     0          2m48s   198.18.0.143     198.18.0.144    <none>           <none>
+player-svr-0                        1/1     Running     0          6m14s   198.18.0.145    198.18.0.63    <none>           <none>
+route-controller-7555ccf646-fz5bg   1/1     Running     0          2m32s   198.18.0.146    198.18.0.63    <none>           <none>
+ws-stress-join-114432-kvrpt         0/1     Completed   0          89s     198.18.0.147     198.18.0.72    <none>           <none>
+ws-stress-join-114530-vnjk5         0/1     Completed   0          31s     198.18.0.148    198.18.0.51    <none>           <none>
+farm-gate-577f645cd8-n8gkf r=0 ready=True uid=e78b34e9-4940-4d3a-b070-52d6fc7fa7fd
+farm-svr-0 r=0 ready=True uid=68f8f925-2076-49ee-a0c0-38e9b7ef912e
+farm-worker-a-8c9dcbf44-4kncl r=0 ready=True uid=20e3f360-eba3-4b24-b668-c563edf3a161
+farm-worker-b-5fdcbff857-b8njs r=0 ready=True uid=eb1a0330-c3a7-4f9f-aa9f-51eab8f5dc74
+player-svr-0 r=0 ready=True uid=4595ae1c-72a2-48ed-bcc9-76e2fed383c7
+route-controller-7555ccf646-fz5bg r=0 ready=True uid=e4a0fdb7-129c-4b43-923c-b749a8c48f28

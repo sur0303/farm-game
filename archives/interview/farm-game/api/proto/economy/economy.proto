@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package economy;
+
+option go_package = "farmgame/api/gen/economy;economypb";
+
+// Wallet 是玩家货币。P0 只有金币。
+message Wallet {
+  int64 coin = 1;
+}
+
+// ItemStack 是一种道具的持有量。
+message ItemStack {
+  int32 item_id = 1;
+  int64 count = 2;
+}
+
+// Inventory 是背包/仓库。P0 视容量为足够大(交接文档 §1.4)。
+message Inventory {
+  repeated ItemStack stacks = 1;
+}
+
+// Progression 是等级/经验/解锁。
+message Progression {
+  int32 level = 1;
+  int64 exp = 2;
+  repeated int32 unlocked = 3;   // 已解锁的功能/作物 id
+}
+
+// PlayerProfile 是账号基础信息。
+message PlayerProfile {
+  string nickname = 1;
+  int32 avatar_id = 2;
+  int64 created_at = 3;
+  int64 last_login_at = 4;
+}

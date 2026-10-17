@@ -1,0 +1,25 @@
+{
+  "classification": "HARNESS_DURATION_EXCEEDED_FROZEN_ROUTE_LEASE_AND_TOOL_HEAD_DIRTY",
+  "disposition": "RETAINED_NOT_ELIGIBLE_PRESSURE_STOPPED",
+  "error_code": "HOLDER_LEASE_EXPIRED",
+  "observations": {
+    "backend_dirty_reported": true,
+    "browser_pass": false,
+    "holder_lease_expired_observations": 22,
+    "protocol_bot_pass": true,
+    "stack_pass": false
+  },
+  "raw_error_persisted": false,
+  "schema_version": "cap-redis-business-trace-correctness-stop-v1",
+  "secret_redaction": "PASS",
+  "source_sha256": {
+    "browser-verdict.json": "a07fbdc15054b9e4e1428dba4355b17b4c92bdf875365595b46e96a9b89bffd8",
+    "farm.log": "7fb84d4beba5629e4c6676d48967c6d5848e2e1b4bc053b7db6201592dca7a1d",
+    "protocol-verdict.json": "be7c7a03174f177a90033f18158b9b22172726e8d216c255417ba5a822aad5e6",
+    "verdict.json": "349851875744ccb92c655e2bcc2d4366f66d3a246a9c7eda1c4ef1cf107cfdde",
+    "worker.log": "5a477f26e6d6145c65ac2c2483d2571242a9f4dc27bbba6c6495709abf5d4558"
+  },
+  "trace_rows_published": false,
+  "trace_run": "capredis-business-e2e-20260810T070800Z",
+  "verdict": "FAIL_CORRECTNESS"
+}

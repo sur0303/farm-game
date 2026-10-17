@@ -1,0 +1,39 @@
+{
+  "attachments": {
+    "business-command-amplification.json": "10b084792d028ced774eaff656ffc6dae353bf3d16bbf2c520383c90cb74f89c",
+    "cleanup.txt": "84442a9d7c5a9a562b643400998900ada7d7c2f82a97e0f21e41731a85028648",
+    "correctness-witness.json": "58c4ab4c4610e887615341c4b79338c4d5210a5f2723a53ae18b807eb8a34590",
+    "h5-bundle.json": "3a93ba4d61a60e948938997383af4202ff143f7c86283f806d456eef16fb6e3c",
+    "qualification.json": "22d94e808e88a64ff3ab84a79b151bcba70ce043c3e2fe3623644bfd4fe18b99",
+    "tool-artifacts.json": "0c2b9e196b90b1573c56abf9d31fabd812b0cb726b27f968194fedbeb10a9db1"
+  },
+  "backend_business_head": "5ce43715363eea4f18e0925b6992429785053261",
+  "backend_integration_head": "1df5305add7df195349482546a26df93ebe80d28",
+  "checks": {
+    "backend_cap_race_count_20": true,
+    "backend_postmerge_full_test_vet_build": true,
+    "correctness_witness": true,
+    "h5_typecheck": true,
+    "h5_unit_215_of_215": true,
+    "h5_web_build": true,
+    "real_h5_trace_7_of_7": true,
+    "remote_player_rpc": true,
+    "secret_raw_id_scan": true,
+    "temporary_resource_residual_zero": true
+  },
+  "commands": [
+    "BUY",
+    "CLAIM_TASK",
+    "HARVEST",
+    "PLANT",
+    "SELL",
+    "THEFT",
+    "WATER"
+  ],
+  "h5_bundle_aggregate_sha256": "0fe0bb8f23304d9c54eb63771b04a3ee389bd6933d8ffb128e2b50efb5294bdb",
+  "h5_image_digest": "sha256:eb1bb441ab6c46ef647bb07e360d9f068f9728e07a82f18450ef85b633f96f80",
+  "h5_integration_head": "f22dcb447e154e424656b12409e041c32dfb4c5c",
+  "schema_version": "cap-redis-l1-r2.postmerge-h5-qualification.v1",
+  "trace_aggregate_sha256": "aee5b0b3e8b0788e171d03958cd68d22d3ad8721bded91645d83f2d12ecf96b2",
+  "verdict": "PASS"
+}

@@ -1,0 +1,9 @@
+{
+  "aggregate_sha256": "ac465d1e3842ed63171e3d6ce08ae8e6372107e52bb5aa39bff172a46a70d867",
+  "original_verdict": "PASS",
+  "reason": "ACTOR_CANDIDATE_STATE_STABLE_IDS_COULD_ADMIT_UNRELATED_BACKGROUND; RETAINED WITHOUT REWRITING",
+  "schema_version": "cap-redis-business-trace-supersession-v1",
+  "selection": "NOT_SELECTED",
+  "trace_run": "capredis-business-e2e-20260810T071500Z",
+  "trace_sha256": "35750268626fdb5ffe86699fad0d742f24b2d111baaec094fe05bf6ef4f3882d"
+}

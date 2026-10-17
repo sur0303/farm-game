@@ -1,0 +1,737 @@
+--- 04:11:00
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   1475m        159Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   537m         106Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   522m         102Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   515m         106Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   438m         109Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   1592m        103Mi           
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   1405m        106Mi           
+--- 04:11:04
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   1475m        159Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   537m         106Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   522m         102Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   515m         106Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   438m         109Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   1592m        103Mi           
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   1405m        106Mi           
+--- 04:11:09
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   1475m        159Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   537m         106Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   522m         102Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   515m         106Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   438m         109Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   1592m        103Mi           
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   1405m        106Mi           
+--- 04:11:14
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   1475m        159Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   537m         106Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   522m         102Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   515m         106Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   438m         109Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   1592m        103Mi           
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   1405m        106Mi           
+--- 04:11:19
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   1475m        159Mi           
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   537m         106Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   522m         102Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   515m         106Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   438m         109Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   2024m        56Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   1853m        38Mi            
+--- 04:11:24
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   950m         97Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   408m         100Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   457m         108Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   224m         116Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   2024m        56Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   1853m        38Mi            
+--- 04:11:29
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   950m         97Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   408m         100Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   457m         108Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   224m         116Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   2024m        56Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   1853m        38Mi            
+--- 04:11:34
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   950m         97Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   408m         100Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   457m         108Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   224m         116Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   2024m        56Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   1853m        38Mi            
+--- 04:11:39
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   950m         97Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   408m         100Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   457m         108Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   224m         116Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   2024m        56Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   1853m        38Mi            
+--- 04:11:43
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   950m         97Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   408m         100Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   457m         108Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   224m         116Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   2024m        56Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   1853m        38Mi            
+--- 04:11:48
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   950m         97Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   408m         100Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   457m         108Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   224m         116Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   2024m        56Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   302m         19Mi            
+--- 04:11:53
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   906m         58Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   213m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   275m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          121Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   367m         113Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   628m         20Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   302m         19Mi            
+--- 04:11:58
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   906m         58Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   213m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   275m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          121Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   367m         113Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   628m         20Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   302m         19Mi            
+--- 04:12:02
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   906m         58Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   213m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   275m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          121Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   367m         113Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   628m         20Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   302m         19Mi            
+--- 04:12:07
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   906m         58Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   213m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   275m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          121Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   367m         113Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   628m         20Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   302m         19Mi            
+--- 04:12:12
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   906m         58Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   213m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   275m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          121Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   367m         113Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   628m         20Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   302m         19Mi            
+--- 04:12:17
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   906m         58Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   213m         105Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   275m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          121Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   367m         113Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   628m         20Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   302m         19Mi            
+--- 04:12:21
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   519m         57Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   142m         99Mi            
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   242m         96Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   17m          132Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   297m         114Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   114m         16Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+NAME                                    CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-5323-kh8sd   159m         17Mi            
+--- 04:12:26
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   519m         57Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   142m         99Mi            
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   242m         96Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   17m          132Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   297m         114Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+NAME                                     CPU(cores)   MEMORY(bytes)   
+ws-stress-reconnect-120954-17854-5m678   114m         16Mi            
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:12:31
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   519m         57Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   142m         99Mi            
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   242m         96Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   17m          132Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   297m         114Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:12:36
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   519m         57Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   142m         99Mi            
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   242m         96Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   17m          132Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   297m         114Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:12:40
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   519m         57Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   142m         99Mi            
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   242m         96Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   17m          132Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   297m         114Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:12:45
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   519m         57Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   142m         99Mi            
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   242m         96Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   17m          132Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   297m         114Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:12:50
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   519m         57Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   59m          114Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   148m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   178m         117Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:12:55
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   308m         56Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   59m          114Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   148m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   178m         117Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:13:00
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   308m         56Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   59m          114Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   148m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   178m         117Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:13:05
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   308m         56Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   59m          114Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   148m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   178m         117Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:13:09
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   308m         56Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   59m          114Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   148m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   178m         117Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:13:14
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   308m         56Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   59m          114Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   148m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   178m         117Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:13:19
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   308m         56Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   59m          114Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   148m         97Mi            
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   178m         117Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:13:24
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   12m          59Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   11m          119Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   15m          112Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   12m          139Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:13:29
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   12m          59Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   11m          119Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   15m          112Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   12m          139Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:13:34
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   12m          59Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   11m          119Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   15m          112Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   12m          139Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:13:38
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   12m          59Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   11m          119Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   15m          112Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   12m          139Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found
+--- 04:13:43
+pod=farm-gate-6d664d9846-xrdhp
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-xrdhp   12m          59Mi            
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   11m          119Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   15m          112Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   15m          131Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   12m          139Mi           
+pod=ws-stress-reconnect-120954-17854-5m678
+Error from server (NotFound): pods "ws-stress-reconnect-120954-17854-5m678" not found
+pod=ws-stress-reconnect-120954-5323-kh8sd
+Error from server (NotFound): pods "ws-stress-reconnect-120954-5323-kh8sd" not found

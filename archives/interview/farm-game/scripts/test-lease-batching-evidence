@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+OUTPUT=${LEASE_BATCHING_EVIDENCE_OUTPUT:-$ROOT_DIR/docs/verification/results/r1-4/lease-batching-evidence.json}
+GOCACHE_DIR=${FARM_GO_BUILD_CACHE:-/tmp/farm-r1-4-gocache}
+GOTMP_DIR=${FARM_GO_TMP:-/tmp/farm-r1-4-gotmp}
+
+mkdir -p "$GOCACHE_DIR" "$GOTMP_DIR"
+cd "$ROOT_DIR"
+GOCACHE="$GOCACHE_DIR" GOTMPDIR="$GOTMP_DIR" \
+  go run -buildvcs=false ./cmd/lease-batching-evidence -output "$OUTPUT"
+
+echo "machine-checked lease batching evidence: $OUTPUT"

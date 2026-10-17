@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+DURATION="${FARM_CAPACITY_DURATION:-30s}"
+JOIN_CONNS="${FARM_CAPACITY_JOIN_CONNS:-80}"
+JOIN_RATE="${FARM_CAPACITY_JOIN_RATE:-20}"
+PLANT_CONNS="${FARM_CAPACITY_PLANT_CONNS:-20}"
+PLANT_RATE="${FARM_CAPACITY_PLANT_RATE:-5}"
+JOIN_PLAYER_START="${FARM_CAPACITY_JOIN_PLAYER_START:-930000000}"
+PLANT_PLAYER_START="${FARM_CAPACITY_PLANT_PLAYER_START:-940000000}"
+RESULT_DIR="${FARM_CAPACITY_RESULT_DIR:-$ROOT_DIR/docs/verification/results}"
+RUN_ID=$(date -u +%Y%m%dT%H%M%SZ)
+LOAD_SECRET=$(od -An -N24 -tx1 /dev/urandom | tr -d ' \n')
+export LOAD_TEST_TOKEN_SECRET="$LOAD_SECRET"
+export GATE_WS_RATE_PER_SEC="${GATE_WS_RATE_PER_SEC:-2000}"
+export GATE_WS_RATE_BURST="${GATE_WS_RATE_BURST:-4000}"
+export GATE_WS_MAX_CONNS="${GATE_WS_MAX_CONNS:-5000}"
+
+mkdir -p "$RESULT_DIR"
+cd "$ROOT_DIR"
+
+./scripts/prepare-local-compose.sh
+./scripts/company-redis-compose.sh up -d --build --force-recreate player-svr farm-svr farm-worker farm-gate
+GOCACHE="${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache}" go build -trimpath -o /tmp/farm-ws-stress ./cmd/ws-stress
+
+join_json="$RESULT_DIR/ws-join-${RUN_ID}.json"
+plant_json="$RESULT_DIR/ws-plant-${RUN_ID}.json"
+join_log="$RESULT_DIR/ws-join-${RUN_ID}.log"
+plant_log="$RESULT_DIR/ws-plant-${RUN_ID}.log"
+runtime_log="$RESULT_DIR/runtime-${RUN_ID}.log"
+
+/tmp/farm-ws-stress \
+  -scenario join \
+  -player-start "$JOIN_PLAYER_START" \
+  -conns "$JOIN_CONNS" \
+  -rate "$JOIN_RATE" \
+  -duration "$DURATION" \
+  -json-out "$join_json" >"$join_log" 2>&1 &
+join_pid=$!
+
+/tmp/farm-ws-stress \
+  -scenario plant \
+  -player-start "$PLANT_PLAYER_START" \
+  -conns "$PLANT_CONNS" \
+  -rate "$PLANT_RATE" \
+  -duration "$DURATION" \
+  -json-out "$plant_json" >"$plant_log" 2>&1 &
+plant_pid=$!
+
+(
+  while kill -0 "$join_pid" 2>/dev/null || kill -0 "$plant_pid" 2>/dev/null; do
+    date -u '+sample_time=%Y-%m-%dT%H:%M:%SZ'
+    curl -fsS http://127.0.0.1:8080/metrics |
+      grep -E '^(farmgate_ws_(conn_active|conn_total|conn_rejected_total|msg_received_total|msg_sent_total|slow_client_kick_total|write_batch_size_(sum|count))|go_(goroutines|memstats_alloc_bytes)) '
+    curl -fsS http://127.0.0.1:19001/metrics |
+      grep -E '^(farm_actor_(active_keys|mailbox_max_depth|mailbox_queued|mailbox_rejected_total|submit_total)|farm_store_operation_(seconds_(sum|count)|total))'
+    docker stats --no-stream --format '{{json .}}' \
+      farm-game-local-farm-gate-1 farm-game-local-farm-svr-1 \
+      farm-game-local-player-svr-1 farm-game-local-farm-worker-1
+    sleep 10
+  done
+) >"$runtime_log" 2>&1 &
+monitor_pid=$!
+
+status=0
+wait "$join_pid" || status=$?
+wait "$plant_pid" || status=$?
+wait "$monitor_pid" || true
+
+echo "join_result=$join_json"
+cat "$join_json"
+echo "plant_result=$plant_json"
+cat "$plant_json"
+echo "runtime_samples=$runtime_log"
+exit "$status"

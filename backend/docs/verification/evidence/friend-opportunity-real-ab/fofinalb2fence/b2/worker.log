@@ -1,0 +1,16 @@
+2026/08/11 21:35:29 worker actor routing enabled with 2 connections
+2026/08/11 21:35:29 CareRewardOrder authority recovery enabled with bounded FARM bucket scans
+2026/08/11 21:35:29 farm-worker durable Theft recovery enabled from Pair DueIndex
+2026/08/11 21:35:29 FARM opportunity wakeup enabled shadow=false transport=direct
+2026/08/11 21:35:29 farm-worker running, worker_id=foperf-b2-worker boot_id=foperf-fofinalb2fence-b2-worker-boot version=0.0.0-dev readiness=worker-family-readiness-v1
+2026/08/11 21:35:29 recover CareRewardOrder: shared Pair CARE recovery is not ready
+2026/08/11 21:35:41 opportunity wakeup round={OwnedShards:1 Buckets:1 EmptyShards:0 Scanned:1 Candidates:1 Claimed:1 LeaseHeld:0 Skipped:0 Published:1 Advanced:1 Completed:0 StaleGeneration:0 LeaseLost:0 Failed:0 DueBacklog:1 MaxDueLagMs:772 BudgetExhausted:0 Shadow:false}
+2026/08/11 21:35:42 opportunity wakeup round={OwnedShards:1 Buckets:1 EmptyShards:0 Scanned:1 Candidates:1 Claimed:1 LeaseHeld:0 Skipped:0 Published:1 Advanced:1 Completed:0 StaleGeneration:0 LeaseLost:0 Failed:0 DueBacklog:1 MaxDueLagMs:1780 BudgetExhausted:0 Shadow:false}
+2026/08/11 21:35:43 opportunity wakeup round={OwnedShards:1 Buckets:1 EmptyShards:0 Scanned:1 Candidates:1 Claimed:1 LeaseHeld:0 Skipped:0 Published:1 Advanced:1 Completed:0 StaleGeneration:0 LeaseLost:0 Failed:0 DueBacklog:1 MaxDueLagMs:2789 BudgetExhausted:0 Shadow:false}
+2026/08/11 21:35:44 opportunity wakeup round={OwnedShards:1 Buckets:1 EmptyShards:0 Scanned:1 Candidates:1 Claimed:1 LeaseHeld:0 Skipped:0 Published:0 Advanced:1 Completed:0 StaleGeneration:0 LeaseLost:0 Failed:0 DueBacklog:1 MaxDueLagMs:798 BudgetExhausted:0 Shadow:false}
+2026/08/11 21:35:45 opportunity wakeup round={OwnedShards:1 Buckets:1 EmptyShards:0 Scanned:1 Candidates:1 Claimed:1 LeaseHeld:0 Skipped:0 Published:1 Advanced:1 Completed:0 StaleGeneration:0 LeaseLost:0 Failed:0 DueBacklog:1 MaxDueLagMs:287 BudgetExhausted:0 Shadow:false}
+2026/08/11 21:35:46 opportunity wakeup round={OwnedShards:1 Buckets:1 EmptyShards:0 Scanned:1 Candidates:1 Claimed:1 LeaseHeld:0 Skipped:0 Published:1 Advanced:1 Completed:0 StaleGeneration:0 LeaseLost:0 Failed:0 DueBacklog:1 MaxDueLagMs:998 BudgetExhausted:0 Shadow:false}
+2026/08/11 21:35:48 opportunity wakeup round={OwnedShards:1 Buckets:1 EmptyShards:0 Scanned:1 Candidates:1 Claimed:1 LeaseHeld:0 Skipped:0 Published:1 Advanced:1 Completed:0 StaleGeneration:0 LeaseLost:0 Failed:0 DueBacklog:1 MaxDueLagMs:820 BudgetExhausted:0 Shadow:false}
+2026/08/11 21:35:49 opportunity wakeup round={OwnedShards:1 Buckets:1 EmptyShards:0 Scanned:1 Candidates:1 Claimed:1 LeaseHeld:0 Skipped:0 Published:0 Advanced:1 Completed:0 StaleGeneration:0 LeaseLost:0 Failed:0 DueBacklog:1 MaxDueLagMs:819 BudgetExhausted:0 Shadow:false}
+2026/08/11 21:35:52 opportunity wakeup round={OwnedShards:1 Buckets:1 EmptyShards:0 Scanned:1 Candidates:1 Claimed:1 LeaseHeld:0 Skipped:0 Published:1 Advanced:1 Completed:0 StaleGeneration:0 LeaseLost:0 Failed:0 DueBacklog:1 MaxDueLagMs:322 BudgetExhausted:0 Shadow:false}
+2026/08/11 21:35:53 opportunity wakeup round={OwnedShards:1 Buckets:1 EmptyShards:0 Scanned:1 Candidates:1 Claimed:1 LeaseHeld:0 Skipped:0 Published:1 Advanced:0 Completed:1 StaleGeneration:0 LeaseLost:0 Failed:0 DueBacklog:1 MaxDueLagMs:832 BudgetExhausted:0 Shadow:false}

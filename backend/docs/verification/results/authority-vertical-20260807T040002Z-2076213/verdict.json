@@ -1,0 +1,4 @@
+{
+  "verdict": "FAIL",
+  "reason": "H5_FAIL_SERVER_PASS: real H5 failed while protocol bot passed (h5=1 bot=0)"
+}

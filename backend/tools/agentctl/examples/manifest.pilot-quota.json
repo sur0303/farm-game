@@ -1,0 +1,50 @@
+{
+  "task_id": "mm-pilot-quota",
+  "repo": "/ABSOLUTE/PATH/TO/farm-game",
+  "worktree": "/ABSOLUTE/PATH/TO/pilot-worktree",
+  "branch": "codex/example-agentctl-pilot",
+  "base_commit": "0000000000000000000000000000000000000000",
+  "execution_policy": {
+    "initial_writer_profile": "codex-luna-primary",
+    "fixer_profile": "cursor-grok45-fixer",
+    "reviewer_profile": "codex-luna-review",
+    "diagnoser_profile": "codex-sol-xhigh-diagnose",
+    "backup_profile": "codebuddy-kimi-k3-backup",
+    "max_fix_cycles_before_diagnosis": 2,
+    "max_post_diagnosis_fix_cycles": 1,
+    "require_fresh_review_session": true,
+    "automatic_provider_switch": false
+  },
+  "prompt_file": "tools/agentctl/pilot/PROMPT_FIX.md",
+  "owned_write_set": [
+    "tools/agentctl/pilot/**"
+  ],
+  "forbidden_write_set": [
+    "internal/**",
+    "cmd/**",
+    "src/**",
+    "docs/design/2*.md",
+    "docs/design/3*.md"
+  ],
+  "semantic_locks": [
+    "agentctl-pilot-quota"
+  ],
+  "risk": "low",
+  "authoritative_inputs": [
+    {
+      "path": "docs/design/74-agent-control-plane-multi-model-v1.2.md",
+      "section": "4.4 Grok \u5b9a\u5411\u4fee\u590d"
+    }
+  ],
+  "acceptance_commands": [
+    "python3 -m unittest discover -s tools/agentctl/pilot -p 'test_*.py' -v"
+  ],
+  "review_scope": [
+    "tools/agentctl/pilot/**"
+  ],
+  "frozen_summary": [
+    "Synthetic CP2 pilot only.",
+    "Fix the off-by-one in tools/agentctl/pilot/quota.py.",
+    "Do not modify game Actors, proto, Redis, or business contracts."
+  ]
+}

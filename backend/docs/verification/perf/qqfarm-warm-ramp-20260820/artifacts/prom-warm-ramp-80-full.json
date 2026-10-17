@@ -1,0 +1,227 @@
+{
+  "run_id": "warm-ramp-80-full-20260820",
+  "start": "2026-08-19T17:06:58.512918591Z",
+  "finish": "2026-08-19T17:12:05.692193924Z",
+  "window_seconds": 337,
+  "queries": {
+    "commands": [
+      {
+        "metric": {
+          "command_type": "BUY",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787159530.692,
+          "1418.4636363636364"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "JOIN_FARM",
+          "error_code": "NONE",
+          "status": "ACCEPTED"
+        },
+        "value": [
+          1787159530.692,
+          "81.6969696969697"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "PLANT",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787159530.692,
+          "1416.4212121212122"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "UNLOCK_PLOT",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787159530.692,
+          "1507.3090909090909"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "CARE",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787159530.692,
+          "923.1757575757576"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "HARVEST",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787159530.692,
+          "1330.639393939394"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "GET_PLAYER_BOOTSTRAP",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787159530.692,
+          "1323.490909090909"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "SELL",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787159530.692,
+          "1322.469696969697"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "GET_OPERATION_RESULT",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787159530.692,
+          "0"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "UNLOCK_PLOT",
+          "error_code": "NONE",
+          "status": "PROCESSING"
+        },
+        "value": [
+          1787159530.692,
+          "5.106060606060606"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "PLANT",
+          "error_code": "NONE",
+          "status": "PROCESSING"
+        },
+        "value": [
+          1787159530.692,
+          "2.0424242424242425"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "PLANT",
+          "error_code": "ERR_STORE_UNAVAILABLE",
+          "status": "UNAVAILABLE"
+        },
+        "value": [
+          1787159530.692,
+          "0"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "UNLOCK_PLOT",
+          "error_code": "ERR_STORE_UNAVAILABLE",
+          "status": "UNAVAILABLE"
+        },
+        "value": [
+          1787159530.692,
+          "0"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "CARE",
+          "error_code": "ERR_STORE_UNAVAILABLE",
+          "status": "UNAVAILABLE"
+        },
+        "value": [
+          1787159530.692,
+          "0"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "GET_PLAYER_BOOTSTRAP",
+          "error_code": "ERR_STORE_UNAVAILABLE",
+          "status": "UNAVAILABLE"
+        },
+        "value": [
+          1787159530.692,
+          "0"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "HARVEST",
+          "error_code": "ERR_STORE_UNAVAILABLE",
+          "status": "UNAVAILABLE"
+        },
+        "value": [
+          1787159530.692,
+          "0"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "SELL",
+          "error_code": "ERR_STORE_UNAVAILABLE",
+          "status": "UNAVAILABLE"
+        },
+        "value": [
+          1787159530.692,
+          "0"
+        ]
+      }
+    ],
+    "rpc_non_ok": [
+      {
+        "metric": {
+          "code": "Unavailable"
+        },
+        "value": [
+          1787159530.692,
+          "0"
+        ]
+      },
+      {
+        "metric": {
+          "code": "FailedPrecondition"
+        },
+        "value": [
+          1787159530.692,
+          "3.0636363636363635"
+        ]
+      }
+    ],
+    "client_rpc_non_ok": [],
+    "backend_rejected": [
+      {
+        "metric": {},
+        "value": [
+          1787159530.692,
+          "2.0424242424242425"
+        ]
+      }
+    ]
+  }
+}

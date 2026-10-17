@@ -1,0 +1,236 @@
+#!/bin/sh
+set -eu
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+repo_dir=$(CDPATH= cd -- "$script_dir/.." && pwd)
+validator="$repo_dir/scripts/validate-k8s-static-staging"
+tmp_dir=$(mktemp -d)
+trap 'rm -rf "$tmp_dir"' EXIT
+
+candidate="$tmp_dir/candidate.json"
+release="$tmp_dir/release.json"
+w1="$tmp_dir/w1.json"
+
+"$validator" --profile candidate >"$candidate"
+python3 - "$candidate" <<'PY'
+import json
+import sys
+
+verdict = json.load(open(sys.argv[1], encoding="utf-8"))
+assert verdict["status"] == "CANDIDATE_RENDERED_NOT_DEPLOYED", verdict["status"]
+assert not verdict["issues"], verdict["issues"]
+assert verdict["object_counts"]["Deployment"] == 3
+assert verdict["object_counts"]["StatefulSet"] == 2
+assert verdict["object_counts"]["Secret"] == 2
+assert verdict["hashes"]["route_snapshot_sha256"]
+checks = {item["name"]: item["status"] for item in verdict["checks"]}
+assert checks["friendship:candidate:intended-mode"] == "PASS"
+for name in (
+    "profile:WORKER_READINESS_CONTRACT_VERSION",
+    "profile:WORKER_READINESS_MAX_SCAN_AGE_V1",
+    "profile:WORKER_DUE_OBSERVE_LIMIT",
+    "profile:GUARD_SYNC_WORKER_ENABLED",
+    "profile:MAIL_WORKER_ENABLED",
+    "networking:gate-to-player-grpc-egress",
+    "networking:player-grpc-from-gate",
+):
+    assert checks[name] == "PASS", name
+PY
+
+if "$validator" --profile release >"$release"; then
+  echo "release profile unexpectedly accepted unbound placeholders" >&2
+  exit 1
+fi
+python3 - "$release" <<'PY'
+import json
+import sys
+
+verdict = json.load(open(sys.argv[1], encoding="utf-8"))
+assert verdict["status"] == "REJECTED"
+checks = {item["check"] for item in verdict["issues"]}
+assert "release-image-digests" in checks, checks
+assert "release:no-unbound-placeholders" in checks, checks
+assert "friendship:release-shadow-evidence-sha256" in checks, checks
+assert "friendship:release-shadow-evidence-reviewed" in checks, checks
+assert "friendship:release-shadow-evidence-ref" in checks, checks
+PY
+
+"$validator" --profile w1 >"$w1"
+python3 - "$w1" <<'PY'
+import json
+import sys
+
+verdict = json.load(open(sys.argv[1], encoding="utf-8"))
+assert verdict["status"] == "CANDIDATE_RENDERED_NOT_DEPLOYED", verdict["status"]
+assert not verdict["issues"], verdict["issues"]
+assert verdict["object_counts"].get("Secret", 0) == 0
+checks = {item["name"]: item["status"] for item in verdict["checks"]}
+assert checks["friendship:w1:intended-mode"] == "PASS"
+assert checks["worker:no-stale-required-families"] == "PASS"
+PY
+
+if command -v kubectl >/dev/null 2>&1; then
+  candidate_render="$tmp_dir/candidate-render.yaml"
+  release_render="$tmp_dir/release-render.yaml"
+  w1_render="$tmp_dir/w1-render.yaml"
+  rollback_render="$tmp_dir/rollback-render.yaml"
+  kubectl kustomize "$repo_dir/deploy/k8s/static-staging" >"$candidate_render"
+  kubectl kustomize "$repo_dir/deploy/k8s/static-staging/overlays/release" >"$release_render"
+  kubectl kustomize "$repo_dir/deploy/k8s/static-staging/overlays/w1-readiness" >"$w1_render"
+  kubectl kustomize "$repo_dir/deploy/k8s/static-staging/overlays/local-gate-rollback" >"$rollback_render"
+  grep -q 'FRIENDSHIP_SERVICE_MODE: remote_shadow' "$candidate_render"
+  grep -q 'FRIENDSHIP_SERVICE_MODE: remote_player' "$release_render"
+  grep -q 'FRIENDSHIP_SERVICE_MODE: local_gate' "$rollback_render"
+  grep -q 'WORKER_READINESS_CONTRACT_VERSION: worker-family-readiness-v1' "$candidate_render"
+  grep -q 'WORKER_READINESS_MAX_SCAN_AGE_V1: 5s' "$w1_render"
+  if grep -q 'WORKER_REQUIRED_FAMILIES' "$candidate_render" "$w1_render" "$release_render" "$rollback_render"; then
+    echo 'stale WORKER_REQUIRED_FAMILIES setting rendered' >&2
+    exit 1
+  fi
+fi
+
+# Exercise the release shadow-binding gate in a temporary copied tree.  The
+# checked-in release overlay remains deliberately unbound; this copy is the
+# only place where controlled test bindings are written.
+bound_repo="$tmp_dir/bound-release-tree"
+mkdir -p "$bound_repo/scripts" "$bound_repo/deploy/k8s"
+cp "$validator" "$bound_repo/scripts/validate-k8s-static-staging"
+cp -R "$repo_dir/deploy/k8s/static-staging" "$bound_repo/deploy/k8s/static-staging"
+chmod +x "$bound_repo/scripts/validate-k8s-static-staging"
+
+python3 - "$bound_repo" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+repo = Path(sys.argv[1])
+root = repo / "deploy" / "k8s" / "static-staging"
+release = root / "overlays" / "release"
+platform_path = release / "platform-release-patch.json"
+platform = json.loads(platform_path.read_text(encoding="utf-8"))
+data = platform["data"]
+host = "staging-release.farm.test"
+proxy_cidr = "198.18.0.206/24"
+redis_cidr = "198.18.0.207/24"
+runtime_digest = "a" * 64
+h5_digest = "b" * 64
+evidence_sha256 = "0123456789abcdef" * 4
+
+data.update(
+    {
+        "FRIENDSHIP_SERVICE_MODE": "remote_player",
+        "FRIENDSHIP_RPC_TIMEOUT": "2s",
+        "FRIENDSHIP_SHADOW_EVIDENCE_SHA256": evidence_sha256,
+        "FRIENDSHIP_SHADOW_EVIDENCE_REVIEWED": "true",
+        "FRIENDSHIP_SHADOW_EVIDENCE_SCOPE": "zero-unexplained-shadow-v1",
+        "FRIENDSHIP_SHADOW_EVIDENCE_REF": "reviewed/shadow/zero-unexplained-20260810.json",
+        "H5_PUBLIC_HOST": host,
+        "H5_PUBLIC_ORIGIN": f"https://{host}",
+        "H5_PUBLIC_WSS": f"wss://{host}/ws",
+        "GATE_WS_ALLOWED_ORIGINS": host,
+        "GATE_WS_TRUSTED_PROXIES": proxy_cidr,
+        "GATE_HTTP_TRUSTED_PROXIES": proxy_cidr,
+        "WSS_ENDPOINT": f"wss://{host}/ws",
+    }
+)
+platform_path.write_text(json.dumps(platform, indent=2) + "\n", encoding="utf-8")
+
+ingress_path = release / "ingress-release-patch.json"
+ingress = json.loads(ingress_path.read_text(encoding="utf-8"))
+ingress["spec"]["tls"][0]["hosts"] = [host]
+ingress["spec"]["rules"][0]["host"] = host
+ingress_path.write_text(json.dumps(ingress, indent=2) + "\n", encoding="utf-8")
+
+redis_path = release / "redis-egress-release-patch.json"
+redis = json.loads(redis_path.read_text(encoding="utf-8"))
+redis["spec"]["egress"][0]["to"][0]["ipBlock"]["cidr"] = redis_cidr
+redis_path.write_text(json.dumps(redis, indent=2) + "\n", encoding="utf-8")
+
+kustomization_path = release / "kustomization.yaml"
+kustomization = kustomization_path.read_text(encoding="utf-8")
+kustomization = kustomization.replace(
+    "newName: registry.example.invalid/farm-game-runtime",
+    "newName: registry.staging.test/farm-game-runtime",
+).replace(
+    "newName: registry.example.invalid/classic-farm-h5",
+    "newName: registry.staging.test/classic-farm-h5",
+).replace(
+    "digest: sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST",
+    f"digest: sha256:{runtime_digest}",
+).replace(
+    "digest: sha256:REPLACE_WITH_64_HEX_H5_DIGEST",
+    f"digest: sha256:{h5_digest}",
+)
+kustomization_path.write_text(kustomization, encoding="utf-8")
+PY
+
+bound_validator="$bound_repo/scripts/validate-k8s-static-staging"
+bound_release="$tmp_dir/bound-release.json"
+"$bound_validator" --profile release >"$bound_release"
+python3 - "$bound_release" <<'PY'
+import json
+import sys
+
+verdict = json.load(open(sys.argv[1], encoding="utf-8"))
+assert verdict["status"] == "RELEASE_RENDERED_NOT_DEPLOYED", verdict["status"]
+assert not verdict["issues"], verdict["issues"]
+assert verdict["cluster"]["checked"] is False
+assert verdict["cluster"]["official_url"] is None
+assert verdict["hashes"]["release_image_digests"] == {
+    "registry.example.invalid/farm-game-runtime": "sha256:" + "a" * 64,
+    "registry.example.invalid/classic-farm-h5": "sha256:" + "b" * 64,
+}
+checks = {item["name"]: item["status"] for item in verdict["checks"]}
+for name in (
+    "friendship:release:intended-mode",
+    "friendship:release-shadow-evidence-sha256",
+    "friendship:release-shadow-evidence-reviewed",
+    "friendship:release-shadow-evidence-scope",
+    "friendship:release-shadow-evidence-ref",
+):
+    assert checks[name] == "PASS", name
+PY
+
+for evidence_case in malformed-hash false-review; do
+  case_repo="$tmp_dir/$evidence_case-tree"
+  case_verdict="$tmp_dir/$evidence_case.json"
+  cp -R "$bound_repo" "$case_repo"
+  python3 - "$case_repo" "$evidence_case" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+case_repo = Path(sys.argv[1])
+case = sys.argv[2]
+path = case_repo / "deploy" / "k8s" / "static-staging" / "overlays" / "release" / "platform-release-patch.json"
+value = json.loads(path.read_text(encoding="utf-8"))
+if case == "malformed-hash":
+    value["data"]["FRIENDSHIP_SHADOW_EVIDENCE_SHA256"] = "not-a-64-hex-sha256"
+elif case == "false-review":
+    value["data"]["FRIENDSHIP_SHADOW_EVIDENCE_REVIEWED"] = "false"
+else:
+    raise SystemExit(f"unknown evidence case: {case}")
+path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+PY
+
+  if "$case_repo/scripts/validate-k8s-static-staging" --profile release >"$case_verdict"; then
+    echo "$evidence_case release case unexpectedly accepted" >&2
+    exit 1
+  fi
+  python3 - "$case_verdict" "$evidence_case" <<'PY'
+import json
+import sys
+
+verdict = json.load(open(sys.argv[1], encoding="utf-8"))
+case = sys.argv[2]
+assert verdict["status"] == "REJECTED", verdict["status"]
+expected = {
+    "malformed-hash": "friendship:release-shadow-evidence-sha256",
+    "false-review": "friendship:release-shadow-evidence-reviewed",
+}[case]
+assert {issue["check"] for issue in verdict["issues"]} == {expected}, verdict["issues"]
+PY
+done
+
+printf '%s\n' 'isolated release-binding regression passed'
+printf '%s\n' 'static-route Kubernetes validation tests passed'

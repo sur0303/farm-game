@@ -1,0 +1,78 @@
+{
+  "audited_at": "2026-08-07T02:32:54Z",
+  "authority": {
+    "farm": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-farm-20260807T023227Z-1725314",
+        "holder_instance_id": "smoke-farm",
+        "last_transition_at_ms": "1786069954589",
+        "last_transition_digest": "d7bdf1278d7422269fcbb234a3fadd2ee573a9615c436c3cabfe5a66c55a99b7",
+        "last_transition_id": "claim-FARM-20260807T023227Z-1725314",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786070024631",
+        "lease_state": "ACTIVE",
+        "route_domain": "FARM",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260807t023227z-1725314:local:auth:farm:v1:s:0}:shard-authority"
+    },
+    "player": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-player-20260807T023227Z-1725314",
+        "holder_instance_id": "smoke-player",
+        "last_transition_at_ms": "1786069954588",
+        "last_transition_digest": "74ade549209195121fb42e186ce3f515aa76a476b26cd873f4fb300580bb5748",
+        "last_transition_id": "claim-PLAYER-20260807T023227Z-1725314",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786070024615",
+        "lease_state": "ACTIVE",
+        "route_domain": "PLAYER",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260807t023227z-1725314:local:auth:player:v1:s:0}:shard-authority"
+    }
+  },
+  "protocol_verdict": {
+    "finished_at": "2026-08-07T02:32:54Z",
+    "frames": 12,
+    "steps": {
+      "bootstrap": {
+        "status": "ok"
+      },
+      "buy": {
+        "status": "ok"
+      },
+      "hello": {
+        "status": "ok"
+      },
+      "join": {
+        "status": "ok"
+      },
+      "login": {
+        "status": "ok"
+      },
+      "plant": {
+        "detail": "plant status=PROCESSING code=ERROR_CODE_UNSPECIFIED msg=",
+        "status": "fail"
+      },
+      "recovery_complete": {
+        "status": "ok"
+      },
+      "register": {
+        "status": "ok"
+      }
+    },
+    "verdict": "FAIL"
+  },
+  "route_snapshot_sha256": "41a"
+}

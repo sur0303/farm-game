@@ -1,0 +1,32 @@
+{
+  "finished_at": "2026-08-07T02:32:54Z",
+  "frames": 12,
+  "steps": {
+    "bootstrap": {
+      "status": "ok"
+    },
+    "buy": {
+      "status": "ok"
+    },
+    "hello": {
+      "status": "ok"
+    },
+    "join": {
+      "status": "ok"
+    },
+    "login": {
+      "status": "ok"
+    },
+    "plant": {
+      "status": "fail",
+      "detail": "plant status=PROCESSING code=ERROR_CODE_UNSPECIFIED msg="
+    },
+    "recovery_complete": {
+      "status": "ok"
+    },
+    "register": {
+      "status": "ok"
+    }
+  },
+  "verdict": "FAIL"
+}

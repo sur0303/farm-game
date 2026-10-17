@@ -1,0 +1,12 @@
+{
+  "apiVersion": "v1",
+  "kind": "Namespace",
+  "metadata": {
+    "name": "farm-staging-system",
+    "labels": {
+      "app.kubernetes.io/part-of": "farm-game",
+      "farm.io/staging-candidate": "r2-p1-a",
+      "farm.io/route-mode": "static"
+    }
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "schema_version": "fo-gate-capacity.c6b-harness.v1",
+  "purpose": "C6B deterministic harness evidence for slow-cohort isolation, mixed Hint/FarmChange/CommandResult quota, hint quota reopening after transport drain, and drain quantum behavior",
+  "run_metadata": {
+    "date": "2026-08-12",
+    "branch": "codex/fo-gate-capacity-r1",
+    "base_head": "d8f9502965dbb47c6fc6009d1713aefc632209e8",
+    "worktree": "uncommitted (main-agent review)"
+  },
+  "evidence_type": "deterministic_go_test_harness",
+  "environment": {
+    "multi_pod": false,
+    "live_cluster": false,
+    "tool": "go test -race -count=1"
+  },
+  "cells": [
+    {
+      "name": "slow_cohort_1pct",
+      "total_connections": 100,
+      "slow_connections": 1,
+      "fast_stats": {
+        "hint_accepted": 198,
+        "hint_quota_rejected": 198,
+        "hint_full_rejected": 0,
+        "farm_change_accepted": 99,
+        "farm_change_full_rejected": 0,
+        "command_result_accepted": 99,
+        "command_result_full_rejected": 0
+      },
+      "slow_stats": {
+        "hint_accepted": 0,
+        "hint_quota_rejected": 0,
+        "hint_full_rejected": 4,
+        "farm_change_accepted": 0,
+        "farm_change_full_rejected": 1,
+        "command_result_accepted": 0,
+        "command_result_full_rejected": 1
+      },
+      "fifo_violations": 0,
+      "test": "TestC6BSlowCohortHarness"
+    },
+    {
+      "name": "slow_cohort_5pct",
+      "total_connections": 100,
+      "slow_connections": 5,
+      "fast_stats": {
+        "hint_accepted": 190,
+        "hint_quota_rejected": 190,
+        "hint_full_rejected": 0,
+        "farm_change_accepted": 95,
+        "farm_change_full_rejected": 0,
+        "command_result_accepted": 95,
+        "command_result_full_rejected": 0
+      },
+      "slow_stats": {
+        "hint_accepted": 0,
+        "hint_quota_rejected": 0,
+        "hint_full_rejected": 20,
+        "farm_change_accepted": 0,
+        "farm_change_full_rejected": 5,
+        "command_result_accepted": 0,
+        "command_result_full_rejected": 5
+      },
+      "fifo_violations": 0,
+      "test": "TestC6BSlowCohortHarness"
+    },
+    {
+      "name": "slow_cohort_20pct",
+      "total_connections": 100,
+      "slow_connections": 20,
+      "fast_stats": {
+        "hint_accepted": 160,
+        "hint_quota_rejected": 160,
+        "hint_full_rejected": 0,
+        "farm_change_accepted": 80,
+        "farm_change_full_rejected": 0,
+        "command_result_accepted": 80,
+        "command_result_full_rejected": 0
+      },
+      "slow_stats": {
+        "hint_accepted": 0,
+        "hint_quota_rejected": 0,
+        "hint_full_rejected": 80,
+        "farm_change_accepted": 0,
+        "farm_change_full_rejected": 20,
+        "command_result_accepted": 0,
+        "command_result_full_rejected": 20
+      },
+      "fifo_violations": 0,
+      "test": "TestC6BSlowCohortHarness"
+    },
+    {
+      "name": "mixed_traffic_quota_and_classification",
+      "assertions": [
+        "hint soft quota rejects before sequence allocation",
+        "FARM_CHANGE delivered through full W2A fence classified as farm_change (not system)",
+        "CommandResult enqueued as command_result",
+        "rejected hints consume no sequence; FIFO stays contiguous"
+      ],
+      "tests": [
+        "TestHintQuotaKeepsFarmChangeAndCommandResultCapacity",
+        "TestNotifyFriendOpportunityHintSoftQuotaAndSequence"
+      ]
+    },
+    {
+      "name": "hint_quota_reopens_after_transport_drain",
+      "assertions": [
+        "quota-full hint soft-dropped without consuming a sequence",
+        "FarmChange enters FIFO during drop with exact delivery semantics",
+        "WritePump drain frees quota slots; fresh hints can be admitted again",
+        "the independent Navigator Pull path that recovers a dropped opportunity is outside this writer-level harness",
+        "recovered writer re-enforces the same bounded quota"
+      ],
+      "test": "TestC6BHintQuotaReopensAfterDrain"
+    },
+    {
+      "name": "drain_quantum_yields_to_command_result",
+      "assertions": [
+        "one wakeup drains at most DownlinkDrainQuantum frames",
+        "pump returns to select between quanta so a synchronous CommandResult is never starved",
+        "pending/re-notify seam drains all remaining frames without another enqueue",
+        "single connection sequence/FIFO order preserved"
+      ],
+      "tests": [
+        "TestWritePumpDrainQuantumYieldsToCommandResult",
+        "TestC6BDrainYieldsToCommandResultAndDrainsAll",
+        "TestConnectionWriterPendingReArmsAfterQuantumDrain",
+        "TestLevelTriggeredNotifierDrainsWithoutReEnqueue"
+      ]
+    }
+  ],
+  "limitations": {
+    "multi_pod_evidence": "MISSING",
+    "live_cluster": "NOT_AVAILABLE",
+    "supports_30m_dau": false,
+    "note": "Deterministic single-process Go harness only. No multi-Pod / multi-Gate fan-out, no real client TCP behavior, no end-to-end Navigator Pull recovery, and no 30M DAU claim. Production wiring of the hint quota into command/gate is deferred to the main agent after review."
+  }
+}

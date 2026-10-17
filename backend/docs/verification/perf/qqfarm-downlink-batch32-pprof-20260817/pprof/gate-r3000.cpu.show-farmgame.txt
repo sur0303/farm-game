@@ -1,0 +1,41 @@
+File: farm-gate
+Build ID: b0d69fe8c3d01668e868c1247097ed61a8e14826
+Type: cpu
+Time: 2026-08-17 12:06:59 CST
+Duration: 12s, Total samples = 12.42s (103.49%)
+Active filters:
+   show=^farmgame
+Showing nodes accounting for 5.61s, 45.17% of 12.42s total
+Dropped 84 nodes (cum <= 0.06s)
+Showing top 30 nodes out of 108
+      flat  flat%   sum%        cum   cum%
+     1.19s  9.58%  9.58%      1.50s 12.08%  farmgame/internal/authoritycomposition.(*PooledClientConn).Invoke
+     0.73s  5.88% 15.46%      0.74s  5.96%  farmgame/internal/observability/redisworkload.(*dependencyHook).ProcessHook.dependencyHook.ProcessHook.func1
+     0.58s  4.67% 20.13%      1.77s 14.25%  farmgame/internal/gateway/transport/websocket.(*Server).serveConnection
+     0.58s  4.67% 24.80%      0.58s  4.67%  farmgame/internal/gateway/transport/websocket.(*Server).writePump.func2
+     0.24s  1.93% 26.73%      0.25s  2.01%  farmgame/internal/gateway/transport/websocket.(*outboundSequencer).Enqueue
+     0.22s  1.77% 28.50%      0.27s  2.17%  farmgame/internal/authoritycomposition.outgoingRoute
+     0.17s  1.37% 29.87%      1.06s  8.53%  farmgame/internal/gateway/transport/websocket.(*Server).writePump
+     0.16s  1.29% 31.16%      0.16s  1.29%  farmgame/internal/gateway/command.WithResolvedActorRoute
+     0.13s  1.05% 32.21%      0.21s  1.69%  farmgame/internal/gateway/downlink.(*ConnectionRegistry).deliverW2JoinItemLocked
+     0.13s  1.05% 33.25%      0.13s  1.05%  farmgame/internal/gateway/protocol.Decode
+     0.11s  0.89% 34.14%      0.11s  0.89%  farmgame/internal/gateway/command.stableLeaseIdentity
+     0.11s  0.89% 35.02%         2s 16.10%  farmgame/internal/gateway/transport/websocket.(*Server).ServeHTTP
+     0.11s  0.89% 35.91%      0.11s  0.89%  farmgame/internal/gatewayapp.RunWithOptions
+     0.10s  0.81% 36.71%      0.41s  3.30%  farmgame/api/gen/logicrpc._GatewayDownlinkService_ActivateSubscription_Handler
+     0.10s  0.81% 37.52%      0.14s  1.13%  farmgame/internal/gateway/auth.writeJSON
+     0.09s  0.72% 38.24%      0.09s  0.72%  farmgame/internal/actorrouting.WithRoute
+     0.09s  0.72% 38.97%      1.54s 12.40%  farmgame/internal/gateway/auth.(*Handler).ServeHTTP
+     0.09s  0.72% 39.69%      0.25s  2.01%  farmgame/internal/gatewayapp.RunWithOptions.func6
+     0.07s  0.56% 40.26%      0.22s  1.77%  farmgame/internal/gateway/auth/ticket.(*Service).Issue
+     0.06s  0.48% 40.74%      0.06s  0.48%  farmgame/internal/gateway/auth.(*Service).IssueHTTPSession
+     0.06s  0.48% 41.22%      0.12s  0.97%  farmgame/internal/gateway/auth.setHTTPSessionCookie
+     0.06s  0.48% 41.71%      0.06s  0.48%  farmgame/internal/gateway/auth/ticket.resultU64
+     0.06s  0.48% 42.19%      0.31s  2.50%  farmgame/internal/gateway/downlink.(*ConnectionRegistry).ActivateSubscription
+     0.06s  0.48% 42.67%      0.10s  0.81%  farmgame/internal/gateway/leasebatch.(*Planner[go.shape.struct { farmgame/internal/gateway/command.route farmgame/internal/gateway/session.ActiveRoute; farmgame/internal/gateway/command.deadline time.Time }]).Plan
+     0.06s  0.48% 43.16%      0.06s  0.48%  farmgame/internal/gateway/session.redisString (inline)
+     0.05s   0.4% 43.56%      0.05s   0.4%  farmgame/internal/gateway/auth/ticket.(*Metrics).observe
+     0.05s   0.4% 43.96%      0.15s  1.21%  farmgame/internal/gateway/auth/ticket.(*RedisStore).Save
+     0.05s   0.4% 44.36%      0.06s  0.48%  farmgame/internal/gateway/auth/ticket.resultI64
+     0.05s   0.4% 44.77%      0.53s  4.27%  farmgame/internal/gateway/command.(*Gate).armJoinAsync.func1
+     0.05s   0.4% 45.17%      0.05s   0.4%  farmgame/internal/gateway/downlink.(*ConnectionWriter).statsLocked

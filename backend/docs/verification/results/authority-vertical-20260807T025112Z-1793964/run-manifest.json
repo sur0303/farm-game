@@ -1,0 +1,18 @@
+{
+  "run_id": "authority-vertical-20260807T025112Z-1793964",
+  "backend_commit": "13156f081d6b4b2bf3c47f93b9aedf8439a05eb1",
+  "backend_dirty": "true",
+  "h5_commit": "b9f8659c9ae2e3163d61d922eed54e977205f370",
+  "h5_dirty": "false",
+  "mode": "authority",
+  "worker_mode": "real_authority",
+  "assignment_source": "static",
+  "legacy_fallback": false,
+  "witness": {
+    "downlink_events": "protocol-events.ndjson",
+    "h5_bot_frames": "bot-frames.ndjson",
+    "playwright": "playwright.log",
+    "authority_after": "authority-after.json"
+  },
+  "finished_at": "2026-08-07T02:52:06Z"
+}

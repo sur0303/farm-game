@@ -1,0 +1,17 @@
+2026/08/11 21:35:29 farm-gate starting, version=0.0.0-dev
+2026/08/11 21:35:29 FriendshipService mode=remote_player
+2026/08/11 21:35:29 permit secret policy=authority insecure_development=false development_switch=false
+2026/08/11 21:35:29 using redis-backed session/ticket/account stores
+2026/08/11 21:35:30 using static actor route snapshot /data/home/developer_026/CodeBuddy/20260519141303/farm-game-fo-optimized-20260811/.local-state/friend-opportunity-real-ab/fofinalb2fence/b2/route-snapshot.json with 2 holder endpoints and 2 ServiceLB destinations
+2026/08/11 21:35:30 GateControl listening on 127.0.0.1:53029
+2026/08/11 21:35:30 gate transport: websocket (direct, maxConns=0 rate=1000.0/s burst=2000 origins=[127.0.0.1:53103 localhost:53103] trustedProxies=[] metrics=true)
+2026/08/11 21:35:30 gateway downlink listening on 127.0.0.1:54795
+2026/08/11 21:35:30 prometheus metrics: /metrics
+2026/08/11 21:35:30 websocket endpoint: /ws
+2026/08/11 21:35:30 listening on 127.0.0.1:35879
+2026/08/11 21:35:32 [WS] ws-cf8bb97f6f6dbead48f6b344dc4b959f(gen=1) connected from 127.0.0.1:54352
+2026/08/11 21:35:32 [WS] ws-bcd080e8f99c93b52cb6c4de92b70976(gen=2) connected from 127.0.0.1:54362
+2026/08/11 21:35:32 [WS] ws-cf8bb97f6f6dbead48f6b344dc4b959f(gen=1) closed
+2026/08/11 21:35:33 [WS] ws-af738799dfb60ccf9f47c49964ad6802(gen=3) connected from 127.0.0.1:54396
+2026/08/11 21:36:07 [WS] ws-bcd080e8f99c93b52cb6c4de92b70976(gen=2) closed
+2026/08/11 21:36:08 [WS] ws-af738799dfb60ccf9f47c49964ad6802(gen=3) closed

@@ -1,0 +1,48 @@
+# syntax=docker/dockerfile:1
+
+FROM golang:1.26-alpine AS build
+WORKDIR /src
+COPY go.mod go.sum ./
+ENV GOPROXY=https://goproxy.cn,direct
+ENV GOPRIVATE=git.internal.example.invalid
+RUN go mod download
+COPY . .
+
+ARG RUNTIME_SERVICES="player-svr farm-svr farm-worker farm-gate route-controller"
+ARG APP_VERSION="0.0.0-dev"
+ARG GIT_COMMIT=""
+ARG IMAGE_REVISION=""
+RUN set -eux; \
+    mkdir -p /out; \
+    for service in $RUNTIME_SERVICES; do \
+      case "$service" in \
+        player-svr|farm-svr|farm-worker|farm-gate|route-controller) ;; \
+        *) echo "unsupported runtime service: $service" >&2; exit 64 ;; \
+      esac; \
+      CGO_ENABLED=0 GOOS=linux go build -tags timetzdata -trimpath -ldflags "-s -w -X farmgame.Version=$APP_VERSION -X farmgame.GitCommit=$GIT_COMMIT -X farmgame.ImageRevision=$IMAGE_REVISION" -o "/out/$service" "./cmd/$service"; \
+    done
+
+FROM alpine:3.21
+RUN addgroup -S -g 10001 farm && adduser -S -D -H -u 10001 -G farm farm \
+    && printf '%s\n' \
+      '#!/bin/sh' \
+      'set -eu' \
+      'service="${FARM_SERVICE:-}"' \
+      'case "$service" in' \
+      '  player-svr|farm-svr|farm-worker|farm-gate|route-controller) exec "/usr/local/bin/$service" "$@" ;;' \
+      '  *) echo "set FARM_SERVICE to a runtime service" >&2; exit 64 ;;' \
+      'esac' \
+      > /usr/local/bin/farm-runtime-entrypoint \
+    && chmod 0755 /usr/local/bin/farm-runtime-entrypoint
+COPY --from=build /out/player-svr /usr/local/bin/player-svr
+COPY --from=build /out/farm-svr /usr/local/bin/farm-svr
+COPY --from=build /out/farm-worker /usr/local/bin/farm-worker
+COPY --from=build /out/farm-gate /usr/local/bin/farm-gate
+COPY --from=build /out/route-controller /usr/local/bin/route-controller
+ARG APP_PROFILE=showcase
+ARG IMAGE_REVISION=""
+LABEL org.opencontainers.image.revision=${IMAGE_REVISION}
+ENV FARM_APP_PROFILE=${APP_PROFILE} \
+    FARM_IMAGE_REVISION=${IMAGE_REVISION}
+USER 10001:10001
+ENTRYPOINT ["/usr/local/bin/farm-runtime-entrypoint"]

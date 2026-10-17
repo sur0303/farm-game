@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "frozen_input": "b83cae607245391df6e2d605cffba85eb194cb09",
+  "profile": "showcase",
+  "vite_mode": "web",
+  "environment": {
+    "VITE_FARM_ENV": "web",
+    "VITE_FARM_PROFILE": "showcase",
+    "VITE_FARM_PROTOCOL": "canonical-final"
+  },
+  "auth_flow": "real web account register/login -> HttpOnly Cookie -> connection ticket -> WSS -> Redis Authority",
+  "provider": "WebAuthProvider",
+  "showcase_bundle_boundary": "staging auth provider is removed from the showcase bundle; test/staging remains available only in test builds",
+  "forbidden_runtime_capabilities": [
+    "VITE_DEMO_PLATFORM_TOKEN",
+    "VITE_DEMO_SECONDARY_PLATFORM_TOKEN",
+    "automatic staging login",
+    "mock auth provider",
+    "mock friend provider",
+    "test fixtures"
+  ],
+  "audit_command": "npm run audit:build",
+  "audit_profiles": ["showcase/web", "test/staging", "local/wechat"]
+}

@@ -1,0 +1,49 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: farm-l2-r2
+resources:
+  - ../../../base
+images:
+  - name: registry.example.invalid/farm-game-runtime
+    newName: 127.0.0.1:5001/farm/backend
+    digest: sha256:0000000000000000000000000000000000000000000000000000000000000000
+  - name: registry.example.invalid/classic-farm-h5
+    newName: 127.0.0.1:5001/farm/h5
+    digest: sha256:0000000000000000000000000000000000000000000000000000000000000000
+configMapGenerator:
+  - name: farm-static-route
+    behavior: replace
+    files:
+      - route-snapshot.json=route-snapshot.render-only.json
+    options:
+      disableNameSuffixHash: true
+patches:
+  - target:
+      kind: Namespace
+      name: farm-staging-system
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: farm-l2-r2
+  - path: platform-patch.json
+  - path: ingress-patch.json
+  - target:
+      kind: Deployment
+      name: farm-gate
+    path: gate-patch.json
+  - target:
+      kind: StatefulSet
+      name: player-svr
+    path: player-patch.json
+  - target:
+      kind: StatefulSet
+      name: farm-svr
+    path: farm-patch.json
+  - target:
+      kind: Deployment
+      name: farm-worker
+    path: worker-patch.json
+  - target:
+      kind: Deployment
+      name: farm-h5
+    path: h5-patch.json

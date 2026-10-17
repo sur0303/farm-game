@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "profile": "showcase",
+  "images": [
+    {
+      "name": "farm-game-runtime",
+      "dockerfile": "Dockerfile.runtime",
+      "build_args": {
+        "APP_PROFILE": "showcase",
+        "RUNTIME_SERVICES": "player-svr farm-svr farm-worker farm-gate"
+      },
+      "binaries": [
+        "farm-gate",
+        "farm-svr",
+        "farm-worker",
+        "player-svr"
+      ],
+      "forbidden_binaries": [
+        "authority-fault-bot",
+        "authority-smoke-bot",
+        "authority-smoke-fixture",
+        "gate-vertical-e2e",
+        "lease-stress",
+        "q2r2b2-smoke",
+        "ws-driver",
+        "ws-stress"
+      ]
+    },
+    {
+      "name": "farm-load-tools",
+      "dockerfile": "Dockerfile.tools",
+      "build_args": {
+        "TOOLSET": "load"
+      },
+      "binaries": [
+        "lease-stress",
+        "ws-driver",
+        "ws-stress"
+      ]
+    },
+    {
+      "name": "farm-fault-tools",
+      "dockerfile": "Dockerfile.tools",
+      "build_args": {
+        "TOOLSET": "fault"
+      },
+      "binaries": [
+        "authority-fault-bot",
+        "authority-smoke-bot",
+        "authority-smoke-fixture",
+        "gate-vertical-e2e",
+        "q2r2b2-smoke"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+Exact reviewed product base: 54c6d0a15cd2e0555d309b59319f1ce30fab268c
+Redis image: redis:7.4-alpine / sha256:2a51817f79255c8b69f86a974459c2e0359aff81417d80158f2b9e541e6f4b33
+Method: temporary copy of the exact worktree plus an uncommitted reviewer-only Go test; no tracked source was modified.
+Barrier: tagged target ActivateFriendRelation paused after bucket-meta HMGET returned and before GetPair HLEN/ZCARD; a distinct Pair in the same product KeyBuilder bucket then committed; target resumed.
+
+=== RUN   TestDifferentPairSameBucketProducesMixedSnapshotBeforeTargetCommit
+    review_test.go:202: CLASSIFICATION=PRODUCT_READ_SNAPSHOT_RACE target_pair=sid1_40DiSoehXDco19LyJ-H2QY3UDa0UebQNFv8vaBfBHRw writer_pair=sid1_i3pyhiMrYMKXDf489dYPo8IfPU-HMXshREW66ZZP_VA bucket=44 target_record=0 target_receipt_keys=0 target_attempt_keys=0 stable_receipt_count=2 stable_receipt_zcard=2
+--- PASS: TestDifferentPairSameBucketProducesMixedSnapshotBeforeTargetCommit (0.05s)
+=== RUN   TestDifferentBucketCommitDoesNotTripTargetEnvelope
+    review_test.go:247: DIFFERENT_BUCKET_ISOLATION=PASS target_bucket=49 writer_bucket=15
+--- PASS: TestDifferentBucketCommitDoesNotTripTargetEnvelope (0.02s)
+PASS
+ok  farmgame/cmd/friend-envelope-review  0.078s
+
+Interpretation:
+- Same-bucket target returned ErrFriendReconcile deterministically.
+- Target Pair had no canonical record, receipt partition, or attempt partition after the error: the target operation was NOT_COMMITTED.
+- The concurrent writer Pair was ACTIVE.
+- Once concurrent mutation stopped, bucket receipt_count and receipt-due ZCARD were both 2: no stable accounting mismatch was present in this schedule.
+- A different-bucket writer did not affect the target.
+
+The temporary test and Redis container were destroyed after capture. This reviewer probe confirms the product race class; it is not a replacement for the permanent Friend testkit required from the product Writer.

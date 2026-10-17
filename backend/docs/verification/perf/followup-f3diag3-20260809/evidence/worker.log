@@ -1,0 +1,17 @@
+2026/08/09 20:26:47 worker actor routing enabled with 2 connections
+2026/08/09 20:26:47 CareRewardOrder authority recovery enabled with bounded FARM bucket scans
+2026/08/09 20:26:47 farm-worker shared generic recovery enabled for PLANT, UNLOCK_PLOT and HARVEST
+2026/08/09 20:26:47 farm-worker durable Theft recovery enabled from Pair DueIndex
+2026/08/09 20:26:47 farm-worker running, worker_id=smoke-worker boot_id=smoke-worker-q108091226392569922 version=0.0.0-dev
+2026/08/09 20:27:12 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:0 InvalidOrders:2 Claimed:0 Completed:0 ResultsCompleted:0 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:2 LastError:theft online: target binding unavailable: not found}
+2026/08/09 20:27:16 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:0 InvalidOrders:2 Claimed:0 Completed:0 ResultsCompleted:0 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:2 LastError:theft online: target binding unavailable: not found}
+2026/08/09 20:27:20 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:0 InvalidOrders:2 Claimed:0 Completed:0 ResultsCompleted:0 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:2 LastError:theft online: target binding unavailable: not found}
+2026/08/09 20:27:24 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:0 InvalidOrders:2 Claimed:0 Completed:0 ResultsCompleted:0 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:2 LastError:theft online: target binding unavailable: not found}
+2026/08/09 20:27:28 recovery round theft={Discovered:4 MalformedMembers:0 NonTheft:0 InvalidOrders:2 Claimed:1 Completed:1 ResultsCompleted:1 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:2 LastError:theft online: target binding unavailable: not found}
+2026/08/09 20:27:31 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:0 InvalidOrders:2 Claimed:0 Completed:0 ResultsCompleted:0 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:2 LastError:theft online: target binding unavailable: not found}
+2026/08/09 20:27:35 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:0 InvalidOrders:2 Claimed:0 Completed:0 ResultsCompleted:0 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:2 LastError:theft online: target binding unavailable: not found}
+2026/08/09 20:27:39 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:0 InvalidOrders:2 Claimed:0 Completed:0 ResultsCompleted:0 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:2 LastError:theft online: target binding unavailable: not found}
+2026/08/09 20:27:43 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:0 InvalidOrders:2 Claimed:0 Completed:0 ResultsCompleted:0 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:2 LastError:theft online: target binding unavailable: not found}
+2026/08/09 20:27:47 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:0 InvalidOrders:2 Claimed:0 Completed:0 ResultsCompleted:0 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:2 LastError:theft online: target binding unavailable: not found}
+2026/08/09 20:27:50 recovery round theft={Discovered:2 MalformedMembers:0 NonTheft:0 InvalidOrders:2 Claimed:0 Completed:0 ResultsCompleted:0 Retried:0 Reconciled:0 LeaseHeld:0 LeaseLost:0 Errors:2 LastError:theft online: target binding unavailable: not found}
+2026/08/09 20:27:51 farm-worker stopped

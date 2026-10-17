@@ -1,0 +1,69 @@
+{
+  "schema_version": "cap-single-pod-l2-harness-c0.observability-adapter-mapping.v0.1",
+  "task_id": "CAP-SINGLE-POD-L2-HARNESS-C0-CLOSURE",
+  "qualification_status": "NOT_RUN",
+  "policy": {
+    "required_metric_absence": "INCONCLUSIVE_OBSERVABILITY",
+    "required_gate_absence": "INCONCLUSIVE_OBSERVABILITY",
+    "counter_reset": "INCONCLUSIVE_OBSERVABILITY",
+    "log_estimation_allowed": false,
+    "primitive_substitution_allowed": false
+  },
+  "generic_core_metrics": [
+    "planned_arrivals_total",
+    "launched_arrivals_total",
+    "scheduled_unsent_total",
+    "completed_total",
+    "rejected_total",
+    "timeout_total",
+    "arrival_lag_ms"
+  ],
+  "collector_cgroup_procfs_metrics": [
+    "service_cpu_percent",
+    "service_rss_bytes",
+    "service_memory_percent_of_limit",
+    "service_fd_open",
+    "driver_cpu_percent",
+    "driver_rss_bytes",
+    "driver_fd_open",
+    "observer_cpu_percent",
+    "observer_rss_bytes",
+    "dependency_cpu_percent",
+    "dependency_memory_percent_of_limit",
+    "cgroup_limit_drift",
+    "identity_drift"
+  ],
+  "prometheus_adapter": {
+    "source_policy": "credential_free_loopback_only",
+    "supported_values": ["value", "sum", "count", "p50", "p95", "p99"],
+    "supported_aggregations": ["SINGLE", "SUM", "MAX", "MIN"],
+    "mapping_owner": "L2 test-only adapter config; missing production metrics remain with the existing B2 Writer",
+    "service_mapping_status": {
+      "gate": "CONFIG_REQUIRED_NOT_QUALIFIED",
+      "player": "CONFIG_REQUIRED_NOT_QUALIFIED",
+      "farm": "CONFIG_REQUIRED_NOT_QUALIFIED",
+      "worker": "CONFIG_REQUIRED_NOT_QUALIFIED"
+    }
+  },
+  "oracle_adapter": {
+    "baseline_modes": ["COUNTER_DELTA", "GAUGE_CURRENT"],
+    "source_policy": "credential_free_loopback Prometheus correctness exporter",
+    "required_gate_count": 15,
+    "exact_r1_mapping": "deploy/load/cap-single-pod-r1-oracle-adapter.json",
+    "source_exporter_status": "REQUIRED_NOT_QUALIFIED"
+  },
+  "adapter_identity": {
+    "health_schema": "cap-single-pod-l2.adapter-health.v0.1",
+    "binary_identity": "exact executable sha256 must equal the running Harness binary",
+    "collector_config_identity": "exact sha256 from Run Plan",
+    "oracle_config_identity": "exact sha256 from Run Plan",
+    "raw_endpoint_or_path_in_evidence": false
+  },
+  "claim_boundary": {
+    "observability_qualification": "NOT_RUN",
+    "smoke_authorized": false,
+    "baseline_eligible": false,
+    "capacity_claim": "NONE",
+    "supports_30m_dau": false
+  }
+}

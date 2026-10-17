@@ -1,0 +1,21 @@
+{
+  "schema": "farm.r2-q.fixture/static-kubernetes/v1",
+  "fixture_id": "static-kubernetes-v1",
+  "contract_status": "SKIPPED_NOT_COMPOSED",
+  "deterministic": true,
+  "production_semantics_changed": false,
+  "required_objects": ["Deployment_or_StatefulSet", "Service", "ConfigMap", "Secret", "startupProbe", "readinessProbe", "livenessProbe", "preStop", "terminationGracePeriodSeconds", "PodDisruptionBudget", "topologySpreadConstraints", "anti-affinity", "NetworkPolicy", "ServiceMonitor_or_PodMonitor"],
+  "topology": {"namespace": "farm-staging-system", "farm_gate_replicas": 3, "player_holders": 2, "farm_holders": 2, "worker_replicas": 2, "h5_replicas": 2, "redis": "external_controlled_service", "route": "static_assignment"},
+  "route_snapshot": "deploy/k8s/static-staging/base/route-snapshot.v1.json",
+  "candidate_tools": {"validator": "scripts/validate-k8s-static-staging", "test": "scripts/test-k8s-static-staging"},
+  "separate_environment_gates": ["render_structural_validation", "cluster_deployment", "pod_ready", "gate_rolling_update", "worker_kill", "holder_same_holder_restart", "official_h5_url"],
+  "security": {"internal_grpc_public_ingress": false, "clusterip_only": true, "network_policy_required": true, "secret_values_recorded": false},
+  "cases": [
+    {"case_id": "render", "environment": "rendered_manifest", "localhost_is_staging": false},
+    {"case_id": "cluster", "environment": "kubernetes_staging", "cluster_identity_required": true, "namespace_required": "farm-staging-system"},
+    {"case_id": "gate-rollout", "environment": "kubernetes_staging", "rolling_update_separate": true, "old_gate_drained": true},
+    {"case_id": "worker-kill", "environment": "kubernetes_staging", "due_index_recovery_required": true},
+    {"case_id": "holder-restart", "environment": "kubernetes_staging", "same_holder_identity_required": true, "route_snapshot_hash_required": true},
+    {"case_id": "official-h5", "environment": "official_url", "localhost_allowed": false, "real_auth_required": true, "mock_allowed": false}
+  ]
+}

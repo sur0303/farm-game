@@ -1,0 +1,576 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+KUBECONFIG="${KUBECONFIG:-$LAB_ROOT/runtime/kubeconfig}"
+RUN_ID="${ROUTE_RUN_ID:-}"
+PHASE="${1:-}"
+NAMESPACE="farm-route-dynamic"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO=$(CDPATH= cd -- "$SCRIPT_DIR/../.." && pwd)
+PROFILE="$LAB_ROOT/receipts/dynamic-route-profile-$RUN_ID.json"
+INITIAL="$LAB_ROOT/receipts/dynamic-route-bootstrap-initial-$RUN_ID.json"
+READY="$LAB_ROOT/receipts/dynamic-route-verify-ready-zero-shard-$RUN_ID.json"
+ASSIGN="$LAB_ROOT/receipts/dynamic-route-bootstrap-assign-$RUN_ID.json"
+FINAL_RECEIPT="$LAB_ROOT/receipts/dynamic-route-verify-final-$RUN_ID.json"
+TLS_DIR="$LAB_ROOT/runtime/tls/dynamic-route/$RUN_ID"
+OUT_ROOT="$LAB_ROOT/runtime/dynamic-route-$RUN_ID"
+
+case "$PHASE" in
+  --ready-zero-shard) phase=ready-zero-shard ;;
+  --final) phase=final ;;
+  --post-business) phase=post-business ;;
+  *) echo "usage: ROUTE_RUN_ID=<id> $0 --ready-zero-shard|--final|--post-business" >&2; exit 2 ;;
+esac
+OUTPUT="$OUT_ROOT/verify-$phase.json"
+RECEIPT="$LAB_ROOT/receipts/dynamic-route-verify-$phase-$RUN_ID.json"
+KUBE_CONTEXT="farm-l2-r2"
+KUBECTL_BIN=$(command -v kubectl)
+kubectl() { timeout --foreground 240s "$KUBECTL_BIN" --kubeconfig "$KUBECONFIG" --context "$KUBE_CONTEXT" "$@"; }
+[[ "$RUN_ID" =~ ^[a-z0-9][a-z0-9-]{0,62}$ ]] || { echo "verify-dynamic-route-state: ROUTE_RUN_ID required" >&2; exit 1; }
+[[ -s "$KUBECONFIG" && "$(kubectl config current-context)" == "farm-l2-r2" ]] || { echo "verify-dynamic-route-state: refusing non-lab context" >&2; exit 1; }
+kubectl config view --minify -o json | python3 -c 'import json,sys; d=json.load(sys.stdin); ok=d.get("current-context")=="farm-l2-r2" and d.get("contexts",[{}])[0].get("context",{}).get("cluster")=="default" and d.get("clusters",[{}])[0].get("cluster",{}).get("server")=="https://127.0.0.1:6443"; sys.exit(0 if ok else "lab cluster identity mismatch")'
+[[ -s "$PROFILE" && -s "$INITIAL" && -s "$TLS_DIR/ca.crt" && -s "$TLS_DIR/route-operator.crt" && -s "$TLS_DIR/route-operator.key" ]] || { echo "verify-dynamic-route-state: immutable inputs missing" >&2; exit 1; }
+[[ ! -e "$OUTPUT" && ! -e "$RECEIPT" ]] || { echo "verify-dynamic-route-state: immutable output exists" >&2; exit 1; }
+if [[ "$phase" != "ready-zero-shard" ]]; then
+  [[ -s "$READY" && -s "$ASSIGN" ]] || { echo "verify-dynamic-route-state: ready-zero-shard and assignment receipts missing" >&2; exit 1; }
+fi
+if [[ "$phase" == "post-business" ]]; then
+  [[ -s "$FINAL_RECEIPT" ]] || { echo "verify-dynamic-route-state: final verification receipt missing" >&2; exit 1; }
+fi
+test -z "$(git -C "$REPO" status --porcelain)" || { echo "verify-dynamic-route-state: source worktree must be clean" >&2; exit 1; }
+
+head=$(git -C "$REPO" rev-parse HEAD)
+identity_output=$(python3 - "$PROFILE" "$INITIAL" "$READY" "$ASSIGN" "$FINAL_RECEIPT" "$head" "$phase" <<'PY'
+import hashlib,json,os,sys
+profile_path,initial_path,ready_path,assign_path,final_path,head,phase=sys.argv[1:]
+def require(ok,message):
+ if not ok: raise SystemExit(message)
+def sha(path): return hashlib.sha256(open(path,'rb').read()).hexdigest()
+p=json.load(open(profile_path)); i=json.load(open(initial_path))
+require(p.get('source_head')==head and p.get('status')=='MATERIALIZED_NOT_APPLIED','profile/source mismatch')
+require(i.get('source_head')==head and i.get('status')=='BOOTSTRAPPED_ZERO_SHARD_CONTROLLER_NOT_STARTED','initial receipt mismatch')
+require(i.get('run_id')==p.get('run_id') and i.get('final_revision')==1 and i.get('claim_count')==0,'initial receipt semantics mismatch')
+if phase!='ready-zero-shard':
+ ready=json.load(open(ready_path)); assign=json.load(open(assign_path))
+ require(ready.get('status')=='READY_ZERO_SHARD_VERIFIED' and ready.get('phase')=='ready-zero-shard','ready receipt mismatch')
+ require(ready.get('run_id')==p.get('run_id') and ready.get('source_head')==head and ready.get('snapshot_revision')==1,'ready receipt binding mismatch')
+ require(ready.get('holder_restart_count')==0 and ready.get('controller_overlap') is False,'ready receipt safety mismatch')
+ require(assign.get('status')=='ASSIGNED_4X4X4_CONTROLLER_STOPPED' and assign.get('phase')=='assign','assignment receipt mismatch')
+ require(assign.get('run_id')==p.get('run_id') and assign.get('source_head')==head,'assignment receipt binding mismatch')
+ require(assign.get('initial_revision')==1 and assign.get('final_revision')==13 and assign.get('claim_count')==12,'assignment receipt revision mismatch')
+ require(assign.get('holder_boot_ids')==i.get('holder_boot_ids') and assign.get('controller_overlap') is False,'assignment Holder/overlap mismatch')
+ require(assign.get('initial_bootstrap_receipt_sha256')==sha(initial_path),'assignment initial hash mismatch')
+ require(assign.get('ready_zero_shard_receipt_sha256')==sha(ready_path),'assignment ready hash mismatch')
+ if phase=='post-business':
+  final=json.load(open(final_path))
+  require(final.get('status')=='FINAL_4X4X4_VERIFIED_WORKER_AUTHORITY_HOLDERS_ONLY' and final.get('phase')=='final','final receipt mismatch')
+  require(final.get('run_id')==p.get('run_id') and final.get('source_head')==head and final.get('snapshot_revision',0)>=13,'final receipt binding mismatch')
+boot_key='initial_zero_shard_runtime' if phase=='ready-zero-shard' else 'final_dynamic_runtime'
+print(p['controller_boot_generations'][boot_key])
+for name in ('player-svr-0','player-svr-1','farm-svr-0','farm-svr-1'):
+ print(i['holder_boot_ids'][name])
+for name in ('farm-worker-a','farm-worker-b'):
+ print(i['holder_boot_ids'][name])
+PY
+)
+readarray -t identity <<<"$identity_output"
+[[ "${#identity[@]}" -eq 7 ]] || { echo "verify-dynamic-route-state: identity binding output invalid" >&2; exit 1; }
+controller_boot=${identity[0]}
+player_a_boot=${identity[1]}; player_b_boot=${identity[2]}; farm_a_boot=${identity[3]}; farm_b_boot=${identity[4]}
+worker_a_boot=${identity[5]}; worker_b_boot=${identity[6]}
+
+binary=$(mktemp); pf_log=$(mktemp); work=$(mktemp -d)
+cleanup() {
+  if [[ -n "${pf_pid:-}" ]]; then
+    kill -- "-$pf_pid" >/dev/null 2>&1 || true
+    wait "$pf_pid" >/dev/null 2>&1 || true
+  fi
+  rm -f "$binary" "$pf_log"
+  rm -rf "$work"
+}
+trap cleanup EXIT
+(cd "$REPO" && go build -buildvcs=false -trimpath -o "$binary" ./cmd/routectl)
+port=$(python3 - <<'PY'
+import socket
+s=socket.socket(); s.bind(('127.0.0.1',0)); print(s.getsockname()[1]); s.close()
+PY
+)
+setsid timeout --foreground 240s "$KUBECTL_BIN" \
+  --kubeconfig "$KUBECONFIG" \
+  --context "$KUBE_CONTEXT" \
+  -n "$NAMESPACE" \
+  port-forward service/route-controller "$port:9443" >"$pf_log" 2>&1 &
+pf_pid=$!
+for _ in $(seq 1 100); do
+  grep -q "Forwarding from 127.0.0.1:$port" "$pf_log" && break
+  kill -0 "$pf_pid" 2>/dev/null || { echo "verify-dynamic-route-state: controller port-forward failed" >&2; exit 1; }
+  sleep .1
+done
+grep -q "Forwarding from 127.0.0.1:$port" "$pf_log" || { echo "verify-dynamic-route-state: controller port-forward timeout" >&2; exit 1; }
+
+run_ctl() {
+  ROUTE_CONTROLLER_TARGET="127.0.0.1:$port" \
+  ROUTE_CONTROLLER_SERVER_NAME="route-controller.$NAMESPACE.svc.cluster.local" \
+  ROUTE_CONTROLLER_EXPECTED_SERVER_IDENTITY="route-controller.$NAMESPACE.svc.cluster.local" \
+  ROUTECTL_TLS_CERT="$TLS_DIR/route-operator.crt" \
+  ROUTECTL_TLS_KEY="$TLS_DIR/route-operator.key" \
+  ROUTECTL_TLS_CA="$TLS_DIR/ca.crt" \
+  "$binary" "$@"
+}
+
+# Holder heartbeats and Controller startup are asynchronous. Poll boundedly and
+# accept only a fully coherent sample; partial samples are retained only in the
+# enclosing immutable apply failure evidence. Deadline-only revisions advance
+# while six independently scheduled Holder heartbeats converge, so the bound
+# must cover several refresh cycles without weakening the five-sample gate.
+verification_attempts=180
+verified=false
+consecutive=0
+for _ in $(seq 1 "$verification_attempts"); do
+  if run_ctl status >"$work/status.json" &&
+     run_ctl holders --domain PLAYER >"$work/player-holders.json" &&
+     run_ctl holders --domain FARM >"$work/farm-holders.json" &&
+     run_ctl holders --domain FARM_WORKER >"$work/worker-holders.json" &&
+     run_ctl shard --domain FARM_WORKER --shard 0 >"$work/worker-shard-0.json" &&
+     run_ctl shard --domain FARM_WORKER --shard 1 >"$work/worker-shard-1.json" &&
+     run_ctl shard --domain FARM_WORKER --shard 2 >"$work/worker-shard-2.json" &&
+     run_ctl shard --domain FARM_WORKER --shard 3 >"$work/worker-shard-3.json" &&
+     kubectl -n "$NAMESPACE" get pod -o json >"$work/pods.json"; then
+    if python3 - "$phase" "$controller_boot" "$player_a_boot" "$player_b_boot" "$farm_a_boot" "$farm_b_boot" "$worker_a_boot" "$worker_b_boot" "$work" <<'PY'
+import json,sys,time
+phase,controller_boot,pa,pb,fa,fb,wa,wb,root=sys.argv[1:]
+def require(ok,message):
+ if not ok: raise SystemExit(message)
+status=json.load(open(root+'/status.json'))
+observed_rev=status.get('snapshot_revision',0)
+if phase=='ready-zero-shard': require(observed_rev==1,'ready-zero-shard revision mismatch')
+elif phase=='final': require(observed_rev>=13,'final assignment revision mismatch')
+else: require(observed_rev>=13,'post-business revision regressed')
+expected_rev=observed_rev
+require(status.get('ready') is True and status.get('boot')==controller_boot,'Controller status mismatch')
+require(status.get('incomplete_plans')==[],'incomplete plans observed')
+now=int(time.time()*1000)
+expected={
+ 'PLAYER': {
+  'player-svr-0':(pa,'player-svr-0.player-svr-headless.farm-route-dynamic.svc.cluster.local:9100'),
+  'player-svr-1':(pb,'player-svr-1.player-svr-headless.farm-route-dynamic.svc.cluster.local:9100'),
+ },
+ 'FARM': {
+  'farm-svr-0':(fa,'farm-svr-0.farm-svr-headless.farm-route-dynamic.svc.cluster.local:9090'),
+  'farm-svr-1':(fb,'farm-svr-1.farm-svr-headless.farm-route-dynamic.svc.cluster.local:9090'),
+ },
+}
+for domain,file in (('PLAYER','player-holders.json'),('FARM','farm-holders.json')):
+ values=json.load(open(root+'/'+file))
+ require(values.get('domain')==domain and len(values.get('holders',[]))==2,domain+' holder cardinality mismatch')
+ got={x['holder_id']:x for x in values['holders']}
+ require(set(got)==set(expected[domain]),domain+' holder identity mismatch')
+ for holder_id,(boot,endpoint) in expected[domain].items():
+  h=got[holder_id]
+  is_a=holder_id.endswith('-0')
+  state='READY_ZERO_SHARD' if phase=='ready-zero-shard' or not is_a else 'SERVING'
+  count=0 if phase=='ready-zero-shard' or not is_a else 4
+  require(h.get('domain')==domain and h.get('boot_id')==boot and h.get('logic_endpoint')==endpoint,holder_id+' identity/endpoint mismatch')
+  require(h.get('tls_dns_identity')=='holder-control.farm-route-dynamic.svc.cluster.local',holder_id+' TLS identity mismatch')
+  require(h.get('state')==state and h.get('process_ready') is True and h.get('draining') is False,holder_id+' state mismatch')
+  require(h.get('serving_shard_count')==count and h.get('snapshot_revision')==expected_rev,holder_id+' count/revision mismatch')
+  require(h.get('capacity_weight',0)>0 and h.get('sequence',0)>0 and h.get('heartbeat_at_ms',0)>0 and h.get('lease_until_ms',0)>=now+5000,holder_id+' heartbeat/lease mismatch')
+worker_holders=json.load(open(root+'/worker-holders.json'))
+require(worker_holders.get('domain')=='FARM_WORKER','FARM_WORKER holder domain mismatch')
+if phase=='ready-zero-shard':
+ require(worker_holders.get('holders')==[],'FARM_WORKER holders started before final Controller')
+else:
+ require(len(worker_holders.get('holders',[]))==2,'FARM_WORKER holder cardinality mismatch')
+ worker_expected={
+  'farm-worker-a':(wa,'farm-worker-a.farm-route-dynamic.svc.cluster.local:9201'),
+  'farm-worker-b':(wb,'farm-worker-b.farm-route-dynamic.svc.cluster.local:9201'),
+ }
+ worker_by_id={x['holder_id']:x for x in worker_holders['holders']}
+ require(set(worker_by_id)==set(worker_expected),'FARM_WORKER holder identity mismatch')
+ for holder_id,(boot,endpoint) in worker_expected.items():
+  h=worker_by_id[holder_id]
+  require(h.get('boot_id')==boot and h.get('logic_endpoint')==endpoint and h.get('state')=='SERVING',holder_id+' holder identity/state mismatch')
+  require(h.get('process_ready') is True and h.get('draining') is False and h.get('serving_shard_count')==2,holder_id+' holder readiness/count mismatch')
+  require(h.get('snapshot_revision')==expected_rev,holder_id+' holder revision mismatch')
+  require(h.get('capacity_weight',0)>0 and h.get('sequence',0)>0 and h.get('heartbeat_at_ms',0)>0 and h.get('lease_until_ms',0)>=now+5000,holder_id+' holder heartbeat/lease mismatch')
+for shard in range(4):
+ worker=json.load(open(root+f'/worker-shard-{shard}.json'))
+ require(worker.get('domain')=='FARM_WORKER' and worker.get('shard')==shard,'FARM_WORKER shard identity mismatch')
+ require(worker.get('snapshot_revision')==observed_rev,'FARM_WORKER snapshot revision mismatch')
+ authority=worker.get('authority')
+ if phase=='ready-zero-shard':
+  require(worker.get('snapshot_state')=='ASSIGNING' and authority is None,'zero-shard FARM_WORKER authority mismatch')
+ else:
+  expected_id,expected_boot=('farm-worker-a',wa) if shard%2==0 else ('farm-worker-b',wb)
+  require(worker.get('snapshot_state')=='ACTIVE' and isinstance(authority,dict),'FARM_WORKER active authority missing')
+  fence=authority.get('fence',{})
+  require(authority.get('domain')=='FARM_WORKER' and authority.get('shard')==shard and authority.get('state')=='ACTIVE','FARM_WORKER authority tuple mismatch')
+  require(fence.get('holder_id')==expected_id and fence.get('holder_boot_id')==expected_boot,'FARM_WORKER ownership mismatch')
+  require(fence.get('assignment_revision')==1 and fence.get('writer_epoch')==1 and fence.get('lease_epoch')==1,'FARM_WORKER fence mismatch')
+pods=json.load(open(root+'/pods.json')).get('items',[])
+by_name={p['metadata']['name']:p for p in pods}
+required={'player-svr-0','player-svr-1','farm-svr-0','farm-svr-1'}
+require(required.issubset(by_name),'Holder Pod set incomplete')
+counts={name:sum(p.get('metadata',{}).get('labels',{}).get('app.kubernetes.io/name')==name for p in pods) for name in ('route-controller','player-svr','farm-svr','farm-worker-a','farm-worker-b','farm-gate','farm-h5')}
+expected={'route-controller':1,'player-svr':2,'farm-svr':2,'farm-worker-a':0,'farm-worker-b':0,'farm-gate':0,'farm-h5':0}
+if phase=='final':
+ expected.update({'farm-worker-a':1,'farm-worker-b':1})
+if phase=='post-business':
+ expected.update({'farm-worker-a':1,'farm-worker-b':1,'farm-gate':1,'farm-h5':1})
+require(counts==expected,'workload Pod cardinality mismatch')
+require(len(pods)==sum(expected.values()),'unexpected Pod present')
+for pod in pods:
+ statuses=pod.get('status',{}).get('containerStatuses',[])
+ require(len(statuses)==1 and statuses[0].get('restartCount')==0 and statuses[0].get('ready') is True and bool(statuses[0].get('imageID')),pod['metadata']['name']+' readiness/restart/image mismatch')
+ app=pod.get('metadata',{}).get('labels',{}).get('app.kubernetes.io/name')
+ if app in {'farm-worker-a','farm-worker-b'}:
+  env={item.get('name'):item.get('value') for item in pod['spec']['containers'][0].get('env',[])}
+  require(env.get('FARM_WORKER_ROUTE_HOLDER_ONLY')==('true' if phase=='final' else 'false'),pod['metadata']['name']+' route-holder mode mismatch')
+ init_statuses=pod.get('status',{}).get('initContainerStatuses',[])
+ if pod['metadata']['name'] in required:
+  require(len(init_statuses)==1 and init_statuses[0].get('restartCount')==0 and bool(init_statuses[0].get('imageID')) and init_statuses[0].get('state',{}).get('terminated',{}).get('exitCode')==0,pod['metadata']['name']+' Holder init barrier mismatch')
+ elif pod.get('metadata',{}).get('labels',{}).get('app.kubernetes.io/name')=='farm-h5':
+  require(len(init_statuses)==1 and init_statuses[0].get('restartCount')==0 and bool(init_statuses[0].get('imageID')) and init_statuses[0].get('state',{}).get('terminated',{}).get('exitCode')==0,pod['metadata']['name']+' H5 init barrier mismatch')
+ else:
+  require(init_statuses==[],pod['metadata']['name']+' unexpected init container')
+PY
+    then
+      consecutive=$((consecutive + 1)); sample=$consecutive
+      cp "$work/status.json" "$work/sample-$sample-status.json"
+      cp "$work/player-holders.json" "$work/sample-$sample-player-holders.json"
+      cp "$work/farm-holders.json" "$work/sample-$sample-farm-holders.json"
+      cp "$work/worker-holders.json" "$work/sample-$sample-worker-holders.json"
+      for shard in 0 1 2 3; do
+        cp "$work/worker-shard-$shard.json" "$work/sample-$sample-worker-shard-$shard.json"
+      done
+      cp "$work/pods.json" "$work/sample-$sample-pods.json"
+      if [[ "$consecutive" -ge 5 ]]; then verified=true; break; fi
+    else
+      consecutive=0
+      rm -f "$work"/sample-*
+    fi
+  else
+    consecutive=0
+    rm -f "$work"/sample-*
+  fi
+  sleep 1
+done
+[[ "$verified" == true ]] || { echo "verify-dynamic-route-state: five coherent $phase Controller/Holder samples not observed" >&2; exit 1; }
+verified_revision=$(python3 - "$work/status.json" <<'PY'
+import json,sys
+print(json.load(open(sys.argv[1]))['snapshot_revision'])
+PY
+)
+python3 - "$work" <<'PY'
+import json,sys
+from pathlib import Path
+root=Path(sys.argv[1]); bindings=[]
+revisions=[]
+worker_samples=[]
+for index in range(1,6):
+ status=json.loads((root/f'sample-{index}-status.json').read_text())
+ revisions.append(status.get('snapshot_revision'))
+ worker_samples.append([])
+ for shard in range(4):
+  worker=json.loads((root/f'sample-{index}-worker-shard-{shard}.json').read_text())
+  authority=worker.get('authority') or {}
+  fence=authority.get('fence') or {}
+  worker_samples[-1].append((
+   worker.get('snapshot_revision'),worker.get('snapshot_state'),
+   fence.get('holder_id'),fence.get('holder_boot_id'),
+   fence.get('assignment_revision'),fence.get('writer_epoch'),fence.get('lease_epoch'),
+  ))
+ pods=json.loads((root/f'sample-{index}-pods.json').read_text())['items']
+ bindings.append({p['metadata']['name']:(
+  p['metadata']['uid'],
+  tuple((c.get('restartCount',0),c.get('ready'),c.get('imageID')) for c in p.get('status',{}).get('containerStatuses',[])),
+  tuple((c.get('restartCount',0),c.get('imageID'),c.get('state',{}).get('terminated',{}).get('exitCode')) for c in p.get('status',{}).get('initContainerStatuses',[])),
+ ) for p in pods})
+if any(value!=bindings[0] for value in bindings[1:]):
+ raise SystemExit('Pod UID/restart/readiness drift across five samples')
+if len(set(revisions))!=1:
+ raise SystemExit('Snapshot revision drift across five samples')
+if any(value!=worker_samples[0] for value in worker_samples[1:]):
+ raise SystemExit('FARM_WORKER authority drift across five samples')
+PY
+
+for pair in "player-svr-0:$player_a_boot" "player-svr-1:$player_b_boot" "farm-svr-0:$farm_a_boot" "farm-svr-1:$farm_b_boot"; do
+  pod=${pair%%:*}; expected=${pair#*:}
+  [[ "$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" get pod "$pod" -o jsonpath='{.status.containerStatuses[0].restartCount}')" == "0" ]] || { echo "verify-dynamic-route-state: Holder process restart observed for $pod" >&2; exit 1; }
+  observed=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" exec "$pod" -- cat /var/run/farm-holder/current-boot-id)
+  [[ "$observed" == "$expected" ]] || { echo "verify-dynamic-route-state: Holder Boot mismatch for $pod" >&2; exit 1; }
+done
+
+if [[ "$phase" == "ready-zero-shard" ]]; then
+  run_ctl snapshot >"$work/snapshot.json"
+  for domain in PLAYER FARM FARM_WORKER; do
+    for shard in 0 1 2 3; do
+      run_ctl shard --domain "$domain" --shard "$shard" >"$work/shard-$domain-$shard.json"
+    done
+  done
+  python3 - "$work" "$player_a_boot" "$player_b_boot" "$farm_a_boot" "$farm_b_boot" "$worker_a_boot" "$worker_b_boot" <<'PY'
+import hashlib,json,struct,sys
+from pathlib import Path
+root=Path(sys.argv[1]); pa,pb,fa,fb,wa,wb=sys.argv[2:]
+def require(ok,message):
+ if not ok: raise SystemExit(message)
+wrapped=json.loads((root/'snapshot.json').read_text()); snapshot=wrapped.get('canonical_json') or {}
+require(wrapped.get('schema')=='route-snapshot-v1' and wrapped.get('realm')=='classic-farm-dynamic-local' and wrapped.get('revision')==1 and wrapped.get('committed_at_ms',0)>0,'revision-1 envelope mismatch')
+canonical=json.dumps(snapshot,separators=(',',':'),ensure_ascii=False).encode()
+require(hashlib.sha256(canonical).hexdigest()==wrapped.get('checksum_sha256'),'revision-1 checksum mismatch')
+def lp(value):
+ raw=value.encode(); return struct.pack('>I',len(raw))+raw
+topology=lp('route-snapshot-v1')+lp('classic-farm-dynamic-local')+struct.pack('>I',2)+struct.pack('>Q',202608100001)+struct.pack('>I',4)+struct.pack('>I',4)+struct.pack('>I',4)
+require(hashlib.sha256(topology).hexdigest()==wrapped.get('topology_fingerprint'),'revision-1 topology mismatch')
+require(snapshot.get('global_revision')==1 and snapshot.get('hash_version')==2 and snapshot.get('hash_seed')==202608100001,'revision-1 Snapshot identity mismatch')
+expected=[('player-svr-0',pa),('player-svr-1',pb),('farm-svr-0',fa),('farm-svr-1',fb),('farm-worker-a',wa),('farm-worker-b',wb)]
+require(len(snapshot.get('holders',[]))==6,'revision-1 holder cardinality mismatch')
+for got,(holder,boot) in zip(snapshot['holders'],expected):
+ require(got.get('instance_id')==holder and got.get('boot_id')==boot and got.get('state')=='ACTIVE' and got.get('weight')==1,'revision-1 holder mismatch')
+for domain,key,index in (('PLAYER','player',0),('FARM','farm',2),('FARM_WORKER','farm_worker',4)):
+ table=snapshot.get(key) or {}
+ require(table.get('shard_count')==4 and len(table.get('routes',[]))==4,domain+' revision-1 route cardinality mismatch')
+ for shard,route in enumerate(table['routes']):
+  holder_index=4+shard%2 if domain=='FARM_WORKER' else index
+  require(route=={'holder_index':holder_index,'state':'ASSIGNING','shard_revision':1,'expected_writer_epoch':1,'expected_lease_epoch':1},domain+' revision-1 placeholder mismatch')
+  observed=json.loads((root/f'shard-{domain}-{shard}.json').read_text())
+  require(observed.get('snapshot_state')=='ASSIGNING' and observed.get('snapshot_revision')==1,domain+' revision-1 shard view mismatch')
+  require(observed.get('authority') is None and observed.get('related_plans')==[],domain+' revision-1 fabricated Authority/Plan')
+PY
+fi
+
+if [[ "$phase" != "ready-zero-shard" ]]; then
+  capture_deep_state() {
+    run_ctl status >"$work/deep-status-before.json" &&
+      run_ctl snapshot >"$work/snapshot.json" || return
+    for domain in PLAYER FARM FARM_WORKER; do
+      for shard in 0 1 2 3; do
+        run_ctl shard --domain "$domain" --shard "$shard" >"$work/shard-$domain-$shard.json" || return
+      done
+    done
+    run_ctl status >"$work/deep-status-after.json" || return
+  }
+  deep_verified=false
+  for _ in $(seq 1 "$verification_attempts"); do
+    if capture_deep_state && python3 - "$work" "$controller_boot" "$player_a_boot" "$player_b_boot" "$farm_a_boot" "$farm_b_boot" "$worker_a_boot" "$worker_b_boot" "$verified_revision" >"$work/deep-verified-revision.txt" <<'PY'
+import hashlib,json,struct,sys,time
+from pathlib import Path
+root=Path(sys.argv[1]); controller_boot,pa,pb,fa,fb,wa,wb,baseline=sys.argv[2:]; baseline=int(baseline)
+def require(ok,message):
+ if not ok: raise SystemExit(message)
+before=json.loads((root/'deep-status-before.json').read_text())
+after=json.loads((root/'deep-status-after.json').read_text())
+revision=before.get('snapshot_revision',0)
+require(revision>=baseline and after.get('snapshot_revision')==revision,'deep Controller revision drift')
+require(before.get('ready') is True and after.get('ready') is True and before.get('boot')==controller_boot and after.get('boot')==controller_boot,'deep Controller status mismatch')
+require(before.get('incomplete_plans')==[] and after.get('incomplete_plans')==[],'deep incomplete plans observed')
+wrapped=json.loads((root/'snapshot.json').read_text()); snapshot=wrapped.get('canonical_json') or {}
+require(set(wrapped)=={'command','schema','realm','revision','canonical_json','checksum_sha256','topology_fingerprint','committed_at_ms'},'Snapshot envelope field set mismatch')
+require(wrapped.get('command')=='snapshot' and wrapped.get('schema')=='route-snapshot-v1','Snapshot envelope schema mismatch')
+require(wrapped.get('realm')=='classic-farm-dynamic-local' and wrapped.get('revision')==revision and wrapped.get('committed_at_ms',0)>0,'Snapshot envelope identity mismatch')
+canonical=json.dumps(snapshot,separators=(',',':'),ensure_ascii=False).encode()
+require(hashlib.sha256(canonical).hexdigest()==wrapped.get('checksum_sha256'),'Snapshot canonical checksum mismatch')
+def lp(value):
+ raw=value.encode(); return struct.pack('>I',len(raw))+raw
+topology=lp('route-snapshot-v1')+lp('classic-farm-dynamic-local')+struct.pack('>I',2)+struct.pack('>Q',202608100001)+struct.pack('>I',4)+struct.pack('>I',4)+struct.pack('>I',4)
+require(hashlib.sha256(topology).hexdigest()==wrapped.get('topology_fingerprint'),'Snapshot topology fingerprint mismatch')
+require(set(snapshot)=={'realm','global_revision','hash_version','hash_seed','player','farm','farm_worker','holders'},'Snapshot field set mismatch')
+require(snapshot.get('global_revision')==revision and snapshot.get('realm')=='classic-farm-dynamic-local','Snapshot revision/realm mismatch')
+require(snapshot.get('hash_version')==2 and snapshot.get('hash_seed')==202608100001,'Snapshot hash profile mismatch')
+# RouteAssignmentManager projects only HolderRefs referenced by complete route
+# tables. READY_ZERO_SHARD targets remain in HolderRegistry, not in the process
+# Snapshot, until a route references them.
+require(len(snapshot.get('holders',[]))==4,'Snapshot active holder cardinality mismatch')
+expected_holders=[
+ ('player-svr-0',pa,'player-svr-0.player-svr-headless.farm-route-dynamic.svc.cluster.local:9100'),
+ ('farm-svr-0',fa,'farm-svr-0.farm-svr-headless.farm-route-dynamic.svc.cluster.local:9090'),
+ ('farm-worker-a',wa,'farm-worker-a.farm-route-dynamic.svc.cluster.local:9201'),
+ ('farm-worker-b',wb,'farm-worker-b.farm-route-dynamic.svc.cluster.local:9201'),
+]
+for got,expected in zip(snapshot['holders'],expected_holders):
+ holder,boot,endpoint=expected
+ require(set(got)=={'instance_id','boot_id','endpoint','state','weight'},holder+' Snapshot holder field mismatch')
+ require(got.get('instance_id')==holder and got.get('boot_id')==boot and got.get('endpoint')==endpoint,holder+' Snapshot holder identity mismatch')
+ require(got.get('state')=='ACTIVE' and got.get('weight')==1,holder+' Snapshot holder state/weight mismatch')
+for domain,key in (('PLAYER','player'),('FARM','farm'),('FARM_WORKER','farm_worker')):
+ table=snapshot.get(key) or {}
+ require(set(table)=={'shard_count','routes'} and table.get('shard_count')==4 and len(table.get('routes',[]))==4,domain+' Snapshot table mismatch')
+ for shard,route in enumerate(table['routes']):
+  observed=json.loads((root/f'shard-{domain}-{shard}.json').read_text())
+  authority=observed.get('authority') or {}; fence=authority.get('fence') or {}
+  require(observed.get('domain')==domain and observed.get('shard')==shard and observed.get('snapshot_state')=='ACTIVE' and observed.get('snapshot_revision')==revision,domain+' shard Snapshot mismatch')
+  require(authority.get('domain')==domain and authority.get('shard')==shard and authority.get('state')=='ACTIVE',domain+' shard Authority mismatch')
+  require(authority.get('lease_until_ms',0)>int(time.time()*1000) and observed.get('related_plans')==[],domain+' shard lease/plan mismatch')
+  require(set(route)=={'holder_index','state','shard_revision','expected_writer_epoch','expected_lease_epoch','lease_expire_at_ms'},domain+' route field set mismatch')
+  holder_index={'PLAYER':0,'FARM':1}.get(domain,2 if shard%2==0 else 3)
+  require(route.get('holder_index')==holder_index and route.get('state')=='ACTIVE',domain+' route holder/state mismatch')
+  require(route.get('shard_revision')==fence.get('assignment_revision') and fence.get('assignment_revision',0)>0,domain+' assignment revision mismatch')
+  require(route.get('expected_writer_epoch')==fence.get('writer_epoch') and fence.get('writer_epoch',0)>0,domain+' writer epoch mismatch')
+  require(route.get('expected_lease_epoch')==fence.get('lease_epoch') and fence.get('lease_epoch',0)>0,domain+' lease epoch mismatch')
+  require(route.get('lease_expire_at_ms',0)>0 and authority.get('lease_until_ms',0)>=route.get('lease_expire_at_ms',0),domain+' lease deadline mismatch')
+  holder=snapshot['holders'][holder_index]
+  require(fence.get('holder_id')==holder['instance_id'] and fence.get('holder_boot_id')==holder['boot_id'],domain+' holder fence mismatch')
+print(revision)
+PY
+    then
+      deep_verified=true
+      break
+    fi
+    sleep .25
+  done
+  [[ "$deep_verified" == true ]] || { echo "verify-dynamic-route-state: coherent deep Snapshot/shard window not observed" >&2; exit 1; }
+fi
+
+if [[ "$phase" == "post-business" ]]; then
+  python3 - "$FINAL_RECEIPT" "$work/pods.json" <<'PY'
+import json,sys
+final=json.load(open(sys.argv[1])); current=json.load(open(sys.argv[2]))['items']
+uids={p['metadata']['name']:p['metadata']['uid'] for p in current if p['metadata']['name'] in final.get('pod_uids',{})}
+if uids != final.get('pod_uids'):
+ raise SystemExit('post-business Controller/Holder Pod UID drift')
+PY
+  h5_pod=$(kubectl --request-timeout=15s -n "$NAMESPACE" get pod -l app.kubernetes.io/name=farm-h5 -o jsonpath='{.items[0].metadata.name}')
+  kubectl --request-timeout=15s -n "$NAMESPACE" exec "$h5_pod" -- wget -q -T 5 -O - http://127.0.0.1:8080/healthz >"$work/h5-health.txt"
+  grep -qx ok "$work/h5-health.txt"
+  kubectl --request-timeout=15s -n "$NAMESPACE" exec "$h5_pod" -- wget -q -T 5 -O - http://127.0.0.1:8080/ >"$work/h5-root.html"
+  [[ -s "$work/h5-root.html" ]] || { echo "verify-dynamic-route-state: H5 root is empty" >&2; exit 1; }
+  kubectl --request-timeout=15s -n "$NAMESPACE" get configmap farm-opportunity-mode -o json |
+    python3 -c 'import json,sys; data=json.load(sys.stdin).get("data",{}); o=json.load(open(sys.argv[1])).get("friend_opportunity",{}); expected={"header-read-mode":o.get("header_read_mode"),"hint-transport":o.get("hint_transport"),"stage":o.get("initial_stage")}; sys.exit(0 if data==expected else "baseline opportunity mode ConfigMap mismatch")' "$PROFILE"
+  capture_business_metrics() {
+    local spec app port pod_names pod metrics
+    rm -f "$work"/route-revision-*.prom
+    for spec in "player-svr:9101" "farm-svr:9091" "farm-worker-a:9201" "farm-worker-b:9201" "farm-gate:8080"; do
+      app=${spec%%:*}; port=${spec#*:}
+      pod_names=$(kubectl --request-timeout=15s -n "$NAMESPACE" get pod -l "app.kubernetes.io/name=$app" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}') || return
+      [[ -n "$pod_names" ]] || return
+      while IFS= read -r pod; do
+        [[ -n "$pod" ]] || continue
+        metrics="$work/route-revision-$pod.prom"
+        kubectl --request-timeout=15s -n "$NAMESPACE" exec "$pod" -- wget -q -T 5 -O - "http://127.0.0.1:$port/metrics" >"$metrics" || return
+      done <<<"$pod_names"
+    done
+  }
+  metrics_verified=false
+  for _ in $(seq 1 "$verification_attempts"); do
+    if capture_business_metrics && python3 - "$work" "$verified_revision" "$PROFILE" >"$work/business-metrics-revision.txt" <<'PY'
+import json,math,sys
+from pathlib import Path
+root=Path(sys.argv[1]); baseline=int(sys.argv[2])
+opportunity=json.load(open(sys.argv[3])).get('friend_opportunity',{})
+expected_hint=opportunity.get('hint_transport'); expected_header=opportunity.get('header_read_mode')
+pods=json.loads((root/'pods.json').read_text()).get('items',[])
+expected={'player-svr':2,'farm-svr':2,'farm-worker-a':1,'farm-worker-b':1,'farm-gate':1}
+by_app={}
+for pod in pods:
+ app=pod.get('metadata',{}).get('labels',{}).get('app.kubernetes.io/name')
+ if app in expected:
+  by_app.setdefault(app,[]).append(pod['metadata']['name'])
+def require(ok,message):
+ if not ok: raise SystemExit('verify-dynamic-route-state: '+message)
+require({app:len(names) for app,names in by_app.items()}==expected,'business metric Pod set mismatch')
+revisions=set()
+for app,names in by_app.items():
+ for pod in names:
+  path=root/f'route-revision-{pod}.prom'
+  require(path.is_file(),pod+' metrics missing')
+  lines=path.read_text().splitlines()
+  def scalar(name):
+   values=[]
+   for line in lines:
+    if line.startswith(name+' '):
+     try: values.append(float(line.split()[-1]))
+     except ValueError: pass
+   require(len(values)==1 and math.isfinite(values[0]) and values[0].is_integer(),pod+' metric '+name+' is missing or invalid')
+   return int(values[0])
+  revision=scalar('farm_actor_route_snapshot_revision')
+  require(revision>=baseline,pod+f' route revision {revision} regressed below {baseline}')
+  revisions.add(revision)
+  if app.startswith('farm-worker-'):
+   require(scalar('farm_opportunity_wakeup_assignment_revision')==revision,pod+' FARM_WORKER assignment revision mismatch')
+   require(scalar('farm_opportunity_wakeup_owned_shards')==2,pod+' does not own exactly two FARM_WORKER shards')
+   require(scalar('farm_opportunity_wakeup_assignment_ready')==1,pod+' FARM_WORKER assignment is not ready')
+   require(scalar('farm_friend_opportunity_hint_transport_mode{mode="%s"}'%expected_hint)==1,pod+' baseline Hint mode mismatch')
+  elif app=='farm-svr':
+   require(scalar('farm_opportunity_header_read_mode{mode="%s"}'%expected_header)==1,pod+' baseline Header mode mismatch')
+require(len(revisions)==1,'business consumers are not on one complete revision')
+print(revisions.pop())
+PY
+    then
+      metrics_verified=true
+      break
+    fi
+    sleep .25
+  done
+  [[ "$metrics_verified" == true ]] || { echo "verify-dynamic-route-state: coherent business metric revision not observed" >&2; exit 1; }
+fi
+
+python3 - "$OUTPUT" "$RECEIPT" "$RUN_ID" "$head" "$phase" "$controller_boot" "$PROFILE" "$INITIAL" "$READY" "$ASSIGN" "$FINAL_RECEIPT" "$work" <<'PY'
+import hashlib,json,os,sys,tempfile
+from pathlib import Path
+out_path,receipt,run_id,head,phase,controller_boot,profile,initial,ready,assign,final_receipt,work=sys.argv[1:]
+work=Path(work)
+def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def require(ok,message):
+ if not ok: raise SystemExit('verify-dynamic-route-state: '+message)
+observations={p.stem:json.loads(p.read_text()) for p in sorted(work.glob('*.json'))}
+artifact_sha256={p.name:sha(p) for p in sorted(work.iterdir()) if p.is_file()}
+pods=observations['pods']['items']
+baseline_revision=observations['status']['snapshot_revision']
+deep_revision=observations['snapshot']['revision']
+if phase=='ready-zero-shard':
+ require(deep_revision==baseline_revision==1,'ready deep Snapshot revision mismatch')
+else:
+ before=observations['deep-status-before']['snapshot_revision']
+ after=observations['deep-status-after']['snapshot_revision']
+ require(deep_revision>=baseline_revision,'deep Snapshot revision below coherent sample baseline')
+ require(before==deep_revision==after,'deep Snapshot/status sandwich mismatch')
+business_metrics_revision=None
+if phase=='post-business':
+ business_metrics_revision=int((work/'business-metrics-revision.txt').read_text().strip())
+ require(business_metrics_revision>=baseline_revision,'business metric revision below coherent sample baseline')
+bound_names={'player-svr-0','player-svr-1','farm-svr-0','farm-svr-1'}
+bound_names.update(p['metadata']['name'] for p in pods if p.get('metadata',{}).get('labels',{}).get('app.kubernetes.io/name')=='route-controller')
+if phase=='post-business':
+ bound_names={p['metadata']['name'] for p in pods}
+pod_uids={p['metadata']['name']:p['metadata']['uid'] for p in pods if p['metadata']['name'] in bound_names}
+pod_restarts={p['metadata']['name']:sum(c.get('restartCount',0) for c in p.get('status',{}).get('containerStatuses',[])) for p in pods if p['metadata']['name'] in bound_names}
+statuses={'ready-zero-shard':'READY_ZERO_SHARD_VERIFIED','final':'FINAL_4X4X4_VERIFIED_WORKER_AUTHORITY_HOLDERS_ONLY','post-business':'POST_BUSINESS_4X4X4_STABLE_NOT_G1_VERIFIED'}
+value={
+ 'schema_version':'farm-dynamic-route-state-verification.v1',
+ 'status':statuses[phase],
+ 'phase':phase,'run_id':run_id,'source_head':head,'controller_boot':controller_boot,
+ 'snapshot_revision':baseline_revision,'deep_snapshot_revision':deep_revision,
+ 'business_metrics_revision':business_metrics_revision,
+ 'profile_receipt_sha256':sha(profile),'initial_bootstrap_receipt_sha256':sha(initial),
+ 'ready_zero_shard_receipt_sha256':sha(ready) if phase!='ready-zero-shard' else None,
+ 'assignment_receipt_sha256':sha(assign) if phase!='ready-zero-shard' else None,
+ 'final_verification_receipt_sha256':sha(final_receipt) if phase=='post-business' else None,
+ 'observations':observations,'artifact_sha256':artifact_sha256,
+ 'pod_uids':pod_uids,'pod_restart_counts':pod_restarts,
+ 'holder_restart_count':sum(v for k,v in pod_restarts.items() if k.startswith(('player-svr-','farm-svr-'))),
+ 'controller_restart_count':sum(v for k,v in pod_restarts.items() if k.startswith('route-controller-')),
+ 'controller_overlap':False,
+ 'authenticated_complete_snapshot_control_plane_verified':True,
+ 'business_remote_watch_revision_13_installed':phase=='post-business',
+ 'remote_watch_revision_update_observed':False,'g1_verified':False,
+ 'company_redis_contacted':False,
+ 'redis_flush_performed':False,'global_scan_performed':False,
+ 'network_policy_enforcement':'NOT_CLAIMED','capacity_qualified':False,
+}
+payload=(json.dumps(value,sort_keys=True,indent=2)+'\n').encode()
+out=Path(out_path); out.parent.mkdir(parents=True,exist_ok=True)
+fd,tmp=tempfile.mkstemp(prefix='.dynamic-route-verify-output-',dir=out.parent)
+with os.fdopen(fd,'wb') as f:
+ f.write(payload);f.flush();os.fsync(f.fileno())
+os.chmod(tmp,0o600)
+try: os.link(tmp,out)
+finally: os.unlink(tmp)
+value['verification_output_sha256']=hashlib.sha256(payload).hexdigest()
+receipt_path=Path(receipt); receipt_path.parent.mkdir(parents=True,exist_ok=True)
+fd,tmp=tempfile.mkstemp(prefix='.dynamic-route-verify-',dir=receipt_path.parent)
+with os.fdopen(fd,'w') as f:
+ json.dump(value,f,sort_keys=True,indent=2);f.write('\n');f.flush();os.fsync(f.fileno())
+os.chmod(tmp,0o640);os.link(tmp,receipt_path);os.unlink(tmp)
+print(json.dumps(value,sort_keys=True,indent=2))
+PY

@@ -1,0 +1,9 @@
+FROM alpine:3.21
+ARG SERVICE
+RUN addgroup -S farm && adduser -S -G farm farm
+COPY .local-build/${SERVICE} /usr/local/bin/farm-service
+ARG IMAGE_REVISION=""
+LABEL org.opencontainers.image.revision=${IMAGE_REVISION}
+ENV FARM_IMAGE_REVISION=${IMAGE_REVISION}
+USER farm
+ENTRYPOINT ["/usr/local/bin/farm-service"]

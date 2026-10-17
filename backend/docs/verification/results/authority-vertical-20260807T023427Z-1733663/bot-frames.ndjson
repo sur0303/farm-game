@@ -1,0 +1,14 @@
+{"timestamp":"2026-08-07T02:34:48.711639235Z","direction":"send","kind":"ClientHello"}
+{"timestamp":"2026-08-07T02:34:48.712654999Z","direction":"recv","kind":"ServerHello","detail":"session=804acb7244e9c42e043b550a689da4e6 epoch=14 server_time_ms=1786070088712"}
+{"timestamp":"2026-08-07T02:34:48.712822304Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-join-smoke_bot1786070067-1786070088712675397 command_type=6"}
+{"timestamp":"2026-08-07T02:34:48.716165061Z","direction":"recv","kind":"CommandResult","detail":"join accepted sub=sub-ea97b558d4b1cd80f6a6548bb32bb0a2"}
+{"timestamp":"2026-08-07T02:34:48.717478225Z","direction":"recv","kind":"FarmSnapshot","detail":"owner=1000002 version=0"}
+{"timestamp":"2026-08-07T02:34:48.718244159Z","direction":"recv","kind":"SubscriptionReady"}
+{"timestamp":"2026-08-07T02:34:48.71827123Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-bootstrap-smoke_bot1786070067-1786070088718260319 command_type=13"}
+{"timestamp":"2026-08-07T02:34:48.720606539Z","direction":"recv","kind":"BootstrapApplied","detail":"revision=2 coin=100 items=0"}
+{"timestamp":"2026-08-07T02:34:48.720642316Z","direction":"send","kind":"ClientRecoveryComplete"}
+{"timestamp":"2026-08-07T02:34:48.720752604Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-buy-smoke_bot1786070067-1786070088720727818 command_type=2"}
+{"timestamp":"2026-08-07T02:34:48.722665178Z","direction":"recv","kind":"BuyApplied"}
+{"timestamp":"2026-08-07T02:34:48.72274058Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-plant-smoke_bot1786070067-1786070088722686748 command_type=4"}
+{"timestamp":"2026-08-07T02:34:48.734995057Z","direction":"recv","kind":"FarmChange","detail":"plot=0 phase=GROWING cycle=sid1_sF8ost8I6_jBMfX0dkezeA30qBKtmHi5dkHHGqKvdzg plant_at_ms=1786070088733 mature_at_ms=1786070098733 plot_version=2"}
+{"timestamp":"2026-08-07T02:34:48.735068085Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-harvest-pre-smoke_bot1786070067-1786070088735048287 command_type=5"}

@@ -1,0 +1,9 @@
+{
+  "schema_version": "schedule-due-index-run-meta-v1",
+  "train_id": "schedule-due-c5-full-20260811T211215Z-1922807",
+  "mode": "full",
+  "ordinary_members": 1000000,
+  "iterations": 5,
+  "redis_kind": "isolated_ephemeral_single_node",
+  "supports_30m_dau": false
+}

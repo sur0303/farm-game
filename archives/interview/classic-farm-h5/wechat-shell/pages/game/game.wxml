@@ -1,0 +1,14 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="title">正在进入经典农场</text>
+    <text class="hint">正在完成微信身份交接，请稍候。</text>
+  </view>
+
+  <view wx:elif="{{errorMessage}}" class="state-card">
+    <text class="title">暂时无法进入农场</text>
+    <text class="hint">{{errorMessage}}</text>
+    <button bindtap="retry">重新进入</button>
+  </view>
+
+  <web-view wx:else src="{{h5Url}}" bindload="onH5Load" binderror="onH5Error"></web-view>
+</view>

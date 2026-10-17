@@ -1,0 +1,531 @@
+# HELP farm_gate_boot_lease_renew_attempts_total GateBoot lease authority renew attempts.
+# TYPE farm_gate_boot_lease_renew_attempts_total counter
+farm_gate_boot_lease_renew_attempts_total 1
+# HELP farm_gate_boot_lease_renew_failures_total Failed GateBoot lease renewals; failures never extend local trust.
+# TYPE farm_gate_boot_lease_renew_failures_total counter
+farm_gate_boot_lease_renew_failures_total 0
+# HELP farm_gate_boot_lease_renew_successes_total Successful GateBoot lease renewals.
+# TYPE farm_gate_boot_lease_renew_successes_total counter
+farm_gate_boot_lease_renew_successes_total 1
+# HELP farm_gate_boot_lease_seconds_remaining Seconds remaining before this GateBoot becomes untrusted; never negative.
+# TYPE farm_gate_boot_lease_seconds_remaining gauge
+farm_gate_boot_lease_seconds_remaining 10.964380887
+# HELP farm_gate_boot_lease_trusted 1 while this exact GateBoot fence is within its last Redis-confirmed local trust deadline.
+# TYPE farm_gate_boot_lease_trusted gauge
+farm_gate_boot_lease_trusted 1
+# HELP farm_gate_command_admission_total Gate command admission pipeline stage counters (ADMITTED = passed all Gate checks before logic.ExecuteCommand).
+# TYPE farm_gate_command_admission_total counter
+farm_gate_command_admission_total{stage="ADMITTED"} 1
+# HELP farm_gate_command_post_seconds Gate command pipeline: response encode + subscription bookkeeping.
+# TYPE farm_gate_command_post_seconds histogram
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.0001"} 0
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.0005"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.001"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.0025"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.005"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.01"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.025"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.05"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.1"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.25"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.5"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="1"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="2.5"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="5"} 1
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="+Inf"} 1
+farm_gate_command_post_seconds_sum{command_type="JOIN_FARM"} 0.000120827
+farm_gate_command_post_seconds_count{command_type="JOIN_FARM"} 1
+# HELP farm_gate_command_pre_permit_seconds Gate command pipeline: admission/decode/lookup before permit issuance.
+# TYPE farm_gate_command_pre_permit_seconds histogram
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.0001"} 0
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.0005"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.001"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.0025"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.005"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.01"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.025"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.05"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.1"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.25"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.5"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="1"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="2.5"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="5"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="+Inf"} 1
+farm_gate_command_pre_permit_seconds_sum{command_type="JOIN_FARM"} 0.000226777
+farm_gate_command_pre_permit_seconds_count{command_type="JOIN_FARM"} 1
+# HELP farm_gate_command_rpc_server_seconds Gate command pipeline: logic.ExecuteCommand RPC round-trip.
+# TYPE farm_gate_command_rpc_server_seconds histogram
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.0001"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.0005"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.001"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.0025"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.005"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.01"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.025"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.05"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.1"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.25"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.5"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="1"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="2.5"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="5"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="+Inf"} 1
+farm_gate_command_rpc_server_seconds_sum{command_type="JOIN_FARM"} 0.002215644
+farm_gate_command_rpc_server_seconds_count{command_type="JOIN_FARM"} 1
+# HELP farm_gate_join_accept_without_snapshot_total Timed-out joins that observed ACCEPTED but no queue-accepted Snapshot.
+# TYPE farm_gate_join_accept_without_snapshot_total counter
+farm_gate_join_accept_without_snapshot_total 0
+# HELP farm_gate_join_pending_timeout_total PendingJoin records closed by their shared liveness deadline.
+# TYPE farm_gate_join_pending_timeout_total counter
+farm_gate_join_pending_timeout_total 0
+# HELP farm_gate_join_snapshot_without_accept_total Timed-out joins that queue-accepted Snapshot but did not observe ACCEPTED.
+# TYPE farm_gate_join_snapshot_without_accept_total counter
+farm_gate_join_snapshot_without_accept_total 0
+# HELP farm_gate_join_stale_callback_total Late or wrong-fence Join callbacks discarded after replacement or terminal close.
+# TYPE farm_gate_join_stale_callback_total counter
+farm_gate_join_stale_callback_total 0
+# HELP farm_gate_join_subscription_mismatch_total Join result and Snapshot callbacks rejected for different subscription IDs.
+# TYPE farm_gate_join_subscription_mismatch_total counter
+farm_gate_join_subscription_mismatch_total 0
+# HELP farm_gate_lease_batch_backlog Pending indexed lease items; excludes in-flight items.
+# TYPE farm_gate_lease_batch_backlog gauge
+farm_gate_lease_batch_backlog{lane="session_route"} 0
+farm_gate_lease_batch_backlog{lane="subscription"} 0
+# HELP farm_gate_legacy_implicit_bind_total Legacy unfenced Snapshot callbacks admitted only by compatibility mode.
+# TYPE farm_gate_legacy_implicit_bind_total counter
+farm_gate_legacy_implicit_bind_total 0
+# HELP farm_gate_pending_join_age_seconds Age in seconds of the oldest non-terminal local PendingJoin.
+# TYPE farm_gate_pending_join_age_seconds gauge
+farm_gate_pending_join_age_seconds 0
+# HELP farm_gate_pending_join_current Current non-terminal PendingJoin records across local connections.
+# TYPE farm_gate_pending_join_current gauge
+farm_gate_pending_join_current 0
+# HELP farm_gate_preauth_bytes Current admitted FarmFrame bytes held by PRE_AUTH connections.
+# TYPE farm_gate_preauth_bytes gauge
+farm_gate_preauth_bytes 0
+# HELP farm_gate_preauth_connections Current transport connections waiting for ClientHello activation.
+# TYPE farm_gate_preauth_connections gauge
+farm_gate_preauth_connections 0
+# HELP farm_gate_preauth_duration_seconds Time spent waiting for ClientHello activation.
+# TYPE farm_gate_preauth_duration_seconds histogram
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="0.01"} 4
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="0.05"} 4
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="0.1"} 4
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="0.25"} 4
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="0.5"} 4
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="1"} 4
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="2"} 4
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="5"} 4
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="10"} 4
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="+Inf"} 4
+farm_gate_preauth_duration_seconds_sum{result="authenticated"} 0.003432377
+farm_gate_preauth_duration_seconds_count{result="authenticated"} 4
+# HELP farm_gate_preauth_transitions_total PRE_AUTH connection exits by result.
+# TYPE farm_gate_preauth_transitions_total counter
+farm_gate_preauth_transitions_total{result="authenticated"} 4
+# HELP farm_gate_subscription_lease_renew_batches_total BatchRenewSubscriptions RPC batches sent to Farm Holders.
+# TYPE farm_gate_subscription_lease_renew_batches_total counter
+farm_gate_subscription_lease_renew_batches_total 0
+# HELP farm_gate_subscription_lease_renew_duration_seconds BatchRenewSubscriptions RPC round-trip latency.
+# TYPE farm_gate_subscription_lease_renew_duration_seconds histogram
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.0001"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.0005"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.001"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.0025"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.005"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.01"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.025"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.05"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.1"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.25"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.5"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="1"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="2.5"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="5"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="+Inf"} 0
+farm_gate_subscription_lease_renew_duration_seconds_sum 0
+farm_gate_subscription_lease_renew_duration_seconds_count 0
+# HELP farm_gate_subscription_lease_renew_entries_total Individual subscription lease entries sent inside renew batches.
+# TYPE farm_gate_subscription_lease_renew_entries_total counter
+farm_gate_subscription_lease_renew_entries_total 0
+# HELP farm_gate_ticket_operation_seconds Ticket store operation latency.
+# TYPE farm_gate_ticket_operation_seconds histogram
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.0001"} 0
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.0005"} 3
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.001"} 4
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.0025"} 4
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.005"} 4
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.01"} 4
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.025"} 4
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.05"} 4
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.1"} 4
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.25"} 4
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.5"} 4
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="1"} 4
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="+Inf"} 4
+farm_gate_ticket_operation_seconds_sum{operation="activate"} 0.001849413
+farm_gate_ticket_operation_seconds_count{operation="activate"} 4
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.0001"} 0
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.0005"} 6
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.001"} 6
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.0025"} 6
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.005"} 6
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.01"} 6
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.025"} 6
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.05"} 6
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.1"} 6
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.25"} 6
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.5"} 6
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="1"} 6
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="+Inf"} 6
+farm_gate_ticket_operation_seconds_sum{operation="save"} 0.001374372
+farm_gate_ticket_operation_seconds_count{operation="save"} 6
+# HELP farm_gate_ticket_operations_total Ticket store operations by operation and result.
+# TYPE farm_gate_ticket_operations_total counter
+farm_gate_ticket_operations_total{operation="activate",result="ok"} 4
+farm_gate_ticket_operations_total{operation="save",result="ok"} 6
+# HELP farm_redis_workload_batch_size Number of commands in one dispatch (single command or pipeline); recorded once per dispatch, never per command.
+# TYPE farm_redis_workload_batch_size histogram
+farm_redis_workload_batch_size_bucket{component="unspecified",le="1"} 53
+farm_redis_workload_batch_size_bucket{component="unspecified",le="2"} 56
+farm_redis_workload_batch_size_bucket{component="unspecified",le="4"} 62
+farm_redis_workload_batch_size_bucket{component="unspecified",le="8"} 62
+farm_redis_workload_batch_size_bucket{component="unspecified",le="16"} 62
+farm_redis_workload_batch_size_bucket{component="unspecified",le="32"} 62
+farm_redis_workload_batch_size_bucket{component="unspecified",le="64"} 62
+farm_redis_workload_batch_size_bucket{component="unspecified",le="128"} 62
+farm_redis_workload_batch_size_bucket{component="unspecified",le="256"} 62
+farm_redis_workload_batch_size_bucket{component="unspecified",le="512"} 62
+farm_redis_workload_batch_size_bucket{component="unspecified",le="+Inf"} 62
+farm_redis_workload_batch_size_sum{component="unspecified"} 83
+farm_redis_workload_batch_size_count{component="unspecified"} 62
+# HELP farm_redis_workload_commands_total Observed Redis commands in the opt-in workload window; arguments are never recorded.
+# TYPE farm_redis_workload_commands_total counter
+farm_redis_workload_commands_total{command="client",component="unspecified",outcome="error"} 1
+farm_redis_workload_commands_total{command="client",component="unspecified",outcome="ok"} 6
+farm_redis_workload_commands_total{command="eval",component="unspecified",outcome="ok"} 3
+farm_redis_workload_commands_total{command="evalsha",component="unspecified",outcome="error"} 3
+farm_redis_workload_commands_total{command="evalsha",component="unspecified",outcome="ok"} 11
+farm_redis_workload_commands_total{command="expire",component="unspecified",outcome="ok"} 6
+farm_redis_workload_commands_total{command="get",component="unspecified",outcome="nil"} 1
+farm_redis_workload_commands_total{command="get",component="unspecified",outcome="ok"} 17
+farm_redis_workload_commands_total{command="hget",component="unspecified",outcome="ok"} 3
+farm_redis_workload_commands_total{command="hset",component="unspecified",outcome="ok"} 6
+farm_redis_workload_commands_total{command="multi",component="unspecified",outcome="ok"} 6
+farm_redis_workload_commands_total{command="other",component="unspecified",outcome="ok"} 9
+farm_redis_workload_commands_total{command="set",component="unspecified",outcome="error"} 9
+farm_redis_workload_commands_total{command="set",component="unspecified",outcome="ok"} 2
+# HELP farm_redis_workload_pipeline_width Number of commands in one go-redis pipeline dispatch.
+# TYPE farm_redis_workload_pipeline_width histogram
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="1"} 0
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="2"} 3
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="4"} 9
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="8"} 9
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="16"} 9
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="32"} 9
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="64"} 9
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="128"} 9
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="256"} 9
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="512"} 9
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="+Inf"} 9
+farm_redis_workload_pipeline_width_sum{component="unspecified"} 30
+farm_redis_workload_pipeline_width_count{component="unspecified"} 9
+# HELP farm_redis_workload_request_bytes_total RESP request bytes calculated from in-memory command arguments; values are not exported.
+# TYPE farm_redis_workload_request_bytes_total counter
+farm_redis_workload_request_bytes_total{command="client",component="unspecified"} 497
+farm_redis_workload_request_bytes_total{command="eval",component="unspecified"} 7654
+farm_redis_workload_request_bytes_total{command="evalsha",component="unspecified"} 3396
+farm_redis_workload_request_bytes_total{command="expire",component="unspecified"} 684
+farm_redis_workload_request_bytes_total{command="get",component="unspecified"} 1026
+farm_redis_workload_request_bytes_total{command="hget",component="unspecified"} 225
+farm_redis_workload_request_bytes_total{command="hset",component="unspecified"} 2364
+farm_redis_workload_request_bytes_total{command="multi",component="unspecified"} 90
+farm_redis_workload_request_bytes_total{command="other",component="unspecified"} 150
+farm_redis_workload_request_bytes_total{command="set",component="unspecified"} 869
+# HELP farm_redis_workload_response_bytes_total ESTIMATED RESP response bytes reconstructed from in-memory command arguments and command-specific reply shapes; never exact wire truth (use a Harness proxy for exact bytes).
+# TYPE farm_redis_workload_response_bytes_total counter
+farm_redis_workload_response_bytes_total{command="client",component="unspecified",estimated="true"} 95
+farm_redis_workload_response_bytes_total{command="eval",component="unspecified",estimated="true"} 48
+farm_redis_workload_response_bytes_total{command="evalsha",component="unspecified",estimated="true"} 320
+farm_redis_workload_response_bytes_total{command="expire",component="unspecified",estimated="true"} 30
+farm_redis_workload_response_bytes_total{command="get",component="unspecified",estimated="true"} 702
+farm_redis_workload_response_bytes_total{command="hget",component="unspecified",estimated="true"} 165
+farm_redis_workload_response_bytes_total{command="hset",component="unspecified",estimated="true"} 30
+farm_redis_workload_response_bytes_total{command="multi",component="unspecified",estimated="true"} 30
+farm_redis_workload_response_bytes_total{command="other",component="unspecified",estimated="true"} 144
+farm_redis_workload_response_bytes_total{command="set",component="unspecified",estimated="true"} 181
+# HELP farm_redis_workload_round_trip_duration_seconds go-redis process and pipeline dispatch latency.
+# TYPE farm_redis_workload_round_trip_duration_seconds histogram
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.0001"} 0
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.00025"} 8
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.0005"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.001"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.0025"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.005"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.01"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.025"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.05"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.1"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.25"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.5"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="1"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="2.5"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="+Inf"} 9
+farm_redis_workload_round_trip_duration_seconds_sum{component="unspecified",kind="pipeline"} 0.00169848
+farm_redis_workload_round_trip_duration_seconds_count{component="unspecified",kind="pipeline"} 9
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.0001"} 0
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.00025"} 35
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.0005"} 49
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.001"} 52
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.0025"} 53
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.005"} 53
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.01"} 53
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.025"} 53
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.05"} 53
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.1"} 53
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.25"} 53
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.5"} 53
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="1"} 53
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="2.5"} 53
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="+Inf"} 53
+farm_redis_workload_round_trip_duration_seconds_sum{component="unspecified",kind="single"} 0.014384840000000001
+farm_redis_workload_round_trip_duration_seconds_count{component="unspecified",kind="single"} 53
+# HELP farm_redis_workload_round_trips_total go-redis process and pipeline dispatches.
+# TYPE farm_redis_workload_round_trips_total counter
+farm_redis_workload_round_trips_total{component="unspecified",kind="pipeline",outcome="ok"} 9
+farm_redis_workload_round_trips_total{component="unspecified",kind="single",outcome="error"} 13
+farm_redis_workload_round_trips_total{component="unspecified",kind="single",outcome="nil"} 1
+farm_redis_workload_round_trips_total{component="unspecified",kind="single",outcome="ok"} 39
+# HELP farmgate_downlink_batch_items DeliverBatch request item count (ServerPush fan-out size).
+# TYPE farmgate_downlink_batch_items histogram
+farmgate_downlink_batch_items_bucket{le="1"} 1
+farmgate_downlink_batch_items_bucket{le="2"} 1
+farmgate_downlink_batch_items_bucket{le="4"} 1
+farmgate_downlink_batch_items_bucket{le="8"} 1
+farmgate_downlink_batch_items_bucket{le="16"} 1
+farmgate_downlink_batch_items_bucket{le="32"} 1
+farmgate_downlink_batch_items_bucket{le="64"} 1
+farmgate_downlink_batch_items_bucket{le="128"} 1
+farmgate_downlink_batch_items_bucket{le="256"} 1
+farmgate_downlink_batch_items_bucket{le="512"} 1
+farmgate_downlink_batch_items_bucket{le="+Inf"} 1
+farmgate_downlink_batch_items_sum 1
+farmgate_downlink_batch_items_count 1
+# HELP farmgate_downlink_bindings_active Current connection registry bindings.
+# TYPE farmgate_downlink_bindings_active gauge
+farmgate_downlink_bindings_active 0
+# HELP farmgate_downlink_delivered_total Downlink frames successfully enqueued to connection writers.
+# TYPE farmgate_downlink_delivered_total counter
+farmgate_downlink_delivered_total 1
+# HELP farmgate_ws_bytes_received_total Total bytes received from clients.
+# TYPE farmgate_ws_bytes_received_total counter
+farmgate_ws_bytes_received_total 445
+# HELP farmgate_ws_bytes_sent_total Total bytes sent to clients.
+# TYPE farmgate_ws_bytes_sent_total counter
+farmgate_ws_bytes_sent_total 1078
+# HELP farmgate_ws_conn_active Current active websocket connections.
+# TYPE farmgate_ws_conn_active gauge
+farmgate_ws_conn_active 0
+# HELP farmgate_ws_conn_rejected_total Rejected connections (rate limit / invalid).
+# TYPE farmgate_ws_conn_rejected_total counter
+farmgate_ws_conn_rejected_total 0
+# HELP farmgate_ws_conn_total Total accepted websocket connections.
+# TYPE farmgate_ws_conn_total counter
+farmgate_ws_conn_total 4
+# HELP farmgate_ws_drain_sessions_remaining Connections remaining after drain has started.
+# TYPE farmgate_ws_drain_sessions_remaining gauge
+farmgate_ws_drain_sessions_remaining 0
+# HELP farmgate_ws_drain_total Total graceful drain transitions.
+# TYPE farmgate_ws_drain_total counter
+farmgate_ws_drain_total 0
+# HELP farmgate_ws_frame_recv_bytes Received frame size distribution.
+# TYPE farmgate_ws_frame_recv_bytes histogram
+farmgate_ws_frame_recv_bytes_bucket{le="64"} 1
+farmgate_ws_frame_recv_bytes_bucket{le="256"} 6
+farmgate_ws_frame_recv_bytes_bucket{le="1024"} 6
+farmgate_ws_frame_recv_bytes_bucket{le="4096"} 6
+farmgate_ws_frame_recv_bytes_bucket{le="16384"} 6
+farmgate_ws_frame_recv_bytes_bucket{le="65536"} 6
+farmgate_ws_frame_recv_bytes_bucket{le="262144"} 6
+farmgate_ws_frame_recv_bytes_bucket{le="+Inf"} 6
+farmgate_ws_frame_recv_bytes_sum 445
+farmgate_ws_frame_recv_bytes_count 6
+# HELP farmgate_ws_frame_sent_bytes Sent frame size distribution.
+# TYPE farmgate_ws_frame_sent_bytes histogram
+farmgate_ws_frame_sent_bytes_bucket{le="64"} 4
+farmgate_ws_frame_sent_bytes_bucket{le="256"} 6
+farmgate_ws_frame_sent_bytes_bucket{le="1024"} 7
+farmgate_ws_frame_sent_bytes_bucket{le="4096"} 7
+farmgate_ws_frame_sent_bytes_bucket{le="16384"} 7
+farmgate_ws_frame_sent_bytes_bucket{le="65536"} 7
+farmgate_ws_frame_sent_bytes_bucket{le="262144"} 7
+farmgate_ws_frame_sent_bytes_bucket{le="+Inf"} 7
+farmgate_ws_frame_sent_bytes_sum 1078
+farmgate_ws_frame_sent_bytes_count 7
+# HELP farmgate_ws_handle_latency_seconds HandleBinary processing latency.
+# TYPE farmgate_ws_handle_latency_seconds histogram
+farmgate_ws_handle_latency_seconds_bucket{le="0.0001"} 0
+farmgate_ws_handle_latency_seconds_bucket{le="0.0005"} 4
+farmgate_ws_handle_latency_seconds_bucket{le="0.001"} 4
+farmgate_ws_handle_latency_seconds_bucket{le="0.005"} 6
+farmgate_ws_handle_latency_seconds_bucket{le="0.01"} 6
+farmgate_ws_handle_latency_seconds_bucket{le="0.05"} 6
+farmgate_ws_handle_latency_seconds_bucket{le="0.1"} 6
+farmgate_ws_handle_latency_seconds_bucket{le="0.5"} 6
+farmgate_ws_handle_latency_seconds_bucket{le="1"} 6
+farmgate_ws_handle_latency_seconds_bucket{le="+Inf"} 6
+farmgate_ws_handle_latency_seconds_sum 0.005399474
+farmgate_ws_handle_latency_seconds_count 6
+# HELP farmgate_ws_lifecycle_serving 1 while accepting traffic, 0 while draining.
+# TYPE farmgate_ws_lifecycle_serving gauge
+farmgate_ws_lifecycle_serving 1
+# HELP farmgate_ws_msg_received_total Total business frames received.
+# TYPE farmgate_ws_msg_received_total counter
+farmgate_ws_msg_received_total 6
+# HELP farmgate_ws_msg_sent_total Total business frames sent.
+# TYPE farmgate_ws_msg_sent_total counter
+farmgate_ws_msg_sent_total 7
+# HELP farmgate_ws_slow_client_kick_total Slow clients kicked due to full send queue.
+# TYPE farmgate_ws_slow_client_kick_total counter
+farmgate_ws_slow_client_kick_total 0
+# HELP farmgate_ws_write_batch_size Downlink frames drained per wakeup.
+# TYPE farmgate_ws_write_batch_size histogram
+farmgate_ws_write_batch_size_bucket{le="1"} 3
+farmgate_ws_write_batch_size_bucket{le="2"} 3
+farmgate_ws_write_batch_size_bucket{le="4"} 3
+farmgate_ws_write_batch_size_bucket{le="8"} 3
+farmgate_ws_write_batch_size_bucket{le="16"} 3
+farmgate_ws_write_batch_size_bucket{le="32"} 3
+farmgate_ws_write_batch_size_bucket{le="64"} 3
+farmgate_ws_write_batch_size_bucket{le="+Inf"} 3
+farmgate_ws_write_batch_size_sum 3
+farmgate_ws_write_batch_size_count 3
+# HELP go_gc_duration_seconds A summary of the wall-time pause (stop-the-world) duration in garbage collection cycles.
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile="0"} 7.7405e-05
+go_gc_duration_seconds{quantile="0.25"} 0.000135146
+go_gc_duration_seconds{quantile="0.5"} 0.000211016
+go_gc_duration_seconds{quantile="0.75"} 0.000365049
+go_gc_duration_seconds{quantile="1"} 0.000365049
+go_gc_duration_seconds_sum 0.000788616
+go_gc_duration_seconds_count 4
+# HELP go_gc_gogc_percent Heap size target percentage configured by the user, otherwise 100. This value is set by the GOGC environment variable, and the runtime/debug.SetGCPercent function. Sourced from /gc/gogc:percent.
+# TYPE go_gc_gogc_percent gauge
+go_gc_gogc_percent 100
+# HELP go_gc_gomemlimit_bytes Go runtime memory limit configured by the user, otherwise math.MaxInt64. This value is set by the GOMEMLIMIT environment variable, and the runtime/debug.SetMemoryLimit function. Sourced from /gc/gomemlimit:bytes.
+# TYPE go_gc_gomemlimit_bytes gauge
+go_gc_gomemlimit_bytes 9.223372036854776e+18
+# HELP go_goroutines Number of goroutines that currently exist.
+# TYPE go_goroutines gauge
+go_goroutines 44
+# HELP go_info Information about the Go environment.
+# TYPE go_info gauge
+go_info{version="go1.26.3-X:nodwarf5"} 1
+# HELP go_memstats_alloc_bytes Number of bytes allocated in heap and currently in use. Equals to /memory/classes/heap/objects:bytes.
+# TYPE go_memstats_alloc_bytes gauge
+go_memstats_alloc_bytes 3.096944e+06
+# HELP go_memstats_alloc_bytes_total Total number of bytes allocated in heap until now, even if released already. Equals to /gc/heap/allocs:bytes.
+# TYPE go_memstats_alloc_bytes_total counter
+go_memstats_alloc_bytes_total 6.269792e+06
+# HELP go_memstats_buck_hash_sys_bytes Number of bytes used by the profiling bucket hash table. Equals to /memory/classes/profiling/buckets:bytes.
+# TYPE go_memstats_buck_hash_sys_bytes gauge
+go_memstats_buck_hash_sys_bytes 1.451658e+06
+# HELP go_memstats_frees_total Total number of heap objects frees. Equals to /gc/heap/frees:objects + /gc/heap/tiny/allocs:objects.
+# TYPE go_memstats_frees_total counter
+go_memstats_frees_total 28536
+# HELP go_memstats_gc_sys_bytes Number of bytes used for garbage collection system metadata. Equals to /memory/classes/metadata/other:bytes.
+# TYPE go_memstats_gc_sys_bytes gauge
+go_memstats_gc_sys_bytes 3.678448e+06
+# HELP go_memstats_heap_alloc_bytes Number of heap bytes allocated and currently in use, same as go_memstats_alloc_bytes. Equals to /memory/classes/heap/objects:bytes.
+# TYPE go_memstats_heap_alloc_bytes gauge
+go_memstats_heap_alloc_bytes 3.096944e+06
+# HELP go_memstats_heap_idle_bytes Number of heap bytes waiting to be used. Equals to /memory/classes/heap/released:bytes + /memory/classes/heap/free:bytes.
+# TYPE go_memstats_heap_idle_bytes gauge
+go_memstats_heap_idle_bytes 5.464064e+06
+# HELP go_memstats_heap_inuse_bytes Number of heap bytes that are in use. Equals to /memory/classes/heap/objects:bytes + /memory/classes/heap/unused:bytes
+# TYPE go_memstats_heap_inuse_bytes gauge
+go_memstats_heap_inuse_bytes 5.742592e+06
+# HELP go_memstats_heap_objects Number of currently allocated objects. Equals to /gc/heap/objects:objects.
+# TYPE go_memstats_heap_objects gauge
+go_memstats_heap_objects 9926
+# HELP go_memstats_heap_released_bytes Number of heap bytes released to OS. Equals to /memory/classes/heap/released:bytes.
+# TYPE go_memstats_heap_released_bytes gauge
+go_memstats_heap_released_bytes 4.34176e+06
+# HELP go_memstats_heap_sys_bytes Number of heap bytes obtained from system. Equals to /memory/classes/heap/objects:bytes + /memory/classes/heap/unused:bytes + /memory/classes/heap/released:bytes + /memory/classes/heap/free:bytes.
+# TYPE go_memstats_heap_sys_bytes gauge
+go_memstats_heap_sys_bytes 1.1206656e+07
+# HELP go_memstats_last_gc_time_seconds Number of seconds since 1970 of last garbage collection.
+# TYPE go_memstats_last_gc_time_seconds gauge
+go_memstats_last_gc_time_seconds 1.7864710494839175e+09
+# HELP go_memstats_mallocs_total Total number of heap objects allocated, both live and gc-ed. Semantically a counter version for go_memstats_heap_objects gauge. Equals to /gc/heap/allocs:objects + /gc/heap/tiny/allocs:objects.
+# TYPE go_memstats_mallocs_total counter
+go_memstats_mallocs_total 38462
+# HELP go_memstats_mcache_inuse_bytes Number of bytes in use by mcache structures. Equals to /memory/classes/metadata/mcache/inuse:bytes.
+# TYPE go_memstats_mcache_inuse_bytes gauge
+go_memstats_mcache_inuse_bytes 73472
+# HELP go_memstats_mcache_sys_bytes Number of bytes used for mcache structures obtained from system. Equals to /memory/classes/metadata/mcache/inuse:bytes + /memory/classes/metadata/mcache/free:bytes.
+# TYPE go_memstats_mcache_sys_bytes gauge
+go_memstats_mcache_sys_bytes 80360
+# HELP go_memstats_mspan_inuse_bytes Number of bytes in use by mspan structures. Equals to /memory/classes/metadata/mspan/inuse:bytes.
+# TYPE go_memstats_mspan_inuse_bytes gauge
+go_memstats_mspan_inuse_bytes 213280
+# HELP go_memstats_mspan_sys_bytes Number of bytes used for mspan structures obtained from system. Equals to /memory/classes/metadata/mspan/inuse:bytes + /memory/classes/metadata/mspan/free:bytes.
+# TYPE go_memstats_mspan_sys_bytes gauge
+go_memstats_mspan_sys_bytes 228480
+# HELP go_memstats_next_gc_bytes Number of heap bytes when next garbage collection will take place. Equals to /gc/heap/goal:bytes.
+# TYPE go_memstats_next_gc_bytes gauge
+go_memstats_next_gc_bytes 6.377802e+06
+# HELP go_memstats_other_sys_bytes Number of bytes used for other system allocations. Equals to /memory/classes/other:bytes.
+# TYPE go_memstats_other_sys_bytes gauge
+go_memstats_other_sys_bytes 3.36567e+06
+# HELP go_memstats_stack_inuse_bytes Number of bytes obtained from system for stack allocator in non-CGO environments. Equals to /memory/classes/heap/stacks:bytes.
+# TYPE go_memstats_stack_inuse_bytes gauge
+go_memstats_stack_inuse_bytes 1.376256e+06
+# HELP go_memstats_stack_sys_bytes Number of bytes obtained from system for stack allocator. Equals to /memory/classes/heap/stacks:bytes + /memory/classes/os-stacks:bytes.
+# TYPE go_memstats_stack_sys_bytes gauge
+go_memstats_stack_sys_bytes 1.376256e+06
+# HELP go_memstats_sys_bytes Number of bytes obtained from system. Equals to /memory/classes/total:byte.
+# TYPE go_memstats_sys_bytes gauge
+go_memstats_sys_bytes 2.1387528e+07
+# HELP go_sched_gomaxprocs_threads The current runtime.GOMAXPROCS setting, or the number of operating system threads that can execute user-level Go code simultaneously. Sourced from /sched/gomaxprocs:threads.
+# TYPE go_sched_gomaxprocs_threads gauge
+go_sched_gomaxprocs_threads 32
+# HELP go_threads Number of OS threads created.
+# TYPE go_threads gauge
+go_threads 17
+# HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.
+# TYPE process_cpu_seconds_total counter
+process_cpu_seconds_total 0.21
+# HELP process_max_fds Maximum number of open file descriptors.
+# TYPE process_max_fds gauge
+process_max_fds 524287
+# HELP process_network_receive_bytes_total Number of bytes received by the process over the network.
+# TYPE process_network_receive_bytes_total counter
+process_network_receive_bytes_total 4.4909226445e+11
+# HELP process_network_transmit_bytes_total Number of bytes sent by the process over the network.
+# TYPE process_network_transmit_bytes_total counter
+process_network_transmit_bytes_total 7.13339652233e+11
+# HELP process_open_fds Number of open file descriptors.
+# TYPE process_open_fds gauge
+process_open_fds 19
+# HELP process_resident_memory_bytes Resident memory size in bytes.
+# TYPE process_resident_memory_bytes gauge
+process_resident_memory_bytes 2.4571904e+07
+# HELP process_start_time_seconds Start time of the process since unix epoch in seconds.
+# TYPE process_start_time_seconds gauge
+process_start_time_seconds 1.78647104483e+09
+# HELP process_virtual_memory_bytes Virtual memory size in bytes.
+# TYPE process_virtual_memory_bytes gauge
+process_virtual_memory_bytes 1.31731456e+09
+# HELP process_virtual_memory_max_bytes Maximum amount of virtual memory available in bytes.
+# TYPE process_virtual_memory_max_bytes gauge
+process_virtual_memory_max_bytes 1.8446744073709552e+19
+# HELP promhttp_metric_handler_requests_in_flight Current number of scrapes being served.
+# TYPE promhttp_metric_handler_requests_in_flight gauge
+promhttp_metric_handler_requests_in_flight 1
+# HELP promhttp_metric_handler_requests_total Total number of scrapes by HTTP status code.
+# TYPE promhttp_metric_handler_requests_total counter
+promhttp_metric_handler_requests_total{code="200"} 5
+promhttp_metric_handler_requests_total{code="500"} 0
+promhttp_metric_handler_requests_total{code="503"} 0

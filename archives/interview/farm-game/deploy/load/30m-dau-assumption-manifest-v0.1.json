@@ -1,0 +1,140 @@
+{
+  "schema_version": "30m-dau-assumption-manifest.v1",
+  "assumption_version": "v0.1",
+  "claim_scope": "LOCAL_LAB_MODEL_INPUT_ONLY",
+  "inputs": {
+    "dau": {
+      "value": 30000000,
+      "unit": "users/day",
+      "status": "ASSUMED",
+      "role": "TARGET_REQUIREMENT",
+      "source": "user capacity target",
+      "owner": "product-capacity-owner-pending",
+      "sample_window": null,
+      "sample_count": 0,
+      "confidence": "planning-target"
+    },
+    "sessions_per_dau": {
+      "value": 6,
+      "unit": "sessions/user/day",
+      "status": "ASSUMED",
+      "source": "capacity-profile-v0.1",
+      "owner": "product-analytics-owner-pending",
+      "sample_window": null,
+      "sample_count": 0,
+      "confidence": "low"
+    },
+    "mean_session_duration_minutes": {
+      "value": 5,
+      "unit": "minutes/session",
+      "status": "ASSUMED",
+      "source": "capacity-profile-v0.1 upper-bound adopted as candidate mean",
+      "owner": "product-analytics-owner-pending",
+      "sample_window": null,
+      "sample_count": 0,
+      "confidence": "low"
+    },
+    "design_joins_per_session": {
+      "value": 3,
+      "unit": "joins/session",
+      "status": "ASSUMED",
+      "source": "capacity-profile-v0.1",
+      "owner": "product-analytics-owner-pending",
+      "sample_window": null,
+      "sample_count": 0,
+      "confidence": "low"
+    },
+    "stress_joins_per_session": {
+      "value": 6,
+      "unit": "joins/session",
+      "status": "ASSUMED",
+      "source": "capacity-profile-v0.1",
+      "owner": "product-analytics-owner-pending",
+      "sample_window": null,
+      "sample_count": 0,
+      "confidence": "low"
+    },
+    "business_operations_per_dau": {
+      "value": 20,
+      "unit": "operations/user/day",
+      "status": "ASSUMED",
+      "source": "capacity-profile-v0.1",
+      "owner": "product-analytics-owner-pending",
+      "sample_window": null,
+      "sample_count": 0,
+      "confidence": "low"
+    },
+    "design_pcu": {
+      "value": 3000000,
+      "unit": "connections",
+      "status": "ASSUMED",
+      "source": "capacity-profile-v0.1 design target",
+      "owner": "capacity-owner-pending",
+      "sample_window": null,
+      "sample_count": 0,
+      "confidence": "planning-target"
+    },
+    "stress_pcu": {
+      "value": 5000000,
+      "unit": "connections",
+      "status": "ASSUMED",
+      "source": "capacity-profile-v0.1 stress target",
+      "owner": "capacity-owner-pending",
+      "sample_window": null,
+      "sample_count": 0,
+      "confidence": "planning-target"
+    },
+    "peak_factor": {
+      "value": 10,
+      "unit": "ratio",
+      "status": "ASSUMED",
+      "source": "capacity-profile-v0.1",
+      "owner": "product-analytics-owner-pending",
+      "sample_window": null,
+      "sample_count": 0,
+      "confidence": "low"
+    },
+    "average_friends": {
+      "value": 100,
+      "unit": "directed-friends/player",
+      "status": "ASSUMED",
+      "source": "capacity-profile-v0.1",
+      "owner": "social-product-owner-pending",
+      "sample_window": null,
+      "sample_count": 0,
+      "confidence": "low"
+    },
+    "redis_allocator_object_overhead": {
+      "value": 2.5,
+      "unit": "ratio",
+      "status": "ASSUMED",
+      "source": "capacity-profile-v0.1 sizing candidate",
+      "owner": "storage-capacity-owner-pending",
+      "sample_window": null,
+      "sample_count": 0,
+      "confidence": "low"
+    }
+  },
+  "sensitivity": {
+    "sessions_per_dau": [4, 6, 8],
+    "mean_session_duration_minutes": [2, 5, 10],
+    "joins_per_session": [1, 3, 6],
+    "business_operations_per_dau": [10, 20, 40],
+    "pcu": [1500000, 3000000, 5000000],
+    "average_friends": [20, 100, 300],
+    "redis_allocator_object_overhead": [2.0, 2.5, 3.0, 4.0]
+  },
+  "derived_candidates": {
+    "average_concurrency": 625000,
+    "normal_design_join_qps": 62500,
+    "normal_stress_join_qps": 125000,
+    "design_business_qps": 69444,
+    "stress_business_qps": 138889
+  },
+  "governance": {
+    "supports_30m_dau": false,
+    "production_capacity_certified": false,
+    "measured_input_count": 0,
+    "required_measured_replacement": true
+  }
+}

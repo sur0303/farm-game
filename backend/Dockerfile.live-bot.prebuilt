@@ -1,0 +1,9 @@
+FROM alpine:3.21
+
+ARG BINARY_DIR
+RUN addgroup -S -g 10001 farm && adduser -S -D -H -u 10001 -G farm farm
+COPY ${BINARY_DIR}/live-bot-fixture /usr/local/bin/live-bot-fixture
+COPY ${BINARY_DIR}/live-farm-bot /usr/local/bin/live-farm-bot
+
+USER 10001:10001
+ENTRYPOINT ["/bin/sh"]

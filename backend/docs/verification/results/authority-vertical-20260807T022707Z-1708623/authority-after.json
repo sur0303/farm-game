@@ -1,0 +1,78 @@
+{
+  "audited_at": "2026-08-07T02:27:44Z",
+  "authority": {
+    "farm": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-farm-20260807T022707Z-1708623",
+        "holder_instance_id": "smoke-farm",
+        "last_transition_at_ms": "1786069634767",
+        "last_transition_digest": "4235b3279252fb6c396dd0040dbe8325b96e52cd480490614616059f24729686",
+        "last_transition_id": "claim-FARM-20260807T022707Z-1708623",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786069714809",
+        "lease_state": "ACTIVE",
+        "route_domain": "FARM",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260807t022707z-1708623:local:auth:farm:v1:s:0}:shard-authority"
+    },
+    "player": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-player-20260807T022707Z-1708623",
+        "holder_instance_id": "smoke-player",
+        "last_transition_at_ms": "1786069634766",
+        "last_transition_digest": "35a1c13edf2e696516034f752728db069f2e33faf172f36a5c8e7520cd6802fa",
+        "last_transition_id": "claim-PLAYER-20260807T022707Z-1708623",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786069714794",
+        "lease_state": "ACTIVE",
+        "route_domain": "PLAYER",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-20260807t022707z-1708623:local:auth:player:v1:s:0}:shard-authority"
+    }
+  },
+  "protocol_verdict": {
+    "finished_at": "2026-08-07T02:27:44Z",
+    "frames": 14,
+    "steps": {
+      "bootstrap": {
+        "status": "ok"
+      },
+      "buy": {
+        "status": "ok"
+      },
+      "hello": {
+        "status": "ok"
+      },
+      "join": {
+        "status": "ok"
+      },
+      "login": {
+        "status": "ok"
+      },
+      "plant": {
+        "detail": "read tcp 127.0.0.1:47690-\u003e127.0.0.1:37343: i/o timeout",
+        "status": "fail"
+      },
+      "recovery_complete": {
+        "status": "ok"
+      },
+      "register": {
+        "status": "ok"
+      }
+    },
+    "verdict": "FAIL"
+  },
+  "route_snapshot_sha256": "41a"
+}

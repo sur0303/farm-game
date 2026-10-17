@@ -1,0 +1,44 @@
+File: farm-gate
+Build ID: 9779c951ae4449b8e6332ce45bc4fad420eb518e
+Type: cpu
+Time: 2026-08-18 12:11:00 CST
+Duration: 60s, Total samples = 47.15s (78.58%)
+Showing nodes accounting for 22.88s, 48.53% of 47.15s total
+Dropped 1353 nodes (cum <= 0.24s)
+Showing top 35 nodes out of 420
+      flat  flat%   sum%        cum   cum%
+     9.99s 21.19% 21.19%      9.99s 21.19%  internal/runtime/syscall/linux.Syscall6
+     1.46s  3.10% 24.28%      1.46s  3.10%  runtime.futex
+     0.82s  1.74% 26.02%      0.82s  1.74%  runtime.nextFreeFast (inline)
+     0.73s  1.55% 27.57%      0.83s  1.76%  runtime.step
+     0.72s  1.53% 29.10%      0.72s  1.53%  runtime.memmove
+     0.65s  1.38% 30.48%      0.65s  1.38%  runtime.memclrNoHeapPointers
+     0.55s  1.17% 31.64%      0.55s  1.17%  internal/runtime/maps.ctrlGroup.matchH2
+     0.46s  0.98% 32.62%      1.44s  3.05%  runtime.pcvalue
+     0.43s  0.91% 33.53%      0.91s  1.93%  runtime.tryDeferToSpanScan
+     0.41s  0.87% 34.40%      2.68s  5.68%  google.golang.org/protobuf/internal/impl.(*MessageInfo).unmarshalPointerEager
+     0.41s  0.87% 35.27%      1.25s  2.65%  runtime.(*stkframe).getStackMap
+     0.41s  0.87% 36.14%      0.41s  0.87%  time.runtimeNow
+     0.40s  0.85% 36.99%      0.40s  0.85%  runtime.nanotime (inline)
+     0.39s  0.83% 37.82%      0.39s  0.83%  aeshashbody
+     0.39s  0.83% 38.64%      0.91s  1.93%  runtime.selectgo
+     0.36s  0.76% 39.41%      2.75s  5.83%  runtime.newobject
+     0.34s  0.72% 40.13%      1.08s  2.29%  runtime.(*unwinder).resolveInternal
+     0.32s  0.68% 40.81%      0.32s  0.68%  runtime.spanClass.sizeclass (inline)
+     0.29s  0.62% 41.42%      0.31s  0.66%  runtime.(*mspan).writeHeapBitsSmall
+     0.29s  0.62% 42.04%      0.71s  1.51%  runtime.scanObjectsSmall
+     0.28s  0.59% 42.63%      0.31s  0.66%  internal/sync.(*Mutex).Lock
+     0.28s  0.59% 43.22%      2.36s  5.01%  runtime.mallocgcSmallScanNoHeader
+     0.26s  0.55% 43.78%      0.27s  0.57%  runtime.findfunc
+     0.26s  0.55% 44.33%      0.29s  0.62%  runtime.unlock2
+     0.23s  0.49% 44.81%      5.31s 11.26%  runtime.mallocgc
+     0.21s  0.45% 45.26%      0.39s  0.83%  farmgame/internal/actorrouting.(*StaticResolver).resolve
+     0.21s  0.45% 45.71%      1.58s  3.35%  runtime.adjustframe
+     0.20s  0.42% 46.13%      2.32s  4.92%  runtime.findRunnable
+     0.19s   0.4% 46.53%      0.38s  0.81%  encoding/json.appendCompact
+     0.17s  0.36% 46.89%      0.57s  1.21%  runtime.scanObject
+     0.16s  0.34% 47.23%      0.28s  0.59%  internal/runtime/maps.(*Map).getWithoutKeySmallFastStr
+     0.16s  0.34% 47.57%      0.98s  2.08%  runtime.mallocgcSmallNoscan
+     0.15s  0.32% 47.89%      0.70s  1.48%  google.golang.org/grpc/internal/transport.(*http2Client).createHeaderFields
+     0.15s  0.32% 48.21%      0.36s  0.76%  internal/poll.runtime_pollSetDeadline
+     0.15s  0.32% 48.53%      0.38s  0.81%  runtime.sweepone

@@ -1,0 +1,496 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# 阶段 5 运行级证据(交接文档 §7 剩余四项),受控故障注入,全程无浏览器:
+#   E1  Gate Boot Lease 过期(冻结 gate-b 续约)→ farm-svr Reaper 精确清理对应 Presence
+#   E2  gate-b Redis 失联超过 trusted deadline → readyz 503 / WS 升级拒绝 / 登录拒绝;代理恢复后自行转好
+#   E3  坏 Lane(gate-b 冻结,downlink 超时)不阻塞健康 Lane(gate-a 推送新鲜)
+#   E4  farm-svr Redis authority 不确定(代理断开)→ Reaper 报错重试,Presence 保留不误删
+#
+# 安全边界:
+#   - 只读 deploy/secrets/redis.conf.local 中的公司 Redis 地址,不打印、不修改;
+#   - 所有业务 key 使用 per-run 前缀并在退出时精确清理;
+#   - Redis 失联通过本机 socat 代理断开模拟,公司 Redis 本身不受任何影响;
+#   - 不动正在运行的 docker 栈(独立端口、独立进程)。
+#
+# 用法: bash scripts/test-stage5-fault-evidence
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+if [[ -z "${FARM_REDIS_URL:-}" ]]; then
+  if [[ ! -f deploy/secrets/redis.conf.local ]]; then
+    echo "FAIL: 缺少 deploy/secrets/redis.conf.local(含公司 Redis 凭据,不入库)" >&2
+    exit 1
+  fi
+  # redis.conf.local 是 key: value 形式(host/port/password[/db]),与
+  # company-redis-compose.sh 的解析保持一致;凭据只读、不回显。
+  read_config_value() {
+    local key="$1" line
+    line="$(grep -E "^${key}:" deploy/secrets/redis.conf.local | head -n1 || true)"
+    line="${line#${key}:}"
+    line="${line#"${line%%[![:space:]]*}"}"
+    line="${line%"${line##*[![:space:]]}"}"
+    printf '%s' "$line"
+  }
+  uri_encode() {
+    local raw="$1" output="" i ch
+    for ((i = 0; i < ${#raw}; i++)); do
+      ch="${raw:i:1}"
+      case "$ch" in
+        [a-zA-Z0-9.~_-]) output+="$ch" ;;
+        *) printf -v octet '%02X' "'$ch"; output+="%${octet}" ;;
+      esac
+    done
+    printf '%s' "$output"
+  }
+  redis_host="$(read_config_value host)"
+  redis_port="$(read_config_value port)"
+  redis_password="REPLACE_WITH_LOCAL_SECRET"
+  redis_db="$(read_config_value db)"
+  redis_db="${redis_db:-0}"
+  if [[ -z "$redis_host" || -z "$redis_port" || -z "$redis_password" ]]; then
+    echo "FAIL: redis.conf.local 必须包含 host/port/password" >&2
+    exit 1
+  fi
+  FARM_REDIS_URL="redis://:$(uri_encode "$redis_password")@${redis_host}:${redis_port}/${redis_db}"
+  export FARM_REDIS_URL
+fi
+
+# 从 FARM_REDIS_URL 解析 host:port(不回显凭据),并生成经本机代理的 URL。
+url_no_scheme="${FARM_REDIS_URL#redis://}"
+hostport_auth="${url_no_scheme%%/*}"
+hostport="${hostport_auth##*@}"
+auth_part=""
+if [[ "$hostport_auth" == *"@"* ]]; then
+  auth_part="${hostport_auth%@*}@"
+fi
+db_part=""
+if [[ "$url_no_scheme" == */* ]]; then
+  db_part="/${url_no_scheme#*/}"
+fi
+REDIS_VIA_PROXY_FARM="redis://${auth_part}127.0.0.1:16410${db_part}"
+REDIS_VIA_PROXY_GATEB="redis://${auth_part}127.0.0.1:16411${db_part}"
+
+RUN_ID="$(date +%s)"
+PF="farm:stage5e:${RUN_ID}"
+LOG_DIR="${TMPDIR:-/tmp}/stage5-fault-${RUN_ID}"
+mkdir -p "$LOG_DIR"
+
+# 端口规划(避开 dualgate/multigate 脚本与运行中 docker 栈)。
+PLAYER_GRPC=19800
+PLAYER_HEALTH=19801
+FARM_GRPC=19700
+FARM_HEALTH=19701
+GATE_A_HTTP=18700
+GATE_A_DOWNLINK=19792
+GATE_A_CONTROL=19793
+GATE_B_HTTP=18701
+GATE_B_DOWNLINK=19794
+GATE_B_CONTROL=19795
+PROXY_FARM_PORT=16410
+PROXY_GATEB_PORT=16411
+
+GATE_A_ID="stage5-gate-a"
+GATE_B_ID="stage5-gate-b"
+PLATFORM_SECRET="stage5-platform-secret"
+PERMIT_SECRET="$(openssl rand -hex 32)"
+COOKIE_KEY_RING="1=$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=')"
+
+PLAYER_A=$((860000000000 + RANDOM))
+PLAYER_C1=$((PLAYER_A + 1))
+PLAYER_C2=$((PLAYER_A + 2))
+
+PASS=0
+FAIL=0
+ok() { echo "PASS: $*"; PASS=$((PASS + 1)); }
+bad() { echo "FAIL: $*" >&2; FAIL=$((FAIL + 1)); }
+
+SERVICE_PIDS=()
+STRESS_PIDS=()
+PROXY_PIDS=()
+
+cleanup() {
+  set +e
+  for pid in "${STRESS_PIDS[@]:-}"; do kill -CONT "$pid" 2>/dev/null; kill "$pid" 2>/dev/null; done
+  for pid in "${SERVICE_PIDS[@]:-}"; do kill -CONT "$pid" 2>/dev/null; kill "$pid" 2>/dev/null; done
+  for pid in "${PROXY_PIDS[@]:-}"; do kill "$pid" 2>/dev/null; done
+  sleep 1
+  # 精确清理 per-run 前缀 key(只删本运行创建的 keyspace)。
+  GOFILE="$(mktemp /tmp/stage5-clean-XXXX.go)"
+  cat > "$GOFILE" <<'GOEOF'
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+
+	"farmgame/internal/storage/blobstore"
+)
+
+func main() {
+	if len(os.Args) < 3 {
+		return
+	}
+	ctx := context.Background()
+	client, err := blobstore.NewRedisClient(os.Args[1])
+	if err != nil {
+		return
+	}
+	defer client.Close()
+	for _, prefix := range os.Args[2:] {
+		iter := client.Scan(ctx, 0, prefix+"*", 500).Iterator()
+		var keys []string
+		for iter.Next(ctx) {
+			keys = append(keys, iter.Val())
+		}
+		if len(keys) > 0 {
+			client.Del(ctx, keys...)
+		}
+	}
+	fmt.Println("cleaned")
+}
+GOEOF
+  go run "$GOFILE" "$FARM_REDIS_URL" \
+    "$PF:player" "$PF:farm" "$PF:friend" "$PF:share" "$PF:gateboot" \
+    "$PF:workflow" "$PF:workflow:bucket" \
+    "session:current:{${PLAYER_A}}:" "session:current:{${PLAYER_C1}}:" "session:current:{${PLAYER_C2}}:" \
+    "farm:online:{${PLAYER_A}}:" >/dev/null 2>&1
+  rm -f "$GOFILE"
+  echo "--- 日志目录: $LOG_DIR"
+  if [[ "$FAIL" -gt 0 ]]; then
+    echo "RESULT: FAIL ($FAIL 项失败, $PASS 项通过)" >&2
+    exit 1
+  fi
+  echo "RESULT: PASS ($PASS 项全部通过)"
+}
+trap cleanup EXIT
+
+# --- 构建二进制(本地静态编译,与 docker 栈无关) ---
+echo "== 构建二进制 =="
+mkdir -p .bin
+for svc in player-svr farm-svr farm-gate ws-stress; do
+  CGO_ENABLED=0 go build -o ".bin/$svc" "./cmd/$svc"
+done
+
+startService() {
+  local name="$1"; shift
+  nohup "$@" > "$LOG_DIR/$name.log" 2>&1 &
+  SERVICE_PIDS+=($!)
+  echo "started $name (pid $!)"
+}
+
+waitReady() {
+  local name="$1" url="$2"
+  for _ in $(seq 1 90); do
+    if curl -sf "$url" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 1
+  done
+  echo "ERROR: $name 未就绪: $url" >&2
+  tail -20 "$LOG_DIR/${name%%-*}"*.log >&2 2>/dev/null || true
+  bad "$name 未就绪"
+  exit 1
+}
+
+startProxy() {
+  local port="$1"
+  socat "TCP-LISTEN:${port},bind=127.0.0.1,reuseaddr,fork" "TCP:${hostport}" >/dev/null 2>&1 &
+  PROXY_PIDS+=($!)
+  echo "started proxy :${port} (pid $!)"
+}
+
+# farm-svr 指标读取(去尾日志后缀,只取数值)。
+farmMetric() {
+  curl -s "http://127.0.0.1:${FARM_HEALTH}/metrics" 2>/dev/null | grep -E "^$1( |\{|$)" | awk '{s+=$NF} END {print s+0}'
+}
+
+signToken() { # player_id -> load:<id>:<hex-hmac>
+  local id="$1"
+  local sig
+  sig="$(printf '%s' "$id" | openssl dgst -sha256 -hmac "$PLATFORM_SECRET" -hex | sed 's/^.* //')"
+  printf 'load:%s:%s' "$id" "$sig"
+}
+
+# --- 启动拓扑 ---
+echo "== 启动代理与四服务(独立端口 + per-run 前缀 $PF) =="
+startProxy "$PROXY_FARM_PORT"
+startProxy "$PROXY_GATEB_PORT"
+sleep 1
+
+startService player-svr env \
+  PLAYER_LISTEN="127.0.0.1:${PLAYER_GRPC}" \
+  PLAYER_HEALTH_LISTEN="127.0.0.1:${PLAYER_HEALTH}" \
+  FARM_REDIS_URL="$FARM_REDIS_URL" \
+  PLAYER_STORE_PREFIX="$PF:player" \
+  PERMIT_SECRET="$PERMIT_SECRET" \
+  ./.bin/player-svr
+
+startService farm-svr env \
+  FARM_LISTEN="127.0.0.1:${FARM_GRPC}" \
+  FARM_HEALTH_LISTEN="127.0.0.1:${FARM_HEALTH}" \
+  FARM_REDIS_URL="$REDIS_VIA_PROXY_FARM" \
+  PLAYER_ADDR="127.0.0.1:${PLAYER_GRPC}" \
+  FARM_STORE_PREFIX="$PF:farm" \
+  FARM_WORKFLOW_STORE_PREFIX="$PF:workflow" \
+  FARM_WORKFLOW_BUCKET_PREFIX="$PF:workflow:bucket" \
+  GATEWAY_DOWNLINK_ROUTES="${GATE_A_ID}=127.0.0.1:${GATE_A_DOWNLINK},${GATE_B_ID}=127.0.0.1:${GATE_B_DOWNLINK}" \
+  GATE_BOOT_LEASE_PREFIX="$PF:gateboot" \
+  GATE_BOOT_REAPER=1 \
+  GATE_BOOT_REAPER_INTERVAL=5s \
+  GATE_BOOT_REAPER_CHECK_TIMEOUT=2s \
+  FARM_ACTOR_IDLE_TIMEOUT=10m \
+  PERMIT_SECRET="$PERMIT_SECRET" \
+  ./.bin/farm-svr
+
+nohup env \
+  GATEWAY_ID="$GATE_A_ID" GATE_TRANSPORT=websocket GATE_WS_PATH=/ws \
+  GATEWAY_LISTEN="127.0.0.1:${GATE_A_HTTP}" GATEWAY_DOWNLINK_LISTEN="127.0.0.1:${GATE_A_DOWNLINK}" \
+  GATE_CONTROL_LISTEN="127.0.0.1:${GATE_A_CONTROL}" \
+  PLAYER_ADDR="127.0.0.1:${PLAYER_GRPC}" FARM_ADDR="127.0.0.1:${FARM_GRPC}" \
+  FARM_REDIS_URL="$FARM_REDIS_URL" \
+  SHARE_STORE_PREFIX="$PF:share" \
+  GATE_BOOT_LEASE_PREFIX="$PF:gateboot" GATE_BOOT_LEASE_TTL=15s \
+  LOAD_TEST_TOKEN_SECRET="$PLATFORM_SECRET" PERMIT_SECRET="$PERMIT_SECRET" \
+  HTTP_SESSION_COOKIE_KEYRING="$COOKIE_KEY_RING" \
+  ./.bin/farm-gate > "$LOG_DIR/gate-a.log" 2>&1 &
+SERVICE_PIDS+=($!)
+echo "started gate-a (pid $!)"
+
+nohup env \
+  GATEWAY_ID="$GATE_B_ID" GATE_TRANSPORT=websocket GATE_WS_PATH=/ws \
+  GATEWAY_LISTEN="127.0.0.1:${GATE_B_HTTP}" GATEWAY_DOWNLINK_LISTEN="127.0.0.1:${GATE_B_DOWNLINK}" \
+  GATE_CONTROL_LISTEN="127.0.0.1:${GATE_B_CONTROL}" \
+  PLAYER_ADDR="127.0.0.1:${PLAYER_GRPC}" FARM_ADDR="127.0.0.1:${FARM_GRPC}" \
+  FARM_REDIS_URL="$REDIS_VIA_PROXY_GATEB" \
+  SHARE_STORE_PREFIX="$PF:share" \
+  GATE_BOOT_LEASE_PREFIX="$PF:gateboot" GATE_BOOT_LEASE_TTL=15s \
+  LOAD_TEST_TOKEN_SECRET="$PLATFORM_SECRET" PERMIT_SECRET="$PERMIT_SECRET" \
+  HTTP_SESSION_COOKIE_KEYRING="$COOKIE_KEY_RING" \
+  ./.bin/farm-gate > "$LOG_DIR/gate-b.log" 2>&1 &
+SERVICE_PIDS+=($!)
+echo "started gate-b (pid $!)"
+
+waitReady player-svr "http://127.0.0.1:${PLAYER_HEALTH}/readyz"
+waitReady farm-svr "http://127.0.0.1:${FARM_HEALTH}/readyz"
+waitReady gate-a "http://127.0.0.1:${GATE_A_HTTP}/readyz"
+waitReady gate-b "http://127.0.0.1:${GATE_B_HTTP}/readyz"
+ok "四服务就绪(farm-svr 与 gate-b 的 Redis 均经本机代理)"
+
+curlLogin() { # <http-port> <player-id> <jar> <bootstrap>
+  curl -s -c "$3" -o /dev/null -w '%{http_code}' -X POST "http://127.0.0.1:$1/api/v1/auth/login" \
+    -H 'content-type: application/json' \
+    -d "{\"platform_token\":\"$(signToken "$2")\",\"bootstrap_id\":\"$4\",\"client_build\":\"stage5/1\"}"
+}
+
+waitFences() { # <expected>
+  local want="$1"
+  for _ in $(seq 1 30); do
+    [[ "$(farmMetric farm_subscription_hub_boot_fences)" == "$want" ]] && return 0
+    sleep 1
+  done
+  return 1
+}
+
+# --- 好友关系:A 创建分享,C1(gate-a)/C2(gate-b) 分别接受 ---
+echo "== 建立好友关系(A=$PLAYER_A, C1=$PLAYER_C1@gate-a, C2=$PLAYER_C2@gate-b) =="
+JAR_A="$LOG_DIR/cookie-a.jar"
+JAR_C1="$LOG_DIR/cookie-c1.jar"
+JAR_C2="$LOG_DIR/cookie-c2.jar"
+code="$(curlLogin "$GATE_A_HTTP" "$PLAYER_A" "$JAR_A" "stage5-a")"
+[[ "$code" == "200" ]] || { bad "A 登录 gate-a http=$code"; exit 1; }
+share_resp="$(curl -s -b "$JAR_A" -c "$JAR_A" -X POST "http://127.0.0.1:${GATE_A_HTTP}/api/v1/share/create")"
+share_token="$(printf '%s' "$share_resp" | sed -n 's/.*"share_token":"\([^"]*\)".*/\1/p')"
+[[ -n "$share_token" ]] || { bad "share/create 未返回 token: $share_resp"; exit 1; }
+code="$(curlLogin "$GATE_A_HTTP" "$PLAYER_C1" "$JAR_C1" "stage5-c1")"
+[[ "$code" == "200" ]] || { bad "C1 登录 gate-a http=$code"; exit 1; }
+code="$(curl -s -b "$JAR_C1" -o /dev/null -w '%{http_code}' -X POST "http://127.0.0.1:${GATE_A_HTTP}/api/v1/share/accept" \
+  -H 'content-type: application/json' -d "{\"share_token\":\"$share_token\"}")"
+[[ "$code" == "200" ]] || { bad "C1 share/accept http=$code"; exit 1; }
+code="$(curlLogin "$GATE_B_HTTP" "$PLAYER_C2" "$JAR_C2" "stage5-c2")"
+[[ "$code" == "200" ]] || { bad "C2 登录 gate-b http=$code"; exit 1; }
+code="$(curl -s -b "$JAR_C2" -o /dev/null -w '%{http_code}' -X POST "http://127.0.0.1:${GATE_B_HTTP}/api/v1/share/accept" \
+  -H 'content-type: application/json' -d "{\"share_token\":\"$share_token\"}")"
+[[ "$code" == "200" ]] || { bad "C2 share/accept http=$code"; exit 1; }
+ok "好友关系已建立(A 分享,C1@gate-a 与 C2@gate-b 接受)"
+
+# ws-stress 接口:-player-start/-rate,LOAD_TEST_TOKEN_SECRET,-json-out JSON 报告。
+STRESS_TOKEN_ENV="LOAD_TEST_TOKEN_SECRET=$PLATFORM_SECRET"
+jsonField() { # <file> <field> -> 数值(缺失为 0)
+  sed -n "s/.*\"$2\":[[:space:]]*\([0-9]*\).*/\1/p" "$1" | tail -1
+}
+
+# --- 长连接观察者:C1@gate-a、C2@gate-b 同时观看农场 A ---
+# 观察者用独立玩家 ID,避免与后续 A 的短连接写操作互踢(session fencing)。
+echo "== 启动长连接观察者(C1@gate-a, C2@gate-b, 共享农场 A) =="
+env "$STRESS_TOKEN_ENV" ./.bin/ws-stress \
+  -http-url "http://127.0.0.1:${GATE_A_HTTP}" -ws-url "ws://127.0.0.1:${GATE_A_HTTP}/ws" \
+  -player-start "$PLAYER_C1" -shared-farm "$PLAYER_A" -conns 1 -scenario join -duration 900s -rate 1 \
+  > "$LOG_DIR/client-c1.log" 2>&1 &
+STRESS_PIDS+=($!)
+CLIENT_C1_PID=$!
+env "$STRESS_TOKEN_ENV" ./.bin/ws-stress \
+  -http-url "http://127.0.0.1:${GATE_B_HTTP}" -ws-url "ws://127.0.0.1:${GATE_B_HTTP}/ws" \
+  -player-start "$PLAYER_C2" -shared-farm "$PLAYER_A" -conns 1 -scenario join -duration 900s -rate 1 \
+  > "$LOG_DIR/client-c2.log" 2>&1 &
+STRESS_PIDS+=($!)
+
+waitFences 2 \
+  && ok "双 Gate Presence 建立(hub boot_fences=2)" \
+  || { bad "双 Gate Presence 未建立(boot_fences=$(farmMetric farm_subscription_hub_boot_fences))"; exit 1; }
+
+# ================= E1: Boot Lease 过期 → Reaper 精确清理 =================
+echo "== E1: 冻结 gate-b(SIGSTOP),等待 lease 过期 =="
+# gate-b 是最后一个启动的 service。
+GATE_B_PID="${SERVICE_PIDS[$((${#SERVICE_PIDS[@]}-1))]}"
+kill -STOP "$GATE_B_PID"
+dead_before="$(farmMetric farm_gate_boot_reaper_dead_boots_total)"
+removed_before="$(farmMetric farm_gate_boot_reaper_presences_removed_total)"
+sleep 26
+
+dead_after="$(farmMetric farm_gate_boot_reaper_dead_boots_total)"
+removed_after="$(farmMetric farm_gate_boot_reaper_presences_removed_total)"
+fences_after="$(farmMetric farm_subscription_hub_boot_fences)"
+
+[[ "$dead_after" -gt "$dead_before" ]] \
+  && ok "E1.1 Reaper 识别死 Gate(dead_boots_total $dead_before -> $dead_after)" \
+  || bad "E1.1 dead_boots_total 未增长($dead_before -> $dead_after)"
+[[ "$removed_after" -gt "$removed_before" ]] \
+  && ok "E1.2 Reaper 精确清理死 Gate Presence(presences_removed_total $removed_before -> $removed_after)" \
+  || bad "E1.2 presences_removed_total 未增长($removed_before -> $removed_after)"
+[[ "$fences_after" == "1" ]] \
+  && ok "E1.3 存活 Gate 的 Presence 保留(boot_fences=1, 仅剩 gate-a)" \
+  || bad "E1.3 boot_fences=$fences_after, 期望 1"
+kill -0 "$CLIENT_C1_PID" 2>/dev/null \
+  && ok "E1.4 gate-a 客户端连接不受 gate-b 冻结影响" \
+  || bad "E1.4 gate-a 客户端进程退出"
+
+kill -CONT "$GATE_B_PID"
+for _ in $(seq 1 20); do
+  curl -sf "http://127.0.0.1:${GATE_B_HTTP}/readyz" >/dev/null 2>&1 && break
+  sleep 1
+done
+curl -sf "http://127.0.0.1:${GATE_B_HTTP}/readyz" >/dev/null 2>&1 \
+  && ok "E1.5 gate-b 恢复续约后重新 trusted(readyz 200)" \
+  || bad "E1.5 gate-b 恢复后 readyz 仍非 200"
+
+# ================= E2: gate-b Redis 失联 → 降级与恢复 =================
+echo "== E2: 断开 gate-b 的 Redis 代理 =="
+curl -sf "http://127.0.0.1:${GATE_B_HTTP}/readyz" >/dev/null 2>&1 || { bad "E2 前置: gate-b 未 trusted"; exit 1; }
+# socat fork 模式下 kill 父进程不断已有连接(连接池仍可用),必须连子进程一起杀。
+pkill -f "socat TCP-LISTEN:${PROXY_GATEB_PORT}" 2>/dev/null || true
+sleep 1
+code_now="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${GATE_B_HTTP}/readyz")"
+[[ "$code_now" == "200" ]] \
+  && ok "E2.1 trusted 窗口内 readyz 仍 200(短暂失联不误伤)" \
+  || bad "E2.1 失联瞬间 readyz=$code_now, 期望 200(trusted 窗口)"
+
+sleep 18
+code_dead="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${GATE_B_HTTP}/readyz")"
+[[ "$code_dead" == "503" ]] \
+  && ok "E2.2 超过 trusted deadline 后 readyz=503(对外标不 Ready)" \
+  || bad "E2.2 readyz=$code_dead, 期望 503"
+
+login_code="$(curl -s -o /dev/null -w '%{http_code}' -X POST "http://127.0.0.1:${GATE_B_HTTP}/api/v1/auth/login" \
+  -H 'content-type: application/json' \
+  -d "{\"platform_token\":\"$(signToken $PLAYER_C2)\",\"bootstrap_id\":\"stage5-c2x\",\"client_build\":\"stage5/1\"}")"
+[[ "$login_code" != "200" ]] \
+  && ok "E2.3 失联期间新登录被拒绝(http=$login_code,owner-write 入口关闭)" \
+  || bad "E2.3 失联期间登录竟成功(http=200)"
+
+ws_code="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${GATE_B_HTTP}/ws" \
+  -H 'Connection: Upgrade' -H 'Upgrade: websocket' -H 'Sec-WebSocket-Version: 13' \
+  -H 'Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==')"
+[[ "$ws_code" != "101" && "$ws_code" != "000" ]] \
+  && ok "E2.4 失联期间 WS 升级被拒绝(http=$ws_code)" \
+  || bad "E2.4 WS 升级响应异常(http=$ws_code)"
+
+startProxy "$PROXY_GATEB_PORT"
+sleep 18
+code_back="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${GATE_B_HTTP}/readyz")"
+[[ "$code_back" == "200" ]] \
+  && ok "E2.5 Redis 恢复后 gate-b 不重启进程自行转 Ready(readyz 200)" \
+  || bad "E2.5 恢复后 readyz=$code_back"
+
+# ================= E3: 坏 Lane 不阻塞健康 Lane =================
+echo "== E3: C2 重新加入后冻结 gate-b,验证 gate-a 业务与推送不受影响 =="
+env "$STRESS_TOKEN_ENV" ./.bin/ws-stress \
+  -http-url "http://127.0.0.1:${GATE_B_HTTP}" -ws-url "ws://127.0.0.1:${GATE_B_HTTP}/ws" \
+  -player-start "$PLAYER_C2" -shared-farm "$PLAYER_A" -conns 1 -scenario join -duration 300s -rate 1 \
+  > "$LOG_DIR/client-c2b.log" 2>&1 &
+STRESS_PIDS+=($!)
+waitFences 2 || { bad "E3 前置: C2 重新加入失败"; exit 1; }
+
+kill -STOP "$GATE_B_PID"
+dl_fail_before="$(farmMetric farm_downlink_rpc_failure_total)"
+# hot 场景自带 plant+water 写循环,在 gate-a 上驱动农场 A 变化;gate-b 冻结期间
+# farm-svr 到 gate-b 的下行 RPC 超时失败,但 gate-a 链路必须保持健康。
+env "$STRESS_TOKEN_ENV" timeout 120 ./.bin/ws-stress \
+  -http-url "http://127.0.0.1:${GATE_A_HTTP}" -ws-url "ws://127.0.0.1:${GATE_A_HTTP}/ws" \
+  -player-start "$PLAYER_A" -conns 1 -scenario hot -duration 20s -rate 1 -hot-loops 6 \
+  -json-out "$LOG_DIR/client-a-hot.json" \
+  > "$LOG_DIR/client-a-hot.log" 2>&1 || true
+dl_fail_after="$(farmMetric farm_downlink_rpc_failure_total)"
+kill -CONT "$GATE_B_PID"
+
+hot_ok="$(jsonField "$LOG_DIR/client-a-hot.json" hot_water_ok)"
+hot_err="$(jsonField "$LOG_DIR/client-a-hot.json" hot_water_err)"
+hot_join_err="$(jsonField "$LOG_DIR/client-a-hot.json" join_errors)"
+# 错误计数为 0 时 JSON 可能省略字段(omitempty),按 0 处理。
+[[ "${hot_ok:-0}" -ge 1 && "${hot_err:-0}" == "0" && "${hot_join_err:-0}" == "0" ]] \
+  && ok "E3.1 gate-a 写操作全部成功(hot_water_ok=$hot_ok, hot_water_err=$hot_err, join_errors=$hot_join_err)" \
+  || bad "E3.1 gate-a 写操作异常(hot_water_ok=${hot_ok:-?}, hot_water_err=${hot_err:-?}, join_errors=${hot_join_err:-?}); $(tail -2 "$LOG_DIR/client-a-hot.log")"
+hot_succeeded="$(jsonField "$LOG_DIR/client-a-hot.json" scenario_succeeded)"
+[[ "${hot_succeeded:-0}" -ge 1 ]] \
+  && ok "E3.2 gate-a 推送链路健康(hot 场景完成, scenario_succeeded=$hot_succeeded)" \
+  || bad "E3.2 hot 场景未完成(scenario_succeeded=${hot_succeeded:-?}); $(tail -2 "$LOG_DIR/client-a-hot.log")"
+[[ "$dl_fail_after" -gt "$dl_fail_before" ]] \
+  && ok "E3.3 坏 Lane 失败被独立计数(rpc_failure_total $dl_fail_before -> $dl_fail_after,不影响好 Lane)" \
+  || bad "E3.3 downlink rpc_failure_total 未增长($dl_fail_before -> $dl_fail_after)"
+kill -0 "$CLIENT_C1_PID" 2>/dev/null \
+  && ok "E3.4 gate-a 长连接观察者在坏 Lane 故障期间保持连接" \
+  || bad "E3.4 gate-a 长连接观察者退出"
+for _ in $(seq 1 20); do
+  curl -sf "http://127.0.0.1:${GATE_B_HTTP}/readyz" >/dev/null 2>&1 && break
+  sleep 1
+done
+
+# ================= E4: farm-svr Redis authority 不确定 → Presence 保留 =================
+echo "== E4: 断开 farm-svr 的 Redis 代理 =="
+err_before="$(farmMetric farm_gate_boot_reaper_errors_total)"
+removed_e4_before="$(farmMetric farm_gate_boot_reaper_presences_removed_total)"
+fences_e4_before="$(farmMetric farm_subscription_hub_boot_fences)"
+[[ "$fences_e4_before" -ge 1 ]] || { bad "E4 前置: Hub 无 Presence(fences=$fences_e4_before)"; exit 1; }
+
+# 同上:socat fork 子进程需一并杀掉,否则 farm-svr 连接池仍可用。
+pkill -f "socat TCP-LISTEN:${PROXY_FARM_PORT}" 2>/dev/null || true
+sleep 12
+
+err_after="$(farmMetric farm_gate_boot_reaper_errors_total)"
+removed_e4_after="$(farmMetric farm_gate_boot_reaper_presences_removed_total)"
+fences_e4_after="$(farmMetric farm_subscription_hub_boot_fences)"
+
+[[ "$err_after" -gt "$err_before" ]] \
+  && ok "E4.1 Reaper 查询失败被计数(errors_total $err_before -> $err_after)" \
+  || bad "E4.1 errors_total 未增长($err_before -> $err_after)"
+[[ "$removed_e4_after" == "$removed_e4_before" ]] \
+  && ok "E4.2 authority 不确定时 Presence 保留不误删(presences_removed_total 保持 $removed_e4_after)" \
+  || bad "E4.2 失联期间误删 Presence($removed_e4_before -> $removed_e4_after)"
+[[ "$fences_e4_after" == "$fences_e4_before" ]] \
+  && ok "E4.3 Hub boot fences 保持不变($fences_e4_after)" \
+  || bad "E4.3 boot_fences 变化($fences_e4_before -> $fences_e4_after)"
+
+startProxy "$PROXY_FARM_PORT"
+waitReady farm-svr-recovered "http://127.0.0.1:${FARM_HEALTH}/readyz"
+env "$STRESS_TOKEN_ENV" timeout 60 ./.bin/ws-stress \
+  -http-url "http://127.0.0.1:${GATE_A_HTTP}" -ws-url "ws://127.0.0.1:${GATE_A_HTTP}/ws" \
+  -player-start "$PLAYER_A" -conns 1 -scenario join -duration 12s -rate 1 \
+  -json-out "$LOG_DIR/client-a-verify.json" \
+  > "$LOG_DIR/client-a-verify.log" 2>&1 || true
+verify_join_err="$(jsonField "$LOG_DIR/client-a-verify.json" join_errors)"
+verify_ready="$(jsonField "$LOG_DIR/client-a-verify.json" ready)"
+[[ "${verify_join_err:-1}" == "0" && "${verify_ready:-0}" == "1" ]] \
+  && ok "E4.4 farm-svr 恢复后业务正常(ready=1, join_errors=0,无卡死无误删)" \
+  || bad "E4.4 恢复后 join 失败(ready=${verify_ready:-?}, join_errors=${verify_join_err:-?}); $(tail -2 "$LOG_DIR/client-a-verify.log")"

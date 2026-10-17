@@ -1,0 +1,5 @@
+=== RUN   TestLiveAuthorityRoundTrip
+    live_test.go:74: live shard claim: status=APPLIED writer_epoch=1 slot bucket=8
+--- PASS: TestLiveAuthorityRoundTrip (0.01s)
+PASS
+ok  	farmgame/internal/storage/redis/authority	0.016s

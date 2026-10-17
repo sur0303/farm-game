@@ -1,0 +1,95 @@
+{
+  "schema_version": "actor-layout-v1-baseline/v1",
+  "baseline_commit": "ba6f3aee4f0fcd941d9fa37135af0ce09ffdfa5c",
+  "status": "local_fixture_sample_only",
+  "source": {
+    "kind": "deterministic_code_fixture",
+    "live_redis": false,
+    "representative": false,
+    "sample_selection": "Player initialRecord(10001, preflight-bootstrap) and Farm InitialRecord(20002), encoded by the production v1 model builders",
+    "evidence": [
+      "internal/player/actor/model_layout_preflight_test.go:TestPlayerV1InitialFixtureSerializedBytes",
+      "internal/farm/actor/model_layout_preflight_test.go:TestFarmV1InitialFixtureSerializedBytes"
+    ]
+  },
+  "byte_accounting": {
+    "actor_record_serialized_bytes": "length of the deterministic model:record protobuf value",
+    "model_field_logical_bytes": "UTF-8 model field name bytes plus already-serialized value bytes",
+    "model_state_bytes": "sum of all model_field_logical_bytes",
+    "redis_protocol_and_allocator_overhead_included": false
+  },
+  "domains": {
+    "player": {
+      "requested": 1,
+      "sampled": 1,
+      "actor_record_serialized_bytes": {
+        "count": 1,
+        "p50": 81,
+        "p95": 81,
+        "p99": 81,
+        "max": 81
+      },
+      "model_state_bytes": {
+        "count": 1,
+        "p50": 119,
+        "p95": 119,
+        "p99": 119,
+        "max": 119
+      },
+      "model_fields": {
+        "record": {
+          "serialized_value_bytes": 81,
+          "logical_bytes": 87
+        },
+        "public_profile": {
+          "serialized_value_bytes": 18,
+          "logical_bytes": 32
+        }
+      }
+    },
+    "farm": {
+      "requested": 1,
+      "sampled": 1,
+      "actor_record_serialized_bytes": {
+        "count": 1,
+        "p50": 249,
+        "p95": 249,
+        "p99": 249,
+        "max": 249
+      },
+      "model_state_bytes": {
+        "count": 1,
+        "p50": 358,
+        "p95": 358,
+        "p99": 358,
+        "max": 358
+      },
+      "model_fields": {
+        "record": {
+          "serialized_value_bytes": 249,
+          "logical_bytes": 255
+        },
+        "opportunity_header": {
+          "serialized_value_bytes": 48,
+          "logical_bytes": 66
+        },
+        "opportunity_facts": {
+          "serialized_value_bytes": 20,
+          "logical_bytes": 37
+        }
+      }
+    }
+  },
+  "not_measured": [
+    "Redis Actor hash metadata and full hash logical bytes",
+    "outer Authority receipts and resolution receipts",
+    "SourceOrder hashes and typed payloads",
+    "post-mutation Player/Farm records",
+    "production percentiles, tails, population mix, and command write amplification"
+  ],
+  "limitations": [
+    "One empty/initial fixture per domain is not a production sample and must not be used for capacity sizing.",
+    "No authorized Redis endpoint was provided to this workspace; its sandbox also rejects creation of loopback listening sockets.",
+    "Run cmd/actor-layout-inspect against an authorized namespace and archive that output before any v2 enablement decision."
+  ]
+}

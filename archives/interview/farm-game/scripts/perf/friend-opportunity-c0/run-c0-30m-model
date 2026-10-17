@@ -1,0 +1,282 @@
+#!/usr/bin/env bash
+# C0 30m-model matrix runner. Same isolated ephemeral Redis discipline as smoke;
+# each 20/100/300 cell uses a distinct viewer/target/bootstrap/operation identity.
+# shellcheck shell=bash
+set -Eeuo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib-c0.sh
+source "$script_dir/lib-c0.sh"
+
+config_path="${1:-$c0_root/deploy/load/friend-opportunity-c0-30m-model.json}"
+[[ -f "$config_path" ]] || { printf 'missing config: %s\n' "$config_path" >&2; exit 2; }
+
+run_id="${FARM_PERF_RUN_ID:-c0m$(date -u +%m%d%H%M%S%N)}"
+run_id="$(printf '%s' "$run_id" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-')"
+namespace="foperf-${run_id}"
+if (( ${#namespace} > 32 )); then
+  printf 'namespace %s exceeds rediskey 32-char limit\n' "$namespace" >&2
+  exit 2
+fi
+
+evidence_root="${FARM_PERF_EVIDENCE_ROOT:-$c0_root/docs/verification/perf/friend-opportunity-c0/$run_id}"
+state_dir="${FARM_PERF_STATE_DIR:-/tmp/farmgame-c0/$run_id}"
+build_dir="${FARM_PERF_BUILD_DIR:-/tmp/farmgame-c0-build}"
+if [[ -e "$evidence_root" || -e "$state_dir" ]]; then
+  printf 'refusing run_id %s: evidence/state already exists\n' "$run_id" >&2
+  exit 2
+fi
+mkdir -p "$evidence_root" "$state_dir" "$build_dir"
+
+load_secret="c0-load-$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
+
+cleanup_done=0
+c0_cleanup() {
+  local ec=$?
+  if (( cleanup_done == 0 )); then
+    cleanup_done=1
+    c0_stack_down "$state_dir" || true
+    cp -f "$state_dir/cleanup.json" "$evidence_root/cleanup.json" 2>/dev/null || \
+      printf '{"cleanup":"destroy_exact_ephemeral_container_and_processes","completed":false}\n' >"$evidence_root/cleanup.json"
+  fi
+  exit "$ec"
+}
+trap c0_cleanup EXIT INT TERM
+
+cp "$config_path" "$evidence_root/config.json"
+printf '{"run_id":"%s","namespace":"%s","zone":"local","hint_transport_effective":"direct","model":"30m-capacity-matrix","claims_30m_dau":false,"matrix_isolation":"per-cell-viewer-target-bootstrap-run-id","matrix_cells_required":%s}\n' \
+  "$run_id" "$namespace" >"$evidence_root/run-meta.json"
+
+c0_build_binaries "$build_dir"
+c0_prepare_stack_identity "$state_dir" "$namespace" "$run_id"
+redis_url="$(c0_redis_up "$run_id")"
+c0_stack_up "$build_dir" "$state_dir" "$namespace" "$run_id" "$redis_url" "$load_secret"
+# shellcheck disable=SC1090
+source "$state_dir/stack.env"
+
+c0_bootstrap_player() {
+  local player_id=$1 bootstrap_tag=$2
+  python3 - "$PERF_GATE_HTTP" "$load_secret" "$player_id" "$bootstrap_tag" <<'PY'
+import hashlib, hmac, json, sys, urllib.request
+base, secret, player, tag = sys.argv[1], sys.argv[2].encode(), sys.argv[3], sys.argv[4]
+mac = hmac.new(secret, player.encode(), hashlib.sha256).hexdigest()
+body = json.dumps({
+  "platform_token": f"load:{player}:{mac}",
+  "bootstrap_id": f"c0-bootstrap-{tag}-{player}",
+  "client_build": "c0-30m/1",
+}).encode()
+req = urllib.request.Request(base.rstrip("/") + "/api/v1/auth/login", data=body,
+                             headers={"content-type": "application/json"})
+with urllib.request.urlopen(req, timeout=30) as resp:
+    payload = json.load(resp)
+if str(payload.get("player_id")) != player:
+    raise SystemExit(f"bootstrap identity mismatch: {payload!r}")
+print(json.dumps(payload))
+PY
+}
+
+mapfile -t friend_counts < <(python3 - "$config_path" <<'PY'
+import json,sys
+for value in json.load(open(sys.argv[1]))["matrix"]["friend_counts"]:
+    print(value)
+PY
+)
+mapfile -t scenarios < <(python3 - "$config_path" <<'PY'
+import json,sys
+for value in json.load(open(sys.argv[1]))["matrix"]["scenarios"]:
+    print(value)
+PY
+)
+density="$(python3 - "$config_path" <<'PY'
+import json,sys
+print(json.load(open(sys.argv[1])).get("fixture",{}).get("density_percent",0))
+PY
+)"
+
+# Fail closed if matrix cells would reuse identities.
+python3 - "$run_id" "${friend_counts[@]}" <<'PY'
+import sys
+run_id = sys.argv[1]
+counts = [int(x) for x in sys.argv[2:]]
+cells = []
+for count in counts:
+    viewer = 813010000 + count * 10 + 1
+    target = 813010000 + count * 10 + 2
+    fake_base = 7000000000 + count * 1000000
+    cell_run = f"{run_id}f{count}"
+    cells.append((viewer, target, fake_base, cell_run))
+viewers = [c[0] for c in cells]
+targets = [c[1] for c in cells]
+fakes = [c[2] for c in cells]
+runs = [c[3] for c in cells]
+if len(set(viewers)) != len(viewers) or len(set(targets)) != len(targets):
+    raise SystemExit(f"matrix cells reuse viewer/target identities: {cells}")
+if len(set(fakes)) != len(fakes) or len(set(runs)) != len(runs):
+    raise SystemExit(f"matrix cells reuse fake-base/run-id: {cells}")
+if any(v == t for v, t, _, _ in cells):
+    raise SystemExit("viewer must differ from target inside each cell")
+print("matrix cell identities are distinct")
+PY
+
+overall=pass
+declare -A seen_viewers=()
+for friend_count in "${friend_counts[@]}"; do
+  read -r viewer target_owner fake_base cell_run_id < <(c0_cell_identities "$run_id" "$friend_count")
+  if [[ -n "${seen_viewers[$viewer]:-}" ]]; then
+    printf 'refusing reused viewer %s across matrix cells\n' "$viewer" >&2
+    exit 2
+  fi
+  seen_viewers[$viewer]=1
+  cell_dir="$evidence_root/friends-${friend_count}"
+  mkdir -p "$cell_dir"
+
+  # Bootstrap responses contain one-time connection tickets/session
+  # identifiers. Keep them only in the ephemeral state directory; evidence
+  # must never persist them.
+  c0_bootstrap_player "$viewer" "$cell_run_id" >"$state_dir/bootstrap-viewer-${friend_count}-sensitive.json"
+  c0_bootstrap_player "$target_owner" "$cell_run_id" >"$state_dir/bootstrap-target-${friend_count}-sensitive.json"
+
+  FARM_REDIS_URL="$redis_url" REDIS_NAMESPACE_ENVIRONMENT="$namespace" REDIS_NAMESPACE_ZONE=local \
+    FARM_PERF_RUN_ID="$cell_run_id" \
+    "$build_dir/friend-opportunity-perf-fixture" \
+      --viewer "$viewer" --target-owner "$target_owner" \
+      --friend-count "$friend_count" --density "$density" \
+      --player-addr "$PERF_PLAYER_ADDR" \
+      --route "$state_dir/route-snapshot.json" \
+      --namespace-env "$namespace" --zone local --run-id "$cell_run_id" \
+      --fake-base "$fake_base" \
+    | tee "$cell_dir/fixture.json"
+
+  python3 - "$cell_dir/fixture.json" "$friend_count" "$viewer" "$target_owner" "$cell_run_id" <<'PY'
+import json, sys
+from pathlib import Path
+path, want, viewer, target, cell_run = Path(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), sys.argv[5]
+data = json.loads(path.read_text())
+if int(data.get("verified_friend_count") or 0) != want:
+    raise SystemExit(f"friends-{want}: roster cardinality mismatch verified={data.get('verified_friend_count')}")
+if int(data.get("viewer_player_id") or 0) != viewer or int(data.get("target_owner_id") or 0) != target:
+    raise SystemExit(f"friends-{want}: fixture identity mismatch {data}")
+if str(data.get("run_id") or "") != cell_run:
+    raise SystemExit(f"friends-{want}: fixture run_id mismatch got={data.get('run_id')} want={cell_run}")
+print(f"friends-{want}: verified roster cardinality={want} viewer={viewer}")
+PY
+
+  for scenario in "${scenarios[@]}"; do
+    before_dir="$cell_dir/metrics/before-${scenario}"
+    after_dir="$cell_dir/metrics/after-${scenario}"
+    aggregate_path="$cell_dir/redis-aggregate-${scenario}.json"
+    extra=()
+    if [[ "$scenario" == "hint" ]]; then
+      extra+=(--hint-target-owner "$target_owner" --hint-loops 1 --hint-wait 15s)
+    fi
+    c0_scrape_participating "$before_dir"
+    LOAD_TEST_TOKEN_SECRET="$load_secret" "$build_dir/ws-stress" \
+      -http-url "$PERF_GATE_HTTP" -ws-url "$PERF_GATE_WS" \
+      -conns 1 -rate 1 -duration 60s \
+      -player-start "$viewer" -friend-viewer "$viewer" \
+      -friend-count "$friend_count" -scenario "$scenario" \
+      -environment isolated-ephemeral-redis \
+      -run-id "$cell_run_id" \
+      -json-out "$cell_dir/workload-${scenario}.json" "${extra[@]}"
+    c0_scrape_participating "$after_dir"
+    c0_redis_workload_aggregate "$before_dir" "$after_dir" "$run_id" "$cell_run_id" "$scenario" >"$aggregate_path" || \
+      printf '{"run_id":"%s","cell_run_id":"%s","scenario":"%s","interval":{"before":[],"after":[]},"commands":null,"bytes":null,"availability":"measurement_unavailable","endpoints":["gate:gate.prom","player:player.prom","farm:farm.prom","worker:worker.prom"],"scope":"workload_participating_services_incomplete"}\n' \
+        "$run_id" "$cell_run_id" "$scenario" >"$aggregate_path"
+    if ! c0_merge_redis_evidence "$cell_dir/workload-${scenario}.json" "$aggregate_path" \
+      "$cell_dir/evidence-${scenario}.json" "$run_id" "$cell_run_id" "$scenario"; then
+      overall=fail
+      continue
+    fi
+    cell_gate=$(python3 - "$aggregate_path" <<'PY'
+import json,sys
+print(json.load(open(sys.argv[1])).get("availability","measurement_unavailable"))
+PY
+)
+    if [[ "$cell_gate" != "ok" ]]; then
+      overall=fail
+    fi
+    python3 - "$cell_dir/workload-${scenario}.json" "$cell_run_id" <<'PY'
+import json, sys
+from pathlib import Path
+data = json.loads(Path(sys.argv[1]).read_text())
+want = sys.argv[2]
+if str(data.get("run_id") or "") != want:
+    raise SystemExit(f"workload run_id mismatch got={data.get('run_id')} want={want}")
+if str(data.get("cell_run_id") or "") != want:
+    raise SystemExit(f"workload cell_run_id mismatch got={data.get('cell_run_id')} want={want}")
+PY
+  done
+done
+
+python3 - "$evidence_root" "$overall" "$run_id" "$namespace" "$config_path" <<'PY'
+import json, sys
+from pathlib import Path
+root, gate, run_id, namespace = Path(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4]
+config = json.loads(Path(sys.argv[5]).read_text())
+required_counts = [int(x) for x in config["matrix"]["friend_counts"]]
+required_scenarios = [str(x) for x in config["matrix"]["scenarios"]]
+cells = {}
+evidence_ok = True
+run_id_ok = True
+for cell_dir in sorted(root.glob("friends-*")):
+    fixture = json.loads((cell_dir / "fixture.json").read_text())
+    count = cell_dir.name.split("-")[-1]
+    cells[cell_dir.name] = {
+        "friend_count": int(count),
+        "viewer_player_id": fixture.get("viewer_player_id"),
+        "target_owner_id": fixture.get("target_owner_id"),
+        "verified_friend_count": fixture.get("verified_friend_count"),
+        "run_id": fixture.get("run_id"),
+    }
+    want_run = f"{run_id}f{count}"
+    if str(fixture.get("run_id") or "") != want_run:
+        run_id_ok = False
+    for scenario in required_scenarios:
+        evidence_path = cell_dir / f"evidence-{scenario}.json"
+        if not evidence_path.is_file():
+            evidence_ok = False
+            continue
+        evidence = json.loads(evidence_path.read_text())
+        if str(evidence.get("run_id") or "") != run_id:
+            run_id_ok = False
+        if str(evidence.get("cell_run_id") or "") != want_run:
+            run_id_ok = False
+        if str(evidence.get("scenario") or "") != scenario:
+            evidence_ok = False
+        friend = evidence.get("friend_capacity") or {}
+        if not friend.get("server_phase_availability"):
+            evidence_ok = False
+        if evidence.get("redis_measurement_gate") != "pass":
+            evidence_ok = False
+        bound = evidence.get("redis_evidence_bound") or {}
+        if bound.get("run_id") != run_id or bound.get("cell_run_id") != want_run or bound.get("scenario") != scenario:
+            evidence_ok = False
+        endpoints = evidence.get("redis_evidence_endpoints") or friend.get("redis_evidence_endpoints")
+        if not endpoints:
+            evidence_ok = False
+        workload = json.loads((cell_dir / f"workload-{scenario}.json").read_text())
+        if str(workload.get("run_id") or "") != want_run:
+            run_id_ok = False
+present_counts = sorted(int(c["friend_count"]) for c in cells.values())
+if present_counts != required_counts:
+    raise SystemExit(f"matrix missing required cells: got {present_counts} want {required_counts}")
+verdict = "pass" if gate == "pass" and evidence_ok and run_id_ok else "fail"
+(root / "verdict.json").write_text(json.dumps({
+    "run_id": run_id,
+    "namespace": namespace,
+    "hint_transport_effective": "direct",
+    "redis_measurement_gate": gate,
+    "evidence_gate": "pass" if evidence_ok else "fail",
+    "run_id_gate": "pass" if run_id_ok else "fail",
+    "matrix_cells": cells,
+    "verdict": verdict,
+    "claims_30m_dau": False,
+    "notes": [
+        "30m-model matrix records comparable cells only; it does not prove 30 million DAU.",
+        "Each friend_count cell uses a distinct viewer/target/bootstrap/operation run_id.",
+        "Redis evidence is scraped before/after each workload and aggregated across participating services.",
+        "Unsupported knobs online-ratio/friend-base/pubsub are rejected by ws-stress.",
+    ],
+}, indent=2) + "\n")
+raise SystemExit(0 if verdict == "pass" else 1)
+PY

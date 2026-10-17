@@ -1,0 +1,208 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: route-controller
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: route-controller
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+spec:
+  type: ClusterIP
+  # Holder init barriers must reach the Controller snapshot/health ports
+  # before initial assignment makes the readiness probe return 200.
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/name: route-controller
+  ports:
+    - name: grpc-mtls
+      port: 9443
+      targetPort: grpc-mtls
+    - name: health
+      port: 8081
+      targetPort: health
+    - name: metrics
+      port: 9090
+      targetPort: metrics
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: route-controller
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: route-controller
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+spec:
+  replicas: 0
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: route-controller
+  template:
+    metadata:
+      labels:
+        app: route-controller
+        app.kubernetes.io/name: route-controller
+        app.kubernetes.io/component: route-control
+        app.kubernetes.io/part-of: farm-game
+        farm.io/redis-client: "true"
+      annotations:
+        farm.io/activation-status: DYNAMIC_REMOTE_WATCH_4X4X4
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: /metrics
+    spec:
+      priorityClassName: high-cpu-priority
+      terminationGracePeriodSeconds: 45
+      imagePullSecrets:
+        - name: uc-registry
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: route-controller
+          image: mirrors.tencent.com/uc-backend/farm-route-runtime@sha256:7cce9e1b9ed27c8318180b1b14afb18130cb54035fbae9b77a8edd8f683fde6e
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: farm-platform
+          env:
+            - name: FARM_SERVICE
+              value: route-controller
+            - name: ROUTE_CONTROLLER_LISTEN
+              value: ":9443"
+            - name: ROUTE_CONTROLLER_HEALTH_LISTEN
+              value: ":8081"
+            - name: ROUTE_CONTROLLER_METRICS_LISTEN
+              value: ":9090"
+            - name: ROUTE_CONTROLLER_ID
+              value: route-controller
+            - name: ROUTE_CONTROLLER_BOOT
+              value: bootstrap-pending
+            - name: ROUTE_CONTROLLER_REALM
+              value: classic-farm-dynamic-uc
+            - name: FARM_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: redis-url
+            - name: FARM_AUTHORITY_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: authority-redis-url
+            - name: FARM_RUNTIME_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: runtime-redis-url
+            - name: FARM_PROJECTION_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: projection-redis-url
+            - name: FARM_REDIS_CLUSTER
+              value: "1"
+            - name: FARM_REDIS_CLUSTER_URLS
+              valueFrom:
+                configMapKeyRef:
+                  name: farm-platform
+                  key: FARM_REDIS_CLUSTER_URLS
+            - name: ROUTE_CONTROLLER_TLS_CERT
+              value: /etc/farm/route-control/route-controller.crt
+            - name: ROUTE_CONTROLLER_TLS_KEY
+              value: /etc/farm/route-control/route-controller.key
+            - name: ROUTE_CONTROLLER_TLS_CA
+              value: /etc/farm/route-control/ca.crt
+            - name: ROUTE_CONTROLLER_HOLDER_CLIENT_CERT
+              value: /etc/farm/route-control/route-controller.crt
+            - name: ROUTE_CONTROLLER_HOLDER_CLIENT_KEY
+              value: /etc/farm/route-control/route-controller.key
+            - name: ROUTE_CONTROLLER_HOLDER_CLIENT_CA
+              value: /etc/farm/route-control/ca.crt
+            - name: ROUTE_CONTROLLER_GATE_VERIFIER_CLIENT_CERT
+              value: /etc/farm/route-control/route-controller.crt
+            - name: ROUTE_CONTROLLER_GATE_VERIFIER_CLIENT_KEY
+              value: /etc/farm/route-control/route-controller.key
+            - name: ROUTE_CONTROLLER_GATE_VERIFIER_CLIENT_CA
+              value: /etc/farm/route-control/ca.crt
+            - name: ROUTE_CONTROLLER_GATE_VERIFIER_PEERS
+              value: '[{"name":"farm-gate","address":"farm-gate-verifier.developer_026-qqfarm.svc.cluster.local:19200","server_name":"farm-gate-verifier.developer_026-qqfarm.svc.cluster.local","expected_identity":"farm-gate-verifier.developer_026-qqfarm.svc.cluster.local"}]'
+            - name: ROUTE_CONTROLLER_ALLOWED_CLIENT_IDENTITIES
+              value: route-client.developer_026-qqfarm.local
+            - name: ROUTE_CONTROLLER_PLAN_READ_IDENTITIES
+              value: route-operator.developer_026-qqfarm.local
+            - name: ROUTE_CONTROLLER_OPERATOR_IDENTITIES
+              value: route-operator.developer_026-qqfarm.local
+            - name: ROUTE_CONTROLLER_SINGLE_CONTROLLER_ATTESTATION
+              value: single-replica-recreate-no-overlap-v1
+            - name: ROUTE_CONTROLLER_PLAN_OPERATION_TIMEOUT
+              value: 30s
+            - name: ROUTE_CONTROLLER_PLAN_TTL
+              value: 24h
+            - name: ROUTE_CONTROLLER_DEADLINE_REFRESH_INTERVAL
+              value: 1s
+            - name: ROUTE_CONTROLLER_DEADLINE_REFRESH_LEAD
+              value: 30s
+            - name: ROUTE_CONTROLLER_LEASE_PROJECTION_MODE
+              value: disabled
+          ports:
+            - name: grpc-mtls
+              containerPort: 9443
+            - name: health
+              containerPort: 8081
+            - name: metrics
+              containerPort: 9090
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: health
+            periodSeconds: 2
+            # Initial assignment may atomically seed 1024 PLAYER and 1024 FARM
+            # authorities before the serving loops start. Match its bounded
+            # 30-minute deadline; steady-state failures remain covered by the
+            # separate liveness probe after startup succeeds.
+            failureThreshold: 930
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: health
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: health
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          volumeMounts:
+            - name: route-control-tls
+              mountPath: /etc/farm/route-control
+              readOnly: true
+      volumes:
+        - name: route-control-tls
+          secret:
+            secretName: farm-route-dynamic-tls
+            defaultMode: 0440
+            items:
+              - key: ca.crt
+                path: ca.crt
+              - key: route-controller.crt
+                path: route-controller.crt
+              - key: route-controller.key
+                path: route-controller.key

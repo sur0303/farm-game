@@ -1,0 +1,41 @@
+File: farm-gate
+Build ID: b0d69fe8c3d01668e868c1247097ed61a8e14826
+Type: cpu
+Time: 2026-08-17 12:06:59 CST
+Duration: 12s, Total samples = 12.42s (103.49%)
+Active filters:
+   focus=farmgame
+Showing nodes accounting for 3.25s, 26.17% of 12.42s total
+Dropped 466 nodes (cum <= 0.06s)
+Showing top 30 nodes out of 461
+      flat  flat%   sum%        cum   cum%
+     1.06s  8.53%  8.53%      1.06s  8.53%  internal/runtime/syscall/linux.Syscall6
+     0.18s  1.45%  9.98%      0.18s  1.45%  runtime.memclrNoHeapPointers
+     0.17s  1.37% 11.35%      0.18s  1.45%  runtime.step
+     0.15s  1.21% 12.56%      0.15s  1.21%  runtime.memmove
+     0.15s  1.21% 13.77%      0.15s  1.21%  runtime.nextFreeFast (inline)
+     0.11s  0.89% 14.65%      0.64s  5.15%  google.golang.org/protobuf/internal/impl.(*MessageInfo).unmarshalPointerEager
+     0.09s  0.72% 15.38%      0.09s  0.72%  internal/runtime/maps.ctrlGroup.matchH2
+     0.09s  0.72% 16.10%      0.09s  0.72%  strings.ToLower
+     0.08s  0.64% 16.75%      0.09s  0.72%  runtime.(*mspan).writeHeapBitsSmall
+     0.08s  0.64% 17.39%      0.29s  2.33%  runtime.pcvalue
+     0.08s  0.64% 18.04%      0.25s  2.01%  runtime.selectgo
+     0.07s  0.56% 18.60%      0.10s  0.81%  runtime.tryDeferToSpanScan
+     0.06s  0.48% 19.08%      0.06s  0.48%  aeshashbody
+     0.06s  0.48% 19.57%      0.09s  0.72%  internal/sync.(*Mutex).Lock
+     0.06s  0.48% 20.05%      0.23s  1.85%  runtime.(*unwinder).resolveInternal
+     0.06s  0.48% 20.53%      0.28s  2.25%  runtime.adjustframe
+     0.06s  0.48% 21.01%      0.29s  2.33%  runtime.growslice
+     0.06s  0.48% 21.50%      0.57s  4.59%  runtime.newobject
+     0.06s  0.48% 21.98%      0.06s  0.48%  time.runtimeNow
+     0.05s   0.4% 22.38%      0.05s   0.4%  farmgame/internal/gateway/leasebatch.itemHeap[go.shape.struct { farmgame/internal/gateway/command.route farmgame/internal/gateway/session.ActiveRoute; farmgame/internal/gateway/command.deadline time.Time }].Less
+     0.05s   0.4% 22.79%      0.05s   0.4%  runtime.(*moduledata).textAddr
+     0.05s   0.4% 23.19%      0.05s   0.4%  runtime.findfunc
+     0.05s   0.4% 23.59%      0.05s   0.4%  runtime.futex
+     0.05s   0.4% 23.99%      1.22s  9.82%  runtime.mallocgc
+     0.05s   0.4% 24.40%      0.21s  1.69%  runtime.mallocgcSmallNoscan
+     0.05s   0.4% 24.80%      0.42s  3.38%  runtime.mallocgcSmallScanNoHeader
+     0.05s   0.4% 25.20%      0.05s   0.4%  runtime.stackpoolalloc
+     0.04s  0.32% 25.52%      0.04s  0.32%  encoding/base64.(*Encoding).Encode
+     0.04s  0.32% 25.85%      0.04s  0.32%  farmgame/internal/gateway/leasebatch.itemHeap[go.shape.459dd4b2cc8aed3f0c1a5945c63118a201f03b7e69ad52c1f9fe4d99f97b5b5a].Less
+     0.04s  0.32% 26.17%      0.05s   0.4%  fmt.(*pp).handleMethods

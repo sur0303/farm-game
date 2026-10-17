@@ -1,0 +1,18 @@
+{
+  "verdict": "FAIL",
+  "reason": "scenario s2 failed: guest converged to version 3, want 4",
+  "steps": {
+    "friend_relationship": {
+      "status": "ok",
+      "detail": "owner share created and guest accepted (A\u003c-\u003eB friends)"
+    },
+    "guest_version": {
+      "status": "fail",
+      "detail": "guest converged to version 3, want 4"
+    },
+    "owner_plant": {
+      "status": "ok",
+      "detail": "owner committed FARM_CHANGE V3 -\u003e V4 while guest ACTIVATING"
+    }
+  }
+}

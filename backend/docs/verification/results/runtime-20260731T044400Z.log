@@ -1,0 +1,1441 @@
+sample_time=2026-07-31T04:44:18Z
+farmgate_ws_conn_active 0
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 0
+farmgate_ws_msg_received_total 0
+farmgate_ws_msg_sent_total 0
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 0
+farmgate_ws_write_batch_size_count 0
+go_goroutines 26
+go_memstats_alloc_bytes 1.360656e+06
+farm_actor_active_keys{actor_kind="farm"} 0
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 0
+{"BlockIO":"0B / 0B","CPUPerc":"14.61%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.03%","MemUsage":"19.28MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"22"}
+{"BlockIO":"0B / 0B","CPUPerc":"7.95%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.3MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"6.63%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"12.84MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"17"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.17%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"4.406MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:44:30Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 777
+go_memstats_alloc_bytes 1.2521208e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.04%","MemUsage":"25.91MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"14.67MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"22"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.12%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"12.5MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.16%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.43MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:44:42Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 777
+go_memstats_alloc_bytes 1.2963168e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"1.15%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.04%","MemUsage":"27.74MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.19MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"22"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"11.17MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.14%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.48MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:44:54Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 777
+go_memstats_alloc_bytes 1.3605776e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.04%","MemUsage":"26.96MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"14.32MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"22"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.77MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.12%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.527MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:45:06Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 777
+go_memstats_alloc_bytes 1.4051192e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.29%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"28.97MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"1.96%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.05MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"22"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"11.27MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.12%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"4.387MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:45:18Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 777
+go_memstats_alloc_bytes 1.0985248e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"29.02MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.39MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"22"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.92MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.02%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.113MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:45:30Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 777
+go_memstats_alloc_bytes 1.1260384e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.04%","MemUsage":"28.15MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.25MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.91MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.12%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.176MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:45:42Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 777
+go_memstats_alloc_bytes 1.160672e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"2.06%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"29.26MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.04%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.66MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.7MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.17%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.027MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:45:54Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.2145424e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.04%","MemUsage":"28.11MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.94MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.66MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.12%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.824MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:46:06Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.2504736e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.16%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"28.88MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.10%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.19MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.94MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.12%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.324MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:46:18Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.296512e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"29.43MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.3MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"11.4MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.281MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:46:31Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.3391536e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.30%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"29.11MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.3MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.93MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.12%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.148MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:46:43Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.3837104e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"2.02%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"29.73MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.06%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.71MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"11.48MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.15%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.074MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:46:55Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.4465248e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.27%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"29.45MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.11MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.76MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.12%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.406MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:47:07Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.4873888e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.06MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.32MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.07%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"11.91MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.14%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"4.703MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:47:19Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.0807216e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.29%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.66MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.44MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.96MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.781MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:47:31Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.1145152e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"29.75MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.52MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.73MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.15%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"5.766MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"10"}
+sample_time=2026-07-31T04:47:43Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.1473168e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"2.38%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.63MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"1.97%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.91MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"11.44MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.176MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:47:55Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.2114512e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"29.82MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.33MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.99MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.15%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.047MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:48:07Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.2496752e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.37%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"29.97MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.61MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"1.96%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"11.94MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.051MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:48:19Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.2917744e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.01%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.72MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.55MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.88MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.17%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.281MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:48:31Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.337552e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"1.28%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.26MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.86MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.11MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.15%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.023MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:48:43Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.4048432e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.26%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.8MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"36"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.22%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.57MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.28MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.14%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.543MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:48:55Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.4472272e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"1.23%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.24MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.93MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"9.867MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.09%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.398MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:49:07Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.4898352e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.01MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.8MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.34MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.633MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:49:19Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.0879664e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"3.19%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.94MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.05%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.44MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.44MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.164MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:49:31Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.1136928e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.20%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.58MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.02%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.71MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.29MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.754MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:49:43Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.1711008e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.90%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.1MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"1.98%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.13MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"1.94%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.78MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.14%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.938MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:49:56Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.2081168e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"2.08%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.55MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.77MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.13MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.14%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.375MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:50:08Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.2513648e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"1.22%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.37MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.72MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.01MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.949MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:50:20Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.2847232e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.39MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.04%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"17.14MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.96MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.11%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.16MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:50:32Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.3288736e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"1.21%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.59MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.6MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.1MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.359MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:50:44Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.3918064e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.18MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.56MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"1.98%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.36MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.051MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:50:56Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.4357928e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.01%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.36MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.52MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.86MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.15%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.375MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:51:08Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.0470376e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.44MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.05MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.11MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.15%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.086MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:51:20Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.0721208e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"2.02%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"33.08MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.10%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"17.08MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.48MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.203MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:51:32Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.1054408e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.84MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.29MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.35MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.15%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.027MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:51:44Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.1486296e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.02%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.23MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.85MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"1.94%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"11.63MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.14%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.941MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:51:56Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.1836632e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.23%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.75MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.88MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"9.863MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.11%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.461MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:52:08Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.2198664e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.44MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.45MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"9.867MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.14%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.543MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:52:20Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.2653928e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.25%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.47MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"1.98%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"15.95MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.37MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.06%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.848MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:52:32Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.3095672e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.09MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.04%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.91MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.13MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.15%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.18MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:52:44Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.3776328e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.34%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.98MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.6MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.03%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.11MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.15%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.344MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:52:56Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.4194648e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"2.03%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.23MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.05%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.29MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.11MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.12%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.699MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:53:08Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.0433608e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.29%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.96MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"16.03MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"9.867MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.11%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.68MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:53:20Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.0713464e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.64MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"1.95%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"17MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"1.98%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.49MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.352MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:53:33Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.1046648e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.32%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.83MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.79MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.05MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.13%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.68MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:53:45Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.1606824e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.01%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.74MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.38MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.3MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.14%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.938MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:53:57Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.1911912e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"2.48%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"31.15MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.05%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.03%","MemUsage":"17.11MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"1.94%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"11.11MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"2.05%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"7.73MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}
+sample_time=2026-07-31T04:54:09Z
+farmgate_ws_conn_active 250
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 250
+farmgate_ws_msg_received_total 600
+farmgate_ws_msg_sent_total 900
+farmgate_ws_slow_client_kick_total 0
+farmgate_ws_write_batch_size_sum 300
+farmgate_ws_write_batch_size_count 300
+go_goroutines 775
+go_memstats_alloc_bytes 1.2318728e+07
+farm_actor_active_keys{actor_kind="farm"} 250
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_queued{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_submit_total{actor_kind="farm"} 850
+farm_store_operation_seconds_sum{actor_kind="farm",operation="cas"} 0.029808436999999997
+farm_store_operation_seconds_count{actor_kind="farm",operation="cas"} 100
+farm_store_operation_seconds_sum{actor_kind="farm",operation="get"} 0.08009543099999998
+farm_store_operation_seconds_count{actor_kind="farm",operation="get"} 250
+farm_store_operation_seconds_sum{actor_kind="farm",operation="insert"} 0.07487961600000005
+farm_store_operation_seconds_count{actor_kind="farm",operation="insert"} 250
+farm_store_operation_total{actor_kind="farm",operation="cas",result="ok"} 100
+farm_store_operation_total{actor_kind="farm",operation="get",result="not_found"} 250
+farm_store_operation_total{actor_kind="farm",operation="insert",result="ok"} 250
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-gate-1","ID":"22974522a471","MemPerc":"0.05%","MemUsage":"30.95MiB / 62.29GiB","Name":"farm-game-local-farm-gate-1","NetIO":"0B / 0B","PIDs":"30"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-farm-svr-1","ID":"556c6f2aa595","MemPerc":"0.02%","MemUsage":"15.84MiB / 62.29GiB","Name":"farm-game-local-farm-svr-1","NetIO":"0B / 0B","PIDs":"23"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.00%","Container":"farm-game-local-player-svr-1","ID":"481e2f4ce8e4","MemPerc":"0.02%","MemUsage":"10.35MiB / 62.29GiB","Name":"farm-game-local-player-svr-1","NetIO":"0B / 0B","PIDs":"19"}
+{"BlockIO":"0B / 0B","CPUPerc":"0.14%","Container":"farm-game-local-farm-worker-1","ID":"e16a739079c3","MemPerc":"0.01%","MemUsage":"6.746MiB / 62.29GiB","Name":"farm-game-local-farm-worker-1","NetIO":"0B / 0B","PIDs":"16"}

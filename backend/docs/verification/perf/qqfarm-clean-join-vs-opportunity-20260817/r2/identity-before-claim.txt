@@ -1,0 +1,7 @@
+player_uid=93a305a7-e039-42d5-9d86-e58f2448f47a
+farm_uid=bb0e3679-02de-49c1-a240-57a1c8c7eca7
+worker_a_uid=cdfdc532-66ac-460b-81eb-7fc5e73e990c
+worker_b_uid=519cf6da-a703-42da-b175-1dee6ddcb688
+gate_uid=5479a4f1-d7ae-4578-aae8-8128fbfa49ae
+player_restart=0
+farm_restart=0

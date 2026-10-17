@@ -1,0 +1,411 @@
+{
+    "apiVersion": "apps/v1",
+    "kind": "StatefulSet",
+    "metadata": {
+        "annotations": {
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"StatefulSet\",\"metadata\":{\"annotations\":{},\"labels\":{\"app.kubernetes.io/name\":\"farm-gate\",\"app.kubernetes.io/part-of\":\"farm-game\",\"uc.qq.com/owner\":\"developer_026\"},\"name\":\"farm-gate\",\"namespace\":\"developer_026-qqfarm\"},\"spec\":{\"podManagementPolicy\":\"Parallel\",\"replicas\":1,\"selector\":{\"matchLabels\":{\"app.kubernetes.io/name\":\"farm-gate\"}},\"serviceName\":\"farm-gate-headless\",\"template\":{\"metadata\":{\"annotations\":{\"farm.io/activation-status\":\"DYNAMIC_REMOTE_WATCH_4X4X4\",\"prometheus.io/path\":\"/metrics\",\"prometheus.io/port\":\"8080\",\"prometheus.io/scrape\":\"true\"},\"labels\":{\"app\":\"farm-gate\",\"app.kubernetes.io/component\":\"gateway\",\"app.kubernetes.io/name\":\"farm-gate\",\"app.kubernetes.io/part-of\":\"farm-game\",\"farm.io/redis-client\":\"true\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"FARM_SERVICE\",\"value\":\"farm-gate\"},{\"name\":\"GATEWAY_LISTEN\",\"value\":\":8080\"},{\"name\":\"GATEWAY_DOWNLINK_LISTEN\",\"value\":\":9092\"},{\"name\":\"GATE_CONTROL_LISTEN\",\"value\":\":9093\"},{\"name\":\"GATEWAY_ID\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.name\"}}},{\"name\":\"GATE_PPROF_ENABLED\",\"value\":\"1\"},{\"name\":\"GATE_BACKEND_MAX_INFLIGHT\",\"value\":\"1024\"},{\"name\":\"GATE_BACKEND_ADMISSION_WAIT\",\"value\":\"25ms\"},{\"name\":\"GATE_OPPORTUNITY_HTTP_MAX_INFLIGHT\",\"value\":\"256\"},{\"name\":\"GATE_DOWNLINK_WRITER_MAX_ITEMS\",\"value\":\"256\"},{\"name\":\"GATE_DOWNLINK_WRITER_MAX_BYTES\",\"value\":\"1048576\"},{\"name\":\"GATE_DOWNLINK_HINT_MAX_ITEMS\",\"value\":\"32\"},{\"name\":\"GATE_DOWNLINK_HINT_MAX_BYTES\",\"value\":\"65536\"},{\"name\":\"GATE_DOWNLINK_DRAIN_QUANTUM\",\"value\":\"64\"},{\"name\":\"GATE_VERIFIER_LISTEN\",\"value\":\":19200\"},{\"name\":\"GATE_VERIFIER_TLS_CERT\",\"value\":\"/etc/farm/route-control/gate-verifier.crt\"},{\"name\":\"GATE_VERIFIER_TLS_KEY\",\"value\":\"/etc/farm/route-control/gate-verifier.key\"},{\"name\":\"GATE_VERIFIER_CLIENT_CA\",\"value\":\"/etc/farm/route-control/ca.crt\"},{\"name\":\"GATE_VERIFIER_ALLOWED_CLIENT_IDENTITY\",\"value\":\"route-controller.developer_026-qqfarm.svc.cluster.local\"},{\"name\":\"FARM_REDIS_URL\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"redis-url\",\"name\":\"farm-secrets\"}}},{\"name\":\"FARM_AUTHORITY_REDIS_URL\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"authority-redis-url\",\"name\":\"farm-secrets\"}}},{\"name\":\"FARM_RUNTIME_REDIS_URL\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"runtime-redis-url\",\"name\":\"farm-secrets\"}}},{\"name\":\"FARM_PROJECTION_REDIS_URL\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"projection-redis-url\",\"name\":\"farm-secrets\"}}},{\"name\":\"FARM_REDIS_CLUSTER\",\"value\":\"1\"},{\"name\":\"FARM_REDIS_CLUSTER_URLS\",\"value\":\"redis://farm-redis-0.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0?pool_size=64,redis://farm-redis-1.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0?pool_size=64,redis://farm-redis-2.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0?pool_size=64\"},{\"name\":\"PERMIT_SECRET\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"permit-secret\",\"name\":\"farm-secrets\"}}},{\"name\":\"HTTP_SESSION_COOKIE_KEYRING\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"http-session-cookie-keyring\",\"name\":\"farm-secrets\"}}},{\"name\":\"WEB_LOGIN_RATE_LIMIT_SECRET\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"web-login-rate-limit-secret\",\"name\":\"farm-secrets\"}}},{\"name\":\"LOAD_TEST_TOKEN_SECRET\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"load-test-token-secret\",\"name\":\"farm-secrets\"}}}],\"envFrom\":[{\"configMapRef\":{\"name\":\"farm-platform\"}}],\"image\":\"mirrors.tencent.com/uc-backend/farm-route-runtime@sha256:7cce9e1b9ed27c8318180b1b14afb18130cb54035fbae9b77a8edd8f683fde6e\",\"imagePullPolicy\":\"IfNotPresent\",\"livenessProbe\":{\"failureThreshold\":3,\"httpGet\":{\"path\":\"/healthz\",\"port\":\"http\"},\"periodSeconds\":10,\"timeoutSeconds\":2},\"name\":\"farm-gate\",\"ports\":[{\"containerPort\":8080,\"name\":\"http\"},{\"containerPort\":9092,\"name\":\"downlink\"},{\"containerPort\":9093,\"name\":\"control\"},{\"containerPort\":19200,\"name\":\"verifier-mtls\"}],\"readinessProbe\":{\"failureThreshold\":6,\"httpGet\":{\"path\":\"/readyz\",\"port\":\"http\"},\"periodSeconds\":5,\"timeoutSeconds\":2},\"resources\":{\"limits\":{\"cpu\":\"2\",\"memory\":\"4Gi\"},\"requests\":{\"cpu\":\"2\",\"memory\":\"4Gi\"}},\"startupProbe\":{\"failureThreshold\":36,\"httpGet\":{\"path\":\"/healthz\",\"port\":\"http\"},\"periodSeconds\":5,\"timeoutSeconds\":2},\"volumeMounts\":[{\"mountPath\":\"/etc/farm/route-control\",\"name\":\"route-control-tls\",\"readOnly\":true}]}],\"imagePullSecrets\":[{\"name\":\"uc-registry\"}],\"initContainers\":[{\"command\":[\"sh\",\"-c\",\"until redis-cli -h farm-redis ping | grep -q PONG; do sleep 1; done\"],\"image\":\"redis:7-alpine\",\"name\":\"wait-redis\"}],\"priorityClassName\":\"high-cpu-priority\",\"securityContext\":{\"fsGroup\":10001,\"fsGroupChangePolicy\":\"OnRootMismatch\",\"runAsGroup\":10001,\"runAsNonRoot\":true,\"runAsUser\":10001},\"terminationGracePeriodSeconds\":30,\"volumes\":[{\"name\":\"route-control-tls\",\"secret\":{\"defaultMode\":288,\"items\":[{\"key\":\"ca.crt\",\"path\":\"ca.crt\"},{\"key\":\"route-client.crt\",\"path\":\"route-client.crt\"},{\"key\":\"route-client.key\",\"path\":\"route-client.key\"},{\"key\":\"gate-verifier.crt\",\"path\":\"gate-verifier.crt\"},{\"key\":\"gate-verifier.key\",\"path\":\"gate-verifier.key\"}],\"secretName\":\"farm-route-dynamic-tls\"}}]}}}}\n"
+        },
+        "creationTimestamp": "2026-08-18T11:06:34Z",
+        "generation": 229,
+        "labels": {
+            "app.kubernetes.io/name": "farm-gate",
+            "app.kubernetes.io/part-of": "farm-game",
+            "uc.qq.com/owner": "developer_026"
+        },
+        "name": "farm-gate",
+        "namespace": "developer_026-qqfarm",
+        "resourceVersion": "2698974356",
+        "uid": "8229e853-7e6c-4e85-b6b3-832b2f7419fd"
+    },
+    "spec": {
+        "persistentVolumeClaimRetentionPolicy": {
+            "whenDeleted": "Retain",
+            "whenScaled": "Retain"
+        },
+        "podManagementPolicy": "Parallel",
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+            "matchLabels": {
+                "app.kubernetes.io/name": "farm-gate"
+            }
+        },
+        "serviceName": "farm-gate-headless",
+        "template": {
+            "metadata": {
+                "annotations": {
+                    "farm.io/activation-status": "DYNAMIC_REMOTE_WATCH_4X4X4",
+                    "prometheus.io/path": "/metrics",
+                    "prometheus.io/port": "8080",
+                    "prometheus.io/scrape": "true"
+                },
+                "labels": {
+                    "app": "farm-gate",
+                    "app.kubernetes.io/component": "gateway",
+                    "app.kubernetes.io/name": "farm-gate",
+                    "app.kubernetes.io/part-of": "farm-game",
+                    "farm.io/redis-client": "true"
+                }
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "env": [
+                            {
+                                "name": "FARM_SERVICE",
+                                "value": "farm-gate"
+                            },
+                            {
+                                "name": "GATEWAY_LISTEN",
+                                "value": ":8080"
+                            },
+                            {
+                                "name": "GATEWAY_DOWNLINK_LISTEN",
+                                "value": ":9092"
+                            },
+                            {
+                                "name": "GATE_CONTROL_LISTEN",
+                                "value": ":9093"
+                            },
+                            {
+                                "name": "GATEWAY_ID",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.name"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "GATE_PPROF_ENABLED",
+                                "value": "1"
+                            },
+                            {
+                                "name": "GATE_BACKEND_MAX_INFLIGHT",
+                                "value": "1024"
+                            },
+                            {
+                                "name": "GATE_BACKEND_ADMISSION_WAIT",
+                                "value": "25ms"
+                            },
+                            {
+                                "name": "GATE_OPPORTUNITY_HTTP_MAX_INFLIGHT",
+                                "value": "256"
+                            },
+                            {
+                                "name": "GATE_DOWNLINK_WRITER_MAX_ITEMS",
+                                "value": "256"
+                            },
+                            {
+                                "name": "GATE_DOWNLINK_WRITER_MAX_BYTES",
+                                "value": "1048576"
+                            },
+                            {
+                                "name": "GATE_DOWNLINK_HINT_MAX_ITEMS",
+                                "value": "32"
+                            },
+                            {
+                                "name": "GATE_DOWNLINK_HINT_MAX_BYTES",
+                                "value": "65536"
+                            },
+                            {
+                                "name": "GATE_DOWNLINK_DRAIN_QUANTUM",
+                                "value": "64"
+                            },
+                            {
+                                "name": "GATE_VERIFIER_LISTEN",
+                                "value": ":19200"
+                            },
+                            {
+                                "name": "GATE_VERIFIER_TLS_CERT",
+                                "value": "/etc/farm/route-control/gate-verifier.crt"
+                            },
+                            {
+                                "name": "GATE_VERIFIER_TLS_KEY",
+                                "value": "/etc/farm/route-control/gate-verifier.key"
+                            },
+                            {
+                                "name": "GATE_VERIFIER_CLIENT_CA",
+                                "value": "/etc/farm/route-control/ca.crt"
+                            },
+                            {
+                                "name": "GATE_VERIFIER_ALLOWED_CLIENT_IDENTITY",
+                                "value": "route-controller.developer_026-qqfarm.svc.cluster.local"
+                            },
+                            {
+                                "name": "FARM_REDIS_URL",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "redis-url",
+                                        "name": "farm-secrets"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "FARM_AUTHORITY_REDIS_URL",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "authority-redis-url",
+                                        "name": "farm-secrets"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "FARM_RUNTIME_REDIS_URL",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "runtime-redis-url",
+                                        "name": "farm-secrets"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "FARM_PROJECTION_REDIS_URL",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "projection-redis-url",
+                                        "name": "farm-secrets"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "FARM_REDIS_CLUSTER",
+                                "value": "1"
+                            },
+                            {
+                                "name": "FARM_REDIS_CLUSTER_URLS",
+                                "value": "redis://farm-redis-0.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0?pool_size=64,redis://farm-redis-1.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0?pool_size=64,redis://farm-redis-2.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0?pool_size=64"
+                            },
+                            {
+                                "name": "PERMIT_SECRET",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "permit-secret",
+                                        "name": "farm-secrets"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "HTTP_SESSION_COOKIE_KEYRING",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "http-session-cookie-keyring",
+                                        "name": "farm-secrets"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "WEB_LOGIN_RATE_LIMIT_SECRET",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "web-login-rate-limit-secret",
+                                        "name": "farm-secrets"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "LOAD_TEST_TOKEN_SECRET",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "load-test-token-secret",
+                                        "name": "farm-secrets"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "REDIS_WORKLOAD_METRICS",
+                                "value": "1"
+                            }
+                        ],
+                        "envFrom": [
+                            {
+                                "configMapRef": {
+                                    "name": "farm-platform"
+                                }
+                            }
+                        ],
+                        "image": "mirrors.tencent.com/uc-backend/farm-route-runtime@sha256:70da4dbc883a279b0a9122959eacafd65564e0055615331f7c4bda9945a3c3c9",
+                        "imagePullPolicy": "IfNotPresent",
+                        "livenessProbe": {
+                            "failureThreshold": 3,
+                            "httpGet": {
+                                "path": "/healthz",
+                                "port": "http",
+                                "scheme": "HTTP"
+                            },
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 2
+                        },
+                        "name": "farm-gate",
+                        "ports": [
+                            {
+                                "containerPort": 8080,
+                                "name": "http",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 9092,
+                                "name": "downlink",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 9093,
+                                "name": "control",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 19200,
+                                "name": "verifier-mtls",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "failureThreshold": 6,
+                            "httpGet": {
+                                "path": "/readyz",
+                                "port": "http",
+                                "scheme": "HTTP"
+                            },
+                            "periodSeconds": 5,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 2
+                        },
+                        "resources": {
+                            "limits": {
+                                "cpu": "2",
+                                "memory": "4Gi"
+                            },
+                            "requests": {
+                                "cpu": "2",
+                                "memory": "4Gi"
+                            }
+                        },
+                        "startupProbe": {
+                            "failureThreshold": 36,
+                            "httpGet": {
+                                "path": "/healthz",
+                                "port": "http",
+                                "scheme": "HTTP"
+                            },
+                            "periodSeconds": 5,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 2
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/etc/farm/route-control",
+                                "name": "route-control-tls",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "imagePullSecrets": [
+                    {
+                        "name": "uc-registry"
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "command": [
+                            "sh",
+                            "-c",
+                            "until redis-cli -h farm-redis ping | grep -q PONG; do sleep 1; done"
+                        ],
+                        "env": [
+                            {
+                                "name": "GATE_BACKEND_MAX_INFLIGHT",
+                                "value": "1024"
+                            },
+                            {
+                                "name": "GATE_BACKEND_ADMISSION_WAIT",
+                                "value": "25ms"
+                            },
+                            {
+                                "name": "GATE_OPPORTUNITY_HTTP_MAX_INFLIGHT",
+                                "value": "256"
+                            },
+                            {
+                                "name": "GATE_PPROF_ENABLED",
+                                "value": "1"
+                            },
+                            {
+                                "name": "REDIS_WORKLOAD_METRICS",
+                                "value": "1"
+                            }
+                        ],
+                        "image": "redis:7-alpine",
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "wait-redis",
+                        "resources": {},
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File"
+                    }
+                ],
+                "priorityClassName": "high-cpu-priority",
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {
+                    "fsGroup": 10001,
+                    "fsGroupChangePolicy": "OnRootMismatch",
+                    "runAsGroup": 10001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 10001
+                },
+                "terminationGracePeriodSeconds": 30,
+                "volumes": [
+                    {
+                        "name": "route-control-tls",
+                        "secret": {
+                            "defaultMode": 288,
+                            "items": [
+                                {
+                                    "key": "ca.crt",
+                                    "path": "ca.crt"
+                                },
+                                {
+                                    "key": "route-client.crt",
+                                    "path": "route-client.crt"
+                                },
+                                {
+                                    "key": "route-client.key",
+                                    "path": "route-client.key"
+                                },
+                                {
+                                    "key": "gate-verifier.crt",
+                                    "path": "gate-verifier.crt"
+                                },
+                                {
+                                    "key": "gate-verifier.key",
+                                    "path": "gate-verifier.key"
+                                }
+                            ],
+                            "secretName": "farm-route-dynamic-tls"
+                        }
+                    }
+                ]
+            }
+        },
+        "updateStrategy": {
+            "rollingUpdate": {
+                "partition": 0
+            },
+            "type": "RollingUpdate"
+        }
+    },
+    "status": {
+        "availableReplicas": 1,
+        "collisionCount": 0,
+        "currentReplicas": 1,
+        "currentRevision": "farm-gate-55b74cf457",
+        "observedGeneration": 229,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "updateRevision": "farm-gate-55b74cf457",
+        "updatedReplicas": 1
+    }
+}

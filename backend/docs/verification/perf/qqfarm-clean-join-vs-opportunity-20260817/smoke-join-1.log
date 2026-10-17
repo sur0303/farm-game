@@ -1,0 +1,44 @@
+job.batch/ws-stress-join-124548 created
+job=ws-stress-join-124548
+job.batch/ws-stress-join-124548 condition met
+2026/08/17 04:45:51 ws-stress HTTP=http://farm-gate:8080 WSS=ws://farm-gate:8080/ws conns=1 rate=1/s duration=5s scenario=join run_id=dkqy1zl7rj5b
+{
+  "run_id": "dkqy1zl7rj5b",
+  "cell_run_id": "dkqy1zl7rj5b",
+  "scenario": "join",
+  "auth_mode": "load_test_token",
+  "configured_connections": 1,
+  "player_start": 1786950000000,
+  "connect_rate_per_second": 1,
+  "configured_duration_seconds": 5,
+  "started_at": "2026-08-17T04:45:51.195348989Z",
+  "finished_at": "2026-08-17T04:45:55.058444485Z",
+  "attempted": 1,
+  "ready": 0,
+  "active_at_end": 0,
+  "peak_active": 1,
+  "login_errors": 0,
+  "connect_errors": 0,
+  "hello_errors": 0,
+  "join_errors": 1,
+  "scenario_attempted": 0,
+  "scenario_succeeded": 0,
+  "scenario_errors": 0,
+  "unexpected_disconnects": 0,
+  "ready_rate": 0,
+  "elapsed_ms": 3862.767413,
+  "ready_p50_ms": 0,
+  "ready_p95_ms": 0,
+  "ready_p99_ms": 0,
+  "ready_max_ms": 0,
+  "login_p50_ms": 14.990084,
+  "login_p95_ms": 14.990084,
+  "hello_p50_ms": 9.813271,
+  "hello_p95_ms": 9.813271,
+  "scenario_p95_ms": 0,
+  "failure_reasons": {
+    "join_barrier: REJOIN_REQUIRED during join barrier": 1
+  },
+  "git_sha": "unknown",
+  "test_environment": "developer_026-qqfarm"
+}

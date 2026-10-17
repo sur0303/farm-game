@@ -1,0 +1,97 @@
+{
+  "schema_version": "cap-single-pod-l2-r2.verdict-rules.v0.1",
+  "allowed_verdicts": [
+    "PASS_SAFE_TIER",
+    "FAIL_CORRECTNESS",
+    "FAIL_TARGET_SATURATION",
+    "INCONCLUSIVE_LOAD_GENERATOR",
+    "INCONCLUSIVE_DEPENDENCY",
+    "INCONCLUSIVE_OBSERVABILITY",
+    "INCONCLUSIVE_ENVIRONMENT"
+  ],
+  "precedence": [
+    "FAIL_CORRECTNESS",
+    "INCONCLUSIVE_ENVIRONMENT",
+    "INCONCLUSIVE_OBSERVABILITY",
+    "INCONCLUSIVE_LOAD_GENERATOR",
+    "INCONCLUSIVE_DEPENDENCY",
+    "FAIL_TARGET_SATURATION",
+    "PASS_SAFE_TIER"
+  ],
+  "run_rules": {
+    "FAIL_CORRECTNESS": "any hard correctness gate is nonzero or correctness observation is incomplete after a correctness signal",
+    "INCONCLUSIVE_ENVIRONMENT": "identity, cgroup, machine, clock, isolation, namespace, image, bundle, or config validity fails",
+    "INCONCLUSIVE_OBSERVABILITY": "a required metric/oracle is absent, stale, reset without accounting, or incomplete",
+    "INCONCLUSIVE_LOAD_GENERATOR": "the requested load was not independently deliverable or driver headroom is unproven",
+    "INCONCLUSIVE_DEPENDENCY": "Redis or an unmeasured support service reaches its knee before the measured service",
+    "FAIL_TARGET_SATURATION": "the measured single service reaches a bounded saturation condition without a higher-precedence verdict",
+    "PASS_SAFE_TIER": "all safe-tier and three-formal-round conditions pass"
+  },
+  "safe_tier_candidate": {
+    "must_be_before_first_repeatable_knee": true,
+    "minimum_actual_to_planned_ratio": 0.95,
+    "correctness_violations": 0,
+    "correctness_observation_complete": true,
+    "primary_queue_slope_max_per_second": 0.0,
+    "p99_sustained_degradation": false,
+    "dependency_first_bottleneck": false,
+    "load_generator_first_bottleneck": false,
+    "oom_kill_total": 0,
+    "fd_exhaustion_risk": false,
+    "controlled_drain_pass": true
+  },
+  "formal_acceptance": {
+    "rounds_required": 3,
+    "identical_identity_profile_tier_and_fixture": true,
+    "minimum_actual_to_planned_ratio_each_round": 0.98,
+    "correctness_violations_total": 0,
+    "correctness_observation_complete_each_round": true,
+    "environment_valid_each_round": true,
+    "observability_complete_each_round": true,
+    "dependency_first_bottleneck_each_round": false,
+    "load_generator_first_bottleneck_each_round": false,
+    "primary_queue_slope_max_per_second_each_round": 0.0,
+    "p99_sustained_degradation_each_round": false,
+    "controlled_drain_pass_each_round": true,
+    "cross_round_actual_throughput_cv_max": 0.1,
+    "cross_round_p99_latency_cv_max": 0.1,
+    "cross_round_peak_rss_cv_max": 0.1
+  },
+  "staircase_policy": {
+    "saturated_tier_is_retained": true,
+    "saturated_tier_can_define_knee": true,
+    "saturated_tier_can_be_safe_tier": false,
+    "performance_numbers_after_correctness_failure_are_eligible": false,
+    "continue_after_correctness_failure": false,
+    "safe_tier_may_skip_an_unmeasured_tier": false
+  },
+  "service_train_pass": {
+    "gate": "all required Gate profiles produce PASS_SAFE_TIER and one reviewed safe constant set",
+    "player": "all four Player profiles produce PASS_SAFE_TIER and one reviewed safe constant set",
+    "farm": "all required Farm profiles including 1x200 and 10x200 produce PASS_SAFE_TIER",
+    "worker": "all work families and mixed-family fairness produce PASS_SAFE_TIER"
+  },
+  "l2_pass": {
+    "requires": [
+      "L2-GATE-R1 PASS_SAFE_TIER",
+      "L2-PLAYER-R1 PASS_SAFE_TIER",
+      "L2-FARM-R1 PASS_SAFE_TIER",
+      "L2-WORKER-R1 PASS_SAFE_TIER",
+      "LOAD-GENERATOR-QUALIFICATION PASS",
+      "OBSERVABILITY-QUALIFICATION PASS",
+      "INDEPENDENT-EVIDENCE-REVIEW PASS"
+    ],
+    "output": "CP-PERF-R1-SINGLE-POD-BASELINE",
+    "sets_global_baseline_eligible": false,
+    "authorizes_mixed_b0_preflight": true,
+    "supports_30m_dau": false
+  },
+  "forbidden": [
+    "manual_baseline_eligible_true",
+    "rename_or_delete_failed_runs",
+    "exclude_correctness_failures_from_report",
+    "use_load_generator_limit_as_service_capacity",
+    "sum_L1_primitives_as_L2_business_capacity",
+    "use_R1_single_pod_result_as_R2_or_30m_claim"
+  ]
+}

@@ -1,0 +1,17 @@
+NAME                                       READY   STATUS      RESTARTS        AGE     IP             NODE            NOMINATED NODE   READINESS GATES
+farm-gate-6d664d9846-xrdhp                 1/1     Running     0               98s     198.18.0.158    198.18.0.28    <none>           <none>
+farm-grafana-64f7f46898-z58tr              1/1     Running     0               2d      198.18.0.29    198.18.0.30    <none>           <none>
+farm-prometheus-5966b58fdf-6xrnv           1/1     Running     0               2d      198.18.0.31   198.18.0.32    <none>           <none>
+farm-redis-0                               1/1     Running     0               20h     198.18.0.33    198.18.0.34     <none>           <none>
+farm-redis-1                               1/1     Running     0               20h     198.18.0.35    198.18.0.36   <none>           <none>
+farm-redis-2                               1/1     Running     0               20h     198.18.0.37   198.18.0.38   <none>           <none>
+farm-route-bootstrap                       1/1     Running     0               2m51s   198.18.0.159   198.18.0.40    <none>           <none>
+farm-svr-0                                 1/1     Running     1 (2m41s ago)   2m48s   198.18.0.160   198.18.0.40    <none>           <none>
+farm-svr-1                                 1/1     Running     0               2m48s   198.18.0.161   198.18.0.162     <none>           <none>
+farm-worker-a-5f99585984-44xhk             1/1     Running     0               106s    198.18.0.163   198.18.0.80    <none>           <none>
+farm-worker-b-58cd8d6d5c-f6w8z             1/1     Running     0               106s    198.18.0.164    198.18.0.57     <none>           <none>
+player-svr-0                               1/1     Running     1 (2m41s ago)   2m48s   198.18.0.165   198.18.0.80    <none>           <none>
+player-svr-1                               1/1     Running     1 (2m41s ago)   2m48s   198.18.0.166   198.18.0.82    <none>           <none>
+route-controller-7578b4d4f-82vq2           1/1     Running     0               2m33s   198.18.0.167    198.18.0.57     <none>           <none>
+ws-stress-thick-login-115857-12978-cs96z   0/1     Completed   0               10m     198.18.0.168   198.18.0.135    <none>           <none>
+ws-stress-thick-login-115857-9667-6978q    0/1     Completed   0               10m     198.18.0.169    198.18.0.11    <none>           <none>

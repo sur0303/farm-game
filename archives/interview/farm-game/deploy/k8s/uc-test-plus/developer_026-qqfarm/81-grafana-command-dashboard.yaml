@@ -1,0 +1,354 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: farm-grafana-dashboard-provisioning
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-grafana
+    app.kubernetes.io/part-of: farm-game
+data:
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+      - name: farm-load
+        orgId: 1
+        folder: Farm Load
+        type: file
+        disableDeletion: true
+        updateIntervalSeconds: 10
+        options:
+          path: /etc/grafana/dashboards
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: farm-grafana-command-dashboard
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-grafana
+    app.kubernetes.io/part-of: farm-game
+data:
+  command-correctness.json: |
+    {
+      "uid": "farm-command-correctness",
+      "title": "Farm Load · RPC & Command Correctness",
+      "tags": ["farm", "load-test", "correctness", "答辩"],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 5,
+      "refresh": "5s",
+      "time": {"from": "now-30m", "to": "now"},
+      "templating": {
+        "list": [
+          {
+            "name": "namespace",
+            "label": "Namespace",
+            "type": "query",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "query": "label_values(farm_gate_command_results_total, namespace)",
+            "refresh": 1,
+            "includeAll": true,
+            "allValue": ".*",
+            "multi": true,
+            "current": {"text": "All", "value": ["$__all"]}
+          }
+        ]
+      },
+      "annotations": {"list": []},
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "业务命令正确率",
+          "description": "SUCCEEDED/ACCEPTED/NO_CHANGE ÷ all client-visible command results",
+          "gridPos": {"h": 5, "w": 6, "x": 0, "y": 0},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "100 * sum(increase(farm_gate_command_results_total{namespace=~\"$namespace\",status=~\"SUCCEEDED|ACCEPTED|NO_CHANGE\"}[$__range])) / clamp_min(sum(increase(farm_gate_command_results_total{namespace=~\"$namespace\"}[$__range])), 1)", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "percent", "decimals": 2, "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "yellow", "value": 99}, {"color": "green", "value": 99.99}]}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value"}
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "业务失败命令",
+          "description": "REJECTED + UNAVAILABLE; PROCESSING is shown separately as pending",
+          "gridPos": {"h": 5, "w": 6, "x": 6, "y": 0},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "sum(increase(farm_gate_command_results_total{namespace=~\"$namespace\",status=~\"REJECTED|UNAVAILABLE\"}[$__range]))", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value"}
+        },
+        {
+          "id": 3,
+          "type": "timeseries",
+          "title": "命令结果趋势",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "sum by(status)(rate(farm_gate_command_results_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{status}}", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "ops", "custom": {"drawStyle": "line", "lineInterpolation": "linear", "lineWidth": 2, "showPoints": "never", "stacking": {"mode": "normal", "group": "A"}}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "sum"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 4,
+          "type": "table",
+          "title": "命令 / 状态 / 错误码",
+          "description": "截图主表：每个业务命令最终返回是否正确，以及具体错误码",
+          "gridPos": {"h": 9, "w": 12, "x": 0, "y": 5},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "sum by(command_type,status,error_code)(increase(farm_gate_command_results_total{namespace=~\"$namespace\"}[$__range]))", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"Value": "count", "command_type": "command", "error_code": "error", "status": "status"}}}],
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0}, "overrides": []},
+          "options": {"showHeader": true, "footer": {"show": false}}
+        },
+        {
+          "id": 5,
+          "type": "timeseries",
+          "title": "Gate 准入拒绝原因",
+          "gridPos": {"h": 9, "w": 12, "x": 12, "y": 8},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "sum by(reason)(rate(farm_gate_command_rejected_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{reason}}", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "ops", "custom": {"drawStyle": "bars", "fillOpacity": 70}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom"}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 6,
+          "type": "stat",
+          "title": "内部 RPC 非 OK 比例",
+          "description": "farm_rpc_calls_total 中 gRPC code != OK 的比例",
+          "gridPos": {"h": 5, "w": 6, "x": 0, "y": 14},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "100 * sum(increase(farm_rpc_calls_total{namespace=~\"$namespace\",code!=\"OK\"}[$__range])) / clamp_min(sum(increase(farm_rpc_calls_total{namespace=~\"$namespace\"}[$__range])), 1)", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "percent", "decimals": 2, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 0.01}, {"color": "red", "value": 1}]}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "colorMode": "value"}
+        },
+        {
+          "id": 7,
+          "type": "table",
+          "title": "内部 RPC 状态码",
+          "gridPos": {"h": 9, "w": 6, "x": 6, "y": 14},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "sum by(service,method,code)(increase(farm_rpc_calls_total{namespace=~\"$namespace\"}[$__range]))", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"Value": "count", "service": "service", "method": "method", "code": "grpc_code"}}}],
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0}, "overrides": []},
+          "options": {"showHeader": true}
+        },
+        {
+          "id": 8,
+          "type": "timeseries",
+          "title": "内部 RPC P95 延迟",
+          "gridPos": {"h": 9, "w": 12, "x": 12, "y": 17},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "histogram_quantile(0.95, sum by(le,service,method)(rate(farm_rpc_server_seconds_bucket{namespace=~\"$namespace\"}[5m])))", "legendFormat": "{{service}}/{{method}}", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "s", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom"}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 9,
+          "type": "stat",
+          "title": "Gate Backend Boundary Rejects",
+          "description": "槽位满、RPC timeout/unavailable、无效后端结果",
+          "gridPos": {"h": 5, "w": 6, "x": 0, "y": 23},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "sum(increase(farm_gate_command_backend_rejected_total{namespace=~\"$namespace\"}[$__range]))", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "colorMode": "value"}
+        },
+        {
+          "id": 10,
+          "type": "text",
+          "title": "答辩判定口径",
+          "gridPos": {"h": 5, "w": 18, "x": 6, "y": 23},
+          "options": {"mode": "markdown", "content": "### Correctness gate\n- **正确**：`SUCCEEDED` / `ACCEPTED` / `NO_CHANGE`\n- **失败**：`REJECTED` / `UNAVAILABLE`\n- `PROCESSING` 单独作为 pending 观察，不与成功混淆\n- 业务错误码、Gate 准入拒绝、内部 gRPC 非 `OK` 分开统计，避免只看 HTTP/WSS 成功率。\n\n### 关键业务命令\n`BUY` · `PLANT` · `CARE` · `THEFT` · `HARVEST` · `SELL` · `UNLOCK_PLOT`"}
+        },
+        {
+          "id": 11,
+          "type": "timeseries",
+          "title": "关键业务命令吞吐",
+          "description": "BUY / PLANT / CARE / THEFT / HARVEST / SELL / UNLOCK_PLOT",
+          "gridPos": {"h": 9, "w": 12, "x": 0, "y": 28},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "sum by(command_type)(rate(farm_gate_command_results_total{namespace=~\"$namespace\",command_type=~\"BUY|PLANT|CARE|THEFT|HARVEST|SELL|UNLOCK_PLOT\"}[1m]))", "legendFormat": "{{command_type}}", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "ops", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "sum"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 12,
+          "type": "table",
+          "title": "关键业务命令结果矩阵",
+          "description": "按命令、最终状态和错误码核对业务正确性",
+          "gridPos": {"h": 9, "w": 12, "x": 12, "y": 28},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "sum by(command_type,status,error_code)(increase(farm_gate_command_results_total{namespace=~\"$namespace\",command_type=~\"BUY|PLANT|CARE|THEFT|HARVEST|SELL|UNLOCK_PLOT\"}[$__range]))", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"Value": "count", "command_type": "command", "error_code": "error", "status": "status"}}}],
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0}, "overrides": []},
+          "options": {"showHeader": true}
+        },
+        {
+          "id": 13,
+          "type": "timeseries",
+          "title": "关键业务命令正确率",
+          "description": "每种业务命令的 SUCCEEDED / ACCEPTED / NO_CHANGE 占比",
+          "gridPos": {"h": 9, "w": 12, "x": 0, "y": 37},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "100 * sum by(command_type)(increase(farm_gate_command_results_total{namespace=~\"$namespace\",command_type=~\"BUY|PLANT|CARE|THEFT|HARVEST|SELL|UNLOCK_PLOT\",status=~\"SUCCEEDED|ACCEPTED|NO_CHANGE\"}[$__range])) / clamp_min(sum by(command_type)(increase(farm_gate_command_results_total{namespace=~\"$namespace\",command_type=~\"BUY|PLANT|CARE|THEFT|HARVEST|SELL|UNLOCK_PLOT\"}[$__range])), 1)", "legendFormat": "{{command_type}}", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "percent", "decimals": 2, "min": 0, "max": 100, "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom"}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 14,
+          "type": "timeseries",
+          "title": "关键业务命令 P95",
+          "description": "Gate -> Logic ExecuteCommand round-trip by command type",
+          "gridPos": {"h": 9, "w": 12, "x": 12, "y": 37},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "histogram_quantile(0.95, sum by(le,command_type)(rate(farm_gate_command_rpc_server_seconds_bucket{namespace=~\"$namespace\",command_type=~\"BUY|PLANT|CARE|THEFT|HARVEST|SELL|UNLOCK_PLOT\"}[5m])))", "legendFormat": "{{command_type}}", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "s", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom"}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 15,
+          "type": "timeseries",
+          "title": "Redis 客户端命令吞吐",
+          "description": "业务进程实际发往 Redis 的命令速率，按应用、命令和结果拆分",
+          "gridPos": {"h": 9, "w": 12, "x": 0, "y": 46},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "sum by(app,command,outcome)(rate(farm_redis_workload_commands_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{app}} {{command}} {{outcome}}", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "ops", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 16,
+          "type": "timeseries",
+          "title": "Redis 客户端往返 P95",
+          "description": "业务进程观察到的 Redis round-trip latency；包含连接池等待、网络和 Redis 执行时间",
+          "gridPos": {"h": 9, "w": 12, "x": 12, "y": 46},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "histogram_quantile(0.95, sum by(le,app,pod,kind)(rate(farm_redis_workload_round_trip_duration_seconds_bucket{namespace=~\"$namespace\"}[5m])))", "legendFormat": "{{app}}/{{pod}} {{kind}}", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "s", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 17,
+          "type": "timeseries",
+          "title": "Redis 依赖错误率（10 秒滑窗）",
+          "description": "每个进程/存储域 Redis 命令失败百分比；redis.Nil 不计失败",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 55},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "max by(app,pod,domain)(farm_redis_dependency_error_percent{namespace=~\"$namespace\"})", "legendFormat": "{{app}}/{{pod}} {{domain}}", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 0.01}, {"color": "red", "value": 1}]}, "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 18,
+          "type": "timeseries",
+          "title": "Redis 请求 / 响应带宽",
+          "description": "客户端估算的 Redis 请求与响应字节速率",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 55},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [
+            {"refId": "A", "expr": "sum by(app)(rate(farm_redis_workload_request_bytes_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{app}} request", "format": "time_series"},
+            {"refId": "B", "expr": "sum by(app)(rate(farm_redis_workload_response_bytes_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{app}} response", "format": "time_series"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "Bps", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 19,
+          "type": "timeseries",
+          "title": "Redis Round Trip 速率",
+          "description": "single 与 pipeline 的物理 Redis 往返次数及结果",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 63},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{"refId": "A", "expr": "sum by(app,kind,outcome)(rate(farm_redis_workload_round_trips_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{app}} {{kind}} {{outcome}}", "format": "time_series"}],
+          "fieldConfig": {"defaults": {"unit": "ops", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 20,
+          "type": "timeseries",
+          "title": "Redis Pipeline / Batch P95 宽度",
+          "description": "一次物理往返合并的 Redis 命令数量；用于识别请求放大和批处理效率",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 63},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [
+            {"refId": "A", "expr": "histogram_quantile(0.95, sum by(le,app,pod)(rate(farm_redis_workload_pipeline_width_bucket{namespace=~\"$namespace\"}[5m])))", "legendFormat": "{{app}}/{{pod}} pipeline", "format": "time_series"},
+            {"refId": "B", "expr": "histogram_quantile(0.95, sum by(le,app,pod)(rate(farm_redis_workload_batch_size_bucket{namespace=~\"$namespace\"}[5m])))", "legendFormat": "{{app}}/{{pod}} batch", "format": "time_series"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "short", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 21,
+          "type": "timeseries",
+          "title": "Redis Pool 连接与排队请求",
+          "description": "go-redis 当前连接数、空闲连接和等待连接的请求数",
+          "gridPos": {"h": 9, "w": 12, "x": 0, "y": 71},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [
+            {"refId": "A", "expr": "farm_redis_pool_connections{namespace=~\"$namespace\"}", "legendFormat": "{{app}}/{{pod}} {{domain}} {{state}}", "format": "time_series"},
+            {"refId": "B", "expr": "farm_redis_pool_pending_requests{namespace=~\"$namespace\"}", "legendFormat": "{{app}}/{{pod}} {{domain}} pending", "format": "time_series"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "short", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 22,
+          "type": "timeseries",
+          "title": "Redis Pool 等待速率 / 平均等待",
+          "description": "请求进入连接池等待的速率，以及等待连接的平均耗时",
+          "gridPos": {"h": 9, "w": 12, "x": 12, "y": 71},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [
+            {"refId": "A", "expr": "sum by(app,pod,domain)(rate(farm_redis_pool_waits_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{app}}/{{pod}} {{domain}} waits/s", "format": "time_series"},
+            {"refId": "B", "expr": "sum by(app,pod,domain)(rate(farm_redis_pool_wait_seconds_total{namespace=~\"$namespace\"}[1m])) / clamp_min(sum by(app,pod,domain)(rate(farm_redis_pool_waits_total{namespace=~\"$namespace\"}[1m])), 0.000001)", "legendFormat": "{{app}}/{{pod}} {{domain}} avg wait", "format": "time_series"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "s", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 23,
+          "type": "timeseries",
+          "title": "Redis Pool Timeout / Miss",
+          "description": "连接等待超时与无法立即取得空闲连接的速率",
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 80},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [
+            {"refId": "A", "expr": "sum by(app,pod,domain)(rate(farm_redis_pool_timeouts_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{app}}/{{pod}} {{domain}} timeout", "format": "time_series"},
+            {"refId": "B", "expr": "sum by(app,pod,domain)(rate(farm_redis_pool_misses_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{app}}/{{pod}} {{domain}} miss", "format": "time_series"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "ops", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 24,
+          "type": "timeseries",
+          "title": "SourceOrder Direct Path",
+          "description": "Farm 进程内 direct dispatcher 的完成、重试、失败和丢弃速率",
+          "gridPos": {"h": 9, "w": 12, "x": 0, "y": 88},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [
+            {"refId": "A", "expr": "sum by(app)(rate(farm_source_order_direct_completed_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{app}} completed", "format": "time_series"},
+            {"refId": "B", "expr": "sum by(app)(rate(farm_source_order_direct_rescheduled_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{app}} rescheduled", "format": "time_series"},
+            {"refId": "C", "expr": "sum by(app)(rate(farm_source_order_direct_failed_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{app}} failed", "format": "time_series"},
+            {"refId": "D", "expr": "sum by(app)(rate(farm_source_order_direct_dropped_total{namespace=~\"$namespace\"}[1m]))", "legendFormat": "{{app}} dropped", "format": "time_series"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "ops", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 25,
+          "type": "timeseries",
+          "title": "SourceOrder Direct Queue vs Worker Takeover",
+          "description": "Direct queue 深度与 Worker recovery claim；Worker claim 持续升高说明快路径未及时完成",
+          "gridPos": {"h": 9, "w": 12, "x": 12, "y": 88},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [
+            {"refId": "A", "expr": "sum by(app)(farm_source_order_direct_queue_depth{namespace=~\"$namespace\"})", "legendFormat": "{{app}} direct queue", "format": "time_series"},
+            {"refId": "B", "expr": "sum by(family)(rate(farm_worker_claimed_total{namespace=~\"$namespace\",family=~\"PLANT|HARVEST|CARE\"}[1m]))", "legendFormat": "Worker {{family}} claimed/s", "format": "time_series"},
+            {"refId": "C", "expr": "sum by(family)(rate(farm_worker_retried_total{namespace=~\"$namespace\",family=~\"PLANT|HARVEST|CARE\"}[1m]))", "legendFormat": "Worker {{family}} retried/s", "format": "time_series"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "short", "custom": {"drawStyle": "line", "lineWidth": 2, "showPoints": "never"}}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        }
+      ]
+    }

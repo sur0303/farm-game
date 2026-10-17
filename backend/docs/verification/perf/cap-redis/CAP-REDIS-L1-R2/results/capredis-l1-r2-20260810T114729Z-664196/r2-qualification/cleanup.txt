@@ -1,0 +1,4 @@
+CAP_DBSIZE_AFTER_EXACT_CLEANUP=0
+Q2R_INSTANCE_TEARDOWN=destroyed_unique_ephemeral_container
+SCRIPT_FLUSH_USED=false
+FLUSHALL_USED=false

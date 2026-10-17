@@ -1,0 +1,26 @@
+{
+  "attachments": {
+    "business-command-amplification.json": "4083ad96492a078e7b0d59e674e2b385d84ed7ee23b52cc933921915765131ef",
+    "cleanup.txt": "84442a9d7c5a9a562b643400998900ada7d7c2f82a97e0f21e41731a85028648",
+    "correctness-witness.json": "9c6fa1d4186e85a8fea170babc3d785e718e9bbebfe9671638b4db7f688961da",
+    "h5-bundle.json": "3e735616ca4fd670d11fb73f42f09a8c79077a59f650ee6b686a611e9eb95331"
+  },
+  "checks": {
+    "all_rows_commit_receipt": true,
+    "all_rows_transport": true,
+    "authority_oracle": true,
+    "browser_exact_commands": true,
+    "browser_verdict": true,
+    "exact_commands": true,
+    "no_raw_identity_fields": true,
+    "no_redis_errors": true,
+    "protocol_verdict": true,
+    "stack_verdict": true,
+    "tool_head": true,
+    "trace_verdict": true
+  },
+  "redis_teardown": "DESTROYED_UNIQUE_EPHEMERAL_INSTANCE",
+  "schema_version": "cap-redis-business-trace-qualification-v1",
+  "tool_head": "837d96be63295d23be4b94b471acb8d235acfffb",
+  "verdict": "PASS"
+}

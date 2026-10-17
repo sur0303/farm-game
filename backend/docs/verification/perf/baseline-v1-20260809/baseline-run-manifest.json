@@ -1,0 +1,163 @@
+{
+  "actual_load": {
+    "actual_injected_arrivals": 0,
+    "actual_to_planned_ratio": null,
+    "completed": 0,
+    "planned_arrivals": 0,
+    "schedule_drop": 0
+  },
+  "backend_checkout_commit": "63a74786fb6c1eb836a7a3e89e6da4d398cece3e",
+  "backend_commit": "260babcd93cfb6a4a58a481cc3c7f8c1f95e455a",
+  "backend_dirty_paths": [],
+  "backend_q1_only_diff_paths": [
+    "cmd/perf-baseline/main.go",
+    "deploy/load/q1-perf-baseline-v1-first-run.json",
+    "deploy/load/q1-perf-baseline-v1-smoke.json",
+    "deploy/load/q1-perf-baseline-v1.json",
+    "docs/verification/perf/.gitignore",
+    "docs/verification/perf/README.md",
+    "docs/verification/perf/performance-baseline-report-template.md",
+    "docs/verification/perf/results/.gitkeep",
+    "scripts/perf/lib-stack.sh",
+    "scripts/perf/run-baseline",
+    "scripts/perf/run-product-anchor-profile",
+    "tools/perf/.gitignore",
+    "tools/perf/q1perf.py",
+    "tools/perf/test_q1perf.py"
+  ],
+  "baseline_eligible": true,
+  "capacity_claim": "NOT_A_30M_DAU_CAPACITY_PROOF",
+  "comparison_baseline": null,
+  "config_hash": "sha256:a4ceef4f2d10f850b183f3ecab0cbe6fdb15da4399389a774d86c8c8917cee17",
+  "config_path": "deploy/load/q1-perf-baseline-v1-first-run.json",
+  "finished_at": "2026-08-09T10:11:14.247790Z",
+  "h5_checkout_commit": "df379b5fcc5eb710fc1efa5406c752ba18c3ab30",
+  "h5_commit": "df379b5fcc5eb710fc1efa5406c752ba18c3ab30",
+  "h5_dirty_paths": [],
+  "host": {
+    "architecture": "x86_64",
+    "cpu_model": "AMD EPYC 7K62 48-Core Processor",
+    "docker_version": "29.3.1",
+    "go_version": "go version go1.26.3-X:nodwarf5 linux/amd64",
+    "hostname": "VM-42-214-tencentos",
+    "kernel": "6.6.119-49.20.tl4.x86_64",
+    "logical_cpu_count": 32,
+    "machine_spec_hash": "sha256:e2601c8b7b361b034d2ed44621ad4b461ed9625242069f78057c47a9cdcd41b5",
+    "memory_total_bytes": 66879913984,
+    "node_version": "v22.23.1",
+    "os": "Linux-6.6.119-49.20.tl4.x86_64-x86_64-with-glibc2.38",
+    "ulimit_nofile_hard": 524288,
+    "ulimit_nofile_soft": 524288
+  },
+  "load_tool_commit": "63a74786fb6c1eb836a7a3e89e6da4d398cece3e",
+  "load_tool_dirty_paths": [],
+  "planned_load": {
+    "gate_connection_staircase": {
+      "enabled": true,
+      "model": "open_arrival",
+      "stages": [
+        {
+          "arrival_rate_per_second": 100,
+          "connections": 200,
+          "duration_seconds": 20,
+          "name": "connections-200"
+        },
+        {
+          "arrival_rate_per_second": 200,
+          "connections": 500,
+          "duration_seconds": 20,
+          "name": "connections-500"
+        }
+      ]
+    },
+    "hot_farm_theft": {
+      "cases": [
+        "baseline",
+        "slow_reader"
+      ],
+      "connections_per_case": 200,
+      "enabled": true,
+      "expected_no_effect_or_rejected": 189,
+      "expected_success": 10
+    },
+    "mixed_business_staircase": {
+      "closed_anchor_operations": [
+        "SELL",
+        "UNLOCK_PLOT",
+        "WATER",
+        "THEFT",
+        "CLAIM_TASK",
+        "FRIEND_LIST",
+        "OPERATION_RESULT"
+      ],
+      "enabled": true,
+      "model": "open_arrival",
+      "stages": [
+        {
+          "duration_seconds": 20,
+          "join_connections": 60,
+          "join_rate_per_second": 6,
+          "name": "mix-low",
+          "plant_connections": 12,
+          "plant_rate_per_second": 2
+        },
+        {
+          "duration_seconds": 20,
+          "join_connections": 120,
+          "join_rate_per_second": 12,
+          "name": "mix-medium",
+          "plant_connections": 24,
+          "plant_rate_per_second": 3
+        },
+        {
+          "duration_seconds": 20,
+          "join_connections": 240,
+          "join_rate_per_second": 24,
+          "name": "mix-high",
+          "plant_connections": 48,
+          "plant_rate_per_second": 6
+        }
+      ],
+      "supported_operations": [
+        "REGISTER",
+        "LOGIN",
+        "JOIN",
+        "GET_PLAYER_BOOTSTRAP",
+        "BUY",
+        "PLANT"
+      ]
+    },
+    "product_correctness_anchor": {
+      "checks": [
+        "hero",
+        "task_claim",
+        "F1",
+        "F2",
+        "F3",
+        "authority_oracle"
+      ],
+      "enabled": true,
+      "go_protocol_bots": 1,
+      "playwright_h5_witnesses": 2
+    }
+  },
+  "protocol_maturity": "CURRENT_HARDENED_JOIN",
+  "redis": {
+    "cleanup_completed": true,
+    "cleanup_strategy": "destroy_exact_ephemeral_container",
+    "endpoint_hash": "sha256:1a7a3ae203009f77cc69f0ddb9866cffa7d07dc0b661bb8698ff2d5b5a8faf4b",
+    "flushall_allowed": false,
+    "mode": "ephemeral_local",
+    "namespace": "q1perf-b1-20260809100947-1793411",
+    "secret_recorded": false
+  },
+  "run_id": "q1perf-b1-20260809100947-1793411",
+  "run_kind": "baseline",
+  "schema": "farm-game.q1-perf-evidence.v1",
+  "started_at": "2026-08-09T10:09:48.039023Z",
+  "task_id": "Q1-PERF-BASELINE-V1",
+  "test_window": {
+    "finished_at": "2026-08-09T10:11:14.247790Z",
+    "started_at": "2026-08-09T10:09:48.039037Z"
+  }
+}

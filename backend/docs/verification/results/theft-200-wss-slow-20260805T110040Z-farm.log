@@ -1,0 +1,6 @@
+2026/08/05 19:01:11 farm-svr using persistent Redis legacy friend store plus real Friendship Pair/Quota/Share repositories
+2026/08/05 19:01:11 farm-svr authority mode enabled holder=theft-hot-slow-farm boot=theft-hot-slow-farm-20260805T110040Z snapshot=/tmp/theft-hot-slow.RCl7Gi/route.json
+2026/08/05 19:01:11 GateBootReaper mode=disabled; subscription lifecycle owned by BatchRenew leases (contract 26 section 11.5)
+2026/08/05 19:01:11 using routed player participants across 1 endpoints
+2026/08/05 19:01:11 using single farm-gate downlink at 127.0.0.1:21418
+2026/08/05 19:01:11 farm-svr listening on 127.0.0.1:28452, version=0.0.0-dev

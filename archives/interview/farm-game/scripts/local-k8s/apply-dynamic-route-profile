@@ -1,0 +1,482 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+KUBECONFIG="${KUBECONFIG:-$LAB_ROOT/runtime/kubeconfig}"
+RUN_ID="${ROUTE_RUN_ID:-}"
+REDIS_ENV="${REDIS_NAMESPACE_ENVIRONMENT:-}"
+REDIS_ZONE="${REDIS_NAMESPACE_ZONE:-z1}"
+MODE="${1:---dry-run}"
+NAMESPACE="farm-route-dynamic"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO=$(CDPATH= cd -- "$SCRIPT_DIR/../.." && pwd)
+OUT="$LAB_ROOT/runtime/dynamic-route-$RUN_ID"
+PROFILE="$OUT/profile.json"
+HOLDERS="$OUT/holders.json"
+HOLDERS_ZERO="$OUT/holders-zero-replica.json"
+CONTROL_PLANE="$OUT/control-plane.json"
+FINAL_CONTROL_PLANE="$OUT/final-control-plane.json"
+BUSINESS="$OUT/business.json"
+PROFILE_RECEIPT="$LAB_ROOT/receipts/dynamic-route-profile-$RUN_ID.json"
+RECEIPT="$LAB_ROOT/receipts/dynamic-route-apply-$RUN_ID.json"
+
+case "$MODE" in --dry-run|--apply) ;; *) echo "usage: ROUTE_RUN_ID=<id> REDIS_NAMESPACE_ENVIRONMENT=<id> $0 [--dry-run|--apply]" >&2; exit 2;; esac
+[[ "$RUN_ID" =~ ^[a-z0-9][a-z0-9-]{0,62}$ && "$REDIS_ENV" =~ ^[a-z0-9][a-z0-9-]{0,31}$ ]] || { echo "apply-dynamic-route-profile: run and Redis namespace required" >&2; exit 1; }
+KUBE_CONTEXT="farm-l2-r2"
+KUBECTL_BIN=$(command -v kubectl)
+kubectl() { timeout --foreground 240s "$KUBECTL_BIN" --kubeconfig "$KUBECONFIG" --context "$KUBE_CONTEXT" "$@"; }
+stage="preflight"
+business_started=false
+controller_overlap_status=UNKNOWN_NOT_CHECKED
+completed=false
+record_failure() {
+  local code="${1:-1}"
+  [[ "$completed" == false ]] || return 0
+  [[ "$code" -ne 0 ]] || code=1
+  trap - EXIT INT TERM
+  if [[ ! -e "$RECEIPT" ]]; then
+    python3 - "$RECEIPT" "$RUN_ID" "$stage" "$code" "$PROFILE_RECEIPT" "$business_started" "$controller_overlap_status" <<'PY'
+import hashlib,json,os,sys,tempfile
+path,run_id,stage,code,profile_receipt,business_started,controller_overlap_status=sys.argv[1:]
+try:
+ profile=json.load(open(profile_receipt))
+except Exception:
+ profile={}
+fields=("holders_sha256","control_plane_sha256","final_control_plane_sha256","business_sha256","profile_sha256")
+value={
+ "schema_version":"farm-dynamic-route-apply-receipt.v2","status":"APPLY_FAILED_EVIDENCE_RETAINED",
+ "run_id":run_id,"namespace":"farm-route-dynamic","source_head":profile.get("source_head"),
+ "profile_receipt_sha256":hashlib.sha256(open(profile_receipt,"rb").read()).hexdigest() if os.path.isfile(profile_receipt) else None,
+ "manifest_sha256":{k:profile.get(k) for k in fields},
+ "failure_stage":stage,"exit_code":int(code),"business_consumers_started":business_started=="true",
+ "assignment_attempted":stage in {"stopped_external_assignment","final_controller_startup","final_route_verification","post_business_verification","business_startup","receipt_finalize"},
+ "controller_overlap":controller_overlap_status,"eligible_for_cp_dynamic_bootstrap":False,
+ "eligible_for_g1_g2_g3":False,"capacity_qualified":False,"company_redis_contacted":False,
+ "redis_flush_performed":False,"global_scan_performed":False,"network_policy_enforcement":"NOT_CLAIMED",
+}
+os.makedirs(os.path.dirname(path),exist_ok=True)
+fd,temp=tempfile.mkstemp(prefix='.dynamic-route-apply-failure-',dir=os.path.dirname(path),text=True)
+with os.fdopen(fd,'w') as f:
+ json.dump(value,f,sort_keys=True,indent=2); f.write('\n'); f.flush(); os.fsync(f.fileno())
+os.chmod(temp,0o640)
+try: os.link(temp,path)
+finally: os.unlink(temp)
+PY
+  fi
+  exit "$code"
+}
+if [[ "$MODE" == "--apply" ]]; then
+  [[ ! -e "$RECEIPT" ]] || { echo "apply-dynamic-route-profile: immutable receipt exists" >&2; exit 1; }
+  install -d -m 0750 "$LAB_ROOT/runtime"
+  exec 9>"$LAB_ROOT/runtime/dynamic-route-formal-run.lock"
+  flock -n 9 || { echo "apply-dynamic-route-profile: another formal run owns the host/cluster lock" >&2; false; }
+  trap 'record_failure $?' EXIT
+  trap 'exit 130' INT
+  trap 'exit 143' TERM
+fi
+
+[[ -s "$KUBECONFIG" && "$(kubectl config current-context)" == "$KUBE_CONTEXT" ]] || { echo "apply-dynamic-route-profile: refusing non-lab context" >&2; false; }
+kubectl config view --minify -o json | python3 -c 'import json,sys; d=json.load(sys.stdin); ok=d.get("current-context")=="farm-l2-r2" and len(d.get("contexts",[]))==1 and d["contexts"][0]["context"].get("cluster")=="default" and len(d.get("clusters",[]))==1 and d["clusters"][0]["cluster"].get("server")=="https://127.0.0.1:6443"; sys.exit(0 if ok else "lab cluster identity mismatch")'
+[[ -s "$PROFILE" && -s "$HOLDERS" && -s "$CONTROL_PLANE" && -s "$FINAL_CONTROL_PLANE" && -s "$BUSINESS" && -s "$PROFILE_RECEIPT" ]] || { echo "apply-dynamic-route-profile: phased materialized profile missing" >&2; false; }
+test -z "$(git -C "$REPO" status --porcelain)" || { echo "apply-dynamic-route-profile: source worktree must be clean" >&2; false; }
+verify_manifests() {
+  python3 - "$PROFILE_RECEIPT" "$REPO" "$RUN_ID" "$REDIS_ENV" "$REDIS_ZONE" "$PROFILE" "$HOLDERS" "$CONTROL_PLANE" "$FINAL_CONTROL_PLANE" "$BUSINESS" <<'PY'
+import hashlib,json,subprocess,sys
+from pathlib import Path
+receipt,repo,run_id,redis_env,redis_zone,*paths=sys.argv[1:]
+d=json.load(open(receipt)); head=subprocess.check_output(['git','-C',repo,'rev-parse','HEAD'],text=True,timeout=30).strip()
+def require(ok,message):
+ if not ok: raise SystemExit(message)
+require(d.get('status')=='MATERIALIZED_NOT_APPLIED' and d.get('source_head')==head and d.get('run_id')==run_id and d.get('source_worktree_clean') is True,'profile/source/run binding mismatch')
+require(d.get('redis_namespace_environment')==redis_env and d.get('redis_namespace_zone')==redis_zone,'profile/Redis namespace binding mismatch')
+require(d.get('shards')=={'PLAYER':4,'FARM':4,'FARM_WORKER':4},'profile route-domain shard binding mismatch')
+worker_assignments=d.get('farm_worker_assignments',{})
+require(worker_assignments.get('farm-worker-a',{}).get('shards')==[0,2] and worker_assignments.get('farm-worker-b',{}).get('shards')==[1,3],'profile FARM_WORKER ownership binding mismatch')
+opportunity=d.get('friend_opportunity',{})
+# A run that can still earn an acceptance verdict must be born on the first rung
+# and climb. A capacity run has already forfeited that verdict, so it is allowed
+# to start on the rung the product ends on -- measuring any other rung would
+# report the cost of modes that never ship.
+ladder_rungs=[('compatibility','full','pubsub'),('shadow','narrow-shadow','shadow-direct'),('final','narrow','direct')]
+observed_rung=(opportunity.get('initial_stage'),opportunity.get('header_read_mode'),opportunity.get('hint_transport'))
+require(observed_rung in ladder_rungs,'profile initial opportunity mode names no ladder rung')
+require(opportunity.get('ladder_walked_from_first_rung') is (observed_rung==ladder_rungs[0]),'profile ladder-walk claim contradicts its initial rung')
+require(d.get('eligible_for_product_acceptance') is not True or observed_rung==ladder_rungs[0],'profile initial opportunity mode mismatch')
+require([(x.get('stage'),x.get('header_read_mode'),x.get('hint_transport')) for x in opportunity.get('mode_ladder',[])]==[('compatibility','full','pubsub'),('shadow','narrow-shadow','shadow-direct'),('final','narrow','direct')],'profile opportunity mode ladder mismatch')
+require(d.get('gate_downlink_transport_security')=='PLAINTEXT_LOCAL_LAB_ONLY','profile Gate downlink security boundary missing')
+for prior_path in Path(receipt).parent.glob('dynamic-route-profile-*.json'):
+ if prior_path==Path(receipt): continue
+ try: prior=json.loads(prior_path.read_text())
+ except (OSError,json.JSONDecodeError): continue
+ require((prior.get('redis_namespace_environment'),prior.get('redis_namespace_zone'))!=(redis_env,redis_zone),'Redis namespace tuple reuse rejected')
+fields=('profile_sha256','holders_sha256','control_plane_sha256','final_control_plane_sha256','business_sha256')
+require(len(fields)==len(paths),'manifest field cardinality mismatch')
+for field,path in zip(fields,paths):
+ require(d.get(field)==hashlib.sha256(open(path,'rb').read()).hexdigest(),'manifest hash mismatch: '+field)
+PY
+}
+verify_manifests
+verify_live_platform() {
+  local live_file
+  live_file=$(mktemp)
+  kubectl -n "$NAMESPACE" get configmap farm-staging-platform -o json >"$live_file"
+  if python3 - "$PROFILE_RECEIPT" "$live_file" <<'PY'
+import hashlib,json,sys
+receipt=json.load(open(sys.argv[1])); live=json.load(open(sys.argv[2])).get('data',{})
+digest=hashlib.sha256(json.dumps(live,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+if digest!=receipt.get('platform_config_sha256'):
+ raise SystemExit('live platform ConfigMap hash mismatch')
+expected=f"farm:{receipt['redis_namespace_environment']}:{receipt['redis_namespace_zone']}:dynamic:workflow:v1"
+if live.get('WORKFLOW_STORE_PREFIX')!=expected:
+ raise SystemExit('live workflow prefix mismatch')
+schedule=receipt.get('schedule_due_index',{})
+if live.get('FARM_SCHEDULE_DUE_INDEX_MODE')!=schedule.get('mode'):
+ raise SystemExit('live schedule due index mode mismatch')
+if live.get('FARM_SCHEDULE_DUE_INDEX_DEDICATED_READY')!=str(schedule.get('dedicated_ready')).lower():
+ raise SystemExit('live schedule due index readiness mismatch')
+PY
+  then rm -f "$live_file"; else local code=$?; rm -f "$live_file"; return "$code"; fi
+}
+verify_holder_init_images() {
+  local observed=false pod_file code
+  pod_file=$(mktemp)
+  for _ in $(seq 1 90); do
+    if kubectl -n "$NAMESPACE" get pod player-svr-0 player-svr-1 farm-svr-0 farm-svr-1 -o json >"$pod_file" 2>/dev/null && python3 - "$PROFILE_RECEIPT" "$pod_file" <<'PY'
+import json,sys
+receipt=json.load(open(sys.argv[1])); pods=json.load(open(sys.argv[2])).get('items',[])
+def normalize(value):
+ for prefix in ('docker-pullable://','containerd://'):
+  if value.startswith(prefix): return value[len(prefix):]
+ return value
+if len(pods)!=4: raise SystemExit('Holder Pod cardinality mismatch')
+for pod in pods:
+ statuses=pod.get('status',{}).get('initContainerStatuses',[])
+ if len(statuses)!=1 or statuses[0].get('restartCount')!=0 or normalize(statuses[0].get('imageID',''))!=receipt.get('runtime_image_ref'):
+  raise SystemExit('Holder init image/restart mismatch')
+PY
+    then observed=true; break; fi
+    sleep 1
+  done
+  rm -f "$pod_file"
+  [[ "$observed" == true ]] || { echo "apply-dynamic-route-profile: exact Holder init images not observed" >&2; return 1; }
+}
+
+if [[ "$MODE" == "--dry-run" ]]; then
+  for manifest in "$HOLDERS" "$CONTROL_PLANE" "$FINAL_CONTROL_PLANE" "$BUSINESS" "$PROFILE"; do
+    kubectl apply --dry-run=client -f "$manifest" -o name
+  done
+  exit 0
+fi
+stage="preflight_complete"
+
+# Every formal attempt requires a fresh Kubernetes namespace. Retained failed
+# Redis keyspaces and receipts are separate and are never reused or flushed.
+stage="namespace_freshness"
+existing_namespace=$(KUBECONFIG="$KUBECONFIG" kubectl get namespace "$NAMESPACE" -o name --ignore-not-found)
+if [[ -n "$existing_namespace" ]]; then
+  echo "apply-dynamic-route-profile: dynamic namespace must be absent for a fresh run" >&2
+  false
+fi
+KUBECONFIG="$KUBECONFIG" kubectl create namespace "$NAMESPACE" >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl label namespace "$NAMESPACE" farm.io/lab-id=farm-l2-r2 farm.io/runtime-profile=route-migration-4x4x4 farm.io/network-policy-enforcement=NOT_CLAIMED --overwrite >/dev/null
+
+# Fresh local dependency only. No Redis flush, global scan, or company endpoint.
+stage="local_redis_apply"
+KUBECONFIG="$KUBECONFIG" FARM_L2_LAB_ROOT="$LAB_ROOT" "$SCRIPT_DIR/apply-local-redis" --apply >/dev/null
+stage="secret_materialization"
+ROUTE_RUN_ID="$RUN_ID" KUBECONFIG="$KUBECONFIG" "$SCRIPT_DIR/materialize-dynamic-route-secrets" --apply >/dev/null
+stage="tls_materialization"
+ROUTE_RUN_ID="$RUN_ID" KUBECONFIG="$KUBECONFIG" "$SCRIPT_DIR/materialize-dynamic-route-tls" --apply >/dev/null
+
+# Create the StatefulSets without Pods first. Kubernetes is the authority for
+# the workload UID, so that UID must be stamped into the Pod template before
+# the first Holder Pod exists. The Pods then stop at the /healthz init barrier
+# while bootstrap binds their exact Pod UIDs into the zero-Shard snapshot.
+stage="holder_uid_startup"
+verify_manifests
+python3 - "$HOLDERS" "$HOLDERS_ZERO" <<'PY'
+import json,os,sys,tempfile
+source,target=sys.argv[1:]
+value=json.load(open(source))
+items=value.get("items",[]) if value.get("kind")=="List" else [value]
+holders=0
+for item in items:
+ if item.get("kind")=="StatefulSet" and item.get("metadata",{}).get("name") in {"player-svr","farm-svr"}:
+  item.setdefault("spec",{})["replicas"]=0
+  holders+=1
+if holders != 2:
+ raise SystemExit("expected exactly two Holder StatefulSets")
+os.makedirs(os.path.dirname(target),exist_ok=True)
+fd,temp=tempfile.mkstemp(prefix=".holders-zero-",dir=os.path.dirname(target),text=True)
+with os.fdopen(fd,"w") as stream:
+ json.dump(value,stream,sort_keys=True,indent=2); stream.write("\n")
+os.replace(temp,target)
+PY
+KUBECONFIG="$KUBECONFIG" kubectl apply -f "$HOLDERS_ZERO" >/dev/null
+player_workload_uid=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" get statefulset player-svr -o jsonpath='{.metadata.uid}')
+farm_workload_uid=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" get statefulset farm-svr -o jsonpath='{.metadata.uid}')
+[[ -n "$player_workload_uid" && -n "$farm_workload_uid" ]] || { echo "apply-dynamic-route-profile: StatefulSet UID missing" >&2; false; }
+KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" set env statefulset/player-svr "ACTOR_HOLDER_WORKLOAD_UID=$player_workload_uid" >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" set env statefulset/farm-svr "ACTOR_HOLDER_WORKLOAD_UID=$farm_workload_uid" >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" scale statefulset/player-svr statefulset/farm-svr --replicas=2 >/dev/null
+verify_live_platform
+verify_holder_init_images
+stage="zero_shard_bootstrap"
+ROUTE_RUN_ID="$RUN_ID" REDIS_NAMESPACE_ENVIRONMENT="$REDIS_ENV" REDIS_NAMESPACE_ZONE="$REDIS_ZONE" KUBECONFIG="$KUBECONFIG" "$SCRIPT_DIR/bootstrap-dynamic-route" --bootstrap-only >/dev/null
+
+# Start only the initial singleton on durable zero-shard revision 1. Business
+# processing stays absent; FARM_WORKER route holders start only after the final
+# Controller can publish the assigned snapshot.
+stage="zero_shard_runtime_startup"
+verify_manifests
+KUBECONFIG="$KUBECONFIG" kubectl apply -f "$CONTROL_PLANE" >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl rollout status -n "$NAMESPACE" deployment/route-controller --timeout=180s >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl rollout status -n "$NAMESPACE" statefulset/player-svr --timeout=180s >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl rollout status -n "$NAMESPACE" statefulset/farm-svr --timeout=180s >/dev/null
+stage="ready_zero_shard_verification"
+ROUTE_RUN_ID="$RUN_ID" KUBECONFIG="$KUBECONFIG" "$SCRIPT_DIR/verify-dynamic-route-state" --ready-zero-shard >/dev/null
+stage="farm_worker_zero_shard_route_holder_startup"
+python3 "$SCRIPT_DIR/extract_dynamic_worker_route_holders.py" "$BUSINESS" | KUBECONFIG="$KUBECONFIG" kubectl apply -f - >/dev/null
+for deployment in farm-worker-a farm-worker-b; do
+  KUBECONFIG="$KUBECONFIG" kubectl rollout status -n "$NAMESPACE" "deployment/$deployment" --timeout=90s >/dev/null
+done
+
+# Stop the only controller before the external bootstrap Manager claims the
+# initial 4x4x4 generations. Then start a fresh final controller Boot which loads
+# revision 13 and publishes it through authenticated Watch. No controllers
+# overlap. Already-running route-holder-only workers install revision 13 and
+# renew FARM_WORKER Authority before final route verification; business loops stay off.
+stage="controller_stop_first"
+KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" scale deployment/route-controller --replicas=0 >/dev/null
+if ! KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" wait --for=delete pod -l app.kubernetes.io/name=route-controller --timeout=90s >/dev/null 2>&1; then
+  # A no-resource result is acceptable only after an authoritative list below.
+  :
+fi
+controller_pods=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" get pod -l app.kubernetes.io/name=route-controller -o name)
+if [[ -n "$controller_pods" ]]; then
+  controller_overlap_status=OBSERVED
+  echo "apply-dynamic-route-profile: controller stop-first barrier failed" >&2
+  false
+fi
+controller_overlap_status=NOT_OBSERVED
+stage="stopped_external_assignment"
+ROUTE_RUN_ID="$RUN_ID" REDIS_NAMESPACE_ENVIRONMENT="$REDIS_ENV" REDIS_NAMESPACE_ZONE="$REDIS_ZONE" KUBECONFIG="$KUBECONFIG" "$SCRIPT_DIR/bootstrap-dynamic-route" --assign >/dev/null
+stage="final_controller_startup"
+verify_manifests
+KUBECONFIG="$KUBECONFIG" kubectl apply -f "$FINAL_CONTROL_PLANE" >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl rollout status -n "$NAMESPACE" deployment/route-controller --timeout=45s >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl rollout status -n "$NAMESPACE" statefulset/player-svr --timeout=180s >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl rollout status -n "$NAMESPACE" statefulset/farm-svr --timeout=180s >/dev/null
+stage="final_route_verification"
+ROUTE_RUN_ID="$RUN_ID" KUBECONFIG="$KUBECONFIG" "$SCRIPT_DIR/verify-dynamic-route-state" --final >/dev/null
+
+stage="business_startup"
+business_started=true
+verify_manifests
+KUBECONFIG="$KUBECONFIG" kubectl apply -f "$BUSINESS" >/dev/null
+for deployment in farm-worker-a farm-worker-b; do
+  KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" set env "deployment/$deployment" FARM_WORKER_ROUTE_HOLDER_ONLY=false >/dev/null
+  KUBECONFIG="$KUBECONFIG" kubectl rollout status -n "$NAMESPACE" "deployment/$deployment" --timeout=45s >/dev/null
+done
+for deployment in farm-gate farm-h5; do
+  KUBECONFIG="$KUBECONFIG" kubectl rollout status -n "$NAMESPACE" "deployment/$deployment" --timeout=180s >/dev/null
+done
+stage="post_business_verification"
+ROUTE_RUN_ID="$RUN_ID" KUBECONFIG="$KUBECONFIG" "$SCRIPT_DIR/verify-dynamic-route-state" --post-business >/dev/null
+
+stage="receipt_finalize"
+python3 - "$RECEIPT" "$RUN_ID" "$PROFILE" "$PROFILE_RECEIPT" "$KUBECONFIG" "$LAB_ROOT" <<'PY'
+import hashlib,json,os,subprocess,sys,tempfile
+from pathlib import Path
+path,run_id,profile,profile_receipt,kubeconfig,lab_root=sys.argv[1:]
+def require(ok,message):
+ if not ok: raise SystemExit(message)
+def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def receipt_path(stem): return Path(lab_root)/'receipts'/stem
+def load_receipt(stem):
+ p=receipt_path(stem); return p,json.loads(p.read_text())
+raw=subprocess.check_output(["kubectl","--kubeconfig",kubeconfig,"--context","farm-l2-r2","--request-timeout=30s","-n","farm-route-dynamic","get","pod","-o","json"],timeout=35)
+pods=json.loads(raw)["items"]
+summary=[{
+ "name":p["metadata"]["name"],"uid":p["metadata"]["uid"],
+ "image_ids":[c.get("imageID","") for c in p.get("status",{}).get("containerStatuses",[])],
+ "init_image_ids":[c.get("imageID","") for c in p.get("status",{}).get("initContainerStatuses",[])],
+ "ready":all(c.get("ready") for c in p.get("status",{}).get("containerStatuses",[])),
+ "restarts":sum(c.get("restartCount",0) for c in p.get("status",{}).get("containerStatuses",[])),
+ "init_restarts":sum(c.get("restartCount",0) for c in p.get("status",{}).get("initContainerStatuses",[])),
+} for p in pods]
+require(len(summary)==9 and all(x['ready'] and x['image_ids'] and all(x['image_ids']) for x in summary),'final Pod cardinality/readiness/imageID mismatch')
+require(sum(x['restarts']+x['init_restarts'] for x in summary)==0,'workload/init restart observed after post-business verification')
+pr=json.load(open(profile_receipt)); head=pr.get('source_head')
+require(len(set(pr.get('controller_boot_generations',{}).values()))==3,'Controller Boot uniqueness mismatch')
+image_path,image=load_receipt(f"route-runtime-image-{run_id}.json")
+h5_image_path,h5_image=load_receipt(f"dynamic-h5-image-{run_id}.json")
+secret_path,secret=load_receipt(f"dynamic-route-secrets-{run_id}.json")
+tls_path,tls=load_receipt(f"dynamic-route-tls-{run_id}.json")
+initial_path,initial=load_receipt(f"dynamic-route-bootstrap-initial-{run_id}.json")
+ready_path,ready=load_receipt(f"dynamic-route-verify-ready-zero-shard-{run_id}.json")
+assign_path,assign=load_receipt(f"dynamic-route-bootstrap-assign-{run_id}.json")
+final_path,final=load_receipt(f"dynamic-route-verify-final-{run_id}.json")
+post_path,post=load_receipt(f"dynamic-route-verify-post-business-{run_id}.json")
+require(image.get('status')=='PUBLISHED_LOCAL_ROUTE_RUNTIME_NOT_DEPLOYED' and image.get('run_id')==run_id and image.get('source_head')==head,'image receipt binding mismatch')
+require(pr.get('runtime_image_ref')==image.get('registry_ref'),'profile/image ref mismatch')
+require(h5_image.get('status')=='PUBLISHED_LOCAL_DYNAMIC_H5_NOT_DEPLOYED' and h5_image.get('run_id')==run_id,'H5 image receipt binding mismatch')
+require(h5_image.get('source_commit')=='fc7be57174e9ff4f18e6dfeb5fc1610d681172cf' and h5_image.get('build_mode')=='web','H5 source/build binding mismatch')
+require(h5_image.get('cluster_applied') is False and h5_image.get('company_redis_contacted') is False and h5_image.get('capacity_eligible') is False,'H5 pre-activation receipt flags mismatch')
+require(pr.get('h5_image_ref')==h5_image.get('registry_ref') and pr.get('h5_source_commit')==h5_image.get('source_commit') and pr.get('h5_source_tree')==h5_image.get('source_tree'),'profile/H5 image identity mismatch')
+require(pr.get('h5_image_receipt_sha256')==sha(h5_image_path),'profile/H5 receipt hash mismatch')
+require(pr.get('final_production_modes')=={
+ 'hint_transport':'direct','header_read_mode':'narrow','schedule_due_index':'dedicated_only',
+ 'friend_navigation':'navigator-v3','candidate_window':'top-k','wakeup':'active',
+ 'wakeup_poll_interval':'1s','worker_assignment':'route','actor_persistence':'authority',
+ 'authority_membership':'composed','friendship_deployment':'remote_player',
+ 'gate_transport':'websocket','presence_cleanup':'enabled',
+ 'redis_logical_domains':['authority','runtime','projection'],'theft_prf_mode':'production',
+},'final production mode target mismatch')
+names={x['name'] for x in summary}
+require({'player-svr-0','player-svr-1','farm-svr-0','farm-svr-1'}.issubset(names),'exact Holder Pod names missing')
+require(sum(n.startswith('route-controller-') for n in names)==1 and sum(n.startswith('farm-worker-') for n in names)==2 and sum(n.startswith('farm-gate-') for n in names)==1 and sum(n.startswith('farm-h5-') for n in names)==1,'workload Pod name/count mismatch')
+def normalize_image_id(value):
+ for prefix in ('docker-pullable://','containerd://'):
+  if value.startswith(prefix): return value[len(prefix):]
+ return value
+for pod in summary:
+ expected=h5_image['registry_ref'] if pod['name'].startswith('farm-h5-') else image['registry_ref']
+ require([normalize_image_id(x) for x in pod['image_ids']]==[expected],pod['name']+' runtime imageID mismatch')
+ expected_init=h5_image['registry_ref'] if pod['name'].startswith('farm-h5-') else image['registry_ref']
+ require(all(normalize_image_id(x)==expected_init for x in pod['init_image_ids']),pod['name']+' init imageID mismatch')
+require(secret.get('status')=='MATERIALIZED_LOCAL_ONLY' and secret.get('run_id')==run_id and secret.get('raw_values_persisted') is False,'Secret receipt mismatch')
+require(tls.get('status')=='MATERIALIZED_LOCAL_ONLY' and tls.get('run_id')==run_id and tls.get('leaf_exactly_one_dns_san') is True and tls.get('leaf_common_name_present') is False and tls.get('certificate_private_key_public_match') is True,'TLS receipt mismatch')
+for value,status in ((initial,'BOOTSTRAPPED_ZERO_SHARD_CONTROLLER_NOT_STARTED'),(ready,'READY_ZERO_SHARD_VERIFIED'),(assign,'ASSIGNED_4X4X4_CONTROLLER_STOPPED'),(final,'FINAL_4X4X4_VERIFIED_WORKER_AUTHORITY_HOLDERS_ONLY'),(post,'POST_BUSINESS_4X4X4_STABLE_NOT_G1_VERIFIED')):
+ require(value.get('status')==status and value.get('run_id')==run_id and value.get('source_head')==head,'phase receipt binding mismatch: '+status)
+boots=pr.get('controller_boot_generations',{})
+require(initial.get('controller_boot_id')==boots.get('initial_zero_shard_runtime'),'initial Controller Boot receipt mismatch')
+require(assign.get('controller_boot_id')==boots.get('stopped_external_bootstrap'),'external Manager Boot receipt mismatch')
+require(ready.get('controller_boot')==boots.get('initial_zero_shard_runtime'),'ready Controller Boot mismatch')
+require(final.get('controller_boot')==boots.get('final_dynamic_runtime') and post.get('controller_boot')==boots.get('final_dynamic_runtime'),'final Controller Boot mismatch')
+require(ready.get('initial_bootstrap_receipt_sha256')==sha(initial_path),'ready/initial hash mismatch')
+require(assign.get('initial_bootstrap_receipt_sha256')==sha(initial_path) and assign.get('ready_zero_shard_receipt_sha256')==sha(ready_path),'assignment receipt chain mismatch')
+require(final.get('initial_bootstrap_receipt_sha256')==sha(initial_path) and final.get('ready_zero_shard_receipt_sha256')==sha(ready_path) and final.get('assignment_receipt_sha256')==sha(assign_path),'final receipt chain mismatch')
+require(post.get('final_verification_receipt_sha256')==sha(final_path) and post.get('assignment_receipt_sha256')==sha(assign_path),'post-business receipt chain mismatch')
+runtime=Path(lab_root)/'runtime'/f'dynamic-route-{run_id}'
+phase_outputs={
+ 'initial':runtime/'bootstrap-initial.json','assign':runtime/'bootstrap-assign.json',
+ 'ready':runtime/'verify-ready-zero-shard.json','final':runtime/'verify-final.json',
+ 'post':runtime/'verify-post-business.json',
+}
+require(initial.get('bootstrap_output_sha256')==sha(phase_outputs['initial']),'initial output hash mismatch')
+require(assign.get('bootstrap_output_sha256')==sha(phase_outputs['assign']),'assignment output hash mismatch')
+for receipt_value,key in ((ready,'ready'),(final,'final'),(post,'post')):
+ require(receipt_value.get('verification_output_sha256')==sha(phase_outputs[key]),key+' verification output hash mismatch')
+initial_output=json.loads(phase_outputs['initial'].read_text()); assignment_output=json.loads(phase_outputs['assign'].read_text())
+challenge=hashlib.sha256(run_id.encode()).hexdigest()[:32]
+for output in (initial_output,assignment_output):
+ require(output.get('schema')=='rt2q-route-bootstrap/v1' and output.get('challenge')==challenge,'bootstrap output schema/challenge mismatch')
+ require(output.get('bootstrap_status') in {'COMMITTED','ALREADY_COMMITTED'},'bootstrap CAS status mismatch')
+ require(isinstance(output.get('keyspace_fingerprint'),str) and output['keyspace_fingerprint'].startswith('redis-keyspace-tuple-v1:'),'bootstrap keyspace fingerprint mismatch')
+require(initial_output.get('initial_revision')==1 and initial_output.get('final_revision')==1 and not initial_output.get('claims'),'initial output semantics mismatch')
+claims=assignment_output.get('claims') or []
+require(assignment_output.get('initial_revision')==1 and assignment_output.get('final_revision')==13 and len(claims)==12,'assignment output semantics mismatch')
+boots=initial.get('holder_boot_ids',{}); expected_claims={}
+for domain,holder in (('PLAYER','player-svr-0'),('FARM','farm-svr-0')):
+ for shard in range(4): expected_claims[(domain,shard)]=(holder,boots.get(holder),f'rt2q-{challenge}-bootstrap-{domain.lower()}-{shard}')
+for shard in range(4):
+ holder='farm-worker-a' if shard%2==0 else 'farm-worker-b'
+ expected_claims[('FARM_WORKER',shard)]=(holder,boots.get(holder),f'rt2q-{challenge}-bootstrap-farm_worker-{shard}')
+for claim in claims:
+ key=(claim.get('domain'),claim.get('shard')); require(key in expected_claims,'unexpected assignment claim')
+ holder,boot,transition=expected_claims.pop(key)
+ require(claim.get('holder_id')==holder and claim.get('holder_boot_id')==boot and claim.get('transition_id')==transition,'assignment claim identity mismatch')
+ require(claim.get('assignment_revision')==1 and claim.get('writer_epoch')==1 and claim.get('lease_epoch')==1 and claim.get('lease_until_ms',0)>0,'assignment claim fence mismatch')
+require(not expected_claims,'assignment claim coverage mismatch')
+profile_workers=pr.get('farm_worker_assignments',{})
+for name,shards in (('farm-worker-a',[0,2]),('farm-worker-b',[1,3])):
+ require(profile_workers.get(name,{}).get('boot_id')==boots.get(name) and profile_workers.get(name,{}).get('shards')==shards,'profile/bootstrap FARM_WORKER binding mismatch')
+for phase_receipt in (final,post):
+ require(phase_receipt.get('snapshot_revision',0)>=13,'FARM_WORKER phase revision regressed')
+ observations=phase_receipt.get('observations',{})
+ for shard in range(4):
+  worker=observations.get(f'shard-FARM_WORKER-{shard}',{})
+  authority=worker.get('authority') or {}; fence=authority.get('fence') or {}
+  holder='farm-worker-a' if shard%2==0 else 'farm-worker-b'
+  require(worker.get('snapshot_state')=='ACTIVE' and authority.get('domain')=='FARM_WORKER','FARM_WORKER phase authority missing')
+  require(fence.get('holder_id')==holder and fence.get('holder_boot_id')==boots.get(holder),'FARM_WORKER phase ownership mismatch')
+final_snapshot=final.get('observations',{}).get('snapshot',{})
+require(len(assignment_output.get('snapshot_checksum_sha256',''))==64 and len(final_snapshot.get('checksum_sha256',''))==64,'assignment/final Snapshot checksum missing')
+require(final.get('snapshot_revision',0)>=assignment_output.get('final_revision',0),'assignment/final Snapshot revision regressed')
+require(assignment_output.get('topology_fingerprint')==final_snapshot.get('topology_fingerprint'),'assignment/final topology mismatch')
+canonical=final_snapshot.get('canonical_json') or {}; final_holders=canonical.get('holders') or []
+for domain,key in (('PLAYER','player'),('FARM','farm'),('FARM_WORKER','farm_worker')):
+ routes=(canonical.get(key) or {}).get('routes') or []
+ require(len(routes)==4,domain+' final route cardinality mismatch')
+ for shard,route in enumerate(routes):
+  holder='player-svr-0' if domain=='PLAYER' else ('farm-svr-0' if domain=='FARM' else ('farm-worker-a' if shard%2==0 else 'farm-worker-b'))
+  index=route.get('holder_index',-1)
+  require(0<=index<len(final_holders) and final_holders[index].get('instance_id')==holder and final_holders[index].get('boot_id')==boots.get(holder),domain+' assignment/final holder mismatch')
+  claim=next((value for value in claims if value.get('domain')==domain and value.get('shard')==shard),None)
+  require(claim is not None and route.get('state')=='ACTIVE' and route.get('shard_revision')==claim.get('assignment_revision') and route.get('expected_writer_epoch')==claim.get('writer_epoch') and route.get('expected_lease_epoch')==claim.get('lease_epoch'),domain+' assignment/final generation mismatch')
+def secret_uid_sha(name):
+ uid=subprocess.check_output(["kubectl","--kubeconfig",kubeconfig,"--context","farm-l2-r2","--request-timeout=30s","-n","farm-route-dynamic","get","secret",name,"-o","jsonpath={.metadata.uid}"],text=True,timeout=35)
+ return hashlib.sha256(uid.encode()).hexdigest()
+require(secret.get('secret_uid_sha256')==secret_uid_sha('farm-dynamic-secrets'),'Secret UID mismatch')
+require(tls.get('secret_uid_sha256')==secret_uid_sha('farm-route-dynamic-tls'),'TLS Secret UID mismatch')
+def live_secret_hashes(name):
+ raw=subprocess.check_output(["kubectl","--kubeconfig",kubeconfig,"--context","farm-l2-r2","--request-timeout=30s","-n","farm-route-dynamic","get","secret",name,"-o","json"],timeout=35)
+ import base64
+ data=json.loads(raw).get('data',{})
+ return {k:hashlib.sha256(base64.b64decode(v)).hexdigest() for k,v in data.items()}
+live_app=live_secret_hashes('farm-dynamic-secrets')
+expected_redis_url_hash=hashlib.sha256(b'redis://farm-local-redis.farm-l2-r2-deps.svc.cluster.local:6379/0').hexdigest()
+redis_secret_keys={'redis-url','authority-redis-url','runtime-redis-url','projection-redis-url'}
+require(secret.get('expected_local_redis_url_sha256')==expected_redis_url_hash and all(live_app.get(key)==expected_redis_url_hash for key in redis_secret_keys),'intended local Redis domain URL hash mismatch')
+require(secret.get('required_key_count')==9 and secret.get('redis_failure_domains_claimed') is False,'Redis domain Secret receipt contract mismatch')
+require(pr.get('redis_domain_clients',{}).get('physical_failure_domain_isolation') is False,'profile must not claim Redis failure-domain isolation')
+require(live_app==secret.get('key_value_sha256'),'application Secret content hash mismatch')
+live_config=json.loads(subprocess.check_output(["kubectl","--kubeconfig",kubeconfig,"--context","farm-l2-r2","--request-timeout=30s","-n","farm-route-dynamic","get","configmap","farm-staging-platform","-o","json"],timeout=35))['data']
+require(live_config.get('REDIS_NAMESPACE_ENVIRONMENT')==pr.get('redis_namespace_environment') and live_config.get('REDIS_NAMESPACE_ZONE')==pr.get('redis_namespace_zone'),'live ConfigMap Redis namespace mismatch')
+require(live_config.get('FARM_SCHEDULE_DUE_INDEX_MODE')==pr.get('schedule_due_index',{}).get('mode'),'live ConfigMap schedule mode mismatch')
+require(live_config.get('FARM_SCHEDULE_DUE_INDEX_DEDICATED_READY')==str(pr.get('schedule_due_index',{}).get('dedicated_ready')).lower(),'live ConfigMap schedule readiness mismatch')
+live_opportunity_mode=json.loads(subprocess.check_output(["kubectl","--kubeconfig",kubeconfig,"--context","farm-l2-r2","--request-timeout=30s","-n","farm-route-dynamic","get","configmap","farm-opportunity-mode","-o","json"],timeout=35))['data']
+profile_opportunity=pr.get('friend_opportunity',{})
+require(live_opportunity_mode=={'header-read-mode':profile_opportunity.get('header_read_mode'),'hint-transport':profile_opportunity.get('hint_transport'),'stage':profile_opportunity.get('initial_stage')},'live baseline opportunity mode mismatch')
+live_tls=live_secret_hashes('farm-route-dynamic-tls')
+require(set(live_tls)==set(tls.get('secret_key_names',[])),'TLS Secret key set mismatch')
+require(live_tls.get('ca.crt')==tls.get('ca_certificate_sha256'),'live TLS CA hash mismatch')
+for leaf,digest in tls.get('leaf_certificate_sha256',{}).items():
+ require(live_tls.get(leaf+'.crt')==digest,'live TLS leaf hash mismatch: '+leaf)
+for leaf,digest in tls.get('private_key_sha256',{}).items():
+ require(live_tls.get(leaf+'.key')==digest,'live TLS private-key hash mismatch: '+leaf)
+receipt_hashes={
+ 'image':sha(image_path),'dynamic_h5_image':sha(h5_image_path),'profile':sha(profile_receipt),'secret':sha(secret_path),'tls':sha(tls_path),
+ 'initial_bootstrap':sha(initial_path),'ready_zero_shard':sha(ready_path),'assignment':sha(assign_path),
+ 'final_route':sha(final_path),'post_business':sha(post_path),
+}
+value={
+ "schema_version":"farm-dynamic-route-apply-receipt.v2","status":"APPLIED_READY_NOT_G1_VERIFIED","run_id":run_id,
+ "namespace":"farm-route-dynamic","source_head":head,
+ "profile_sha256":hashlib.sha256(open(profile,'rb').read()).hexdigest(),
+ "manifest_sha256":{k:pr[k] for k in ("holders_sha256","control_plane_sha256","final_control_plane_sha256","business_sha256","profile_sha256")},
+ "receipt_sha256":receipt_hashes,
+ "tls_certificate_sha256":{"ca":tls["ca_certificate_sha256"],"leaves":tls["leaf_certificate_sha256"]},
+ "secret_uid_sha256":{"application":secret["secret_uid_sha256"],"route_tls":tls["secret_uid_sha256"]},
+ "pods":summary,"holder_restart_count":sum(x['restarts'] for x in summary if x['name'].startswith(('player-svr-','farm-svr-'))),
+ "controller_restart_count":sum(x['restarts'] for x in summary if x['name'].startswith('route-controller-')),
+ "business_restart_count":sum(x['restarts'] for x in summary if x['name'].startswith(('farm-worker-','farm-gate-','farm-h5-'))),
+ "controller_replicas":1,"controller_strategy":"Recreate",
+ "controller_overlap":False,"worker_authority_holders_started_before_final_route_verification":True,
+ "business_consumers_started_after_final_route_verification":True,
+ "friend_opportunity_mode":live_opportunity_mode,
+ "eligible_for_cp_dynamic_bootstrap_review":True,"eligible_for_g1_g2_g3":False,"capacity_qualified":False,
+ "network_policy_enforcement":"NOT_CLAIMED","public_web_tls":"NOT_CLAIMED",
+ "local_redis":"RUNNING_EPHEMERAL_EMPTYDIR","company_redis_contacted":False,
+ "redis_flush_performed":False,"global_scan_performed":False,
+}
+os.makedirs(os.path.dirname(path),exist_ok=True)
+fd,temp=tempfile.mkstemp(prefix='.dynamic-route-apply-',dir=os.path.dirname(path),text=True)
+with os.fdopen(fd,'w') as f:
+ json.dump(value,f,sort_keys=True,indent=2); f.write('\n'); f.flush(); os.fsync(f.fileno())
+os.chmod(temp,0o640); os.link(temp,path); os.unlink(temp)
+print(json.dumps(value,sort_keys=True,indent=2))
+PY
+completed=true
+trap - EXIT INT TERM

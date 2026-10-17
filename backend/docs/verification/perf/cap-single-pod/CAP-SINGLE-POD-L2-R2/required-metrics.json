@@ -1,0 +1,627 @@
+{
+  "schema_version": "cap-single-pod-l2-r2.required-metrics.v0.1",
+  "policy": {
+    "availability": "PRECHECK_REQUIRED",
+    "missing_required_metric_verdict": "INCONCLUSIVE_OBSERVABILITY",
+    "allow_log_estimation_for_required_metric": false,
+    "allow_primitive_substitution": false,
+    "sample_interval_seconds": 1,
+    "maximum_scrape_gap_seconds": 5,
+    "counter_reset_must_be_detected": true
+  },
+  "scope": {
+    "narrowed_from": "cap-single-pod-l2-r1.required-metrics.v0.1",
+    "narrowed_because": "A run may only claim complete observation over metrics the deployed image answers with. R1 lists the metrics the contract wants; R2 lists the ones that answer when asked.",
+    "survey": {
+      "source": "observability-mapping-draft.json",
+      "generated_against_identity": "dyn-friend-r66-formal-20260813"
+    },
+    "restores_at": "T1_CAPACITY_STAIRCASE",
+    "dropped_metric_count": 29,
+    "dropped_metrics": [
+      {
+        "metric": "driver_network_rx_bytes_total",
+        "section": "common",
+        "reason": "driver procfs; the collector adapter reads no network counters for the driver cgroup",
+        "kind": "named_source_without_reader"
+      },
+      {
+        "metric": "driver_network_tx_bytes_total",
+        "section": "common",
+        "reason": "driver procfs; the collector adapter reads no network counters for the driver cgroup",
+        "kind": "named_source_without_reader"
+      },
+      {
+        "metric": "redis_commands_total",
+        "section": "common",
+        "reason": "farm_redis_workload_commands_total; the r72 Pods run with REDIS_WORKLOAD_METRICS unset",
+        "kind": "named_source_without_reader"
+      },
+      {
+        "metric": "redis_cpu_seconds_total",
+        "section": "common",
+        "reason": "cap-redis reads Redis INFO, but cap-redis is a scenario runner and does not run during a load test",
+        "kind": "named_source_without_reader"
+      },
+      {
+        "metric": "redis_pool_wait_seconds",
+        "section": "common",
+        "reason": "Not in 7-pod scrape; not Redis INFO. Collector adapter can map a Prometheus name but none is registered. go-redis PoolStats.WaitDuration is only read in-process by cmd/cap-redis.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "redis_request_bytes_total",
+        "section": "common",
+        "reason": "farm_redis_workload_request_bytes_total; the r72 Pods run with REDIS_WORKLOAD_METRICS unset",
+        "kind": "named_source_without_reader"
+      },
+      {
+        "metric": "redis_response_bytes_total",
+        "section": "common",
+        "reason": "farm_redis_workload_response_bytes_total; the r72 Pods run with REDIS_WORKLOAD_METRICS unset",
+        "kind": "named_source_without_reader"
+      },
+      {
+        "metric": "farm_activation_latency_seconds",
+        "section": "farm",
+        "reason": "farm_actor_activation_* are gauges/counters of FSM/load gates; no load-duration histogram in source or scrape.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "farm_activation_total",
+        "section": "farm",
+        "reason": "Activation metrics exist on farm-svr but there is no all-activations counter. reactivated_total is only loads after passivation, not cold starts.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "farm_actor_memory_bytes",
+        "section": "farm",
+        "reason": "No live-actor RAM histogram. actor_record_serialized_bytes / model_state_bytes are serialized sizes.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "farm_change_fanout_total",
+        "section": "farm",
+        "reason": "No farm-side fanout counter. farm_downlink_rpc_attempts_total{method=deliver_batch} is RPC attempts; farmgate_downlink_writer_enqueued_items_total{kind=farm_change} is gate enqueue, not farm fanout.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "farm_commit_seconds",
+        "section": "farm",
+        "reason": "No commit-duration histogram. serialization_duration_ms is envelope sizing only.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "farm_join_total",
+        "section": "farm",
+        "reason": "No join counter. farm_rpc_calls_total has ExecuteCommand/ArmSnapshot/CleanupSubscription, not Join. subscription_state is a gauge of current joins.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "farm_load_and_claim_seconds",
+        "section": "farm",
+        "reason": "No production histogram. cap-redis scenario name only.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "farm_mailbox_wait_seconds",
+        "section": "farm",
+        "reason": "Same gap as player: oldest_wait_seconds is a gauge of the current oldest head, not a per-turn wait histogram.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "farm_version_ring_depth",
+        "section": "farm",
+        "reason": "No version-ring metric in capture or Go (grep version_ring/VersionRing/ring_depth empty). post_ready_buffer_len is a different buffer.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "lease_deadline_remaining_seconds",
+        "section": "gate",
+        "reason": "No per-lease remaining histogram. farm_gate_boot_lease_seconds_remaining is one GateBoot gauge. route-controller exports route_snapshot_min_remaining_ms (min remaining ms, different object).",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "subscription_lane_depth",
+        "section": "gate",
+        "reason": "No gate subscription-lane depth gauge. writer_queue_items is all FrameKinds; farm_subscription_hub_active_lanes is farm-svr lane count, not depth.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "subscription_lane_oldest_age_seconds",
+        "section": "gate",
+        "reason": "No subscription-lane oldest-age gauge. oldest_frame_age_seconds is max over all downlink kinds, not subscription lanes.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "player_activation_latency_seconds",
+        "section": "player",
+        "reason": "No load/activation duration histogram in capture or Go source (grep activation_latency/load_and_claim/LoadLatency).",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "player_activation_total",
+        "section": "player",
+        "reason": "player-svr does not call RegisterActivationMetrics; farm_actor_activation_* absent from player-svr-0/1 scrape. No activation_total counter exists even on farm.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "player_actor_memory_bytes",
+        "section": "player",
+        "reason": "No live-actor RAM histogram. actor_record_serialized_bytes / model_state_bytes are serialized payload sizes, not in-process actor memory.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "player_commit_seconds",
+        "section": "player",
+        "reason": "No Authority Commit duration histogram. serialization_duration_ms is envelope sizing only; redis_round_trips is a count.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "player_load_and_claim_seconds",
+        "section": "player",
+        "reason": "No production histogram. cap-redis uses this only as a scenario operation name, not a metric.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "player_mailbox_wait_seconds",
+        "section": "player",
+        "reason": "Contract is a per-turn wait histogram. farm_actor_user_mailbox_oldest_wait_seconds is a gauge of the current oldest head wait, not the same distribution.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "player_passivation_total",
+        "section": "player",
+        "reason": "Activation FSM not registered on player-svr. farm_actor_mailbox_retired_total is mailbox retire, not PASSIVATING→ABSENT.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "worker_backlog_drain_per_second",
+        "section": "worker",
+        "reason": "No drain-rate gauge. farm_workflow_backlog / farm_worker_due_depth are depths. Deriving rate from completed_total is forbidden substitution.",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "worker_invalid_order_total",
+        "section": "worker",
+        "reason": "theftrecovery.RoundStats.InvalidOrders is in-memory only; no Prometheus registration (grep Name/invalid_order in worker packages).",
+        "kind": "not_exported"
+      },
+      {
+        "metric": "worker_participant_latency_seconds",
+        "section": "worker",
+        "reason": "No worker-side client RPC histogram. farm_worker_terminal_latency_ms is creation-to-terminal work latency, not participant RPC. farm_rpc_server_seconds ExecuteStep is on player/farm.",
+        "kind": "not_exported"
+      }
+    ],
+    "correctness_gates_not_instrumented": {
+      "h5_pending_journal_residual": "the pending journal lives in the browser; this repository holds no implementation to witness",
+      "silent_drop_total": "needs a conservation check between what the server published and what a client received",
+      "invalid_order_total": "needs an order oracle over the applied sequence",
+      "wrong_scope_dispatch_total": "needs an independent audit of which scope served each call"
+    },
+    "not_narrowable": "mandatoryRuntimeMetricNames in cmd/cap-single-pod/required.go is compiled into the harness and is demanded of every sample no matter what this file says. Thirteen of those names have no publisher in this repository; they are the subject of the environment observer work, not of this narrowing."
+  },
+  "common": [
+    {
+      "name": "arrival_lag_ms",
+      "type": "histogram",
+      "source": "load_generator",
+      "quantiles": [
+        0.5,
+        0.95,
+        0.99,
+        1.0
+      ],
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    },
+    {
+      "name": "completed_total",
+      "type": "counter",
+      "source": "load_generator",
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    },
+    {
+      "name": "driver_cpu_percent",
+      "type": "gauge",
+      "source": "cgroup",
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    },
+    {
+      "name": "driver_event_backlog",
+      "type": "gauge",
+      "source": "load_generator",
+      "exported_as": "driver_event_backlog",
+      "survey_verdict": "EXACT"
+    },
+    {
+      "name": "driver_fd_open",
+      "type": "gauge",
+      "source": "procfs",
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    },
+    {
+      "name": "driver_frame_decode_total",
+      "type": "counter",
+      "source": "load_generator",
+      "exported_as": "driver_frame_decode_total",
+      "survey_verdict": "EXACT"
+    },
+    {
+      "name": "driver_frame_encode_total",
+      "type": "counter",
+      "source": "load_generator",
+      "exported_as": "driver_frame_encode_total",
+      "survey_verdict": "EXACT"
+    },
+    {
+      "name": "driver_rss_bytes",
+      "type": "gauge",
+      "source": "cgroup",
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    },
+    {
+      "name": "launched_arrivals_total",
+      "type": "counter",
+      "source": "load_generator",
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    },
+    {
+      "name": "planned_arrivals_total",
+      "type": "counter",
+      "source": "load_generator",
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    },
+    {
+      "name": "rejected_total",
+      "type": "counter",
+      "source": "load_generator",
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    },
+    {
+      "name": "request_or_turn_latency_seconds",
+      "type": "histogram",
+      "source": "measured_service",
+      "quantiles": [
+        0.5,
+        0.95,
+        0.99
+      ],
+      "exported_as": "farm_actor_turn_latency_seconds",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "scheduled_unsent_total",
+      "type": "counter",
+      "source": "load_generator",
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    },
+    {
+      "name": "service_cpu_percent",
+      "type": "gauge",
+      "source": "cgroup",
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    },
+    {
+      "name": "service_fd_open",
+      "type": "gauge",
+      "source": "procfs",
+      "exported_as": "process_open_fds",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "service_gc_pause_seconds",
+      "type": "histogram",
+      "source": "go_runtime",
+      "exported_as": "go_gc_duration_seconds",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "service_goroutines",
+      "type": "gauge",
+      "source": "go_runtime",
+      "exported_as": "go_goroutines",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "service_heap_bytes",
+      "type": "gauge",
+      "source": "go_runtime",
+      "exported_as": "go_memstats_heap_alloc_bytes",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "service_network_rx_bytes_total",
+      "type": "counter",
+      "source": "cgroup_or_procfs",
+      "exported_as": "process_network_receive_bytes_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "service_network_tx_bytes_total",
+      "type": "counter",
+      "source": "cgroup_or_procfs",
+      "exported_as": "process_network_transmit_bytes_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "service_rss_bytes",
+      "type": "gauge",
+      "source": "cgroup",
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    },
+    {
+      "name": "timeout_total",
+      "type": "counter",
+      "source": "load_generator",
+      "survey_verdict": "AVAILABLE_ELSEWHERE"
+    }
+  ],
+  "gate": [
+    {
+      "name": "active_connections",
+      "type": "gauge",
+      "exported_as": "farmgate_ws_conn_active",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "connection_writer_oldest_age_seconds",
+      "type": "gauge",
+      "exported_as": "farmgate_downlink_writer_oldest_frame_age_seconds",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "connection_writer_queue_bytes",
+      "type": "gauge",
+      "exported_as": "farmgate_downlink_writer_queue_bytes",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "connection_writer_queue_items",
+      "type": "gauge",
+      "exported_as": "farmgate_downlink_writer_queue_items",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "egress_bytes_total",
+      "type": "counter",
+      "exported_as": "farmgate_ws_bytes_sent_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "frames_in_total",
+      "type": "counter",
+      "exported_as": "farmgate_ws_msg_received_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "frames_out_total",
+      "type": "counter",
+      "exported_as": "farmgate_ws_msg_sent_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "handshake_latency_seconds",
+      "type": "histogram",
+      "exported_as": "farm_gate_preauth_duration_seconds",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "handshake_total",
+      "type": "counter",
+      "exported_as": "farm_gate_preauth_transitions_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "session_route_batch_bytes",
+      "type": "histogram",
+      "exported_as": "farm_gate_lease_batch_estimated_bytes",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "session_route_batch_duration_seconds",
+      "type": "histogram",
+      "exported_as": "farm_gate_lease_batch_dispatch_duration_seconds",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "session_route_batch_items",
+      "type": "histogram",
+      "exported_as": "farm_gate_lease_batch_items",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "slow_client_kick_total",
+      "type": "counter",
+      "exported_as": "farmgate_ws_slow_client_kick_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "subscription_batch_bytes",
+      "type": "histogram",
+      "exported_as": "farm_gate_lease_batch_estimated_bytes",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "subscription_batch_duration_seconds",
+      "type": "histogram",
+      "exported_as": "farm_gate_subscription_lease_renew_duration_seconds",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "subscription_batch_items",
+      "type": "histogram",
+      "exported_as": "farm_gate_lease_batch_items",
+      "survey_verdict": "EXPORTED_RENAMED"
+    }
+  ],
+  "player": [
+    {
+      "name": "player_active_actors",
+      "type": "gauge",
+      "exported_as": "farm_actor_active_keys",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "player_commit_bytes_total",
+      "type": "counter",
+      "exported_as": "authority_commit_request_bytes",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "player_mailbox_bytes",
+      "type": "gauge",
+      "exported_as": "farm_actor_user_mailbox_bytes",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "player_mailbox_items",
+      "type": "gauge",
+      "exported_as": "farm_actor_user_mailbox_queued",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "player_participant_latency_seconds",
+      "type": "histogram",
+      "exported_as": "farm_rpc_server_seconds",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "player_serialization_seconds",
+      "type": "histogram",
+      "exported_as": "serialization_duration_ms",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "player_turn_duration_seconds",
+      "type": "histogram",
+      "exported_as": "farm_actor_turn_latency_seconds",
+      "survey_verdict": "EXPORTED_RENAMED"
+    }
+  ],
+  "farm": [
+    {
+      "name": "farm_active_actors",
+      "type": "gauge",
+      "exported_as": "farm_actor_active_keys",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "farm_commit_bytes_total",
+      "type": "counter",
+      "exported_as": "authority_commit_request_bytes",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "farm_mailbox_bytes",
+      "type": "gauge",
+      "exported_as": "farm_actor_user_mailbox_bytes",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "farm_mailbox_items",
+      "type": "gauge",
+      "exported_as": "farm_actor_user_mailbox_queued",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "farm_passivation_total",
+      "type": "counter",
+      "exported_as": "farm_actor_activation_passivate_completed_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "farm_serialization_seconds",
+      "type": "histogram",
+      "exported_as": "serialization_duration_ms",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "farm_subscriptions",
+      "type": "gauge",
+      "exported_as": "farm_subscription_hub_subscription_state",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "farm_turn_duration_seconds",
+      "type": "histogram",
+      "exported_as": "farm_actor_turn_latency_seconds",
+      "survey_verdict": "EXPORTED_RENAMED"
+    }
+  ],
+  "worker": [
+    {
+      "name": "worker_claim_total",
+      "type": "counter",
+      "exported_as": "farm_worker_claimed_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "worker_complete_total",
+      "type": "counter",
+      "exported_as": "farm_worker_completed_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "worker_complete_total_by_family",
+      "type": "counter",
+      "required_labels": [
+        "family"
+      ],
+      "exported_as": "farm_worker_completed_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "worker_due_depth",
+      "type": "gauge",
+      "exported_as": "farm_worker_due_depth",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "worker_due_depth_by_family",
+      "type": "gauge",
+      "required_labels": [
+        "family"
+      ],
+      "exported_as": "farm_worker_due_depth",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "worker_oldest_due_age_seconds",
+      "type": "gauge",
+      "exported_as": "farm_worker_oldest_due_age_ms",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "worker_retry_total",
+      "type": "counter",
+      "exported_as": "farm_worker_retried_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "worker_scan_duration_seconds",
+      "type": "histogram",
+      "exported_as": "farm_worker_scan_duration_ms",
+      "survey_verdict": "EXPORTED_RENAMED"
+    },
+    {
+      "name": "worker_step_unknown_total",
+      "type": "counter",
+      "exported_as": "farm_worker_step_unknown_total",
+      "survey_verdict": "EXPORTED_RENAMED"
+    }
+  ],
+  "correctness": [
+    "authority_client_mismatch_total",
+    "due_residual_unexpected",
+    "duplicate_debit_total",
+    "duplicate_grant_total",
+    "farm_version_gap_total",
+    "friend_pair_index_unrepaired",
+    "receipt_conflict_leak_total",
+    "record_version_regression_total",
+    "stale_holder_commit_success_total",
+    "unexpected_lease_expiry_total",
+    "workflow_step_unknown_residual"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": "cap-single-pod-l2.collector-adapter.v0.1",
+  "listen": "127.0.0.1:19091",
+  "snapshot_path": "/snapshot",
+  "allowed_cgroup_root": "${ALLOWED_CGROUP_ROOT}",
+  "sources": "${PROMETHEUS_SOURCES}",
+  "mappings": "${METRIC_MAPPINGS}",
+  "measured_service": "${MEASURED_SERVICE_CGROUP}",
+  "driver": "${DRIVER_CGROUP}",
+  "observer": "${OBSERVER_CGROUP}",
+  "dependencies": "${DEPENDENCY_CGROUPS}",
+  "identity_files": "${IDENTITY_FILES}",
+  "primary_queue_metric": "${PRIMARY_QUEUE_METRIC}",
+  "primary_queue_bytes_metric": "${PRIMARY_QUEUE_BYTES_METRIC}",
+  "primary_queue_age_metric": "${PRIMARY_QUEUE_AGE_METRIC}",
+  "redis_pool_wait_metric": "redis_pool_wait_seconds"
+}

@@ -1,0 +1,74 @@
+{
+  "baseline_state": "BASELINE_BLOCKED_BY_UNCLASSIFIED_F3",
+  "chain": {
+    "T0_fault_plan_armed": {
+      "note": "the B0 fault controller has no plan-id field; future evidence records UTC read-back observations",
+      "observed_at": "2026-08-09T12:15:09.681350Z",
+      "plan_id": null,
+      "proven": true
+    },
+    "T10_snapshot_contains_committed_fact": {
+      "proven": false
+    },
+    "T1_h5_operation_on_wire": {
+      "crop_cycle_ids": [],
+      "operation_ids": [],
+      "proven": false,
+      "target_farm_ids": []
+    },
+    "T2_authority_commit": {
+      "matching_order_count": 0,
+      "proven": false
+    },
+    "T3_farm_change_generated": {
+      "proven": false,
+      "unique_item_count": 0
+    },
+    "T4_downlink_item_constructed": {
+      "item_ids": [],
+      "proven": false
+    },
+    "T5_proxy_observed_farm_change": {
+      "delivery_attempt_count": 0,
+      "proven": false
+    },
+    "T6_fault_injected": {
+      "injection_attempt_count": 0,
+      "proven": false
+    },
+    "T8_rejoin_required": {
+      "count": 0,
+      "proven": false
+    },
+    "T9_h5_fresh_join": {
+      "proven": false
+    }
+  },
+  "classification": "CONTRACT_CONFLICT",
+  "contract_detail": "H5_WIRE_THEFT_MISSING",
+  "decisive_evidence": "the plan was armed, but the H5 action emitted no wire THEFT command; the fault/product delivery chain never entered T1",
+  "evidence_files": {
+    "browser": "browser-verdict.json",
+    "plan": "fault-plan-observations.ndjson",
+    "proxy_events": "protocol-events.ndjson",
+    "redis_dump": "theft-redis-dump.json",
+    "wire_tap": "ws-frame-tap.ndjson"
+  },
+  "facts": {
+    "browser_verdict": "FAIL",
+    "fail_farm_change_count": 0,
+    "matching_redis_order_count": 0,
+    "post_arm_farm_change_count": 0,
+    "post_arm_proxy_event_count": 0,
+    "proxy_traffic_event_count": 38,
+    "rejoin_required_count": 0,
+    "tapped_theft_command_count": 0,
+    "target_bound_fail_farm_change_count": 0,
+    "target_bound_post_arm_farm_change_count": 0,
+    "target_bound_rejoin_required_count": 0,
+    "target_subscription_ids": []
+  },
+  "generated_at": "2026-08-09T12:33:37.010344Z",
+  "schema": "farm-game.q1-perf-evidence.v1",
+  "task": "Q1-F3-FAULT-CHAIN-TRIAGE"
+}

@@ -1,0 +1,130 @@
+{
+  "schema_version": "farm-gate-lease-batching-evidence/v1",
+  "baseline": "4b10d57d84fada08a309ec5a9a8d40a2432f80aa",
+  "status": "PASS",
+  "session_route": {
+    "items": 100000,
+    "planned_items": 100000,
+    "batches": 596,
+    "limits": {
+      "MaxItems": 256,
+      "MaxBytes": 262144,
+      "MaxDispatchDuration": 25000000
+    },
+    "schedule": {
+      "Interval": 10000000000,
+      "BucketCount": 256,
+      "MaxJitter": 10000000
+    },
+    "stable_distribution": {
+      "buckets": 256,
+      "minimum": 329,
+      "maximum": 450,
+      "mean": 390.625,
+      "max_to_mean": 1.152,
+      "min_to_mean": 0.84224,
+      "stable_replay": true,
+      "jitter_bounded": true
+    },
+    "maximum_batch_items": 256,
+    "maximum_non_oversize_bytes": 131072,
+    "oversize_items": 1,
+    "oversize_dispatched_alone": true,
+    "maximum_dispatch_duration": 2760000,
+    "maximum_due_lag": 22042879,
+    "starved_items": 0,
+    "holder_safe_partitions": 1,
+    "mixed_holder_batches": 0,
+    "planner_maximum_scan": 1088,
+    "scheduler_tick": 10000000,
+    "physical_dispatch_model": "one go-redis Pipeline.Exec per batch; single-endpoint redis.Client is one network round trip; one EVAL per item"
+  },
+  "subscription": {
+    "items": 100000,
+    "planned_items": 100000,
+    "batches": 1495,
+    "limits": {
+      "MaxItems": 256,
+      "MaxBytes": 262144,
+      "MaxDispatchDuration": 25000000
+    },
+    "schedule": {
+      "Interval": 10000000000,
+      "BucketCount": 256,
+      "MaxJitter": 10000000
+    },
+    "stable_distribution": {
+      "buckets": 256,
+      "minimum": 334,
+      "maximum": 449,
+      "mean": 390.625,
+      "max_to_mean": 1.14944,
+      "min_to_mean": 0.85504,
+      "stable_replay": true,
+      "jitter_bounded": true
+    },
+    "maximum_batch_items": 122,
+    "maximum_non_oversize_bytes": 62464,
+    "oversize_items": 1,
+    "oversize_dispatched_alone": true,
+    "maximum_dispatch_duration": 1420000,
+    "maximum_due_lag": 5004792026,
+    "starved_items": 0,
+    "holder_safe_partitions": 500,
+    "mixed_holder_batches": 0,
+    "planner_maximum_scan": 1088,
+    "scheduler_tick": 10000000,
+    "physical_dispatch_model": "one BatchRenewSubscriptions gRPC per one-farm holder-safe batch; sharded dispatch resolves the exact current Holder outside Gate.mu"
+  },
+  "lifecycle": {
+    "holder_isolation": true,
+    "late_close_non_resurrection": true,
+    "holder_handoff_fenced": true,
+    "new_generation_applied": true,
+    "clock_rollback_clamped": true,
+    "large_jump_batch_bounded": true,
+    "drain_cleared": 100,
+    "drain_backlog": 0,
+    "drain_stopped": true,
+    "drain_rejected_registration": true
+  },
+  "checks": {
+    "clock_rollback_clamped": true,
+    "drain_cleared_stopped": true,
+    "holder_handoff_fenced": true,
+    "holder_isolation": true,
+    "large_jump_bounded": true,
+    "late_close_non_resurrection": true,
+    "new_generation_applied": true,
+    "session_route_100k": true,
+    "session_route_bytes_bound": true,
+    "session_route_distributed": true,
+    "session_route_due_lag": true,
+    "session_route_duration_bound": true,
+    "session_route_holder_isolation": true,
+    "session_route_items_bound": true,
+    "session_route_no_starvation": true,
+    "session_route_oversize": true,
+    "session_route_single_gate_holder": true,
+    "session_route_stable": true,
+    "subscription_100k": true,
+    "subscription_500_holder_safe_partitions": true,
+    "subscription_bytes_bound": true,
+    "subscription_distributed": true,
+    "subscription_due_lag": true,
+    "subscription_duration_bound": true,
+    "subscription_holder_isolation": true,
+    "subscription_items_bound": true,
+    "subscription_no_starvation": true,
+    "subscription_oversize": true,
+    "subscription_stable": true
+  },
+  "thresholds": {
+    "distribution_max_to_mean": 1.25,
+    "distribution_min_to_mean": 0.75,
+    "items_per_lane": 100000,
+    "max_due_lag": "5.1s",
+    "subscription_holder_safe_partitions": 500
+  },
+  "failures": []
+}

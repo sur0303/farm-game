@@ -1,0 +1,40 @@
+{
+  "design_base": "6f239b136e0943ec0dc30e3c92644974fc2b3454",
+  "files": {
+    "contract.md": {
+      "bytes": 10718,
+      "sha256": "930fc85778672bd0924de40675d6afdb26ff4683f4080894be41070aaff0e16e"
+    },
+    "environment-validity.json": {
+      "bytes": 3788,
+      "sha256": "8343d98ec5946db6247dfc4dd10247b95f53cc073b0460068dfe059141534eed"
+    },
+    "manifest.schema.json": {
+      "bytes": 9985,
+      "sha256": "8d868efc457af536e0c0496fd9ef633fb968a8eabac099d7cbd616ab95dc1eaf"
+    },
+    "profile.json": {
+      "bytes": 10330,
+      "sha256": "c4cf58cd2b6c41831dc1571a70a438a3e53f4e6fc67da078cfff5ccde8c1456e"
+    },
+    "required-metrics.json": {
+      "bytes": 21358,
+      "sha256": "1102979306ebdddf48139913b5451f1bfa32056b69caa7b6133f57a3912b45df"
+    },
+    "review-checklist.md": {
+      "bytes": 6361,
+      "sha256": "b6489d1d5dcb4a8490984422450369661d91e8b0e01d7cd529114881b97c777f"
+    },
+    "stop-conditions.json": {
+      "bytes": 4843,
+      "sha256": "00a0ceaabe437b2db66b2c4bec0841d93635ba43907cdfd65c6adb0a89f80c88"
+    },
+    "verdict-rules.json": {
+      "bytes": 4125,
+      "sha256": "d7e5a9cbc22de8f591f059bfc29c9c2582c8fab48706a6c55889c56efb663cc3"
+    }
+  },
+  "hash_mode": "sha256_exact_file_bytes",
+  "profile_version": "CAP-SINGLE-POD-L2-R2-v0.1",
+  "schema_version": "cap-single-pod-l2-r2.design-index.v0.1"
+}

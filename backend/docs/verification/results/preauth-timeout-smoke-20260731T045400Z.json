@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-07-31T04:54:00Z",
+  "scenario": "PRE_AUTH ClientHello timeout smoke after 10m capacity soak",
+  "stack": "docker compose farm-game + company Redis",
+  "unauthenticated_wss_opens": 32,
+  "observed": {
+    "farm_gate_preauth_connections_peak": 32,
+    "farm_gate_preauth_transitions_total_timeout": 32,
+    "connections_after_timeout": 0,
+    "authenticated_from_prior_soak": 250
+  },
+  "result": "PASS"
+}

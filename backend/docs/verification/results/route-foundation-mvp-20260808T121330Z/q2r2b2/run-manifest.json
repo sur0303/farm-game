@@ -1,0 +1,1 @@
+{"FARM_REDIS_URL":"redacted","auth_enabled":true,"cluster_commands_exposed":false,"fault_proxy":"per-process test-only TCP proxy","membership_mode":true,"redis_profile":"company-proxy","remote_watch":false}

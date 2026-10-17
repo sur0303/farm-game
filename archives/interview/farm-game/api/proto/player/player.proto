@@ -1,0 +1,173 @@
+syntax = "proto3";
+
+package player;
+
+option go_package = "farmgame/api/gen/player;playerpb";
+
+import "common/enums.proto";
+import "economy/economy.proto";
+import "guard/guard.proto";
+import "task/task.proto";
+
+// CodexEntry is a permanent player fact. It is first written in the same
+// PlayerActor turn that applies the first successful harvest reward, so a
+// workflow retry cannot create a duplicate unlock.
+message CodexEntry {
+  int32 crop_definition_id = 1;
+  int64 first_harvested_at_ms = 2;
+  string source_operation_id = 3;
+  uint64 unlock_revision = 4;
+  string source_activity_id = 5;
+  uint64 catalog_version_at_unlock = 6;
+  uint64 definition_version_at_unlock = 7;
+}
+
+message PetState {
+  repeated int32 owned_pet_ids = 1;
+  optional int32 active_guard_pet_id = 2;
+  int64 guard_until_ms = 3;
+  uint64 pet_state_version = 4;
+  uint64 guard_version = 5;
+  guard.GuardRuleSnapshot guard_rule_snapshot = 6;
+}
+
+message MailClaimReceipt {
+  string mail_id = 1;
+  string first_operation_id = 2;
+  uint64 mail_version = 3;
+  bytes claim_material_hash = 4;
+  bytes reward_result = 5;
+  int64 claim_decision_at_ms = 6;
+  int64 claimed_at_ms = 7;
+  int64 receipt_retain_until_ms = 8;
+}
+
+message MailClaimState {
+  uint64 state_version = 1;
+  uint64 projection_dirty_generation = 2;
+  repeated MailClaimReceipt receipts = 3;
+}
+
+message PlayerPublicProfile {
+  string display_name = 1;
+  uint32 avatar_id = 2;
+}
+
+// PlayerRecord is the player_id consistency group used by PlayerActor.
+// Redis implementations are development adapters; production persistence maps
+// this record to the dedicated PlayerEconomy Tcaplus table.
+message PlayerRecord {
+  uint64 player_id = 1;
+  uint64 economy_version = 2;
+  string bootstrap_id = 3;
+  economy.Wallet wallet = 4;
+  economy.Inventory inventory = 5;
+  economy.Progression progression = 6;
+  repeated PlayerOperationReceipt recent_operation_receipts = 7;
+  repeated ItemReservation item_reservations = 8;
+  repeated CodexEntry codex_entries = 9;
+  repeated task.TaskInstance tasks = 10;
+  // W31 compatibility carrier for the final bounded model:task physical
+  // model. Legacy tasks remain only for older Plant/Harvest callers until the
+  // multi-Model physical split; Care and TaskDomain use this field exclusively.
+  task.TaskDomainState task_domain_state = 11;
+  PlayerPublicProfile public_profile = 12;
+  repeated UnlockCoinReservation unlock_coin_reservations = 13;
+  uint64 compendium_revision = 14;
+  uint64 compendium_seen_revision = 15;
+  PetState pet_state = 16;
+  MailClaimState mail_claim_state = 17;
+  uint32 welcome_mail_version = 18;
+}
+
+message PlayerOperationReceipt {
+  string operation_id = 1;
+  common.CommandStatus status = 2;
+  common.ErrorCode error_code = 3;
+  bytes result_payload = 4;
+  int64 committed_at_ms = 5;
+  bytes payload_hash = 6;
+}
+
+enum ReservationState {
+  RESERVATION_STATE_UNSPECIFIED = 0;
+  PREPARED = 1;
+  COMMITTED = 2;
+  RELEASED = 3;
+}
+
+message ItemReservation {
+  string reservation_id = 1;
+  int32 item_id = 2;
+  int64 count = 3;
+  ReservationState state = 4;
+  int64 updated_at_ms = 5;
+  bytes payload_hash = 6;
+}
+
+// UnlockCoinReservation is the durable available-coin reservation used by
+// the UnlockPlot Participant. PREPARED means reserved, COMMITTED means
+// consumed, and RELEASED means returned. The record is the source of truth;
+// no process-local balance or test map may stand in for it.
+message UnlockCoinReservation {
+  string reservation_id = 1;
+  uint64 farm_id = 2;
+  uint32 plot_id = 3;
+  uint64 amount_normal_coin = 4;
+  ReservationState state = 5;
+  uint64 unlock_rule_version = 6;
+  int64 updated_at_ms = 7;
+  bytes payload_hash = 8;
+}
+
+// PrivateState is returned only to the authenticated player.
+message PrivateState {
+  uint64 economy_version = 1;
+  int64 coin = 2;
+  repeated economy.ItemStack inventory = 3;
+  int32 level = 4;
+  int64 exp = 5;
+  repeated CodexEntry codex_entries = 6;
+  repeated task.TaskInstance tasks = 7;
+}
+
+// GetPlayerBootstrapRequest intentionally has no client-controlled fields.
+// The authenticated player_id is taken from TrustedCommandContext and the
+// envelope target is required to match it at Gate/FirstHop.
+message GetPlayerBootstrapRequest {}
+
+// PlayerBootstrapResult is the independent private-state bootstrap required
+// by contract 26. It must never be embedded into FarmSnapshot.
+message PlayerBootstrapResult {
+  PrivateState private_state = 1;
+}
+
+message BuyOfferRequest {
+  int32 offer_id = 1;
+  int32 count = 2;
+}
+
+message SellItemRequest {
+  int32 item_id = 1;
+  int64 count = 2;
+}
+
+message EconomyCommandResult {
+  PrivateState private_state = 1;
+  int64 coin_delta = 2;
+  int32 item_id = 3;
+  int64 item_delta = 4;
+  uint64 offer_version = 5;
+  int64 unit_price = 6;
+}
+
+message ClaimTaskRequest {
+  int32 task_definition_id = 1;
+}
+
+message TaskCommandResult {
+  PrivateState private_state = 1;
+  int32 task_definition_id = 2;
+  int64 coin_delta = 3;
+  int64 exp_delta = 4;
+}

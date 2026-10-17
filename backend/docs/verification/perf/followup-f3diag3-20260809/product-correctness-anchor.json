@@ -1,0 +1,210 @@
+{
+  "actual": {
+    "fault_chain_classification": "F3_CHAIN_PASS",
+    "invalid_order_classification": "PRODUCT_WORKER_RECOVERY_SCOPE_FILTER_BUG",
+    "persistent_invalid_pair_due_candidates": 2,
+    "playwright_verdict": "PASS",
+    "protocol_verdict": "PASS"
+  },
+  "baseline_state": "BASELINE_BLOCKED_BY_PRODUCT_CORRECTNESS",
+  "correctness_incidents": [
+    {
+      "classification": "PRODUCT_WORKER_RECOVERY_SCOPE_FILTER_BUG",
+      "correlated_signals": [
+        "persistent_invalid_pair_due_candidates"
+      ],
+      "incident_id": "care-pair-due-scope-filter-1",
+      "severity": "HARD"
+    }
+  ],
+  "correctness_invariants": {
+    "hard_correctness_incident_total": 1,
+    "persistent_pair_due_residue_total": 2
+  },
+  "correctness_signals": {
+    "browser_witness_failure": 0,
+    "combined_anchor_failure": 0,
+    "persistent_invalid_pair_due_candidates": 2,
+    "protocol_bot_step_failure": 0
+  },
+  "evidence": [
+    "player.log",
+    "xvfb.log",
+    "h5-test-overlay.json",
+    "fault-plan-watcher.log",
+    "fault-plan-observations.ndjson",
+    "theft-invalid-order-triage.json",
+    "bot-frames.ndjson",
+    "control.log",
+    "worker.log",
+    "farm.log",
+    "bot.log",
+    "ws-frame-tap.log",
+    "f3-fault-chain-triage.json",
+    "theft-redis-dump.json",
+    "browser-verdict.json",
+    "playwright.log",
+    "authority-after.json",
+    "proxy.log",
+    "fixture.json",
+    "f3-fault-chain-triage.log",
+    "run-manifest.json",
+    "protocol-events.ndjson",
+    "route-snapshot.json",
+    "theft-redis-dump.log",
+    "theft-invalid-order-triage.log",
+    "ws-frame-tap.ndjson",
+    "verdict.json",
+    "gate.log",
+    "gate-restart-1.log",
+    "protocol-verdict.json",
+    "playwright-artifacts/.last-run.json",
+    "playwright-artifacts/cp-vertical-b.q1-one-real--fb479-farm-→-water-→-theft-→-home/test-finished-2.png",
+    "playwright-artifacts/cp-vertical-b.q1-one-real--fb479-farm-→-water-→-theft-→-home/test-finished-1.png",
+    "screenshots/final-authority-stable-b.png",
+    "screenshots/final-authority-stable-a.png",
+    "screenshots/water-theft-a.png",
+    "screenshots/friend-profile-a.png",
+    "screenshots/water-theft-b.png",
+    "screenshots/friend-profile-b.png",
+    "screenshots/return-home-b.png",
+    "screenshots/return-home-a.png",
+    "control/restart-gate.ack.json",
+    "tmp/fault-plan-watcher.stop",
+    "videos/page@464b1da23dd67f94ca8e80fb223fda4a.webm",
+    "videos/page@d42839041d14c82f6523693af810b4d3.webm"
+  ],
+  "failure_class": "correctness",
+  "fault_chain_classification": "F3_CHAIN_PASS",
+  "finished_at": "2026-08-09T12:27:52.620070Z",
+  "invalid_order_classification": "PRODUCT_WORKER_RECOVERY_SCOPE_FILTER_BUG",
+  "metrics": {
+    "browser_steps": [
+      {
+        "detail": {
+          "ownerA": "1000003",
+          "ownerB": "1000002"
+        },
+        "step": "login"
+      },
+      {
+        "detail": {
+          "aHarvestPlot": "plot-0",
+          "bTheftPlot": "plot-0"
+        },
+        "step": "buy-and-plant"
+      },
+      {
+        "step": "harvest"
+      },
+      {
+        "step": "reverse-visit-b-to-a-ready"
+      },
+      {
+        "step": "share-and-join-friend"
+      },
+      {
+        "detail": {
+          "farmVersion": "3",
+          "generationBefore": "1",
+          "revision": "8"
+        },
+        "step": "f1-lost-care-result-recovered"
+      },
+      {
+        "step": "friend-farm-simulated-disconnect-recovery"
+      },
+      {
+        "step": "f2-gate-drain-restored-friend-target"
+      },
+      {
+        "step": "water-cycle-cleared-on-harvest"
+      },
+      {
+        "detail": {
+          "bFarmVersionAfterTheft": "5",
+          "stolenAfter": 10,
+          "stolenBefore": 0
+        },
+        "step": "f3-farm-change-failure-rejoined"
+      },
+      {
+        "detail": {
+          "generationBeforeLostClaimResult": "4",
+          "lostClaimResultRecovered": true
+        },
+        "step": "task-list-visit-interact-growth-and-claims"
+      },
+      {
+        "detail": {
+          "finalProduce": 510
+        },
+        "step": "return-home"
+      },
+      {
+        "step": "final-authority-stable"
+      }
+    ],
+    "protocol_steps": {
+      "bootstrap": {
+        "status": "ok"
+      },
+      "bootstrap_refresh": {
+        "detail": "inventory map[2001:500] (produce landed), coin 90 unchanged",
+        "status": "ok"
+      },
+      "buy": {
+        "status": "ok"
+      },
+      "grow": {
+        "status": "ok"
+      },
+      "harvest": {
+        "status": "ok"
+      },
+      "hello": {
+        "status": "ok"
+      },
+      "join": {
+        "status": "ok"
+      },
+      "login": {
+        "status": "ok"
+      },
+      "plant": {
+        "detail": "plot=0 cycle=sid1_sDzX88y1GlgXqbUqtnVVeIkSNh5ytcVDcF185P7sCWw mature_at_ms=1786278418364 farm_version=1",
+        "status": "ok"
+      },
+      "premature_reject": {
+        "status": "ok"
+      },
+      "recovery_complete": {
+        "status": "ok"
+      },
+      "recovery_once": {
+        "detail": "ClientRecoveryComplete sent exactly once",
+        "status": "ok"
+      },
+      "register": {
+        "status": "ok"
+      }
+    }
+  },
+  "name": "product-correctness-anchor",
+  "namespace": "smoke-q108091226392569922",
+  "planned": {
+    "faults": [
+      "F1",
+      "F2",
+      "F3",
+      "lost_claim_result"
+    ],
+    "go_protocol_bots": 1,
+    "playwright_h5_witnesses": 2
+  },
+  "profile": "product_correctness_anchor",
+  "reason": "F1 CARE passed at the H5, but its two Pair DueIndex orders remain pending and are repeatedly misclassified by Theft recovery",
+  "redis_endpoint_hash": "sha256:6444f30904a0dfdc20ae4be3694ece03960596f7a0c6ca2f8d07eb8a1b998962",
+  "schema": "farm-game.q1-perf-evidence.v1",
+  "status": "FAIL"
+}

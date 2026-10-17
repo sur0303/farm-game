@@ -1,0 +1,35 @@
+{
+  "schema": "farm-game.q1-perf-profile.v1",
+  "task_id": "Q1-PERF-BASELINE-V1",
+  "description": "Tooling smoke only; never publish as Baseline V1.",
+  "baseline_eligible": false,
+  "redis_mode": "ephemeral_local",
+  "safety": {
+    "allow_shared_redis": false,
+    "allow_flushall": false,
+    "namespace_prefix": "q1perf-",
+    "max_drop_ratio": 0.02,
+    "max_arrival_lag_ms": 250,
+    "load_generator_cpu_stop_percent": 85,
+    "cleanup": "destroy_exact_ephemeral_container"
+  },
+  "profiles": {
+    "product_correctness_anchor": {"enabled": false},
+    "hot_farm_theft": {"enabled": false},
+    "gate_connection_staircase": {
+      "enabled": true,
+      "model": "open_arrival",
+      "stages": [
+        {"name": "connections-20-smoke", "connections": 20, "arrival_rate_per_second": 20, "duration_seconds": 5}
+      ]
+    },
+    "mixed_business_staircase": {
+      "enabled": true,
+      "model": "open_arrival",
+      "supported_operations": ["REGISTER", "LOGIN", "JOIN", "GET_PLAYER_BOOTSTRAP", "BUY", "PLANT"],
+      "stages": [
+        {"name": "mix-smoke", "duration_seconds": 8, "join_connections": 10, "join_rate_per_second": 5, "plant_connections": 2, "plant_rate_per_second": 1}
+      ]
+    }
+  }
+}

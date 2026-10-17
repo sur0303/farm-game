@@ -1,0 +1,11 @@
+{
+  "finished_at": "2026-08-06T13:57:33Z",
+  "frames": 0,
+  "steps": {
+    "register": {
+      "status": "fail",
+      "detail": "register status 503: {\"error\":\"failed to establish game session\"}\n"
+    }
+  },
+  "verdict": "FAIL"
+}

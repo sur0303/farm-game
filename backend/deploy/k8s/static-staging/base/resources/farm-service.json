@@ -1,0 +1,26 @@
+{
+  "apiVersion": "v1",
+  "kind": "Service",
+  "metadata": {
+    "name": "farm-svr",
+    "labels": {
+      "app.kubernetes.io/name": "farm-svr",
+      "app.kubernetes.io/component": "farm-holder",
+      "app.kubernetes.io/part-of": "farm-game"
+    }
+  },
+  "spec": {
+    "type": "ClusterIP",
+    "selector": {
+      "app.kubernetes.io/name": "farm-svr"
+    },
+    "ports": [
+      {
+        "name": "grpc",
+        "port": 9090,
+        "targetPort": "grpc",
+        "protocol": "TCP"
+      }
+    ]
+  }
+}

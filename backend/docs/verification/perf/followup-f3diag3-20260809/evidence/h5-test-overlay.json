@@ -1,0 +1,11 @@
+{
+  "mode": "TEST_ONLY_OVERLAY",
+  "tracked_h5_modified": false,
+  "reason": "align committed CP-B test with frozen H5 two-click Theft confirmation contract",
+  "source_spec": "src/test/e2e/cp-vertical-b.spec.ts",
+  "source_spec_hash": "sha256:c636f3ee1a236ba2cf442625041179a7bf87560498fc16a78aa14713cdb12e50",
+  "generated_spec_hash": "sha256:f2df1ff8f93588104e8a93cd6b5dfd601ab110afd2d67e4dc8a185da8e8ff755",
+  "source_config_hash": "sha256:1d159e3c85e2f585a2e477532f0ff7e5f638f53071f937aafd58b1ac0f815a28",
+  "generated_config_hash": "sha256:c5e4d7774749028b2686154f0e500c410c43b0b2c676e2eaa8cb5cfde60c719e",
+  "exact_change": "after first Theft click assert 确认偷菜, then click again to submit the wire command"
+}

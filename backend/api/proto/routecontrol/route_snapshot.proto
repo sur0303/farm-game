@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package routecontrol;
+
+option go_package = "farmgame/api/gen/routecontrol;routecontrolpb";
+
+// RouteSnapshotEnvelope is the only wire representation of a complete
+// durable RouteSnapshot. It deliberately contains no caller role, mutation,
+// holder-control, plan, patch, or public-protocol fields.
+message RouteSnapshotEnvelope {
+  string schema = 1;
+  string realm = 2;
+  uint64 revision = 3;
+  bytes canonical_json = 4;
+  string checksum = 5;
+  string topology = 6;
+  int64 committed_at = 7;
+  string controller_id = 8;
+  string boot = 9;
+}
+
+message GetSnapshotRequest {}
+
+message GetCurrentRevisionRequest {}
+
+message WatchFromRequest {
+  uint64 after_revision = 1;
+}
+
+service RouteSnapshotService {
+  rpc GetSnapshot(GetSnapshotRequest) returns (RouteSnapshotEnvelope);
+  rpc GetCurrentRevision(GetCurrentRevisionRequest) returns (RouteSnapshotEnvelope);
+  rpc WatchFrom(WatchFromRequest) returns (stream RouteSnapshotEnvelope);
+}

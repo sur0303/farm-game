@@ -1,0 +1,18 @@
+# syntax=docker/dockerfile:1
+
+# 当前仓库唯一可运行镜像是 TcaplusDB 能力探针。
+# player-svr/farm-svr/farm-worker/farm-gate 由 Dockerfile 按 SERVICE 构建；
+# 本文件只构建独立的 Tcaplus 能力探针。
+FROM golang:1.26-alpine AS build
+
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -o /out/tcaplus-verify ./cmd/tcaplus-verify
+
+FROM alpine:3.21
+RUN addgroup -S farm && adduser -S -G farm farm
+COPY --from=build /out/tcaplus-verify /usr/local/bin/tcaplus-verify
+USER farm
+ENTRYPOINT ["/usr/local/bin/tcaplus-verify"]

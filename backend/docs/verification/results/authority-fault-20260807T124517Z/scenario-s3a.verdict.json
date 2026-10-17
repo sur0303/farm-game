@@ -1,0 +1,18 @@
+{
+  "verdict": "PASS",
+  "reason": "scenario s3a passed",
+  "steps": {
+    "at_most_once": {
+      "status": "ok",
+      "detail": "client observed exactly one FarmVersion advance; no duplicate plot delta"
+    },
+    "no_fresh_join": {
+      "status": "ok",
+      "detail": "no REJOIN_REQUIRED observed; healthy gate unaffected"
+    },
+    "unavailable_retries": {
+      "status": "ok",
+      "detail": "injected=2 final_deliver=1 item=sub-8addd89e7fe73c1ee541f8587322d1de:change:1"
+    }
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "custom": {"axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": {"type": "linear"}, "showPoints": "never", "spanNulls": false, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}, "unit": "short"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "id": 1,
+      "options": {"legend": {"calcs": ["last", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
+      "targets": [{"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "farmgate_ws_conn_active", "legendFormat": "Active Connections", "range": true, "refId": "A"}],
+      "title": "活跃连接数",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "custom": {"axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": {"type": "linear"}, "showPoints": "never", "spanNulls": false, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}, "unit": "cps"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "id": 2,
+      "options": {"legend": {"calcs": ["last", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "rate(farmgate_ws_conn_total[1m])", "legendFormat": "New Conn/s", "range": true, "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "rate(farmgate_ws_conn_rejected_total[1m])", "legendFormat": "Rejected/s", "range": true, "refId": "B"},
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "rate(farmgate_ws_slow_client_kick_total[1m])", "legendFormat": "Slow Kick/s", "range": true, "refId": "C"}
+      ],
+      "title": "连接速率(新/拒绝/慢踢)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "custom": {"axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": {"type": "linear"}, "showPoints": "never", "spanNulls": false, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}, "unit": "cps"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "id": 3,
+      "options": {"legend": {"calcs": ["last", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "rate(farmgate_ws_msg_received_total[1m])", "legendFormat": "Recv/s", "range": true, "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "rate(farmgate_ws_msg_sent_total[1m])", "legendFormat": "Sent/s", "range": true, "refId": "B"}
+      ],
+      "title": "消息速率(收/发)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "custom": {"axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": {"type": "linear"}, "showPoints": "never", "spanNulls": false, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}, "unit": "Bps"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "id": 4,
+      "options": {"legend": {"calcs": ["last", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "rate(farmgate_ws_bytes_received_total[1m])", "legendFormat": "Recv Bytes/s", "range": true, "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "rate(farmgate_ws_bytes_sent_total[1m])", "legendFormat": "Sent Bytes/s", "range": true, "refId": "B"}
+      ],
+      "title": "字节流量(收/发)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "custom": {"axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": {"type": "linear"}, "showPoints": "never", "spanNulls": false, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}, "unit": "s"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "id": 5,
+      "options": {"legend": {"calcs": ["last", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "histogram_quantile(0.50, rate(farmgate_ws_handle_latency_seconds_bucket[1m]))", "legendFormat": "P50", "range": true, "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "histogram_quantile(0.90, rate(farmgate_ws_handle_latency_seconds_bucket[1m]))", "legendFormat": "P90", "range": true, "refId": "B"},
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "histogram_quantile(0.99, rate(farmgate_ws_handle_latency_seconds_bucket[1m]))", "legendFormat": "P99", "range": true, "refId": "C"},
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "histogram_quantile(0.999, rate(farmgate_ws_handle_latency_seconds_bucket[1m]))", "legendFormat": "P999", "range": true, "refId": "D"}
+      ],
+      "title": "HandleBinary 延迟分位数",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "custom": {"axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": {"type": "linear"}, "showPoints": "never", "spanNulls": false, "stacking": {"group": "A", "mode": "none"}, "thresholdsStyle": {"mode": "off"}}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}, "unit": "short"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "id": 6,
+      "options": {"legend": {"calcs": ["last", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "histogram_quantile(0.50, rate(farmgate_ws_write_batch_size_bucket[1m]))", "legendFormat": "P50 Batch", "range": true, "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "Prometheus"}, "editorMode": "code", "expr": "histogram_quantile(0.99, rate(farmgate_ws_write_batch_size_bucket[1m]))", "legendFormat": "P99 Batch", "range": true, "refId": "B"}
+      ],
+      "title": "批量写聚合大小",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["farm", "websocket"],
+  "templating": {"list": []},
+  "time": {"from": "now-30m", "to": "now"},
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Farm Gate WebSocket",
+  "uid": "farm-gate-ws",
+  "version": 1,
+  "weekStart": ""
+}

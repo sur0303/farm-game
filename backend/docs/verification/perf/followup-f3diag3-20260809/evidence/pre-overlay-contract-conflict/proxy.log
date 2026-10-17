@@ -1,0 +1,4 @@
+2026/08/09 20:14:29 proxy gRPC listening on 127.0.0.1:54657, upstream=127.0.0.1:37649
+2026/08/09 20:14:29 proxy admin listening on 127.0.0.1:52289
+2026/08/09 20:15:09 fault plan updated: {UnavailableBeforeForward:0 DropResponseAfterForward:false FailFarmChangeAllowRejoin:true HoldActivateResponse:false}
+2026/08/09 20:15:39 fault plan updated: {UnavailableBeforeForward:0 DropResponseAfterForward:false FailFarmChangeAllowRejoin:false HoldActivateResponse:false}

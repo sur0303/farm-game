@@ -1,0 +1,1 @@
+player_imageID=mirrors.tencent.com/uc-backend/farm-route-runtime@sha256:af14da7896da0f6f7e642c5dea9b54d040e903760eff66401316987e4ba04cd2

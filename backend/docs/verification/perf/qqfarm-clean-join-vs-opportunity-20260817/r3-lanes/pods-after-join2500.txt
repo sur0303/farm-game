@@ -1,0 +1,6 @@
+farm-gate-57cd676cbc-f4fw5          1/1     Running     0          6m39s
+farm-svr-0                          1/1     Running     0          16m
+farm-worker-a-8c9dcbf44-ljwhd       1/1     Running     0          6m49s
+farm-worker-b-5fdcbff857-29rk9      1/1     Running     0          6m49s
+player-svr-0                        1/1     Running     0          16m
+route-controller-6cfb8b9b79-p5jb4   1/1     Running     0          5m52s

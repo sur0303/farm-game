@@ -1,0 +1,44 @@
+File: farm-svr
+Build ID: ffca9b336f4ed02ff98b4a0969503ed0381e1583
+Type: cpu
+Time: 2026-08-18 13:51:05 CST
+Duration: 30s, Total samples = 14.24s (47.47%)
+Showing nodes accounting for 7.53s, 52.88% of 14.24s total
+Dropped 828 nodes (cum <= 0.07s)
+Showing top 35 nodes out of 351
+      flat  flat%   sum%        cum   cum%
+     2.97s 20.86% 20.86%      2.97s 20.86%  internal/runtime/syscall/linux.Syscall6
+     1.01s  7.09% 27.95%      1.01s  7.09%  runtime.futex
+     0.25s  1.76% 29.71%      0.25s  1.76%  runtime.spanClass.sizeclass (inline)
+     0.22s  1.54% 31.25%      0.22s  1.54%  runtime.memclrNoHeapPointers
+     0.22s  1.54% 32.79%      0.48s  3.37%  runtime.scanObject
+     0.21s  1.47% 34.27%      0.21s  1.47%  runtime.memmove
+     0.21s  1.47% 35.74%      0.25s  1.76%  runtime.step
+     0.18s  1.26% 37.01%      0.18s  1.26%  runtime.nextFreeFast (inline)
+     0.17s  1.19% 38.20%      0.58s  4.07%  runtime.newobject
+     0.14s  0.98% 39.19%      0.41s  2.88%  runtime.pcvalue
+     0.13s  0.91% 40.10%      0.30s  2.11%  runtime.selectgo
+     0.12s  0.84% 40.94%      0.12s  0.84%  internal/runtime/maps.ctrlGroup.matchH2 (inline)
+     0.12s  0.84% 41.78%      0.34s  2.39%  runtime.(*stkframe).getStackMap
+     0.11s  0.77% 42.56%      0.11s  0.77%  runtime.findfunc
+     0.11s  0.77% 43.33%      0.11s  0.77%  runtime.typePointers.nextFast (inline)
+     0.10s   0.7% 44.03%      0.10s   0.7%  memeqbody
+     0.09s  0.63% 44.66%      0.09s  0.63%  aeshashbody
+     0.09s  0.63% 45.29%      0.18s  1.26%  google.golang.org/protobuf/internal/impl.(*MessageInfo).sizePointerSlow
+     0.09s  0.63% 45.93%      0.35s  2.46%  google.golang.org/protobuf/internal/impl.(*MessageInfo).unmarshalPointerEager
+     0.08s  0.56% 46.49%      0.09s  0.63%  runtime.(*mspan).writeHeapBitsSmall
+     0.08s  0.56% 47.05%      0.46s  3.23%  runtime.adjustframe
+     0.08s  0.56% 47.61%      0.10s   0.7%  runtime.sweepone
+     0.07s  0.49% 48.10%      0.14s  0.98%  google.golang.org/protobuf/internal/impl.(*MessageInfo).marshalAppendPointer
+     0.07s  0.49% 48.60%      0.09s  0.63%  runtime.(*spanSet).push
+     0.07s  0.49% 49.09%      1.18s  8.29%  runtime.findRunnable
+     0.07s  0.49% 49.58%      1.35s  9.48%  runtime.mallocgc
+     0.06s  0.42% 50.00%      0.13s  0.91%  internal/runtime/maps.(*Map).getWithoutKeySmallFastStr
+     0.06s  0.42% 50.42%      0.28s  1.97%  runtime.mapassign_faststr
+     0.06s  0.42% 50.84%      0.31s  2.18%  runtime.scanObjectsSmall
+     0.05s  0.35% 51.19%      0.28s  1.97%  google.golang.org/protobuf/internal/impl.(*messageState).Range
+     0.05s  0.35% 51.54%      0.32s  2.25%  runtime.growslice
+     0.05s  0.35% 51.90%      0.12s  0.84%  runtime.lock2
+     0.05s  0.35% 52.25%      0.77s  5.41%  runtime.mallocgcSmallScanNoHeader
+     0.05s  0.35% 52.60%      0.08s  0.56%  runtime.typePointers.next
+     0.04s  0.28% 52.88%      0.32s  2.25%  google.golang.org/grpc/internal/transport.(*http2Server).operateHeaders

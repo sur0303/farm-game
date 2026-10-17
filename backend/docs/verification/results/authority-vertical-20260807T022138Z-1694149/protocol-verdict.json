@@ -1,0 +1,20 @@
+{
+  "finished_at": "2026-08-07T02:21:59Z",
+  "frames": 3,
+  "steps": {
+    "hello": {
+      "status": "ok"
+    },
+    "join": {
+      "status": "fail",
+      "detail": "join read: websocket: close 1006 (abnormal closure): unexpected EOF"
+    },
+    "login": {
+      "status": "ok"
+    },
+    "register": {
+      "status": "ok"
+    }
+  },
+  "verdict": "FAIL"
+}

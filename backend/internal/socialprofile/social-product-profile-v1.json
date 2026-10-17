@@ -1,0 +1,110 @@
+{
+  "schema": "farm.social-product-profile/v1",
+  "profile_version": "social-product-profile-v1",
+  "decision_status": "I0_USER_CONFIRMED",
+  "effective_date": "2026-08-09",
+  "source_ownership": {
+    "single_backend_source": true,
+    "runtime_package": "internal/socialprofile",
+    "environment_binding": "cmd/farm-gate/main.go",
+    "unversioned_numeric_override_allowed": false
+  },
+  "friend_limit": {
+    "profile": "friend-limit-v1",
+    "effective_max_friends": 300,
+    "grandfathered_overflow": true,
+    "allow_reserve_when": "occupancy < effective_max_friends",
+    "contract_error": "ERR_FRIEND_LIMIT_REACHED",
+    "authority_reason": "FRIEND_LIMIT_REACHED",
+    "http_error_code": "ERR_FRIEND_LIMIT_REACHED"
+  },
+  "share_token_ttl": {
+    "profile": "share-token-ttl-v1",
+    "default_ttl": "7d",
+    "default_ttl_ms": 604800000,
+    "projection_retention_after_expiry_ms": 86400000,
+    "redemption_clock": "REDIS_SERVER_TIME",
+    "valid_when": "now_ms < expires_at_ms",
+    "expiry_error": "SHARE_TOKEN_EXPIRED"
+  },
+  "public_entrypoints": {
+    "https_primary": [
+      "POST /api/v1/share/create",
+      "POST /api/v1/share/accept",
+      "GET /api/v1/friends",
+      "POST /api/v1/friends/revoke",
+      "GET /api/v1/friends/opportunity"
+    ],
+    "wss_primary": [
+      "JOIN_FARM",
+      "CARE",
+      "THEFT"
+    ],
+    "wss_social_disabled": [
+      "GENERATE_SHARE_TOKEN",
+      "REDEEM_SHARE",
+      "GET_FRIEND_LIST",
+      "DELETE_FRIEND",
+      "BLOCK_PLAYER",
+      "UNBLOCK_PLAYER",
+      "GET_NEXT_FRIEND_OPPORTUNITY"
+    ],
+    "block_unblock": {
+      "status": "DEFERRED_NOT_EXPOSED",
+      "h5_entry": false,
+      "http_route": false,
+      "wss_enabled": false,
+      "showcase_r1_blocker": false,
+      "f05_implemented": false
+    }
+  },
+  "verification": {
+    "consumer": "R1-Q",
+    "profile_source": "internal/socialprofile/social-product-profile-v1.json",
+    "scb": "docs/design/SCB-SOCIAL-PUBLIC-API-V1.md",
+    "audited_bases": {
+      "backend": "dd7104a3c43cecdc85c8d7962014f9760bf28f2d",
+      "h5": "fdb9849c0aad613b9a1c45ab8bf33a692c5ee967"
+    },
+    "h5_mechanical_proof": {
+      "business_change_required": false,
+      "friend_limit_or_ttl_adjudication": false,
+      "block_unblock_entry": false,
+      "share_expiry_source": "SERVER_RESPONSE_ONLY"
+    },
+    "production_bindings": [
+      "cmd/farm-gate/main.go",
+      "cmd/player-svr/main.go",
+      "cmd/farm-svr/main.go",
+      "cmd/farm-worker/main.go",
+      "internal/gateway/auth/share.go",
+      "internal/friendshipservice/redis_share_store.go",
+      "internal/friend/quota.go",
+      "internal/friend/share_issuer.go",
+      "internal/friend/redis_authority.go",
+      "loadtest/friend_opportunity.go",
+      "deploy/docker-compose.yml",
+      "deploy/docker-compose.staging.yml",
+      "deploy/docker-compose.local.yml",
+      "deploy/k8s/farm-gate-deployment.example.yaml"
+    ],
+    "required_assertions": [
+      "friend-limit-boundary-299-300-301",
+      "friend-limit-two-sided-concurrency",
+      "friend-limit-grandfathered-overflow",
+      "share-token-lifecycle-boundaries",
+      "block-unblock-not-exposed"
+    ]
+  },
+  "final_entry": "docs/design/SCB-SOCIAL-PUBLIC-API-V1.md#13-最终冻结摘要",
+  "merge_state": "I0_USER_CONFIRMED_PROFILE_SOURCE",
+  "calls": [
+    {"capability": "CreateShare", "status": "READY_HTTP_PRIMARY"},
+    {"capability": "RedeemShare", "status": "READY_HTTP_PRIMARY"},
+    {"capability": "FriendList", "status": "READY_HTTP_PRIMARY"},
+    {"capability": "DeleteFriend", "status": "READY_HTTP_PRIMARY"},
+    {"capability": "NextOpportunity", "status": "READY_HTTP_PRIMARY"},
+    {"capability": "Block", "status": "DEFERRED_NOT_EXPOSED"},
+    {"capability": "Unblock", "status": "DEFERRED_NOT_EXPOSED"}
+  ]
+}

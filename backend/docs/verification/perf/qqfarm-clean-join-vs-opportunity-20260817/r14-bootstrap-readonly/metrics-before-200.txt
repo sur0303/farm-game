@@ -1,0 +1,77 @@
+=== before-200 2026-08-17T12:59:57Z ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-48qgt          11m          19Mi            
+farm-grafana-64f7f46898-z58tr       2m           49Mi            
+farm-prometheus-5966b58fdf-6xrnv    3m           82Mi            
+farm-redis-0                        27m          766Mi           
+farm-redis-1                        23m          782Mi           
+farm-redis-2                        26m          767Mi           
+farm-redis-3                        8m           760Mi           
+farm-redis-4                        7m           758Mi           
+farm-redis-5                        9m           774Mi           
+farm-route-bootstrap                0m           2Mi             
+farm-svr-0                          3m           24Mi            
+farm-worker-a-8c9dcbf44-4cfdl       36m          15Mi            
+farm-worker-b-5fdcbff857-wfvr7      31m          16Mi            
+player-svr-0                        3m           351Mi           
+route-controller-77dd868794-bhwzn   8m           13Mi            
+--- player ---
+go_goroutines 4809
+process_cpu_seconds_total 7.29
+process_resident_memory_bytes 3.88866048e+08
+--- farm ---
+farm_downlink_lanes_current 0
+farm_downlink_queue_full_total 0
+go_goroutines 101
+process_cpu_seconds_total 1.92
+process_resident_memory_bytes 4.6186496e+07
+--- gate ---
+farmgate_ws_bytes_received_total 463
+farmgate_ws_bytes_sent_total 2151
+farmgate_ws_conn_active 0
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 2
+farmgate_ws_drain_sessions_remaining 0
+farmgate_ws_drain_total 0
+farmgate_ws_frame_recv_bytes_bucket{le="64"} 2
+farmgate_ws_frame_recv_bytes_bucket{le="256"} 7
+farmgate_ws_frame_recv_bytes_bucket{le="1024"} 7
+farmgate_ws_frame_recv_bytes_bucket{le="4096"} 7
+farmgate_ws_frame_recv_bytes_bucket{le="16384"} 7
+farmgate_ws_frame_recv_bytes_bucket{le="65536"} 7
+farmgate_ws_frame_recv_bytes_bucket{le="262144"} 7
+farmgate_ws_frame_recv_bytes_bucket{le="+Inf"} 7
+farmgate_ws_frame_recv_bytes_sum 463
+farmgate_ws_frame_recv_bytes_count 7
+farmgate_ws_frame_sent_bytes_bucket{le="64"} 2
+farmgate_ws_frame_sent_bytes_bucket{le="256"} 6
+farmgate_ws_frame_sent_bytes_bucket{le="1024"} 9
+farmgate_ws_frame_sent_bytes_bucket{le="4096"} 9
+farmgate_ws_frame_sent_bytes_bucket{le="16384"} 9
+farmgate_ws_frame_sent_bytes_bucket{le="65536"} 9
+farmgate_ws_frame_sent_bytes_bucket{le="262144"} 9
+farmgate_ws_frame_sent_bytes_bucket{le="+Inf"} 9
+farmgate_ws_frame_sent_bytes_sum 2151
+farmgate_ws_frame_sent_bytes_count 9
+farmgate_ws_handle_latency_seconds_bucket{le="0.0001"} 2
+farmgate_ws_handle_latency_seconds_bucket{le="0.0005"} 3
+farmgate_ws_handle_latency_seconds_bucket{le="0.001"} 3
+farmgate_ws_handle_latency_seconds_bucket{le="0.005"} 6
+farmgate_ws_handle_latency_seconds_bucket{le="0.01"} 7
+farmgate_ws_handle_latency_seconds_bucket{le="0.05"} 7
+farmgate_ws_handle_latency_seconds_bucket{le="0.1"} 7
+farmgate_ws_handle_latency_seconds_bucket{le="0.5"} 7
+farmgate_ws_handle_latency_seconds_bucket{le="1"} 7
+farmgate_ws_handle_latency_seconds_bucket{le="+Inf"} 7
+farmgate_ws_handle_latency_seconds_sum 0.017915065
+farmgate_ws_handle_latency_seconds_count 7
+farmgate_ws_lifecycle_serving 1
+--- pods ---
+NAME                                 READY   STATUS      RESTARTS   AGE     IP              NODE            NOMINATED NODE   READINESS GATES
+farm-gate-5b5b595d85-48qgt           1/1     Running     0          11m     198.18.0.68    198.18.0.48   <none>           <none>
+farm-route-bootstrap                 1/1     Running     0          15m     198.18.0.69    198.18.0.70    <none>           <none>
+farm-svr-0                           1/1     Running     0          15m     198.18.0.71     198.18.0.72    <none>           <none>
+farm-worker-a-8c9dcbf44-4cfdl        1/1     Running     0          14m     198.18.0.73    198.18.0.20    <none>           <none>
+farm-worker-b-5fdcbff857-wfvr7       1/1     Running     0          14m     198.18.0.74    198.18.0.18   <none>           <none>
+player-svr-0                         1/1     Running     0          15m     198.18.0.75     198.18.0.57     <none>           <none>
+route-controller-77dd868794-bhwzn    1/1     Running     0          8m15s   198.18.0.76   198.18.0.77   <none>           <none>

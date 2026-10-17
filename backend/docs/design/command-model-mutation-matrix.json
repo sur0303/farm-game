@@ -1,0 +1,464 @@
+{
+  "schema_version": "command-model-mutation-matrix/v1",
+  "baseline_commit": "ba6f3aee4f0fcd941d9fa37135af0ce09ffdfa5c",
+  "evidence_policy": "Entries are traced from the named Go mutation functions and model builders, not inferred from product design documents.",
+  "product_scope": {
+    "source": "internal/gateway/commandcatalog/catalog.go Availability.Enabled plus production Participant handlers",
+    "enabled_public_commands_covered": [
+      "JOIN_FARM",
+      "GET_PLAYER_BOOTSTRAP",
+      "GET_OPERATION_RESULT",
+      "GET_TASK_LIST",
+      "CLAIM_TASK",
+      "CONFIRM_FRIEND_VISIT",
+      "BUY",
+      "SELL",
+      "UNLOCK_PLOT",
+      "PLANT",
+      "HARVEST",
+      "CARE",
+      "THEFT"
+    ],
+    "controller_gate": "Hero/Task composition remains a Controller decision; this matrix records current code and does not approve that composition."
+  },
+  "current_layout": {
+    "authority_layout_version": "v1",
+    "redis_actor_schema_version": "2",
+    "write_amplification_rule": "Every changed Actor commit rebuilds and rewrites the complete current ModelState and appends one outer Authority receipt. Rejected/no-change Participant terminals also write when they append an embedded durable receipt.",
+    "stable_commit_metric_label": [
+      "AR1_RECORD_COMMIT",
+      "AR1_INITIAL_INSTALL"
+    ],
+    "business_command_label_available_at_store": false
+  },
+  "model_map": {
+    "player": [
+      {
+        "field": "record",
+        "encoding": "deterministic protobuf player.PlayerRecord",
+        "role": "authoritative aggregate",
+        "logical_contents": [
+          "player_id",
+          "economy_version",
+          "bootstrap_id",
+          "wallet",
+          "inventory",
+          "progression",
+          "recent_operation_receipts",
+          "item_reservations",
+          "codex_entries",
+          "legacy tasks",
+          "task_domain_state",
+          "public_profile",
+          "unlock_coin_reservations"
+        ],
+        "write_evidence": "internal/player/actor/profile_projection.go:buildPlayerAuthorityModelState",
+        "schema_evidence": "api/proto/player/player.proto:PlayerRecord"
+      },
+      {
+        "field": "public_profile",
+        "encoding": "publicprofile fixed deterministic projection encoding",
+        "role": "derived read model; never business adjudication truth",
+        "source_record_fields": [
+          "player_id",
+          "public_profile.display_name",
+          "public_profile.avatar_id",
+          "progression.level"
+        ],
+        "write_evidence": "internal/player/actor/profile_projection.go:PublicProfileProjection/buildPlayerAuthorityModelState"
+      }
+    ],
+    "farm": [
+      {
+        "field": "record",
+        "encoding": "deterministic protobuf farm.FarmRecord",
+        "role": "authoritative aggregate",
+        "logical_contents": [
+          "farm_id",
+          "core.farm_version",
+          "core.plots",
+          "core.crop_cycles",
+          "recent_operation_receipts",
+          "active_settlements",
+          "recent_theft_attempts",
+          "recent_care_attempts"
+        ],
+        "write_evidence": "internal/farm/actor/opportunity_models.go:buildFarmAuthorityModelState",
+        "schema_evidence": "api/proto/farm/farm.proto:FarmRecord"
+      },
+      {
+        "field": "opportunity_header",
+        "encoding": "fixed-width deterministic binary",
+        "role": "derived read model; never business adjudication truth",
+        "write_evidence": "internal/farm/actor/opportunity_models.go:deriveFarmOpportunityModels/buildFarmAuthorityModelState"
+      },
+      {
+        "field": "opportunity_facts",
+        "encoding": "bounded deterministic binary",
+        "role": "derived read model; never business adjudication truth",
+        "write_evidence": "internal/farm/actor/opportunity_models.go:deriveFarmOpportunityModels/buildFarmAuthorityModelState"
+      }
+    ],
+    "outer_authority_receipt": {
+      "cardinality": "one appended for every new Authority Commit",
+      "encoding": "Redis payload hash plus six length-prefixed fields",
+      "evidence": "internal/storage/redis/authority/store.go:redisReceiptValueBytes and internal/storage/redis/authority/scripts.go:luaCommitActorWithOrdersSrc"
+    },
+    "source_order": {
+      "current_actor_product_writer": "Farm CARE success only",
+      "encoding": "separate SourceOrder Redis hash atomically created by the same Authority Commit Lua call",
+      "evidence": "internal/farm/actor/care.go:buildCareRewardOrder/ResolveCareIncident"
+    }
+  },
+  "commands": [
+    {
+      "command": "JOIN_FARM",
+      "product_status": "enabled",
+      "actor_mutations": [],
+      "current_model_fields_rewritten": [],
+      "outer_receipt": false,
+      "evidence": [
+        "internal/farm/ingress/service.go:ExecuteCommand JOIN_FARM",
+        "internal/farm/actor/actor.go:joinWithMode"
+      ],
+      "notes": "Presence/join buffers are runtime state; no authority Actor commit."
+    },
+    {
+      "command": "GET_OPERATION_RESULT",
+      "product_status": "enabled",
+      "actor_mutations": [],
+      "current_model_fields_rewritten": [],
+      "outer_receipt": false,
+      "evidence": [
+        "internal/player/ingress/service.go:executeOperationResult"
+      ]
+    },
+    {
+      "command": "GET_PLAYER_BOOTSTRAP",
+      "product_status": "enabled",
+      "actor_mutations": [
+        "player.task_domain_state on daily-period/login transition"
+      ],
+      "current_model_fields_rewritten": [
+        "player.record",
+        "player.public_profile"
+      ],
+      "conditional_write": true,
+      "outer_receipt": true,
+      "evidence": [
+        "internal/player/ingress/service.go:executePlayerBootstrap",
+        "internal/player/task/domain.go:EnsureDailyPeriod/RecordLogin"
+      ],
+      "notes": "Same-period no-change is read-only and writes no Authority receipt."
+    },
+    {
+      "command": "GET_TASK_LIST",
+      "product_status": "enabled",
+      "actor_mutations": [
+        "player.task_domain_state on first login fact in period"
+      ],
+      "current_model_fields_rewritten": [
+        "player.record",
+        "player.public_profile"
+      ],
+      "conditional_write": true,
+      "outer_receipt": true,
+      "evidence": [
+        "internal/player/ingress/service.go:executeTaskList",
+        "internal/player/task/domain.go:RecordLogin"
+      ]
+    },
+    {
+      "command": "BUY",
+      "product_status": "enabled",
+      "actor_mutations": [
+        "player.wallet.coin",
+        "player.inventory.stacks",
+        "player.legacy tasks when EventBuyOffer matches",
+        "player.economy_version",
+        "player.recent_operation_receipts"
+      ],
+      "current_model_fields_rewritten": [
+        "player.record",
+        "player.public_profile"
+      ],
+      "outer_receipt": true,
+      "evidence": [
+        "internal/player/ingress/service.go:buy",
+        "internal/player/actor/state.go:AddItem/AdvanceTask"
+      ]
+    },
+    {
+      "command": "SELL",
+      "product_status": "enabled",
+      "actor_mutations": [
+        "player.inventory.stacks",
+        "player.wallet.coin",
+        "player.progression.exp",
+        "player.progression.level",
+        "player.economy_version",
+        "player.recent_operation_receipts"
+      ],
+      "current_model_fields_rewritten": [
+        "player.record",
+        "player.public_profile"
+      ],
+      "outer_receipt": true,
+      "evidence": [
+        "internal/player/ingress/service.go:sell"
+      ]
+    },
+    {
+      "command": "CLAIM_TASK",
+      "product_status": "enabled",
+      "actor_mutations": [
+        "player.task_domain_state",
+        "player.wallet.coin for coin reward",
+        "player.inventory.stacks for item reward",
+        "player.progression.exp",
+        "player.progression.level",
+        "player.economy_version on successful reward",
+        "player.recent_operation_receipts for every terminal"
+      ],
+      "current_model_fields_rewritten": [
+        "player.record",
+        "player.public_profile"
+      ],
+      "outer_receipt": true,
+      "evidence": [
+        "internal/player/ingress/service.go:claimTask",
+        "internal/player/task/domain.go:Claim"
+      ]
+    },
+    {
+      "command": "CONFIRM_FRIEND_VISIT",
+      "product_status": "enabled",
+      "actor_mutations": [
+        "player.task_domain_state when friend-visit fact applies",
+        "player.recent_operation_receipts for applied/no-change terminal"
+      ],
+      "current_model_fields_rewritten": [
+        "player.record",
+        "player.public_profile"
+      ],
+      "outer_receipt": true,
+      "evidence": [
+        "internal/player/ingress/service.go:confirmFriendVisit",
+        "internal/player/task/domain.go:RecordFriendVisit"
+      ]
+    },
+    {
+      "command": "UNLOCK_PLOT",
+      "product_status": "enabled workflow",
+      "actor_mutations": [
+        "player.wallet.coin",
+        "player.unlock_coin_reservations",
+        "player.economy_version",
+        "player.recent_operation_receipts",
+        "farm.core.plots lock/unlock fields",
+        "farm.core.farm_version",
+        "farm.recent_operation_receipts"
+      ],
+      "current_model_fields_rewritten": [
+        "player.record",
+        "player.public_profile",
+        "farm.record",
+        "farm.opportunity_header",
+        "farm.opportunity_facts"
+      ],
+      "outer_receipt": true,
+      "evidence": [
+        "internal/player/participant/unlock.go:reserveUnlockCoin/commitUnlockCoinReservation/releaseUnlockCoinReservation",
+        "internal/farm/actor/unlock.go:commitPlotUnlockWithAction"
+      ]
+    },
+    {
+      "command": "PLANT",
+      "product_status": "enabled workflow",
+      "actor_mutations": [
+        "player.inventory.stacks",
+        "player.item_reservations",
+        "player.economy_version",
+        "player.recent_operation_receipts",
+        "farm.core.plots active_crop_cycle_id/plot_version",
+        "farm.core.crop_cycles",
+        "farm.core.farm_version",
+        "farm.recent_operation_receipts"
+      ],
+      "current_model_fields_rewritten": [
+        "player.record",
+        "player.public_profile",
+        "farm.record",
+        "farm.opportunity_header",
+        "farm.opportunity_facts"
+      ],
+      "outer_receipt": true,
+      "evidence": [
+        "internal/player/participant/plant.go:reserveSeed/commitSeedReservation/releaseSeedReservation",
+        "internal/farm/actor/participant.go:commitPlantWithAction"
+      ]
+    },
+    {
+      "command": "HARVEST",
+      "product_status": "enabled workflow",
+      "actor_mutations": [
+        "farm.core.plots active_crop_cycle_id/plot_version",
+        "farm.core.crop_cycles removal",
+        "farm.core.farm_version",
+        "farm.recent_operation_receipts",
+        "player.inventory.stacks",
+        "player.progression.exp/level",
+        "player.codex_entries",
+        "player.legacy tasks",
+        "player.task_domain_state",
+        "player.economy_version",
+        "player.recent_operation_receipts"
+      ],
+      "current_model_fields_rewritten": [
+        "farm.record",
+        "farm.opportunity_header",
+        "farm.opportunity_facts",
+        "player.record",
+        "player.public_profile"
+      ],
+      "outer_receipt": true,
+      "evidence": [
+        "internal/farm/actor/participant.go:commitHarvestWithAction",
+        "internal/player/participant/harvest.go:grantHarvestReward"
+      ]
+    },
+    {
+      "command": "CARE/WATER",
+      "product_status": "enabled; owner and friend contexts",
+      "actor_mutations": [
+        "farm crop-cycle care incident/watered state",
+        "farm core plot/farm versions when appearance changes",
+        "farm.recent_operation_receipts",
+        "one CARE_REWARD SourceOrder on successful obligation",
+        "player.progression.exp/level in APPLY_CARE_REWARD",
+        "player.task_domain_state for eligible friend interaction",
+        "player.economy_version",
+        "player.recent_operation_receipts"
+      ],
+      "current_model_fields_rewritten": [
+        "farm.record",
+        "farm.opportunity_header",
+        "farm.opportunity_facts",
+        "player.record",
+        "player.public_profile"
+      ],
+      "outer_receipt": true,
+      "attached_orders_on_success": 1,
+      "evidence": [
+        "internal/farm/actor/care.go:ResolveCareIncident/buildCareRewardOrder",
+        "internal/player/participant/care.go:applyCareReward"
+      ]
+    },
+    {
+      "command": "WATER",
+      "product_status": "legacy/internal FarmActor seam; the enabled public command is CARE with CARE_TYPE_WATER",
+      "actor_mutations": [
+        "farm core crop_cycle.watered on success",
+        "farm core plot.plot_version on success",
+        "farm core farm_version on success",
+        "farm.recent_operation_receipts on success"
+      ],
+      "current_model_fields_rewritten": [
+        "farm.record",
+        "farm.opportunity_header",
+        "farm.opportunity_facts"
+      ],
+      "conditional_write": true,
+      "outer_receipt": true,
+      "evidence": [
+        "internal/farm/actor/actor.go:FarmActor.Water",
+        "internal/gateway/commandcatalog/catalog.go:CARE"
+      ],
+      "notes": "Already-watered returns NO_CHANGE without save; the current public CARE path uses ResolveCareIncident instead."
+    },
+    {
+      "command": "CARE/REMOVE_PEST",
+      "product_status": "enabled; same storage path as WATER",
+      "actor_mutations": [
+        "same carriers as CARE/WATER; domain incident type differs"
+      ],
+      "current_model_fields_rewritten": [
+        "farm.record",
+        "farm.opportunity_header",
+        "farm.opportunity_facts",
+        "player.record",
+        "player.public_profile"
+      ],
+      "outer_receipt": true,
+      "attached_orders_on_success": 1,
+      "evidence": [
+        "internal/farm/domain/care.go:DecideCare",
+        "internal/farm/actor/care.go:ResolveCareIncident"
+      ]
+    },
+    {
+      "command": "THEFT",
+      "product_status": "enabled workflow",
+      "actor_mutations": [
+        "farm crop-cycle stolen_total",
+        "farm plot/farm versions",
+        "farm.recent_theft_attempts",
+        "farm.recent_operation_receipts",
+        "visitor player.inventory.stacks",
+        "visitor player.task_domain_state",
+        "visitor player.economy_version",
+        "owner player.wallet.coin when guard income exists",
+        "owner player.economy_version",
+        "participant player.recent_operation_receipts"
+      ],
+      "current_model_fields_rewritten": [
+        "farm.record",
+        "farm.opportunity_header",
+        "farm.opportunity_facts",
+        "player.record",
+        "player.public_profile"
+      ],
+      "outer_receipt": true,
+      "evidence": [
+        "internal/farm/actor/participant.go:decideTheftWithAction",
+        "internal/player/participant/theft.go:executeTheftVisitor/executeGuardIncome"
+      ]
+    },
+    {
+      "command": "APPLY_GUARD_SNAPSHOT",
+      "product_status": "product participant operation",
+      "actor_mutations": [
+        "farm durable participant receipt",
+        "farm core farm_version only when public appearance changes",
+        "in-memory guard snapshot after commit"
+      ],
+      "current_model_fields_rewritten": [
+        "farm.record",
+        "farm.opportunity_header",
+        "farm.opportunity_facts"
+      ],
+      "outer_receipt": true,
+      "evidence": [
+        "internal/farm/actor/participant.go:applyGuardSnapshotWithAction"
+      ]
+    }
+  ],
+  "deferred": [
+    {
+      "area": "Pet",
+      "reason": "Pet commands are catalog-registered but disabled; PetState is not in the production PlayerRecord aggregate.",
+      "evidence": [
+        "internal/gateway/commandcatalog/catalog.go PET entries",
+        "internal/player/ingress/service.go:claimTask pet unlock fail-closed path"
+      ]
+    },
+    {
+      "area": "Mail",
+      "reason": "Mail commands are catalog-registered but disabled and mail has a separate playermail persistence subsystem; no Actor v2 field is invented in this preflight.",
+      "evidence": [
+        "internal/gateway/commandcatalog/catalog.go Mail entries",
+        "internal/storage/redis/playermail/**"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": "cap-single-pod-l2-r1.environment-validity.v0.1",
+  "required_precheck": [
+    {"check": "exact_backend_business_commit", "expected": "93a66ce76d509d86e8cac8e1d87563d084eba821"},
+    {"check": "exact_backend_evidence_head", "expected": "d1899ecab8d71248062ffd70eb4e42048e394a38"},
+    {"check": "exact_backend_image_digest", "expected": "sha256:9498736750d89ece6cc511acf3f7fa243218ac1a2ce64f2806580f898a053ab7"},
+    {"check": "exact_h5_commit", "expected": "525c4d324100b17a891f02797c4880fa9a02f70a"},
+    {"check": "exact_h5_image_digest", "expected": "sha256:9bfdedaa70f7cbf8bac86bb25cc2ff62dba1cf7832fb5d8f66c72c1f113486fd"},
+    {"check": "model_field_v2_disabled", "expected": true},
+    {"check": "friendship_remote_cutover_disabled", "expected": true},
+    {"check": "legacy_roster_deletion_not_present", "expected": true},
+    {"check": "profile_hash_matches_manifest", "expected": true},
+    {"check": "server_config_hash_matches_manifest", "expected": true},
+    {"check": "machine_spec_hash_matches_manifest", "expected": true},
+    {"check": "route_snapshot_hash_matches_manifest", "expected": true},
+    {"check": "route_snapshot_age_at_run_start_minutes", "operator": "<=", "expected": 30},
+    {"check": "route_lease_remaining_exceeds_phase_plus_minutes", "operator": ">=", "expected": 30},
+    {"check": "actor_shard_requested_ttl", "expected": "4h"},
+    {"check": "backend_image_repo_digest_resolves", "expected": true},
+    {"check": "h5_static_bundle_hash_matches_manifest", "expected": true},
+    {"check": "measured_service_replicas", "expected": 1},
+    {"check": "measured_service_cpu_quota", "expected": "4"},
+    {"check": "measured_service_memory_limit", "expected": "4GiB"},
+    {"check": "load_generator_separate_cgroup", "expected": true},
+    {"check": "redis_loopback_unique_ephemeral", "expected": true},
+    {"check": "namespace_residual_before_run", "expected": 0},
+    {"check": "clock_sync_available", "expected": true}
+  ],
+  "qualification_before_smoke": [
+    {"check": "required_metrics_available", "expected": true, "stage": "OBSERVABILITY_QUALIFICATION"},
+    {"check": "correctness_negative_control_passed", "expected": true, "stage": "OBSERVABILITY_QUALIFICATION"},
+    {"check": "load_generator_qualification_passed", "expected": true, "stage": "LOAD_GENERATOR_QUALIFICATION"},
+    {"check": "load_generator_headroom_factor", "operator": ">=", "expected": 1.5, "stage": "LOAD_GENERATOR_QUALIFICATION"}
+  ],
+  "host_quiet_window": {
+    "duration_seconds": 120,
+    "host_background_definition": "host CPU excluding all manifest-owned measured, dependency, driver, observer and Playwright cgroups",
+    "host_background_cpu_percent_max": 10,
+    "host_cpu_steal_percent_max": 2,
+    "unexpected_disk_io_bytes_per_second_max": 10485760,
+    "clock_step_ms_max": 50,
+    "unexpected_container_restart_total": 0
+  },
+  "runtime_validity": {
+    "sample_interval_seconds": 1,
+    "maximum_sample_gap_seconds": 5,
+    "cgroup_limit_drift_allowed": false,
+    "identity_drift_allowed": false,
+    "host_clock_step_ms_max": 50,
+    "host_cpu_steal_percent_max": 2,
+    "host_background_definition": "host CPU excluding all manifest-owned cgroups",
+    "host_background_cpu_percent_max": 10,
+    "dependency_first_saturation_allowed": false,
+    "load_generator_first_saturation_allowed": false,
+    "observer_process_cpu_percent_max": 10
+  },
+  "cleanup": {
+    "global_flush_commands_allowed": false,
+    "namespace_wide_product_diagnostic_scan_allowed": false,
+    "exact_ephemeral_container_destroy_required": true,
+    "namespace_residual_after_teardown": 0,
+    "secret_in_evidence_allowed": false,
+    "raw_operation_identity_in_evidence_allowed": false
+  },
+  "invalid_environment_verdict": "INCONCLUSIVE_ENVIRONMENT"
+}

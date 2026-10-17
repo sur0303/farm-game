@@ -1,0 +1,17 @@
+{
+  "effective_recovery_budget_ms": 2163,
+  "effective_recovery_budget_ns": 2162500000,
+  "first_post_restore_renew_at_ms": 0,
+  "generation_after": "rfobs1-player/rfobs1-player-boot/1/1/1",
+  "generation_before": "rfobs1-player/rfobs1-player-boot/1/1/1",
+  "known_authority_deadline_ms": 1786190508925,
+  "latest_safe_restore_at_ms": 1786190506762,
+  "lease_fence_reason_after": 1,
+  "remaining_authority_at_restore_ms": 1057,
+  "renew_observation_granularity_ms": 300,
+  "repository_deadline_at_restore_ms": 1786190508925,
+  "restore_at_ms": 1786190507868,
+  "result": "LOCAL_DEADLINE_FAIL_CLOSED",
+  "runtime_fatal_after": false,
+  "scenario": "H3-no-forward-late-restore"
+}

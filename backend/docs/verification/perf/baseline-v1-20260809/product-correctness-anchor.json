@@ -1,0 +1,148 @@
+{
+  "actual": {
+    "playwright_verdict": "FAIL",
+    "protocol_verdict": "PASS"
+  },
+  "correctness_invariants": {
+    "browser_witness_failure": 1,
+    "hero_or_fault_failure": 1,
+    "protocol_bot_step_failure": 0
+  },
+  "evidence": [
+    "player.log",
+    "xvfb.log",
+    "bot-frames.ndjson",
+    "control.log",
+    "worker.log",
+    "farm.log",
+    "bot.log",
+    "browser-verdict.json",
+    "playwright.log",
+    "authority-after.json",
+    "proxy.log",
+    "fixture.json",
+    "run-manifest.json",
+    "protocol-events.ndjson",
+    "route-snapshot.json",
+    "verdict.json",
+    "gate.log",
+    "gate-restart-1.log",
+    "protocol-verdict.json",
+    "playwright-artifacts/.last-run.json",
+    "playwright-artifacts/cp-vertical-b-one-real-bro-65dab-farm-→-water-→-theft-→-home/error-context.md",
+    "playwright-artifacts/cp-vertical-b-one-real-bro-65dab-farm-→-water-→-theft-→-home/test-failed-1.png",
+    "playwright-artifacts/cp-vertical-b-one-real-bro-65dab-farm-→-water-→-theft-→-home/test-failed-2.png",
+    "screenshots/friend-profile-a.png",
+    "screenshots/friend-profile-b.png",
+    "control/restart-gate.ack.json",
+    "videos/page@fe9b821c364907ce92788b2fd5bd3611.webm",
+    "videos/page@db0a8774c4cf0bd6bb1c47dbdb8c9f73.webm"
+  ],
+  "failure_class": "correctness",
+  "finished_at": "2026-08-09T10:11:13.788821Z",
+  "metrics": {
+    "browser_steps": [
+      {
+        "detail": {
+          "ownerA": "1000003",
+          "ownerB": "1000002"
+        },
+        "step": "login"
+      },
+      {
+        "detail": {
+          "aHarvestPlot": "plot-0",
+          "bTheftPlot": "plot-0"
+        },
+        "step": "buy-and-plant"
+      },
+      {
+        "step": "harvest"
+      },
+      {
+        "step": "reverse-visit-b-to-a-ready"
+      },
+      {
+        "step": "share-and-join-friend"
+      },
+      {
+        "detail": {
+          "farmVersion": "3",
+          "generationBefore": "1",
+          "revision": "8"
+        },
+        "step": "f1-lost-care-result-recovered"
+      },
+      {
+        "step": "friend-farm-simulated-disconnect-recovery"
+      },
+      {
+        "step": "f2-gate-drain-restored-friend-target"
+      },
+      {
+        "step": "water-cycle-cleared-on-harvest"
+      }
+    ],
+    "protocol_steps": {
+      "bootstrap": {
+        "status": "ok"
+      },
+      "bootstrap_refresh": {
+        "detail": "inventory map[2001:500] (produce landed), coin 90 unchanged",
+        "status": "ok"
+      },
+      "buy": {
+        "status": "ok"
+      },
+      "grow": {
+        "status": "ok"
+      },
+      "harvest": {
+        "status": "ok"
+      },
+      "hello": {
+        "status": "ok"
+      },
+      "join": {
+        "status": "ok"
+      },
+      "login": {
+        "status": "ok"
+      },
+      "plant": {
+        "detail": "plot=0 cycle=sid1_pjH4VbZAC_lIcR376Ocw9RexLXaRUp9zGNyDsLf4wCA mature_at_ms=1786270206656 farm_version=1",
+        "status": "ok"
+      },
+      "premature_reject": {
+        "status": "ok"
+      },
+      "recovery_complete": {
+        "status": "ok"
+      },
+      "recovery_once": {
+        "detail": "ClientRecoveryComplete sent exactly once",
+        "status": "ok"
+      },
+      "register": {
+        "status": "ok"
+      }
+    }
+  },
+  "name": "product-correctness-anchor",
+  "namespace": "smoke-q108091009481793413",
+  "planned": {
+    "faults": [
+      "F1",
+      "F2",
+      "F3",
+      "lost_claim_result"
+    ],
+    "go_protocol_bots": 1,
+    "playwright_h5_witnesses": 2
+  },
+  "profile": "product_correctness_anchor",
+  "reason": "S0 or S1 failed (s0=0 h5=1 bot=0)",
+  "redis_endpoint_hash": "sha256:1a7a3ae203009f77cc69f0ddb9866cffa7d07dc0b661bb8698ff2d5b5a8faf4b",
+  "schema": "farm-game.q1-perf-evidence.v1",
+  "status": "FAIL"
+}

@@ -1,0 +1,22 @@
+{
+  "checkpoint": "RF-OBS-1H1-H2-H3",
+  "tested_commit": "65f5e887ee54a383e40e48e701bf4fe6d6987c95",
+  "tested_branch": "codex/rt1b-3d-lease-recovery-budget-20260808",
+  "redis_profile": "company-proxy",
+  "assignment_mode": "static",
+  "remote_watch": "OFF",
+  "command": "Q2R2_LIVE=1 FARM_REDIS_URL=<redacted> go run ./cmd/rfobs1-smoke",
+  "cleanup": "exact-key DEL",
+  "global_scan": false,
+  "global_script_flush": false,
+  "known_deadline_source": "last pre-fault authority deadline; unacknowledged in-fault extensions are extra margin only",
+  "renew_observation_granularity_ms": 300,
+  "h1_dropped_renew_replies": 4,
+  "started_at": "2026-08-08T12:00:54Z",
+  "finished_at": "2026-08-08T12:01:57Z",
+  "h1_selective_renew_loss": "PASS_DIRECT_LOCAL_FENCE_AND_SAME_GENERATION_RECOVERY",
+  "h2_all_response_early_restore": "PASS_DIRECT_LOCAL_FENCE_AND_SAME_GENERATION_RECOVERY",
+  "h3_no_forward_late_restore": "PASS_DIRECT_LOCAL_DEADLINE_FAIL_CLOSED_NO_FATAL",
+  "command_evidence_scope": "rejected while direct local fence was observed; no successful mutation; mailbox turn entry is not excluded",
+  "overall": "PASS"
+}

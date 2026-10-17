@@ -1,0 +1,25 @@
+{
+  "schema": "farm-game.q1-perf-profile.v1",
+  "task_id": "Q1-PERF-BASELINE-V1",
+  "description": "F3/InvalidOrder deterministic diagnostic only; never publish as Baseline V1.",
+  "baseline_eligible": false,
+  "redis_mode": "ephemeral_local",
+  "safety": {
+    "allow_shared_redis": false,
+    "allow_flushall": false,
+    "namespace_prefix": "q1perf-",
+    "cleanup": "destroy_exact_ephemeral_container"
+  },
+  "profiles": {
+    "product_correctness_anchor": {
+      "enabled": true,
+      "playwright_h5_witnesses": 2,
+      "go_protocol_bots": 1,
+      "checks": ["hero", "task_claim", "F1", "F2", "F3", "authority_oracle"],
+      "diagnostics": ["fault_plan_readback", "h5_wire_tap", "read_only_theft_order_dump", "closed_f3_classifier"]
+    },
+    "hot_farm_theft": {"enabled": false},
+    "gate_connection_staircase": {"enabled": false, "stages": []},
+    "mixed_business_staircase": {"enabled": false, "stages": []}
+  }
+}

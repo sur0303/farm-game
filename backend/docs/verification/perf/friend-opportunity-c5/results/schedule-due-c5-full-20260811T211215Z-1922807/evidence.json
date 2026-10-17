@@ -1,0 +1,37 @@
+{
+  "schema_version": "schedule-due-index-probe-v1",
+  "purpose": "C5 shared versus dedicated discovery",
+  "ordinary_members": 1000000,
+  "iterations": 5,
+  "cells": [
+    {
+      "mode": "shared",
+      "found_per_iteration": 0,
+      "commands_total": 327680,
+      "commands_per_iteration": 65536,
+      "p50_ms": 8916.652339,
+      "p95_ms": 9212.401713,
+      "p99_ms": 9212.401713
+    },
+    {
+      "mode": "dedicated_fallback",
+      "found_per_iteration": 5,
+      "commands_total": 327685,
+      "commands_per_iteration": 65537,
+      "p50_ms": 8677.411155,
+      "p95_ms": 8793.385779,
+      "p99_ms": 8793.385779
+    },
+    {
+      "mode": "dedicated_only",
+      "found_per_iteration": 5,
+      "commands_total": 5,
+      "commands_per_iteration": 1,
+      "p50_ms": 0.154972,
+      "p95_ms": 0.156286,
+      "p99_ms": 0.156286
+    }
+  ],
+  "supports_30m_dau": false,
+  "note": "Repository-level isolated Redis evidence only; not a 30M DAU capacity proof."
+}

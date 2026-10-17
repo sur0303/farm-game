@@ -1,0 +1,974 @@
+{
+  "schema_version": "cap-single-pod-l2-r2.observability-mapping-draft.v0.1",
+  "status": "DRAFT_NOT_REVIEWED",
+  "evidence_source": "/data/farm-l2-r2/evidence/dynamic-route-g3-crash-takeover-dyn-friend-r66-formal-20260813/final/metrics",
+  "generated_against_identity": "dyn-friend-r66-formal-20260813",
+  "prior_mapping_docs": [
+    "docs/verification/perf/cap-single-pod/CAP-SINGLE-POD-L2-HARNESS-C0-CLOSURE/observability-adapter-mapping.json",
+    "deploy/load/cap-single-pod-r1-oracle-adapter.json",
+    "docs/verification/perf/baseline-v1-20260809/observability-gaps.json"
+  ],
+  "prior_mapping_finding": "C0 observability-adapter-mapping.json owns logical names and cgroup/load-generator collection but does not map production Prometheus names (service_mapping_status CONFIG_REQUIRED_NOT_QUALIFIED). Oracle adapter identity-maps the 15 correctness names to a correctness exporter marked REQUIRED_NOT_QUALIFIED. No production-name mapping existed to reuse.",
+  "summary": {
+    "exported_exact": 3,
+    "exported_renamed": 47,
+    "available_elsewhere": 18,
+    "missing": 38
+  },
+  "entries": [
+    {
+      "required": "planned_arrivals_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "load_generator",
+      "registered_in": "cmd/cap-single-pod/collector.go",
+      "note": "Harness accumulator Planned; not in 7-pod scrape."
+    },
+    {
+      "required": "launched_arrivals_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "load_generator",
+      "registered_in": "cmd/cap-single-pod/collector.go",
+      "note": "Harness accumulator Launched; not in 7-pod scrape."
+    },
+    {
+      "required": "scheduled_unsent_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "load_generator",
+      "registered_in": "cmd/cap-single-pod/collector.go",
+      "note": "Harness accumulator ScheduledUnsent; not in 7-pod scrape."
+    },
+    {
+      "required": "completed_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "load_generator",
+      "registered_in": "cmd/cap-single-pod/collector.go",
+      "note": "Harness accumulator Completed; not in 7-pod scrape."
+    },
+    {
+      "required": "rejected_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "load_generator",
+      "registered_in": "cmd/cap-single-pod/collector.go",
+      "note": "Harness accumulator Rejected; not in 7-pod scrape."
+    },
+    {
+      "required": "timeout_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "load_generator",
+      "registered_in": "cmd/cap-single-pod/collector.go",
+      "note": "Harness accumulator Timeout; not in 7-pod scrape."
+    },
+    {
+      "required": "arrival_lag_ms",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "load_generator",
+      "registered_in": "cmd/cap-single-pod/collector.go",
+      "note": "Harness stores ArrivalLagMS; collector currently copies p99 into this name, not a full histogram."
+    },
+    {
+      "required": "driver_cpu_percent",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "cgroup",
+      "registered_in": "cmd/cap-single-pod/collector_adapter.go",
+      "note": "Collector computes percent from cgroup cpu.stat usage_usec; driver is not in the 7-pod scrape."
+    },
+    {
+      "required": "driver_rss_bytes",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "cgroup",
+      "registered_in": "cmd/cap-single-pod/collector_adapter.go",
+      "note": "Collector fills this from cgroup memory.current, which is cgroup usage not RSS; driver not in scrape."
+    },
+    {
+      "required": "driver_fd_open",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "procfs",
+      "registered_in": "cmd/cap-single-pod/collector_adapter.go",
+      "note": "Collector counts /proc/<pid>/fd via driver PID file; driver not in 7-pod scrape."
+    },
+    {
+      "required": "driver_network_rx_bytes_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "procfs",
+      "registered_in": null,
+      "note": "Not in 7-pod scrape (driver not captured); obtainable from driver procfs/net. Collector adapter does not currently read it."
+    },
+    {
+      "required": "driver_network_tx_bytes_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "procfs",
+      "registered_in": null,
+      "note": "Not in 7-pod scrape (driver not captured); obtainable from driver procfs/net. Collector adapter does not currently read it."
+    },
+    {
+      "required": "driver_frame_encode_total",
+      "section": "common",
+      "verdict": "EXACT",
+      "actual": "driver_frame_encode_total",
+      "source": "load_generator",
+      "registered_in": "internal/testkit/gatedriver/adapter.go",
+      "note": "Counted by the gate adapter as it drives the protocol and exported through the cap-driver /metrics endpoint. Requires a prometheus source for the driver listen address in the R2 collector binding."
+    },
+    {
+      "required": "driver_frame_decode_total",
+      "section": "common",
+      "verdict": "EXACT",
+      "actual": "driver_frame_decode_total",
+      "source": "load_generator",
+      "registered_in": "internal/testkit/gatedriver/adapter.go",
+      "note": "Counted by the gate adapter as it drives the protocol and exported through the cap-driver /metrics endpoint. Requires a prometheus source for the driver listen address in the R2 collector binding."
+    },
+    {
+      "required": "driver_event_backlog",
+      "section": "common",
+      "verdict": "EXACT",
+      "actual": "driver_event_backlog",
+      "source": "load_generator",
+      "registered_in": "internal/testkit/capdriver/server.go",
+      "note": "Gauge over driver inflight, exported through the cap-driver /metrics endpoint. Requires a prometheus source for the driver listen address in the R2 collector binding."
+    },
+    {
+      "required": "service_cpu_percent",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "cgroup",
+      "registered_in": "cmd/cap-single-pod/collector_adapter.go",
+      "note": "Collector derives percent from cgroup cpu.stat. process_cpu_seconds_total in scrape is cumulative seconds, not percent."
+    },
+    {
+      "required": "service_rss_bytes",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "cgroup",
+      "registered_in": "cmd/cap-single-pod/collector_adapter.go",
+      "note": "Collector uses cgroup memory.current. process_resident_memory_bytes in scrape is RSS and is a different quantity."
+    },
+    {
+      "required": "service_heap_bytes",
+      "section": "common",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "go_memstats_heap_alloc_bytes",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "prometheus Go collector (client_golang)",
+      "note": "Same quantity: heap bytes allocated and currently in use. Present on all 7 pods."
+    },
+    {
+      "required": "service_gc_pause_seconds",
+      "section": "common",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "go_gc_duration_seconds",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "prometheus Go collector (client_golang)",
+      "note": "Same STW GC pause time; exported as a Summary not a Histogram. Present on all 7 pods."
+    },
+    {
+      "required": "service_goroutines",
+      "section": "common",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "go_goroutines",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "prometheus Go collector (client_golang)",
+      "note": "Same quantity: current goroutine count. Present on all 7 pods."
+    },
+    {
+      "required": "service_fd_open",
+      "section": "common",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "process_open_fds",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "prometheus process collector (client_golang)",
+      "note": "Same quantity: open file descriptors. Also readable via collector procfs. Present on all 7 pods."
+    },
+    {
+      "required": "service_network_rx_bytes_total",
+      "section": "common",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "process_network_receive_bytes_total",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "prometheus process collector (client_golang)",
+      "note": "Same quantity: process bytes received. Present on all 7 pods."
+    },
+    {
+      "required": "service_network_tx_bytes_total",
+      "section": "common",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "process_network_transmit_bytes_total",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "prometheus process collector (client_golang)",
+      "note": "Same quantity: process bytes transmitted. Present on all 7 pods."
+    },
+    {
+      "required": "redis_commands_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "redis_info",
+      "registered_in": "internal/observability/redisworkload/metrics.go",
+      "note": "Redis INFO total_commands_processed / cmdstat_*. Opt-in farm_redis_workload_commands_total exists in source but REDIS_WORKLOAD_METRICS was off (absent from scrape)."
+    },
+    {
+      "required": "redis_request_bytes_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "redis_info",
+      "registered_in": "internal/observability/redisworkload/metrics.go",
+      "note": "Redis INFO total_net_input_bytes is Redis-process aggregate, not per-service hook. Opt-in farm_redis_workload_request_bytes_total not in scrape."
+    },
+    {
+      "required": "redis_response_bytes_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "redis_info",
+      "registered_in": "internal/observability/redisworkload/metrics.go",
+      "note": "Redis INFO total_net_output_bytes is Redis-process aggregate. Opt-in farm_redis_workload_response_bytes_total is estimated and was not in scrape."
+    },
+    {
+      "required": "redis_pool_wait_seconds",
+      "section": "common",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape; not Redis INFO. Collector adapter can map a Prometheus name but none is registered. go-redis PoolStats.WaitDuration is only read in-process by cmd/cap-redis."
+    },
+    {
+      "required": "redis_cpu_seconds_total",
+      "section": "common",
+      "verdict": "AVAILABLE_ELSEWHERE",
+      "actual": null,
+      "source": "redis_info",
+      "registered_in": "cmd/cap-redis/metrics.go",
+      "note": "Redis INFO used_cpu_sys + used_cpu_user. Not in the 7-pod scrape (Redis was not captured)."
+    },
+    {
+      "required": "request_or_turn_latency_seconds",
+      "section": "common",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_actor_turn_latency_seconds",
+      "source": "farm-svr-0.txt",
+      "registered_in": "cmd/farm-svr/main.go",
+      "note": "Actor-turn execute latency on player/farm (task only). Gate should use farmgate_ws_handle_latency_seconds; worker has no turn histogram. Contract name is ambiguous across subtrains."
+    },
+    {
+      "required": "active_connections",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farmgate_ws_conn_active",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/transport/websocket/metrics.go",
+      "note": "HELP is current active websocket connections — the same gauge."
+    },
+    {
+      "required": "handshake_total",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_gate_preauth_transitions_total",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/preauth/metrics.go",
+      "note": "PRE_AUTH exits by result (authenticated=ClientHello activation). farmgate_ws_conn_total is TCP/WS accept, not protocol handshake."
+    },
+    {
+      "required": "handshake_latency_seconds",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_gate_preauth_duration_seconds",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/preauth/metrics.go",
+      "note": "Time spent waiting for ClientHello activation, which is the handshake interval. HandleBinary latency is all frames."
+    },
+    {
+      "required": "frames_in_total",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farmgate_ws_msg_received_total",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/transport/websocket/metrics.go",
+      "note": "HELP is total business frames received."
+    },
+    {
+      "required": "frames_out_total",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farmgate_ws_msg_sent_total",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/transport/websocket/metrics.go",
+      "note": "HELP is total business frames sent."
+    },
+    {
+      "required": "egress_bytes_total",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farmgate_ws_bytes_sent_total",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/transport/websocket/metrics.go",
+      "note": "HELP is total bytes sent to clients."
+    },
+    {
+      "required": "connection_writer_queue_items",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farmgate_downlink_writer_queue_items",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/downlink/service.go",
+      "note": "HELP is currently queued downlink items across local writers."
+    },
+    {
+      "required": "connection_writer_queue_bytes",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farmgate_downlink_writer_queue_bytes",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/downlink/service.go",
+      "note": "HELP is currently queued downlink bytes across local writers."
+    },
+    {
+      "required": "connection_writer_oldest_age_seconds",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farmgate_downlink_writer_oldest_frame_age_seconds",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/downlink/service.go",
+      "note": "HELP is age of the oldest queued downlink frame."
+    },
+    {
+      "required": "subscription_lane_depth",
+      "section": "gate",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No gate subscription-lane depth gauge. writer_queue_items is all FrameKinds; farm_subscription_hub_active_lanes is farm-svr lane count, not depth."
+    },
+    {
+      "required": "subscription_lane_oldest_age_seconds",
+      "section": "gate",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No subscription-lane oldest-age gauge. oldest_frame_age_seconds is max over all downlink kinds, not subscription lanes."
+    },
+    {
+      "required": "slow_client_kick_total",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farmgate_ws_slow_client_kick_total",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/transport/websocket/metrics.go",
+      "note": "HELP is slow clients kicked due to full send queue."
+    },
+    {
+      "required": "session_route_batch_items",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_gate_lease_batch_items",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/command/metrics.go",
+      "note": "Histogram of items per holder-isolated lease dispatch; filter label lane=session_route (present in this scrape)."
+    },
+    {
+      "required": "session_route_batch_bytes",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_gate_lease_batch_estimated_bytes",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/command/metrics.go",
+      "note": "Same batch, lane=session_route. HELP says conservative estimated wire/storage bytes, not measured wire bytes."
+    },
+    {
+      "required": "session_route_batch_duration_seconds",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_gate_lease_batch_dispatch_duration_seconds",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/command/metrics.go",
+      "note": "Physical Redis/gRPC dispatch duration of the lease batch; filter lane=session_route."
+    },
+    {
+      "required": "subscription_batch_items",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_gate_lease_batch_items",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/command/metrics.go",
+      "note": "Same family, filter lane=subscription. This scrape only had session_route series (histogram children appear after first observation)."
+    },
+    {
+      "required": "subscription_batch_bytes",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_gate_lease_batch_estimated_bytes",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/command/metrics.go",
+      "note": "lane=subscription estimated bytes. This scrape had no subscription series; values are estimates not wire truth."
+    },
+    {
+      "required": "subscription_batch_duration_seconds",
+      "section": "gate",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_gate_subscription_lease_renew_duration_seconds",
+      "source": "farm-gate-6b75f677f4-4ct8x.txt",
+      "registered_in": "internal/gateway/command/metrics.go",
+      "note": "BatchRenewSubscriptions RPC round-trip, which is the subscription-lane dispatch duration. Present in this scrape."
+    },
+    {
+      "required": "lease_deadline_remaining_seconds",
+      "section": "gate",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No per-lease remaining histogram. farm_gate_boot_lease_seconds_remaining is one GateBoot gauge. route-controller exports route_snapshot_min_remaining_ms (min remaining ms, different object)."
+    },
+    {
+      "required": "player_active_actors",
+      "section": "player",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_actor_active_keys",
+      "source": "player-svr-0.txt",
+      "registered_in": "internal/logic/actor/runtime/metrics.go",
+      "note": "Active keyed actor mailboxes with actor_kind=player. Same live actor count."
+    },
+    {
+      "required": "player_activation_total",
+      "section": "player",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "player-svr does not call RegisterActivationMetrics; farm_actor_activation_* absent from player-svr-0/1 scrape. No activation_total counter exists even on farm."
+    },
+    {
+      "required": "player_activation_latency_seconds",
+      "section": "player",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No load/activation duration histogram in capture or Go source (grep activation_latency/load_and_claim/LoadLatency)."
+    },
+    {
+      "required": "player_passivation_total",
+      "section": "player",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Activation FSM not registered on player-svr. farm_actor_mailbox_retired_total is mailbox retire, not PASSIVATING→ABSENT."
+    },
+    {
+      "required": "player_mailbox_items",
+      "section": "player",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_actor_user_mailbox_queued",
+      "source": "player-svr-0.txt",
+      "registered_in": "internal/logic/actor/runtime/metrics.go",
+      "note": "Queued user turns across this process (actor_kind=player). mailbox_queued also includes system turns."
+    },
+    {
+      "required": "player_mailbox_bytes",
+      "section": "player",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_actor_user_mailbox_bytes",
+      "source": "player-svr-0.txt",
+      "registered_in": "internal/logic/actor/runtime/metrics.go",
+      "note": "Queued user mailbox payload bytes across this process."
+    },
+    {
+      "required": "player_mailbox_wait_seconds",
+      "section": "player",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Contract is a per-turn wait histogram. farm_actor_user_mailbox_oldest_wait_seconds is a gauge of the current oldest head wait, not the same distribution."
+    },
+    {
+      "required": "player_turn_duration_seconds",
+      "section": "player",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_actor_turn_latency_seconds",
+      "source": "player-svr-0.txt",
+      "registered_in": "cmd/player-svr/main.go",
+      "note": "HELP: actor turn execution latency, task only, queue wait excluded. Separate mailbox_wait metric in the contract makes this the execute half."
+    },
+    {
+      "required": "player_load_and_claim_seconds",
+      "section": "player",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No production histogram. cap-redis uses this only as a scenario operation name, not a metric."
+    },
+    {
+      "required": "player_serialization_seconds",
+      "section": "player",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "serialization_duration_ms",
+      "source": "player-svr-0.txt",
+      "registered_in": "internal/observability/actorlayout/metrics.go",
+      "note": "Same commit-envelope serialization duration, labeled domain=player. Unit is milliseconds — adapter must convert."
+    },
+    {
+      "required": "player_commit_seconds",
+      "section": "player",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No Authority Commit duration histogram. serialization_duration_ms is envelope sizing only; redis_round_trips is a count."
+    },
+    {
+      "required": "player_commit_bytes_total",
+      "section": "player",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "authority_commit_request_bytes",
+      "source": "player-svr-0.txt",
+      "registered_in": "internal/observability/actorlayout/metrics.go",
+      "note": "Histogram of logical Authority Commit request bytes (domain=player). Adapter value=sum is cumulative bytes; type is histogram not counter."
+    },
+    {
+      "required": "player_actor_memory_bytes",
+      "section": "player",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No live-actor RAM histogram. actor_record_serialized_bytes / model_state_bytes are serialized payload sizes, not in-process actor memory."
+    },
+    {
+      "required": "player_participant_latency_seconds",
+      "section": "player",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_rpc_server_seconds",
+      "source": "player-svr-0.txt",
+      "registered_in": "internal/grpcmetrics/interceptor.go",
+      "note": "Internal gRPC handler latency. Participant steps are method=ExecuteStep on CoordinatorParticipantService; unfiltered family also includes other methods."
+    },
+    {
+      "required": "farm_active_actors",
+      "section": "farm",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_actor_active_keys",
+      "source": "farm-svr-0.txt",
+      "registered_in": "internal/logic/actor/runtime/metrics.go",
+      "note": "Active keyed actor mailboxes with actor_kind=farm."
+    },
+    {
+      "required": "farm_activation_total",
+      "section": "farm",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Activation metrics exist on farm-svr but there is no all-activations counter. reactivated_total is only loads after passivation, not cold starts."
+    },
+    {
+      "required": "farm_activation_latency_seconds",
+      "section": "farm",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "farm_actor_activation_* are gauges/counters of FSM/load gates; no load-duration histogram in source or scrape."
+    },
+    {
+      "required": "farm_passivation_total",
+      "section": "farm",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_actor_activation_passivate_completed_total",
+      "source": "farm-svr-0.txt",
+      "registered_in": "internal/logic/actor/activation/metrics.go",
+      "note": "HELP: completed PASSIVATING to ABSENT passivations. Present on farm-svr-0/1, actor_kind=farm."
+    },
+    {
+      "required": "farm_mailbox_items",
+      "section": "farm",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_actor_user_mailbox_queued",
+      "source": "farm-svr-0.txt",
+      "registered_in": "internal/logic/actor/runtime/metrics.go",
+      "note": "Queued user turns across this process (actor_kind=farm)."
+    },
+    {
+      "required": "farm_mailbox_bytes",
+      "section": "farm",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_actor_user_mailbox_bytes",
+      "source": "farm-svr-0.txt",
+      "registered_in": "internal/logic/actor/runtime/metrics.go",
+      "note": "Queued user mailbox payload bytes across this process."
+    },
+    {
+      "required": "farm_mailbox_wait_seconds",
+      "section": "farm",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Same gap as player: oldest_wait_seconds is a gauge of the current oldest head, not a per-turn wait histogram."
+    },
+    {
+      "required": "farm_turn_duration_seconds",
+      "section": "farm",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_actor_turn_latency_seconds",
+      "source": "farm-svr-0.txt",
+      "registered_in": "cmd/farm-svr/main.go",
+      "note": "Actor turn execution latency (task only, queue wait excluded), actor_kind=farm."
+    },
+    {
+      "required": "farm_load_and_claim_seconds",
+      "section": "farm",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No production histogram. cap-redis scenario name only."
+    },
+    {
+      "required": "farm_serialization_seconds",
+      "section": "farm",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "serialization_duration_ms",
+      "source": "farm-svr-0.txt",
+      "registered_in": "internal/observability/actorlayout/metrics.go",
+      "note": "Same serialization duration, domain=farm. Unit milliseconds; farm-svr-1 scrape lacked series (no commits)."
+    },
+    {
+      "required": "farm_commit_seconds",
+      "section": "farm",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No commit-duration histogram. serialization_duration_ms is envelope sizing only."
+    },
+    {
+      "required": "farm_commit_bytes_total",
+      "section": "farm",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "authority_commit_request_bytes",
+      "source": "farm-svr-0.txt",
+      "registered_in": "internal/observability/actorlayout/metrics.go",
+      "note": "Histogram of logical Authority Commit request bytes (domain=farm); use adapter value=sum. Absent on farm-svr-1 in this scrape."
+    },
+    {
+      "required": "farm_actor_memory_bytes",
+      "section": "farm",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No live-actor RAM histogram. actor_record_serialized_bytes / model_state_bytes are serialized sizes."
+    },
+    {
+      "required": "farm_join_total",
+      "section": "farm",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No join counter. farm_rpc_calls_total has ExecuteCommand/ArmSnapshot/CleanupSubscription, not Join. subscription_state is a gauge of current joins."
+    },
+    {
+      "required": "farm_change_fanout_total",
+      "section": "farm",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No farm-side fanout counter. farm_downlink_rpc_attempts_total{method=deliver_batch} is RPC attempts; farmgate_downlink_writer_enqueued_items_total{kind=farm_change} is gate enqueue, not farm fanout."
+    },
+    {
+      "required": "farm_subscriptions",
+      "section": "farm",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_subscription_hub_subscription_state",
+      "source": "farm-svr-0.txt",
+      "registered_in": "cmd/farm-svr/main.go",
+      "note": "Current subscriptions broken down by join state; SUM across state labels is the live subscription count."
+    },
+    {
+      "required": "farm_version_ring_depth",
+      "section": "farm",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No version-ring metric in capture or Go (grep version_ring/VersionRing/ring_depth empty). post_ready_buffer_len is a different buffer."
+    },
+    {
+      "required": "worker_due_depth",
+      "section": "worker",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_worker_due_depth",
+      "source": "farm-worker-a-5477978fd8-2gw9s.txt",
+      "registered_in": "internal/worker/readiness/metrics.go",
+      "note": "Proven due work depth, labeled by family; SUM across family is process due depth. Present on both workers."
+    },
+    {
+      "required": "worker_oldest_due_age_seconds",
+      "section": "worker",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_worker_oldest_due_age_ms",
+      "source": "farm-worker-a-5477978fd8-2gw9s.txt",
+      "registered_in": "internal/worker/readiness/metrics.go",
+      "note": "Same oldest-due-age quantity; exported in milliseconds. Adapter must divide by 1000. MAX across family."
+    },
+    {
+      "required": "worker_scan_duration_seconds",
+      "section": "worker",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_worker_scan_duration_ms",
+      "source": "farm-worker-a-5477978fd8-2gw9s.txt",
+      "registered_in": "internal/worker/readiness/metrics.go",
+      "note": "Duration of one bounded recovery scan by family. Unit is milliseconds, not seconds."
+    },
+    {
+      "required": "worker_claim_total",
+      "section": "worker",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_worker_claimed_total",
+      "source": "farm-worker-a-5477978fd8-2gw9s.txt",
+      "registered_in": "internal/worker/readiness/metrics.go",
+      "note": "Durable work leases claimed by recovery family. SUM across family. Distinct from farm_workflow_recovery_claimed_total."
+    },
+    {
+      "required": "worker_complete_total",
+      "section": "worker",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_worker_completed_total",
+      "source": "farm-worker-a-5477978fd8-2gw9s.txt",
+      "registered_in": "internal/worker/readiness/metrics.go",
+      "note": "Durable recovery work completed by family. SUM across family."
+    },
+    {
+      "required": "worker_retry_total",
+      "section": "worker",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_worker_retried_total",
+      "source": "farm-worker-a-5477978fd8-2gw9s.txt",
+      "registered_in": "internal/worker/readiness/metrics.go",
+      "note": "Durable recovery retries scheduled by family."
+    },
+    {
+      "required": "worker_invalid_order_total",
+      "section": "worker",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "theftrecovery.RoundStats.InvalidOrders is in-memory only; no Prometheus registration (grep Name/invalid_order in worker packages)."
+    },
+    {
+      "required": "worker_step_unknown_total",
+      "section": "worker",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_worker_step_unknown_total",
+      "source": "farm-worker-a-5477978fd8-2gw9s.txt",
+      "registered_in": "internal/worker/readiness/metrics.go",
+      "note": "Participant steps with an unknown response boundary by family."
+    },
+    {
+      "required": "worker_participant_latency_seconds",
+      "section": "worker",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No worker-side client RPC histogram. farm_worker_terminal_latency_ms is creation-to-terminal work latency, not participant RPC. farm_rpc_server_seconds ExecuteStep is on player/farm."
+    },
+    {
+      "required": "worker_backlog_drain_per_second",
+      "section": "worker",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "No drain-rate gauge. farm_workflow_backlog / farm_worker_due_depth are depths. Deriving rate from completed_total is forbidden substitution."
+    },
+    {
+      "required": "worker_due_depth_by_family",
+      "section": "worker",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_worker_due_depth",
+      "source": "farm-worker-a-5477978fd8-2gw9s.txt",
+      "registered_in": "internal/worker/readiness/metrics.go",
+      "note": "Same gauge already labeled family=CARE|FRIEND_PROJECTION|GUARD_SYNC|HARVEST|MAIL|PLANT|THEFT."
+    },
+    {
+      "required": "worker_complete_total_by_family",
+      "section": "worker",
+      "verdict": "EXPORTED_RENAMED",
+      "actual": "farm_worker_completed_total",
+      "source": "farm-worker-a-5477978fd8-2gw9s.txt",
+      "registered_in": "internal/worker/readiness/metrics.go",
+      "note": "Same counter already labeled by family."
+    },
+    {
+      "required": "duplicate_grant_total",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED. Only appears as JSON/oracle field names in cap-single-pod tests and cap-redis types."
+    },
+    {
+      "required": "duplicate_debit_total",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED."
+    },
+    {
+      "required": "stale_holder_commit_success_total",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED. farm_actor_writer_epoch_mismatch_total counts fence-triggered evictions, which is the opposite of a successful stale commit."
+    },
+    {
+      "required": "farm_version_gap_total",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED. farm_change_version_gap is a log/reason string in farm actor, not a metric. ws-stress JSON field farm_version_gaps is load-tool local."
+    },
+    {
+      "required": "workflow_step_unknown_residual",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED. farm_worker_step_unknown_total is a lifetime counter, not a residual gauge."
+    },
+    {
+      "required": "due_residual_unexpected",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED. farm_worker_due_depth is current proven due depth, not unexpected residual after drain."
+    },
+    {
+      "required": "h5_pending_journal_residual",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED. No H5 journal residual metric in services or scrape."
+    },
+    {
+      "required": "authority_client_mismatch_total",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED."
+    },
+    {
+      "required": "silent_drop_total",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED. Counted drops exist (joining_buffer_dropped, event_lane_full, writer_rejected) and therefore are not silent."
+    },
+    {
+      "required": "unexpected_lease_expiry_total",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED. farm_subscription_lease_expired_total / route_resolve_lease_expired_total count expiries without an unexpected vs expected split."
+    },
+    {
+      "required": "friend_pair_index_unrepaired",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED. friend_pair_index_mismatch_total counts mismatches already repaired, not unrepaired residual."
+    },
+    {
+      "required": "invalid_order_total",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED. Same gap as worker_invalid_order_total: in-memory theftrecovery stats, not exported."
+    },
+    {
+      "required": "wrong_scope_dispatch_total",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED."
+    },
+    {
+      "required": "record_version_regression_total",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED. ws-stress JSON farm_version_regressions is load-tool local, not a service metric."
+    },
+    {
+      "required": "receipt_conflict_leak_total",
+      "section": "correctness",
+      "verdict": "MISSING",
+      "actual": null,
+      "source": null,
+      "registered_in": null,
+      "note": "Not in 7-pod scrape. Not registered as Prometheus in production Go (grep internal/ and cmd/*-svr). Oracle adapter identity-maps this name to a correctness exporter marked REQUIRED_NOT_QUALIFIED."
+    }
+  ]
+}

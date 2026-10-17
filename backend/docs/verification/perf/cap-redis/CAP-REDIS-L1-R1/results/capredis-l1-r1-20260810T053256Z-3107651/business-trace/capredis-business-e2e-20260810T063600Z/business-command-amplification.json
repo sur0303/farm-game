@@ -1,0 +1,228 @@
+{
+  "schema_version": "cap-redis-business-amplification-trace-v1",
+  "train_run_id": "capredis-l1-r1-20260810T053256Z-3107651",
+  "backend_business_commit": "93a66ce76d509d86e8cac8e1d87563d084eba821",
+  "backend_evidence_head": "5b42a4f587263ab0ce8369330321345e240782c7",
+  "h5_commit": "525c4d324100b17a891f02797c4880fa9a02f70a",
+  "tool_head": "837d96be63295d23be4b94b471acb8d235acfffb",
+  "measurement_source": "TRANSPARENT_RESP_PROXY_OPERATION_BOUND_REAL_H5_END_TO_END_TRACE",
+  "identity_policy": "DOMAIN_SEPARATED_OPERATION_HASH_AND_ALLOWLISTED_AGGREGATES_ONLY_NO_RAW_RESP_KEYS_ARGUMENTS_PAYLOADS_OR_IDENTITIES",
+  "rows": [
+    {
+      "command": "BUY",
+      "window_id": 1,
+      "started_at": "2026-08-10T06:36:05.799560289Z",
+      "finished_at": "2026-08-10T06:36:07.128533154Z",
+      "status": "PASS",
+      "actor_commit": 1,
+      "workflow_writes": 0,
+      "orders": 0,
+      "due": 0,
+      "receipts": 1,
+      "redis_ops": 1,
+      "request_bytes": 2195,
+      "response_bytes": 51,
+      "total_bytes": 2246,
+      "redis_errors": 0,
+      "unanswered_requests": 0,
+      "redis_commands": {
+        "EVALSHA": 1
+      },
+      "redis_error_codes": {},
+      "physical_categories": {
+        "actor_commit": 1
+      },
+      "operation_binding_sha256": "43ab61caa77e1cf71a602bbeeb2de891ca2542fe1b4ee648533c7f54c71da975"
+    },
+    {
+      "command": "PLANT",
+      "window_id": 2,
+      "started_at": "2026-08-10T06:36:08.010206622Z",
+      "finished_at": "2026-08-10T06:36:10.101740299Z",
+      "status": "PASS",
+      "actor_commit": 3,
+      "workflow_writes": 7,
+      "orders": 0,
+      "due": 7,
+      "receipts": 3,
+      "redis_ops": 10,
+      "request_bytes": 44248,
+      "response_bytes": 236,
+      "total_bytes": 44484,
+      "redis_errors": 0,
+      "unanswered_requests": 0,
+      "redis_commands": {
+        "EVAL": 7,
+        "EVALSHA": 3
+      },
+      "redis_error_codes": {},
+      "physical_categories": {
+        "actor_commit": 3,
+        "workflow_write": 7
+      },
+      "operation_binding_sha256": "b62b9230e0c89ebcd90493ad0e12d3ab3187dc42bfac32521f7451685023c5a1"
+    },
+    {
+      "command": "HARVEST",
+      "window_id": 3,
+      "started_at": "2026-08-10T06:36:21.445301958Z",
+      "finished_at": "2026-08-10T06:36:22.650538869Z",
+      "status": "PASS",
+      "actor_commit": 2,
+      "workflow_writes": 5,
+      "orders": 0,
+      "due": 5,
+      "receipts": 2,
+      "redis_ops": 7,
+      "request_bytes": 24969,
+      "response_bytes": 161,
+      "total_bytes": 25130,
+      "redis_errors": 0,
+      "unanswered_requests": 0,
+      "redis_commands": {
+        "EVAL": 5,
+        "EVALSHA": 2
+      },
+      "redis_error_codes": {},
+      "physical_categories": {
+        "actor_commit": 2,
+        "workflow_write": 5
+      },
+      "operation_binding_sha256": "c294e98ea4d853a57debb2fe91f99fb6f562485475c792ba053a23f6d5daf5ec"
+    },
+    {
+      "command": "SELL",
+      "window_id": 4,
+      "started_at": "2026-08-10T06:36:23.264001091Z",
+      "finished_at": "2026-08-10T06:36:24.657470008Z",
+      "status": "PASS",
+      "actor_commit": 1,
+      "workflow_writes": 0,
+      "orders": 0,
+      "due": 0,
+      "receipts": 1,
+      "redis_ops": 1,
+      "request_bytes": 3527,
+      "response_bytes": 53,
+      "total_bytes": 3580,
+      "redis_errors": 0,
+      "unanswered_requests": 0,
+      "redis_commands": {
+        "EVALSHA": 1
+      },
+      "redis_error_codes": {},
+      "physical_categories": {
+        "actor_commit": 1
+      },
+      "operation_binding_sha256": "cc25ffa6e29e9383d520381b571b7e05764f9f3bd1c33fe542ad8d3d620eca38"
+    },
+    {
+      "command": "WATER",
+      "window_id": 5,
+      "started_at": "2026-08-10T06:36:30.077608258Z",
+      "finished_at": "2026-08-10T06:36:31.353799087Z",
+      "status": "PASS",
+      "actor_commit": 2,
+      "workflow_writes": 0,
+      "orders": 1,
+      "due": 1,
+      "receipts": 2,
+      "redis_ops": 36,
+      "request_bytes": 40620,
+      "response_bytes": 10420,
+      "total_bytes": 51040,
+      "redis_errors": 0,
+      "unanswered_requests": 0,
+      "redis_commands": {
+        "EVAL": 1,
+        "EVALSHA": 15,
+        "HGET": 1,
+        "HLEN": 6,
+        "HMGET": 11,
+        "OTHER": 2
+      },
+      "redis_error_codes": {},
+      "physical_categories": {
+        "actor_authority_other": 4,
+        "actor_commit": 2,
+        "friend_authority": 30
+      },
+      "operation_binding_sha256": "9663e266b2c864aaef83504e5ac097f24cbd3f96f911f8258bebccb294d344ff"
+    },
+    {
+      "command": "THEFT",
+      "window_id": 6,
+      "started_at": "2026-08-10T06:36:32.578918159Z",
+      "finished_at": "2026-08-10T06:36:34.625533012Z",
+      "status": "PASS",
+      "actor_commit": 2,
+      "workflow_writes": 5,
+      "orders": 0,
+      "due": 5,
+      "receipts": 2,
+      "redis_ops": 25,
+      "request_bytes": 55761,
+      "response_bytes": 4363,
+      "total_bytes": 60124,
+      "redis_errors": 0,
+      "unanswered_requests": 0,
+      "redis_commands": {
+        "EVAL": 6,
+        "EVALSHA": 6,
+        "EXISTS": 1,
+        "HGET": 1,
+        "HLEN": 3,
+        "HMGET": 4,
+        "SET": 4
+      },
+      "redis_error_codes": {},
+      "physical_categories": {
+        "actor_commit": 2,
+        "friend_authority": 13,
+        "other": 5,
+        "workflow_write": 5
+      },
+      "operation_binding_sha256": "90e61811a51f9ba12c286d36b7c91ced47062bdf21a9ea40329ce9266910cec4"
+    },
+    {
+      "command": "CLAIM_TASK",
+      "window_id": 7,
+      "started_at": "2026-08-10T06:36:35.239505564Z",
+      "finished_at": "2026-08-10T06:36:36.449078894Z",
+      "status": "PASS",
+      "actor_commit": 1,
+      "workflow_writes": 0,
+      "orders": 0,
+      "due": 0,
+      "receipts": 1,
+      "redis_ops": 1,
+      "request_bytes": 5248,
+      "response_bytes": 55,
+      "total_bytes": 5303,
+      "redis_errors": 0,
+      "unanswered_requests": 0,
+      "redis_commands": {
+        "EVALSHA": 1
+      },
+      "redis_error_codes": {},
+      "physical_categories": {
+        "actor_commit": 1
+      },
+      "operation_binding_sha256": "5b4b76ae626741e267b901e7882e5339251d48ea3742d31bc208c7172f44a496"
+    }
+  ],
+  "checks": {
+    "all_browser_windows_pass": true,
+    "all_rows_have_actor_commit_and_receipt": true,
+    "all_rows_have_redis_transport": true,
+    "causal_filter_excludes_background": true,
+    "every_window_bound_to_operation": true,
+    "exact_command_set": true,
+    "no_redis_error_or_unanswered_request": true,
+    "raw_identity_persisted": false,
+    "raw_redis_arguments_persisted": false
+  },
+  "aggregate_sha256": "af4730da18b5348999f40ddd9fb1a5698e01db4c79fd3aeef2b8de2de4239269",
+  "verdict": "PASS",
+  "required_gap": "CLOSED"
+}

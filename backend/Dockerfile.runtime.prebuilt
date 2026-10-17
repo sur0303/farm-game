@@ -1,0 +1,40 @@
+FROM alpine:3.21
+ARG BINARY_DIR
+RUN addgroup -S -g 10001 farm && adduser -S -D -H -u 10001 -G farm farm \
+    && printf '%s\n' \
+      '#!/bin/sh' \
+      'set -eu' \
+      'service="${FARM_SERVICE:-}"' \
+      'case "$service:${HOLDER_PROCESS_BOOT_MODE:-}" in' \
+      '  player-svr:pod-uid-then-random|farm-svr:pod-uid-then-random)' \
+      '    : "${POD_NAME:?POD_NAME is required for process boot identity}"' \
+      '    : "${POD_UID:?POD_UID is required for process boot identity}"' \
+      '    boot_dir="${HOLDER_PROCESS_BOOT_DIR:-/var/run/farm-holder}"' \
+      '    test -d "$boot_dir" && test -w "$boot_dir"' \
+      '    if test -e "$boot_dir/process-started"; then suffix="$(cat /proc/sys/kernel/random/uuid)"; else suffix="$POD_UID"; fi' \
+      '    export ACTOR_HOLDER_BOOT_ID="$POD_NAME-$suffix"' \
+      '    umask 077' \
+      '    printf "%s\\n" "$ACTOR_HOLDER_BOOT_ID" > "$boot_dir/current-boot-id.tmp"' \
+      '    mv "$boot_dir/current-boot-id.tmp" "$boot_dir/current-boot-id"' \
+      '    : > "$boot_dir/process-started"' \
+      '    ;;' \
+      'esac' \
+      'case "$service" in' \
+      '  player-svr|farm-svr|farm-worker|farm-gate|route-controller) exec "/usr/local/bin/$service" "$@" ;;' \
+      '  *) echo "set FARM_SERVICE to a runtime service" >&2; exit 64 ;;' \
+      'esac' \
+      > /usr/local/bin/farm-runtime-entrypoint \
+    && chmod 0755 /usr/local/bin/farm-runtime-entrypoint
+COPY ${BINARY_DIR}/player-svr /usr/local/bin/player-svr
+COPY ${BINARY_DIR}/farm-svr /usr/local/bin/farm-svr
+COPY ${BINARY_DIR}/farm-worker /usr/local/bin/farm-worker
+COPY ${BINARY_DIR}/farm-gate /usr/local/bin/farm-gate
+COPY ${BINARY_DIR}/route-controller /usr/local/bin/route-controller
+COPY ${BINARY_DIR}/route-authority-fence-probe /usr/local/bin/route-authority-fence-probe
+ARG APP_PROFILE=showcase
+ARG IMAGE_REVISION=""
+LABEL org.opencontainers.image.revision=${IMAGE_REVISION}
+ENV FARM_APP_PROFILE=${APP_PROFILE} \
+    FARM_IMAGE_REVISION=${IMAGE_REVISION}
+USER 10001:10001
+ENTRYPOINT ["/usr/local/bin/farm-runtime-entrypoint"]

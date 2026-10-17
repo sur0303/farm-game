@@ -1,0 +1,25 @@
+=== top r2500-before 04:05:28 ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-64b5d695d-dgc7x           13m          14Mi            
+farm-grafana-64f7f46898-z58tr       2m           49Mi            
+farm-prometheus-5966b58fdf-6xrnv    5m           77Mi            
+farm-redis-0                        22m          21Mi            
+farm-redis-1                        21m          22Mi            
+farm-redis-2                        22m          19Mi            
+farm-redis-3                        8m           12Mi            
+farm-redis-4                        7m           12Mi            
+farm-redis-5                        7m           12Mi            
+farm-svr-0                          3m           21Mi            
+farm-worker-a-8c9dcbf44-7d57s       40m          15Mi            
+farm-worker-b-5fdcbff857-2tm4n      49m          13Mi            
+player-svr-0                        4m           17Mi            
+route-controller-8489d44597-r8btl   7m           13Mi            
+=== farm metrics ===
+farm_downlink_lanes_current 1
+farm_downlink_queue_full_total 0
+go_goroutines 102
+=== player metrics ===
+go_goroutines 69
+=== gate metrics ===
+farmgate_downlink_writer_queue_items 0
+go_goroutines 72

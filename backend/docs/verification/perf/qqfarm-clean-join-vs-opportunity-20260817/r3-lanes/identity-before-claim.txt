@@ -1,0 +1,10 @@
+player_uid=e8513629-3e67-4b70-b9ea-19b3c5859371
+farm_uid=035460cd-3cdc-4db3-8bf2-54e0bc5d5e61
+worker_a_uid=9678a5f8-bca1-4065-a6c7-eb9281326dd8
+worker_b_uid=f7a8ce55-b190-412f-99cc-c26e1f245c26
+gate_uid=fa95c0fe-7fc6-4951-810e-204800da4174
+player_restart=0
+farm_restart=0
+worker_a_restart=0
+worker_b_restart=0
+gate_restart=0

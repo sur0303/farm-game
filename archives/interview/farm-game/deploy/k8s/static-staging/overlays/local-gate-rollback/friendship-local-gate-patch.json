@@ -1,0 +1,15 @@
+{
+  "apiVersion": "v1",
+  "kind": "ConfigMap",
+  "metadata": {
+    "name": "farm-staging-platform"
+  },
+  "data": {
+    "FRIENDSHIP_SERVICE_MODE": "local_gate",
+    "FRIENDSHIP_RPC_TIMEOUT": "2s",
+    "FRIENDSHIP_SHADOW_EVIDENCE_SHA256": "UNUSED_LOCAL_GATE_ROLLBACK",
+    "FRIENDSHIP_SHADOW_EVIDENCE_REVIEWED": "false",
+    "FRIENDSHIP_SHADOW_EVIDENCE_SCOPE": "local-gate-rollback",
+    "FRIENDSHIP_SHADOW_EVIDENCE_REF": "local-gate-rollback"
+  }
+}

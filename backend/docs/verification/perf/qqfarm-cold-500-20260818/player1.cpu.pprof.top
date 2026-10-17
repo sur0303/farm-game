@@ -1,0 +1,44 @@
+File: player-svr
+Build ID: 0565d61ea6e95006db33febdf1265cfc4ebf0546
+Type: cpu
+Time: 2026-08-18 13:51:05 CST
+Duration: 30s, Total samples = 15.87s (52.90%)
+Showing nodes accounting for 8.45s, 53.25% of 15.87s total
+Dropped 841 nodes (cum <= 0.08s)
+Showing top 35 nodes out of 368
+      flat  flat%   sum%        cum   cum%
+     3.32s 20.92% 20.92%      3.32s 20.92%  internal/runtime/syscall/linux.Syscall6
+     0.88s  5.55% 26.47%      0.88s  5.55%  runtime.futex
+     0.48s  3.02% 29.49%      0.48s  3.02%  runtime.memmove
+     0.32s  2.02% 31.51%      0.32s  2.02%  runtime.nextFreeFast (inline)
+     0.30s  1.89% 33.40%      0.52s  3.28%  runtime.scanObject
+     0.28s  1.76% 35.16%      0.29s  1.83%  runtime.step
+     0.27s  1.70% 36.86%      0.27s  1.70%  runtime.memclrNoHeapPointers
+     0.19s  1.20% 38.06%      0.48s  3.02%  runtime.pcvalue
+     0.15s  0.95% 39.00%      0.15s  0.95%  farmgame/internal/storage/redis/rediskey.redisCRC16
+     0.13s  0.82% 39.82%      0.15s  0.95%  runtime.(*mspan).writeHeapBitsSmall
+     0.12s  0.76% 40.58%      0.12s  0.76%  crypto/internal/fips140/sha256.blockSHANI
+     0.12s  0.76% 41.34%      0.13s  0.82%  runtime.findfunc
+     0.12s  0.76% 42.09%      0.12s  0.76%  runtime.typePointers.nextFast (inline)
+     0.12s  0.76% 42.85%      0.12s  0.76%  time.runtimeNow
+     0.10s  0.63% 43.48%      0.12s  0.76%  internal/runtime/maps.(*Map).getWithoutKeySmallFastStr
+     0.10s  0.63% 44.11%      0.12s  0.76%  internal/sync.(*HashTrieMap[go.shape.interface {},go.shape.interface {}]).Load
+     0.10s  0.63% 44.74%      0.33s  2.08%  runtime.(*stkframe).getStackMap
+     0.10s  0.63% 45.37%      0.49s  3.09%  runtime.newobject
+     0.09s  0.57% 45.94%      0.94s  5.92%  runtime.mallocgcSmallScanNoHeader
+     0.09s  0.57% 46.50%      0.15s  0.95%  runtime.selectgo
+     0.09s  0.57% 47.07%      0.09s  0.57%  runtime.spanClass.sizeclass (inline)
+     0.08s   0.5% 47.57%      0.08s   0.5%  internal/runtime/maps.ctrlGroup.matchH2
+     0.08s   0.5% 48.08%      0.08s   0.5%  memeqbody
+     0.08s   0.5% 48.58%      0.32s  2.02%  runtime.(*unwinder).resolveInternal
+     0.08s   0.5% 49.09%      1.30s  8.19%  runtime.findRunnable
+     0.08s   0.5% 49.59%      0.08s   0.5%  runtime.nanotime (inline)
+     0.08s   0.5% 50.09%      0.19s  1.20%  runtime.scanObjectsSmall
+     0.08s   0.5% 50.60%      0.09s  0.57%  runtime.typePointers.next
+     0.07s  0.44% 51.04%      0.43s  2.71%  google.golang.org/protobuf/internal/impl.(*messageState).Range
+     0.07s  0.44% 51.48%      0.17s  1.07%  runtime.mapaccess1_faststr
+     0.06s  0.38% 51.86%      0.11s  0.69%  fmt.(*pp).doPrintf
+     0.06s  0.38% 52.24%      0.09s  0.57%  google.golang.org/protobuf/internal/impl.(*MessageInfo).sizePointerSlow
+     0.06s  0.38% 52.61%      0.15s  0.95%  runtime.stealWork
+     0.05s  0.32% 52.93%      0.35s  2.21%  google.golang.org/grpc/internal/transport.(*http2Server).operateHeaders
+     0.05s  0.32% 53.25%      0.24s  1.51%  runtime.concatstrings

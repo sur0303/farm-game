@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package farmgame.gateverification;
+
+option go_package = "farmgame/api/gen/gateverification;gateverification";
+
+// ObserveShard is internal control-plane evidence. It carries no caller role,
+// credentials, raw dependency errors, or mutation fields.
+message ObserveShardRequest {
+  string realm = 1;
+  string domain = 2;
+  uint32 shard = 3;
+}
+
+message ObserveShardResponse {
+  string realm = 1;
+  string domain = 2;
+  uint32 shard = 3;
+  string holder_id = 4;
+  string holder_boot_id = 5;
+  string logic_endpoint = 6;
+  string state = 7;
+  uint64 assignment_revision = 8;
+  uint64 writer_epoch = 9;
+  uint64 lease_epoch = 10;
+  int64 lease_until_ms = 11;
+  uint64 snapshot_revision = 12;
+}
+
+service GateVerificationService {
+  rpc ObserveShard(ObserveShardRequest) returns (ObserveShardResponse);
+}

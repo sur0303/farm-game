@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package workflow;
+
+option go_package = "farmgame/api/gen/workflow;workflowpb";
+
+// WorkflowRecord is the durable execution record for a cross-authority farm
+// operation. FarmRecord/PlayerRecord receipts remain the business facts; this
+// record is the recoverable scheduler state used by farm-worker.
+message WorkflowRecord {
+  // StableOpaqueID("farm-workflow-id-v1", subject, command_type, operation_id).
+  // It is a storage/recovery identity and is deliberately not the client key.
+  string workflow_id = 1;
+  WorkflowKind kind = 2;
+  WorkflowState state = 3;
+  uint64 farm_id = 4;
+  uint64 initiator_player_id = 5;
+  int32 attempts = 6;
+  int64 next_retry_at_ms = 7;
+  int64 created_at_ms = 8;
+  int64 updated_at_ms = 9;
+  string last_error = 10;
+  // payload_hash binds one workflow_id to one normalized business intent.
+  // Reusing the same id with different command parameters is rejected.
+  bytes payload_hash = 11;
+  // workflow_revision is incremented by every successful store mutation,
+  // including a worker claim. It fences stale online coordinators/workers.
+  uint64 workflow_revision = 12;
+  string lease_owner = 13;
+  // lease_epoch is monotonic for this workflow and distinguishes two claims
+  // made by the same worker identity.
+  uint64 lease_epoch = 14;
+  int64 lease_until_ms = 15;
+  int64 deadline_at_ms = 16;
+  // final_result is the stable command result returned by later idempotent
+  // queries. It is optional while the workflow is non-terminal.
+  bytes final_result = 17;
+  // Original client idempotency key used by authority receipts and result lookup.
+  string operation_id = 18;
+}
+
+enum WorkflowKind {
+  WORKFLOW_KIND_UNSPECIFIED = 0;
+  PLANT = 1;
+  HARVEST = 2;
+  THEFT = 3;
+  CARE = 4;
+  UNLOCK_PLOT = 5;
+}
+
+enum WorkflowState {
+  WORKFLOW_STATE_UNSPECIFIED = 0;
+  PENDING = 1;
+  FARM_COMMITTED = 2;
+  RETRY_WAIT = 3;
+  COMPLETED = 4;
+  COMPENSATED = 5;
+}

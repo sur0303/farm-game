@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>经典农场后台总体生产架构 v3.0</title>
+<style>
+  :root {
+    --navy: #0b3d82;
+    --blue: #1769c2;
+    --blue-soft: #eef6ff;
+    --purple: #6336a5;
+    --purple-soft: #f6f0ff;
+    --orange: #d85812;
+    --orange-soft: #fff3e9;
+    --green: #1d7b45;
+    --green-soft: #eef9f1;
+    --teal: #087b83;
+    --teal-soft: #eefafa;
+    --ink: #14243a;
+    --muted: #52637a;
+    --line: #cbd8e8;
+    --paper: #ffffff;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif;
+  }
+
+  body { padding: 18px 20px; }
+
+  .header {
+    height: 72px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .title {
+    color: var(--navy);
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: .3px;
+  }
+
+  .subtitle {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .header-note {
+    color: var(--navy);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+    line-height: 1.55;
+  }
+
+  .workspace {
+    height: 972px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 350px;
+    gap: 14px;
+  }
+
+  .main {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: 142px 100px 230px 118px 115px 154px 51px;
+    gap: 9px;
+  }
+
+  .layer {
+    border: 2px solid var(--line);
+    border-radius: 11px;
+    background: #fff;
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    overflow: hidden;
+  }
+
+  .layer-label {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    line-height: 1.35;
+  }
+
+  .layer-content {
+    min-width: 0;
+    padding: 7px 9px;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .access { border-color: #2264ae; }
+  .access .layer-label { background: var(--navy); }
+
+  .route { border-color: #6b42aa; }
+  .route .layer-label { background: var(--purple); }
+  .route .layer-content { background: var(--purple-soft); }
+
+  .deploy { border-color: #2865b5; }
+  .deploy .layer-label { background: var(--blue); }
+  .deploy .layer-content { background: var(--blue-soft); }
+
+  .reliable { border-color: #df6a24; }
+  .reliable .layer-label { background: var(--orange); }
+  .reliable .layer-content { background: var(--orange-soft); }
+
+  .storage { border-color: #24804b; }
+  .storage .layer-label { background: var(--green); }
+  .storage .layer-content { background: var(--green-soft); }
+
+  .flows { border-color: #2865b5; }
+  .flows .layer-label { background: var(--navy); }
+  .flows .layer-content { background: #fbfdff; }
+
+  .box, .route-card, .service-card, .reliable-card, .data-card, .flow-card {
+    border: 1.4px solid #8aa8c9;
+    border-radius: 8px;
+    background: #fff;
+    min-width: 0;
+  }
+
+  .box {
+    padding: 5px 8px;
+    text-align: center;
+  }
+
+  .box-title {
+    color: var(--navy);
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  .box-body {
+    margin-top: 2px;
+    color: var(--ink);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .arrow {
+    color: var(--blue);
+    font-size: 24px;
+    font-weight: 800;
+    flex: 0 0 auto;
+  }
+
+  .access-grid {
+    width: 100%;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 7px;
+  }
+
+  .access-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .client { width: 180px; }
+  .login { width: 265px; }
+  .session { width: 220px; }
+  .transport { width: 150px; }
+  .proxy { width: 150px; }
+  .gate { width: 390px; }
+
+  .route-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1.02fr 1.2fr;
+    gap: 9px;
+  }
+
+  .route-card {
+    border-color: #8a6cbb;
+    padding: 7px;
+    text-align: center;
+  }
+
+  .route-card .box-title { color: var(--purple); }
+
+  .service-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: .86fr 1.3fr 1.2fr 1.08fr;
+    gap: 10px;
+  }
+
+  .service-card {
+    border-color: #4d83c6;
+    padding: 7px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .service-name {
+    color: var(--navy);
+    font-size: 18px;
+    font-weight: 900;
+    text-align: center;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #d6e3f2;
+  }
+
+  .service-mode {
+    color: var(--muted);
+    font-size: 11.5px;
+    text-align: center;
+    margin: 3px 0 5px;
+  }
+
+  .chip {
+    border: 1px solid #acc4e0;
+    background: #fbfdff;
+    border-radius: 5px;
+    padding: 3px 5px;
+    font-size: 11.5px;
+    line-height: 1.25;
+    text-align: center;
+    margin-bottom: 3px;
+  }
+
+  .chip.authority { background: #eef6ff; border-color: #6f9dd2; }
+  .chip.module { background: #f7fbff; }
+  .chip.worker { background: #fff7ef; border-color: #df9b67; }
+
+  .service-foot {
+    margin-top: auto;
+    color: #334a65;
+    font-size: 10.8px;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .reliable-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.12fr 1.14fr 1.1fr 1.06fr 1.2fr;
+    gap: 9px;
+  }
+
+  .reliable-card {
+    border-color: #df7d3c;
+    padding: 6px;
+    text-align: center;
+  }
+
+  .reliable-card .box-title { color: var(--orange); }
+
+  .data-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.05fr 1.05fr 1.08fr 1.1fr 1.15fr;
+    gap: 9px;
+  }
+
+  .data-card {
+    border-color: #559a70;
+    padding: 6px;
+  }
+
+  .data-card .box-title { color: var(--green); text-align: left; }
+  .data-card .box-body { text-align: left; font-size: 10.8px; }
+
+  .flow-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 9px;
+  }
+
+  .flow-card {
+    padding: 7px;
+  }
+
+  .flow-card h3 {
+    margin: 0 0 5px;
+    color: var(--navy);
+    font-size: 14px;
+    line-height: 1.25;
+  }
+
+  .flow-card p {
+    margin: 0;
+    color: #263a53;
+    font-size: 10.7px;
+    line-height: 1.42;
+  }
+
+  .footer {
+    border-radius: 10px;
+    background: linear-gradient(90deg, #073774, #1358a4);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 800;
+    padding: 0 12px;
+  }
+
+  .sidebar {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: 620px 343px;
+    gap: 9px;
+  }
+
+  .side-card {
+    border: 2px solid #3b70b1;
+    border-radius: 11px;
+    background: #fff;
+    padding: 9px 11px;
+    overflow: hidden;
+  }
+
+  .side-title {
+    color: var(--navy);
+    font-size: 18px;
+    font-weight: 900;
+    text-align: center;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #d7e3f1;
+  }
+
+  .principle {
+    margin: 7px 0;
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: 6px;
+    color: #172b44;
+    font-size: 11.4px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--navy);
+    margin-top: 5px;
+  }
+
+  .contract {
+    margin-top: 7px;
+    border-left: 4px solid var(--teal);
+    background: var(--teal-soft);
+    padding: 5px 7px;
+    border-radius: 5px;
+    font-size: 11.1px;
+    line-height: 1.32;
+  }
+
+  .legend {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 10.8px;
+    line-height: 1.45;
+  }
+</style>
+</head>
+<body>
+  <header class="header">
+    <div>
+      <div class="title">经典农场后台总体生产架构（v3.0 · 四部署单元冻结版）</div>
+      <div class="subtitle">部署边界与领域模块分离｜Player / Farm 双 Actor 独立路由域｜权威写链、读投影与可靠异步分层</div>
+    </div>
+    <div class="header-note">对应统一架构 v1.18 hard contracts<br/>Friendship / Mail / Read 共部署但保持独立权威模块</div>
+  </header>
+
+  <div class="workspace">
+    <main class="main">
+      <section class="layer access">
+        <div class="layer-label">1. 客户端与接入</div>
+        <div class="layer-content">
+          <div class="access-grid">
+            <div class="access-row">
+              <div class="box client"><div class="box-title">H5 / 微信小程序</div><div class="box-body">Web / WebView</div></div>
+              <div class="arrow">→</div>
+              <div class="box login"><div class="box-title">HTTPS Login / Auth Adapter</div><div class="box-body">网页 Ticket / wx code / JSON</div></div>
+              <div class="arrow">→</div>
+              <div class="box session"><div class="box-title">SessionAuthority</div><div class="box-body">connection_ticket / session_epoch</div></div>
+            </div>
+            <div class="access-row">
+              <div class="box client"><div class="box-title">WSS 游戏长连接</div><div class="box-body">Binary Protobuf / FarmFrame</div></div>
+              <div class="arrow">→</div>
+              <div class="box transport"><div class="box-title">TCONND</div><div class="box-body">TLS / 心跳 / 连接事件</div></div>
+              <div class="arrow">→</div>
+              <div class="box proxy"><div class="box-title">gateproxy</div><div class="box-body">事件适配，不含业务</div></div>
+              <div class="arrow">→</div>
+              <div class="box gate"><div class="box-title">farm-gate（Deployment 1）</div><div class="box-body">ClientHello / Session / 协议 / 限流 / 路由 / ConnectionWriter / 下行背压</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="layer route">
+        <div class="layer-label">2. 路由、会话与治理</div>
+        <div class="layer-content">
+          <div class="route-grid">
+            <div class="route-card"><div class="box-title">Actor Routing Core</div><div class="box-body">Discovery → Assignment<br/>Holder Lease / Redirect / writer_epoch</div></div>
+            <div class="route-card"><div class="box-title">PLAYER Route Domain</div><div class="box-body">player_id → PLAYER Shard<br/>→ player-svr Holder</div></div>
+            <div class="route-card"><div class="box-title">FARM Route Domain</div><div class="box-body">farm_id → FARM Shard<br/>→ farm-svr Holder</div></div>
+            <div class="route-card"><div class="box-title">SessionRoute（Redis）</div><div class="box-body">player_id → gate / connection<br/>session_epoch / route_revision</div></div>
+            <div class="route-card"><div class="box-title">逻辑发现与治理</div><div class="box-body">authority / friend / mail / read / worker<br/>Config / Feature Toggle / Deadline</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="layer deploy">
+        <div class="layer-label">3. P0 四个部署单元<br/>与进程内模块</div>
+        <div class="layer-content">
+          <div class="service-grid">
+            <div class="service-card">
+              <div class="service-name">farm-gate</div>
+              <div class="service-mode">无业务状态 / 长连接接入</div>
+              <div class="chip authority">Auth / SessionAdmission</div>
+              <div class="chip module">Protocol / RouteAdapter</div>
+              <div class="chip module">ConnectionRegistry / Writer</div>
+              <div class="chip module">限流 / Deadline / Downlink</div>
+              <div class="service-foot">只管理连接与可信会话<br/>不裁决资产，不推进 Workflow</div>
+            </div>
+
+            <div class="service-card">
+              <div class="service-name">player-svr（Deployment 2）</div>
+              <div class="service-mode">一个 Deployment，四个逻辑 Role</div>
+              <div class="chip authority">PlayerAuthority：PlayerActor(player_id)</div>
+              <div class="chip module">Economy / Inventory / Pet / Task / Reward</div>
+              <div class="chip module">FriendshipDomain：Relation / Share / Permit</div>
+              <div class="chip module">PlayerMail：Entry / Mailbox；Claim → PlayerActor</div>
+              <div class="chip module">PlayerReadAPI / FriendReadAPI</div>
+              <div class="service-foot">Friendship 无 FriendActor；MailEntry 不进 Actor 热快照<br/>模块独立 ≠ 网络服务独立</div>
+            </div>
+
+            <div class="service-card">
+              <div class="service-name">farm-svr（Deployment 3）</div>
+              <div class="service-mode">FARM Route Domain / 农场权威</div>
+              <div class="chip authority">FarmAuthority：FarmActor(farm_id)</div>
+              <div class="chip module">Plot / CropCycle / Care / Theft</div>
+              <div class="chip module">Presence / JoiningBuffer / Broadcast</div>
+              <div class="chip module">FarmReadAPI / BatchEvaluate</div>
+              <div class="chip module">OpportunityHeader / AttemptReceipt</div>
+              <div class="service-foot">同农场操作串行裁决<br/>Snapshot / Delta 与业务版本统一</div>
+            </div>
+
+            <div class="service-card">
+              <div class="service-name">farm-worker（Deployment 4）</div>
+              <div class="service-mode">可恢复后台执行，不拥有领域真值</div>
+              <div class="chip worker">WorkflowRunner / OutboxRelay</div>
+              <div class="chip worker">ProjectionConsumer / Reconcile</div>
+              <div class="chip worker">Activity / RedPoint / Task Event</div>
+              <div class="chip worker">Notify；P1 Scheduler / Maturity</div>
+              <div class="chip worker">DirectDispatcher；生产可切 MQ</div>
+              <div class="service-foot">按 Role 独立扩缩容后，再评估拆服务<br/>延迟不回滚已经提交的业务事实</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="layer reliable">
+        <div class="layer-label">4. 权威写、可靠异步<br/>与查询投影</div>
+        <div class="layer-content">
+          <div class="reliable-grid">
+            <div class="reliable-card"><div class="box-title">PlayerPersistenceLane</div><div class="box-body">SoftSave / Barrier / ForceFlush<br/>普通软资产异步合并；关键资产可靠提交</div></div>
+            <div class="reliable-card"><div class="box-title">Authority Commit + Outbox</div><div class="box-body">来源事实与关键意图同提交<br/>Outbox 是恢复真值，禁止裸 Publish</div></div>
+            <div class="reliable-card"><div class="box-title">Typed Workflow / Order</div><div class="box-body">跨 Actor 可恢复编排<br/>Participant Receipt / Settlement 防重</div></div>
+            <div class="reliable-card"><div class="box-title">DomainEventDispatcher</div><div class="box-body">P0 DirectDispatcher<br/>规模/SLA达阈值后切 MQDispatcher</div></div>
+            <div class="reliable-card"><div class="box-title">Read Projection</div><div class="box-body">FriendIndex / Profile / OpportunitySummary / RedPoint<br/>允许落后、可重建，不签发最终业务结果</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="layer storage">
+        <div class="layer-label">5. 存储、运行环境<br/>与可观测性</div>
+        <div class="layer-content">
+          <div class="data-grid">
+            <div class="data-card"><div class="box-title">Tcaplus · Player 权威</div><div class="box-body">PlayerEconomyRecord<br/>Asset / Task / Pet / Receipt<br/>PersistenceLane Version / Outbox</div></div>
+            <div class="data-card"><div class="box-title">Tcaplus · Farm 权威</div><div class="box-body">FarmCoreState / CropCycle<br/>OpportunityHeader.schedule_state<br/>AttemptReceipt / Settlement / Outbox</div></div>
+            <div class="data-card"><div class="box-title">Tcaplus · Friend / Mail / Flow</div><div class="box-body">FriendRelation + Edge/Index<br/>ShareInvite / MailEntry / ClaimPayload<br/>Workflow / Order / Audit</div></div>
+            <div class="data-card"><div class="box-title">三类 Redis</div><div class="box-body">Session：Ticket / Route<br/>Projection：Summary / RedPoint / Rank<br/>Cache：Navigation / LRU / RateLimit</div></div>
+            <div class="data-card"><div class="box-title">Linux / Docker / K8s + O11y</div><div class="box-body">本地/云端 Docker Compose<br/>生产多副本 / HPA / Drain / 滚动发布<br/>Logs / Metrics / Trace / Audit / Alert</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="layer flows">
+        <div class="layer-label">6. 六条核心业务链</div>
+        <div class="layer-content">
+          <div class="flow-grid">
+            <div class="flow-card">
+              <h3>① 登录与 Join</h3>
+              <p>HTTPS 登录 → Ticket<br/>WSS ClientHello → Session<br/>JoinFarm → Snapshot(V) → JoiningBuffer → InFarm</p>
+            </div>
+            <div class="flow-card">
+              <h3>② 个人经营闭环</h3>
+              <p>Buy：PlayerActor 经济裁决<br/>Plant：Reservation → FarmActor<br/>Harvest：Farm 结束 → Player 可靠入仓</p>
+            </div>
+            <div class="flow-card">
+              <h3>③ 好友发现与导航</h3>
+              <p>FriendIndex + OpportunitySummary<br/>→ BatchCheck + BatchEvaluate<br/>→ Top K / 下一座推荐</p>
+            </div>
+            <div class="flow-card">
+              <h3>④ Join / Care / Theft</h3>
+              <p>Visit/ActionPermit → FarmActor<br/>Attempt 目标结果 → Workflow<br/>访客资产、实际罚金、农场主金币闭合</p>
+            </div>
+            <div class="flow-card">
+              <h3>⑤ Mail / Task / RedPoint</h3>
+              <p>MailEntry 独立存储<br/>Claim → PlayerActor 资产 + Receipt<br/>事件异步投影 Task / 红点 / Feed</p>
+            </div>
+            <div class="flow-card">
+              <h3>⑥ 机会与主动提醒</h3>
+              <p>mature_at 决定成熟<br/>Header.schedule_state 每农场一个最早时间<br/>Scheduler 只唤醒，FarmActor 重判</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">实施主线：P0a 接入与双 Actor → P0b 个人经营与可靠持久化 → P0c 好友同场 / Care / Theft → P0d Mail / Task / RedPoint / 连续导航 → P1 主动提醒</div>
+    </main>
+
+    <aside class="sidebar">
+      <section class="side-card">
+        <div class="side-title">关键设计原则</div>
+        <div class="principle"><span class="dot"></span><span>P0 只有四个 Deployment；领域模块不是拆服务清单，优先通过进程内 Role 隔离执行池和资源。</span></div>
+        <div class="principle"><span class="dot"></span><span>只有 PlayerActor 与 FarmActor 两类权威 Actor；Player/Farm 即使 ID 数值相同，也属于独立 Route Domain 和 Shard 空间。</span></div>
+        <div class="principle"><span class="dot"></span><span>FriendshipDomain 没有 FriendActor，但 FriendRelation 是 Tcaplus 长期真值；索引、Redis 与 LRU 都只是投影或缓存。</span></div>
+        <div class="principle"><span class="dot"></span><span>PlayerMail 与 Friendship 只是在 player-svr 共部署；MailEntry 独立存储，附件资产只能由 PlayerActor 提交。</span></div>
+        <div class="principle"><span class="dot"></span><span>不建立通用 query-svr：Player/Friend Read API 共部署，读投影可独立扩容为 Role，但不能形成新的业务权威。</span></div>
+        <div class="principle"><span class="dot"></span><span>Presence 只管理同场订阅与广播，不能证明好友权限；Join 与操作分别验证 Permit，FarmActor 最终裁决。</span></div>
+        <div class="principle"><span class="dot"></span><span>普通软资产可内存成功后异步合并回写；付费、唯一奖励、关键资产和跨 Actor 步骤必须可靠持久化。</span></div>
+        <div class="principle"><span class="dot"></span><span>权威事实与关键 Outbox 同提交；Direct/MQ 只是分发通道，Consumer 重复、延迟或故障不得回滚主链。</span></div>
+        <div class="principle"><span class="dot"></span><span>作物成熟由 trusted_now_ms ≥ mature_at 派生；Header.schedule_state 是调度唯一真值，Scheduler 只提高提醒及时性。</span></div>
+        <div class="principle"><span class="dot"></span><span>Logs/Metrics/Trace 用于诊断，Receipt/Workflow/Outbox 才是恢复证据；资产变化另写 Audit。</span></div>
+      </section>
+
+      <section class="side-card">
+        <div class="side-title">四条硬边界</div>
+        <div class="contract"><strong>好友：</strong>canonical FriendRelation + relation_epoch + CAS；Permit 不能只信缓存。</div>
+        <div class="contract"><strong>导航：</strong>Summary 只做候选；具体弹窗批量精确读，点击后仍由 FarmActor 裁决。</div>
+        <div class="contract"><strong>偷菜：</strong>AttemptReceipt 保存目标侧结果；Settlement/OperationResult 闭合访客作物、实际罚金和农场主金币。</div>
+        <div class="contract"><strong>邮件：</strong>客户端只传 mail_id；ClaimPayload 可信读取，资产 + MailClaimReceipt 单次可靠提交。</div>
+        <div class="legend">实线调用：同步入口或权威裁决　｜　事件链：Outbox → Dispatcher → Consumer　｜　投影可落后：不作为权限和资产真值</div>
+      </section>
+    </aside>
+  </div>
+</body>
+</html>

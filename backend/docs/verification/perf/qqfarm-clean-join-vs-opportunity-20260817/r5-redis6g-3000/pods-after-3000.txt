@@ -1,0 +1,19 @@
+NAME                                 READY   STATUS      RESTARTS   AGE     IP             NODE            NOMINATED NODE   READINESS GATES
+farm-gate-5b5b595d85-94q96           1/1     Running     0          9m2s    198.18.0.97   198.18.0.38   <none>           <none>
+farm-grafana-64f7f46898-z58tr        1/1     Running     0          28h     198.18.0.29    198.18.0.30    <none>           <none>
+farm-prometheus-5966b58fdf-6xrnv     1/1     Running     0          28h     198.18.0.31   198.18.0.32    <none>           <none>
+farm-redis-0                         1/1     Running     0          11m     198.18.0.33    198.18.0.34     <none>           <none>
+farm-redis-1                         1/1     Running     0          11m     198.18.0.35    198.18.0.36   <none>           <none>
+farm-redis-2                         1/1     Running     0          11m     198.18.0.37   198.18.0.38   <none>           <none>
+farm-redis-3                         1/1     Running     0          11m     198.18.0.39   198.18.0.40    <none>           <none>
+farm-redis-4                         1/1     Running     0          11m     198.18.0.41   198.18.0.42    <none>           <none>
+farm-redis-5                         1/1     Running     0          11m     198.18.0.43    198.18.0.44    <none>           <none>
+farm-route-bootstrap                 1/1     Running     0          10m     198.18.0.98   198.18.0.38   <none>           <none>
+farm-svr-0                           1/1     Running     0          10m     198.18.0.99    198.18.0.44    <none>           <none>
+farm-worker-a-8c9dcbf44-kjv22        1/1     Running     0          9m15s   198.18.0.100   198.18.0.93   <none>           <none>
+farm-worker-b-5fdcbff857-2x8db       1/1     Running     0          9m15s   198.18.0.101   198.18.0.51    <none>           <none>
+player-svr-0                         0/1     Running     0          10m     198.18.0.102   198.18.0.40    <none>           <none>
+route-controller-7f4d566d85-fv9jc    1/1     Running     0          8m14s   198.18.0.103   198.18.0.70    <none>           <none>
+ws-stress-join-160735-tbx6h          0/1     Completed   0          7m9s    198.18.0.104   198.18.0.70    <none>           <none>
+ws-stress-thick-login-160746-jttl4   0/1     Completed   0          6m58s   198.18.0.105   198.18.0.42    <none>           <none>
+ws-stress-thick-login-161338-p2x4k   0/1     Completed   0          66s     198.18.0.106    198.18.0.22   <none>           <none>

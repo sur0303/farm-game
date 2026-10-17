@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+cd "$ROOT_DIR"
+
+if [[ "${S2_E2E_ALLOW_EXTERNAL:-0}" != "1" ]]; then
+  echo "Set S2_E2E_ALLOW_EXTERNAL=1 only on the Linux staging host with TCONND/Tcaplus configured" >&2
+  exit 2
+fi
+
+test -n "${H5_E2E_URL:-}" || { echo "H5_E2E_URL is required" >&2; exit 2; }
+test -n "${TCONND_PROBE_REPORT:-}" || { echo "TCONND_PROBE_REPORT is required" >&2; exit 2; }
+test -f "$TCONND_PROBE_REPORT" || { echo "TCONND_PROBE_REPORT does not exist: $TCONND_PROBE_REPORT" >&2; exit 2; }
+
+H5_DIR="$ROOT_DIR/../classic-farm-h5"
+test -f "$H5_DIR/package.json" || { echo "classic-farm-h5 checkout is required" >&2; exit 2; }
+
+# This is intentionally an explicit external gate. The staging Playwright
+# config has no dev server: it exercises the deployed H5 and its real /api and
+# WSS endpoints. TCONND evidence must already be recorded by the probe report.
+echo "running external S2 H5 login/Join/reconnect against configured staging URL"
+(cd "$H5_DIR" && npm run e2e -- --config=playwright.staging.config.ts)
+
+echo "External S2 H5 e2e passed; TCONND evidence: $TCONND_PROBE_REPORT"

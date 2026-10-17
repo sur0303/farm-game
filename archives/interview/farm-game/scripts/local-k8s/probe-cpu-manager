@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+KUBECONFIG="${KUBECONFIG:-$LAB_ROOT/runtime/kubeconfig}"
+NAMESPACE="farm-l2-r2-cpu-probe"
+IMAGE="docker.io/library/alpine@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d"
+RECEIPT="$LAB_ROOT/receipts/cpu-allocation-profile-probe.json"
+
+fail() { echo "probe-cpu-manager: $*" >&2; exit 1; }
+command -v kubectl >/dev/null 2>&1 || fail "kubectl missing"
+[[ -s "$KUBECONFIG" ]] || fail "kubeconfig missing: $KUBECONFIG"
+[[ "$(KUBECONFIG="$KUBECONFIG" kubectl config current-context)" == "farm-l2-r2" ]] || fail "refusing non-lab context"
+
+cleanup() {
+  KUBECONFIG="$KUBECONFIG" kubectl delete namespace "$NAMESPACE" --ignore-not-found --wait=true >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+cleanup
+KUBECONFIG="$KUBECONFIG" kubectl create namespace "$NAMESPACE" >/dev/null
+
+apply_probe() {
+  local name=$1 cpu=$2
+  cat <<YAML | KUBECONFIG="$KUBECONFIG" kubectl apply -f - >/dev/null
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cpu-${name}
+  namespace: ${NAMESPACE}
+  labels:
+    farm.io/test-role: cpu-manager-preflight
+spec:
+  restartPolicy: Never
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+  - name: probe
+    image: ${IMAGE}
+    imagePullPolicy: IfNotPresent
+    command: ["/bin/sh", "-c", "sleep 600"]
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: ["ALL"]
+    resources:
+      requests:
+        cpu: "${cpu}"
+        memory: "128Mi"
+      limits:
+        cpu: "${cpu}"
+        memory: "128Mi"
+YAML
+}
+
+apply_probe target 4
+apply_probe dependency 10
+KUBECONFIG="$KUBECONFIG" kubectl wait -n "$NAMESPACE" --for=condition=Ready pod/cpu-target pod/cpu-dependency --timeout=120s >/dev/null
+
+target=$(KUBECONFIG="$KUBECONFIG" kubectl exec -n "$NAMESPACE" cpu-target -- awk '/Cpus_allowed_list/ {print $2}' /proc/self/status)
+dependency=$(KUBECONFIG="$KUBECONFIG" kubectl exec -n "$NAMESPACE" cpu-dependency -- awk '/Cpus_allowed_list/ {print $2}' /proc/self/status)
+status=FAIL
+if [[ "$target" == "4-7" && "$dependency" == "16-25" ]]; then status=PASS; fi
+
+python3 - "$RECEIPT" "$status" "$target" "$dependency" "$IMAGE" <<'PY'
+import json, os, sys, tempfile
+path, status, target, dependency, image = sys.argv[1:]
+value = {
+  "schema_version": "farm-local-cpu-allocation-profile-probe.v1",
+  "status": status,
+  "target_requested_cpu": 4,
+  "target_cpuset": target,
+  "dependency_requested_cpu": 10,
+  "dependency_cpuset": dependency,
+  "driver_cpuset": "8-15",
+  "observer_cpuset": "28-31",
+  "unallocated_exclusive_safety_cpuset": "26-27",
+  "probe_image": image,
+  "company_redis_contacted": False,
+  "formal_l2_authorized": False,
+}
+os.makedirs(os.path.dirname(path), exist_ok=True)
+fd, temp = tempfile.mkstemp(prefix=".cpu-probe-", dir=os.path.dirname(path), text=True)
+with os.fdopen(fd, "w") as out:
+    json.dump(value, out, sort_keys=True, indent=2)
+    out.write("\n")
+os.replace(temp, path)
+PY
+chmod 0640 "$RECEIPT"
+cat "$RECEIPT"
+[[ "$status" == "PASS" ]] || fail "CPU Manager allocation does not match L2_RESOURCE_PROFILE_V1"

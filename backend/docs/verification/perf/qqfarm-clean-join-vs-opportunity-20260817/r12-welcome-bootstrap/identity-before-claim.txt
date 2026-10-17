@@ -1,0 +1,6 @@
+worker_a_pod=farm-worker-a-8c9dcbf44-pctpx
+worker_b_pod=farm-worker-b-5fdcbff857-b95jg
+gate_pod=farm-gate-5b5b595d85-lbw2f
+worker_a_pod_uid=57cba03e-70ac-4ece-b6a9-fc910b27a955
+worker_b_pod_uid=4d3ae4ff-c549-45d5-b287-a04d3cb062ce
+gate_pod_uid=65c30ff6-d00a-4356-b821-218e82670c61

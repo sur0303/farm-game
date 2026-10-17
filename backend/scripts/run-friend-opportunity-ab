@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+OUT_DIR="${FARM_AB_OUT_DIR:-$ROOT_DIR/artifacts/friend-opportunity-ab}"
+mkdir -p "$OUT_DIR"
+
+cd "$ROOT_DIR"
+{
+  printf 'started_at_utc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  printf 'git_commit=%s\n' "$(git rev-parse HEAD)"
+  printf 'go_version=%s\n' "$(go version)"
+  printf 'host=%s\n' "$(uname -a)"
+  printf 'bench_count=%s\n' "${FARM_AB_BENCH_COUNT:-5}"
+} > "$OUT_DIR/metadata.txt"
+
+go test ./internal/farm/readpath \
+  -run '^$' \
+  -bench 'BenchmarkFriendOpportunity(ReadPaths|SummaryRefreshWrite)$' \
+  -benchmem \
+  -count "${FARM_AB_BENCH_COUNT:-5}" \
+  | tee "$OUT_DIR/preliminary-go-benchmark.txt"
+
+cat <<'EOF'
+PRELIMINARY_ONLY: this compares local command shape and CPU/allocation cost.
+It is not CAPACITY_PASS evidence. Run the frozen A/B/C ws-stress + Prometheus
+matrix from docs/design/76 before enabling Summary in production.
+EOF

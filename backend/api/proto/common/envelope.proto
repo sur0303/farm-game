@@ -1,0 +1,216 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "farmgame/api/gen/common;commonpb";
+
+import "common/enums.proto";
+
+// CommandType 是 CommandCatalog 的唯一查找键(28 §3.3)。P1B 一次冻结 P0a~P0d
+// 33 类公开命令(28 §6.1,L2-PROTO-45);未知、未注册或当前协议版本不可用的
+// 命令必须在 Gate 的 Protocol/Admission 阶段拒绝。
+//
+// 12→33 迁移编号纪律(72 §6.5):
+//   - 保留:JOIN_FARM=6、GET_OPERATION_RESULT=11、CLAIM_TASK=12、
+//     GET_PLAYER_BOOTSTRAP=13 沿用旧编号;
+//   - 重命名沿用旧编号:BUY(2)、SELL(3)、PLANT(4)、HARVEST(5)、CARE(8)、
+//     THEFT(9);旧符号名全部 reserved 不复用;
+//   - 删除:LEAVE_FARM=7、GET_FARM_SNAPSHOT=10,编号 reserved;
+//   - 新增 23 条自 14 起顺序分配。
+enum CommandType {
+  COMMAND_TYPE_UNSPECIFIED = 0;
+
+  // 旧符号名(BUY_OFFER 等别名)只 reserved 名称;编号 2/3/4/5/8/9 仍由新名
+  // 占用,不得 reserved 数值。LEAVE_FARM=7/GET_FARM_SNAPSHOT=10 编号+名称
+  // 一并 reserved(P1B-CONSUMERS-2 删除 deprecated 编译窗口)。
+  reserved 1, 7, 10;
+  reserved "BUY_OFFER", "SELL_ITEM", "PLANT_CROP", "HARVEST_CROP",
+           "WATER_CROP", "BEGIN_THEFT", "LEAVE_FARM", "GET_FARM_SNAPSHOT";
+
+  BUY = 2;                  // 购买,RouteKey=session.player_id
+  SELL = 3;                 // 出售,RouteKey=session.player_id
+  PLANT = 4;                // 播种,RouteKey=PlantRequest.target_farm_id
+  HARVEST = 5;              // 收获,RouteKey=HarvestRequest.target_farm_id
+  JOIN_FARM = 6;            // 建立/替换 Subscription,RouteKey=JoinFarmRequest.target_farm_id
+  // LEAVE_FARM(7) 不再是公开命令(28 §6.1);释放 Presence 由切换/断连清理承接。
+  CARE = 8;                 // 护理,RouteKey=CareRequest.target_farm_id
+  THEFT = 9;                // 偷菜,RouteKey=TheftRequest.target_farm_id
+  // GET_FARM_SNAPSHOT(10) 不再是公开命令;完整快照只经 FARM_SNAPSHOT Push 下发
+  // (L2-PROTO-27/31)。
+  GET_OPERATION_RESULT = 11;  // 弱网结果查询,subject 来自 Session
+  CLAIM_TASK = 12;          // 领取任务奖励,RouteKey=session.player_id
+  GET_PLAYER_BOOTSTRAP = 13;  // 玩家私有首屏,RouteKey=session.player_id
+
+  GET_FRIEND_LIST = 14;
+  GET_NEXT_FRIEND_OPPORTUNITY = 15;
+  GET_TASK_LIST = 16;
+  CONFIRM_FRIEND_VISIT = 17;
+  GET_MAIL_LIST = 18;
+  GET_MAIL_DETAIL = 19;
+  MARK_MAIL_READ = 20;
+  DELETE_MAIL = 21;
+  CLAIM_MAIL_ATTACHMENT = 22;
+  GET_PET_STATE = 23;
+  PET_UNLOCK_BY_COIN = 24;
+  PET_FEED = 25;
+  PET_SWITCH = 26;
+  GET_COMPENDIUM = 27;
+  ACK_COMPENDIUM_SEEN = 28;
+  GENERATE_SHARE_TOKEN = 29;
+  ROTATE_SHARE_TOKEN = 30;
+  REVOKE_SHARE_TOKEN = 31;
+  REDEEM_SHARE = 32;
+  DELETE_FRIEND = 33;
+  BLOCK_PLAYER = 34;
+  UNBLOCK_PLAYER = 35;
+  UNLOCK_PLOT = 36;
+}
+
+// ClientCommandEnvelope 是客户端 → 服务端的唯一业务意图信封(28 §3,
+// L2-PROTO-03/04/05/06):逻辑上只包含请求标识、业务幂等标识、命令类型与
+// bytes payload。操作者 player_id、Session Fence、Subscription、Actor Route
+// 与 WriterEpoch 不允许由客户端放入信封;target_farm_id、地块、作物周期与
+// expected version 已进入各自 Typed Payload。
+//
+// 迁移窗口说明(ICR-P1B-PROTOCOL-CONSUMERS):字段 5/6/7/8 已按 28 §8 退役,
+// 由 P1B-CONSUMERS-2 删除并 reserved;任何实现不得复用这些字段号与名称。
+// 客户端只填 request_id/operation_id/command_type/payload;FirstHop 从
+// Typed Payload 与 TrustedCommandContext 独立派生目标与版本。
+message ClientCommandEnvelope {
+  reserved 1, 3, 5, 6, 7, 8;
+  reserved "protocol_version", "client_seq",
+           "target_owner_id", "expected_farm_version",
+           "expected_plot_version", "expected_crop_cycle_id";
+
+  // request_id:一次客户端网络请求/Trace 关联 ID,必填,不透明 ASCII,
+  // 1..64 字节;重试同一 operation 时可以变化,不得作为业务防重键
+  // (28 §3.1,L2-PROTO-12)。
+  string request_id = 10;
+  // operation_id:一次用户业务意图的幂等 ID,不透明 ASCII,1..64 字节;
+  // 是否必填由 CommandSpec.IdempotencyPolicy 决定(28 §3.2)。
+  string operation_id = 2;
+  CommandType command_type = 4;
+  // payload 必须由 CommandSpec.PayloadType 指定的 Proto 解码;Gate 解码一次
+  // 并保留原始 bytes,FirstHop 独立再解码(28 §3.4/§3.6,L2-PROTO-14)。
+  bytes payload = 15;
+}
+
+// CommandResultEnvelope 回答一个 request_id / operation_id(28 §2.2,
+// L2-PROTO-09/24)。它与 ServerPushEnvelope 是 FarmFrame 顶层 oneof 的不同
+// 分支;普通农场 CommandResult 只携带最小业务结果,完整农场状态只经
+// FARM_SUBSCRIPTION Push 下发(L2-PROTO-31)。
+//
+// 字段号冻结说明:沿用现行 1/2/7/15 与 W11A 冻结的 20~25;新增 28
+// L2-PROTO-57 的 server_operation_locator=26。
+message CommandResultEnvelope {
+  string operation_id = 1;
+  CommandStatus status = 2;
+  reserved 3, 4, 5, 6;
+  reserved "error_code", "error_message", "owner_state_version", "farm_version";
+  string request_id = 7;
+  // payload 即 28 §2.2 的 result_payload;具体业务结果由 CommandSpec.ResultType
+  // 对应的 Proto 编码后放入。
+  bytes payload = 15;
+
+  ErrorDetail error = 20;
+  RetryDirective retry_directive = 21;
+  uint32 retry_after_ms = 22;
+  CommandType command_type = 23;
+  oneof result_context {
+    FarmResultContext farm = 24;
+    JoinResultContext join = 25;
+  }
+  // server_operation_locator 是服务端签发的不透明、带完整性保护的定位提示
+  // (28 L2-PROTO-57);它不是授权,客户端不解析,只在 GetOperationResult 时
+  // 原样回带。
+  optional string server_operation_locator = 26;
+}
+
+message ErrorDetail {
+  ErrorCode error_code = 1;
+  string error_message = 2;
+}
+
+// RetryDirective 是服务端对客户端动作的稳定合同(28 §2.3),与具体错误码正交。
+enum RetryDirective {
+  RETRY_DIRECTIVE_UNSPECIFIED = 0;
+  NONE = 1;
+  RETRY_SAME_OPERATION = 2;
+  POLL_OPERATION_RESULT = 3;
+  FRESH_JOIN = 4;
+  RECONNECT = 5;
+  REAUTHENTICATE = 6;
+  FRESH_JOIN_THEN_RETRY = 7;
+  REFRESH_AUTHORITY_STATE = 8;
+}
+
+// FarmResultContext 只在结果确实涉及农场时出现(28 §2.2 约束 6)。
+message FarmResultContext {
+  uint64 target_farm_id = 1;
+  optional string subscription_id = 2;
+}
+
+// JoinResultContext 承载 Join 元信息的唯一来源;Join 的 ACCEPTED 结果
+// result_payload 应为空,不含 Snapshot 或第二份 Fence(28 §2.2 约束 1,
+// L2-PROTO-27)。
+message JoinResultContext {
+  uint64 target_farm_id = 1;
+  string subscription_id = 2;
+  string join_attempt_id = 3;
+}
+
+// PushType 区分服务端推送的种类。内部 Hub/Gate 失效统一使用 RESYNC_REQUIRED;
+// 公网只存在 REJOIN_REQUIRED(L2-PROTO-41)。
+enum PushType {
+  reserved 6;
+  reserved "RESYNC_REQUIRED";
+  PUSH_TYPE_UNSPECIFIED = 0;
+  FARM_SNAPSHOT = 1;   // Join 后的完整版本化快照(FarmSnapshotPush)
+  FARM_CHANGE = 2;     // Ready 后按 farm_version 严格 +1 的实时变化(FarmChangePush)
+  KICK = 3;            // 顶号/权限撤销通知(体验,非安全边界)
+  SYSTEM_NOTICE = 4;   // 系统通知
+  OPERATION_RESULT = 5;
+  DRAIN_NOTICE = 7;
+  FRIEND_ROSTER_CHANGED = 8;
+  // Player-scoped pull hint only; payload never authorizes an action.
+  FRIEND_OPPORTUNITY_CHANGED = 9;
+
+  FARM_DELTA_BATCH = 20;    // Join Catch-up 批次(FarmDeltaBatchPush)
+  SUBSCRIPTION_READY = 21;  // Join Ready 屏障(SubscriptionReadyPush)
+  REJOIN_REQUIRED = 22;     // 实时流失效,要求 Fresh Join(RejoinRequiredPush)
+}
+
+// ServerPushEnvelope 是服务端主动推送信封(28 §2.4,L2-PROTO-10/24)。
+// push_context 的 oneof 直接决定下行 Scope,不允许 scope 与上下文互相矛盾。
+//
+// 字段号冻结说明:push_type 沿用现行 6,push_context 10/11/12 与 payload 15
+// 均为 W11A 已冻结值;28 §2.4 的逻辑号不作物理依据。
+message ServerPushEnvelope {
+  reserved 1, 2, 3, 4, 5;
+  reserved "server_seq", "subscription_id", "actor_activation_epoch", "presence_epoch", "farm_version";
+  PushType push_type = 6;
+  oneof push_context {
+    SessionPushContext session = 10;
+    PlayerPushContext player = 11;
+    FarmSubscriptionPushContext farm_subscription = 12;
+  }
+  bytes payload = 15;
+}
+
+message SessionPushContext {
+  uint64 target_player_id = 1;
+  uint64 session_epoch = 2;
+}
+
+message PlayerPushContext {
+  uint64 target_player_id = 1;
+  uint64 session_epoch = 2;
+}
+
+// FarmSubscriptionPushContext 只负责"发给谁"和 Subscription Fence,
+// 不负责表达农场业务版本(版本字段在 Typed Payload 内,28 §2.4)。
+message FarmSubscriptionPushContext {
+  uint64 target_player_id = 1;
+  uint64 target_farm_id = 2;
+  string subscription_id = 3;
+}

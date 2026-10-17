@@ -1,0 +1,17 @@
+File: farm-gate
+Build ID: b0d69fe8c3d01668e868c1247097ed61a8e14826
+Type: cpu
+Time: 2026-08-17 10:46:59 CST
+Duration: 12s, Total samples = 920ms (7.67%)
+
+      flat  flat%        cum   function
+     190ms 20.65%      190ms  internal/runtime/syscall/linux.Syscall6
+      70ms  7.61%       70ms  runtime.futex
+      40ms  4.35%       90ms  runtime.newobject
+      10ms  1.09%       10ms  farmgame/internal/friendshipservice.(*GRPCClient).GetNextFriendOpportunity
+         0     0%       10ms  farmgame/internal/gateway/auth.(*ShareHandler).handleFriendOpportunity
+
+Gate opportunity handling has no CPU hotspot; most request wall time is spent
+waiting for the remote PlayerSvr result and therefore is not charged as Gate
+CPU samples.
+

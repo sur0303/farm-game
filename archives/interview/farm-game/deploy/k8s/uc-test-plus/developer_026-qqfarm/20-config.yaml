@@ -1,0 +1,187 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: farm-platform
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/part-of: farm-game
+    farm.io/config-role: uc-test-plus-r93
+    farm.io/runtime-profile: route-migration-4x4x4
+    uc.qq.com/owner: developer_026
+data:
+  FARM_APP_PROFILE: test
+  CAPACITY_PROFILE_VERSION: route-migration-4x4x4-not-capacity-qualified
+  ACTOR_AUTHORITY_MODE: authority
+  AUTHORITY_MEMBERSHIP_MODE: composed
+  ACTOR_ASSIGNMENT_MODE: remote-watch
+  ACTOR_ROUTE_REALM: classic-farm-dynamic-uc
+  SCALEPLAN_MODE: "off"
+  FARM_REDIS_CLUSTER: "1"
+  FARM_REDIS_CLUSTER_URLS: "redis://farm-redis-0.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0,redis://farm-redis-1.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0,redis://farm-redis-2.farm-redis-headless.developer_026-qqfarm.svc.cluster.local:6379/0"
+  REDIS_NAMESPACE_ENVIRONMENT: uctestscaleplanqqfarm20260816
+  REDIS_NAMESPACE_ZONE: z1
+  REDIS_PHYSICAL_PROFILE_VERSION: redis-physical-v1
+  REDIS_AUTHORITY_LAYOUT_VERSION: v1
+  REDIS_WORKFLOW_LAYOUT_VERSION: v1
+  REDIS_WORKFLOW_HASH_VERSION: "1"
+  REDIS_WORKFLOW_BUCKET_COUNT: "256"
+  FARM_SCHEDULE_DUE_INDEX_MODE: dedicated_only
+  FARM_SCHEDULE_DUE_INDEX_DEDICATED_READY: "true"
+  PLAYER_STORE_PREFIX: farm:uctestscaleplanqqfarm20260816:z1:dynamic:player:v1
+  FARM_STORE_PREFIX: farm:uctestscaleplanqqfarm20260816:z1:dynamic:farm:v1
+  WORKFLOW_STORE_PREFIX: farm:uctestscaleplanqqfarm20260816:z1:dynamic:workflow:v1
+  WEB_ACCOUNT_STORE_PREFIX: farm:uctestscaleplanqqfarm20260816:z1:dynamic:web-account:v1
+  SHARE_STORE_PREFIX: farm:uctestscaleplanqqfarm20260816:z1:dynamic:share:v1
+  THEFT_GUARD_SNAPSHOT_PREFIX: farm:uctestscaleplanqqfarm20260816:z1:dynamic:theft-guard:v1
+  THEFT_TARGET_BINDING_PREFIX: farm:uctestscaleplanqqfarm20260816:z1:dynamic:theft-target:v1
+  WEB_LOGIN_RATE_LIMIT_PREFIX: farm:uctestscaleplanqqfarm20260816:web-login-limit
+  GATE_BOOT_LEASE_PREFIX: farm:uctestscaleplanqqfarm20260816:gate-boot
+  PLAYER_ADDR: player-svr.developer_026-qqfarm.svc.cluster.local:9100
+  FARM_ADDR: farm-svr.developer_026-qqfarm.svc.cluster.local:9090
+  GATEWAY_DOWNLINK_ADDR: farm-gate-0.farm-gate-headless.developer_026-qqfarm.svc.cluster.local:9092
+  LOGIC_HEALTH_ADDR: http://farm-svr.developer_026-qqfarm.svc.cluster.local:9091
+  GATEWAY_DOWNLINK_ROUTES: farm-gate-0=farm-gate-0.farm-gate-headless.developer_026-qqfarm.svc.cluster.local:9092,farm-gate-1=farm-gate-1.farm-gate-headless.developer_026-qqfarm.svc.cluster.local:9092
+  FRIENDSHIP_SERVICE_MODE: remote_player
+  FRIENDSHIP_RPC_TIMEOUT: 2s
+  FARM_FRIEND_NAVIGATION_V3_ENABLED: "1"
+  GATE_CONTROL_TARGETS: farm-gate-0=farm-gate-0.farm-gate-headless.developer_026-qqfarm.svc.cluster.local:9093,farm-gate-1=farm-gate-1.farm-gate-headless.developer_026-qqfarm.svc.cluster.local:9093
+  FRIEND_NAVIGATION_WINDOW_MODE: top-k
+  FRIEND_NAVIGATION_WINDOW_SIZE: "10"
+  FRIEND_OPPORTUNITY_SCAN_BATCH_SIZE: "64"
+  THEFT_PRF_MODE: production
+  SHARE_TOKEN_TTL_PROFILE: share-token-ttl-v1
+  FRIEND_LIMIT_PROFILE: friend-limit-v1
+  SOCIAL_PRODUCT_PROFILE_VERSION: social-product-profile-v1
+  FARM_CROP_MATURE_AFTER: 10s
+  ACTOR_AUTHORITY_LEASE_TTL: 60s
+  ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN: 10s
+  ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL: 20s
+  # Actor runtime policy: an offline actor is eligible for passivation after
+  # two minutes. The shorter bucket/sweep cadence and larger per-tick budget
+  # prevent a cold-login burst from leaving the retirement queue behind.
+  PLAYER_MAILBOX_IDLE_TIMEOUT: 2m
+  PLAYER_MAILBOX_IDLE_BUCKET_WIDTH: 5s
+  PLAYER_MAILBOX_IDLE_SWEEP_INTERVAL: 5s
+  PLAYER_MAILBOX_IDLE_MAX_PER_SWEEP: "16384"
+  PLAYER_MAILBOX_INITIAL_SIZE: "16"
+  PLAYER_MAILBOX_MAX_SIZE: "64"
+  FARM_ACTOR_IDLE_TIMEOUT: 2m
+  FARM_ACTOR_IDLE_BUCKET_WIDTH: 5s
+  FARM_ACTOR_IDLE_SWEEP_INTERVAL: 5s
+  FARM_ACTOR_IDLE_MAX_PER_SWEEP: "16384"
+  FARM_MAILBOX_INITIAL_SIZE: "16"
+  FARM_MAILBOX_MAX_SIZE: "64"
+  ROUTE_CONTROL_ADDR: route-controller.developer_026-qqfarm.svc.cluster.local:9443
+  ROUTE_CONTROL_CONTROLLER_ID: route-controller
+  ROUTE_CONTROL_SERVER_NAME: route-controller.developer_026-qqfarm.svc.cluster.local
+  ROUTE_CONTROL_SERVER_IDENTITY: route-controller.developer_026-qqfarm.svc.cluster.local
+  ROUTE_CONTROL_CLIENT_CERT_FILE: /etc/farm/route-control/route-client.crt
+  ROUTE_CONTROL_CLIENT_KEY_FILE: /etc/farm/route-control/route-client.key
+  ROUTE_CONTROL_SERVER_CA_FILE: /etc/farm/route-control/ca.crt
+  ROUTE_CONTROL_DIAL_TIMEOUT: 5s
+  ROUTE_CONTROL_RPC_TIMEOUT: 5s
+  ROUTE_CONTROL_RETIRED_BOOT_LIMIT: "8"
+  ACTOR_ROUTE_INITIAL_FETCH_TIMEOUT: 30s
+  ACTOR_ROUTE_STARTUP_TIMEOUT: 120s
+  ACTOR_ROUTE_ENDPOINT_DIAL_TIMEOUT: 5s
+  ACTOR_ROUTE_ENDPOINT_RETIRE_GRACE: 5s
+  ACTOR_ROUTE_MAX_ENDPOINTS: "64"
+  ACTOR_ROUTE_MAX_RESYNC_ATTEMPTS: "32"
+  ACTOR_ROUTE_MAX_WATCH_FAILURES: "32"
+  ACTOR_ROUTE_RETRY_BACKOFF: 100ms
+  ACTOR_ROUTE_MAX_RETRY_BACKOFF: 1s
+  HTTP_SESSION_COOKIE_SECURE: "0"
+  HTTP_SESSION_COOKIE_ACTIVE_VERSION: "2"
+  HTTP_SESSION_TTL: 2h
+  WEB_LOGIN_IP_BURST: "100000"
+  WEB_LOGIN_IP_WINDOW: 1m
+  WEB_LOGIN_DEVICE_BURST: "100000"
+  WEB_LOGIN_DEVICE_WINDOW: 1m
+  GATE_TRANSPORT: websocket
+  GATE_WS_PATH: /ws
+  GATE_WS_METRICS: "1"
+  GATE_WS_RATE_PER_SEC: "0"
+  GATE_WS_RATE_BURST: "8192"
+  GATE_FRIENDSHIP_HTTP_RATE_PER_SEC: "10000"
+  GATE_FRIENDSHIP_HTTP_RATE_BURST: "20000"
+  GATE_OPPORTUNITY_HTTP_RATE_PER_SEC: "10000"
+  GATE_OPPORTUNITY_HTTP_RATE_BURST: "20000"
+  # Popup is post-Ready; cap concurrent Redis-backed evaluations.
+  GATE_OPPORTUNITY_HTTP_MAX_INFLIGHT: "256"
+  GATE_BOOT_REAPER_MODE: enabled
+  GATE_HTTP_TRUSTED_PROXIES: ""
+  GATE_WS_TRUSTED_PROXIES: ""
+  GATE_WS_ALLOWED_ORIGINS: "farm-gate:8080,farm-gate.developer_026-qqfarm.svc.cluster.local:8080,198.18.0.10:31880,198.18.0.11:31880,198.18.0.12:31880,198.18.0.13:31880,198.18.0.10:31881,198.18.0.11:31881,198.18.0.12:31881,198.18.0.13:31881,127.0.0.1:31880,127.0.0.1:31881,localhost:31880,localhost:31881"
+  WSS_ENDPOINT: ws://198.18.0.10:31881/ws
+  H5_PUBLIC_HOST: 198.18.0.10
+  H5_PUBLIC_ORIGIN: http://198.18.0.10:31881
+  H5_PUBLIC_WSS: ws://198.18.0.10:31881/ws
+  WORKER_HEALTH_LISTEN: ":9201"
+  WORKER_PPROF_ENABLED: "1"
+  WORKER_POLL_INTERVAL: 5s
+  # Must exceed idle backoff plus a bounded scan; a shorter threshold caused
+  # healthy recovery loops to flicker unready at the scrape boundary.
+  WORKER_READINESS_MAX_SCAN_AGE_V1: 30s
+  THEFT_WORKER_POLL_INTERVAL: 250ms
+  THEFT_WORKER_IDLE_MAX_INTERVAL: 2s
+  THEFT_DUE_OBSERVE_INTERVAL: 60s
+  SOURCE_ORDER_WORKER_BUCKETS_PER_ROUND: "256"
+  SOURCE_ORDER_WORKER_IDLE_MAX_INTERVAL: 15s
+  SOURCE_ORDER_DUE_OBSERVE_INTERVAL: 10s
+  SOURCE_ORDER_DISCOVERY_CACHE_TTL: 5s
+  SOURCE_ORDER_DISCOVERY_CACHE_LIMIT: "512"
+  SOURCE_ORDER_SCAN_LEASE_ENABLED: "false"
+  SOURCE_ORDER_RECOVERY_GRACE: 60s
+  # Route-fenced commit proof rollout defaults OFF. Shadow and production
+  # prefer are explicit operator stages; prefer boots only after ephemeral
+  # holder/boot publication has converged through the watched RouteSnapshot.
+  SOURCE_ORDER_COMMIT_PROOF_MODE: prefer
+  SOURCE_ORDER_COMMIT_PROOF_TTL: 10s
+  SOURCE_ORDER_COMMIT_PROOF_LEASE_SAFETY_MARGIN: 2s
+  # Keep normal CARE/HARVEST work on the in-process direct path; Worker scans
+  # remain crash/retry recovery rather than the primary executor.
+  CARE_DIRECT_WORKERS: "32"
+  CARE_DIRECT_QUEUE_SIZE: "131072"
+  CARE_DIRECT_QUEUE_BYTES: "268435456"
+  CARE_DIRECT_COMPLETION_BATCH_SIZE: "64"
+  CARE_DIRECT_COMPLETION_BATCH_WAIT: 1ms
+  FARM_WORKER_ASSIGNMENT_MODE: route
+  WORKER_CLAIM_LEASE: 5s
+  WORKER_OPERATION_TIMEOUT: 3s
+  FARM_OPPORTUNITY_WAKEUP_ENABLED: "true"
+  FARM_OPPORTUNITY_WAKEUP_POLL_INTERVAL: 1s
+  FARM_OPPORTUNITY_WAKEUP_IDLE_MAX_INTERVAL: 5s
+  FARM_OPPORTUNITY_WAKEUP_ASSIGNMENT_MODE: route
+  GUARD_SYNC_WORKER_ENABLED: "false"
+  MAIL_WORKER_ENABLED: "false"
+  GATE_PREAUTH_MAX_CONNECTIONS: "8192"
+  GATE_PREAUTH_MAX_CONNECTIONS_PER_IP: "8192"
+  GATE_PREAUTH_MAX_FRAMES_PER_CONNECTION: "1"
+  GATE_PREAUTH_MAX_BYTES_PER_CONNECTION: "65536"
+  GATE_PREAUTH_MAX_BYTES_PER_IP: "1048576"
+  GATE_PREAUTH_MAX_BYTES_POD: "67108864"
+  GATE_PREAUTH_HELLO_TIMEOUT: 10s
+  # Keep Gate admission coupled to the currently verified downlink capacity.
+  GATE_BACKEND_MAX_INFLIGHT: "1536"
+  GATE_BACKEND_RPC_TIMEOUT: 3s
+  GATE_BACKEND_ADMISSION_WAIT: 500ms
+  MAX_CONCURRENT_ACTOR_LOADS: "2000"
+  MAX_PENDING_ACTOR_LOADS: "4096"
+  ACTIVATION_RATE_PER_SEC: "0"
+  HOLDER_HEARTBEAT_TIMEOUT: 8s
+  HOLDER_REGISTRY_OPERATION_TIMEOUT: 8s
+  HOLDER_HEARTBEAT_FAILURE_THRESHOLD: "8"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: farm-opportunity-mode
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-opportunity-mode
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+data:
+  header-read-mode: narrow
+  hint-transport: pubsub
+  stage: compatibility

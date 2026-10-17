@@ -1,0 +1,7 @@
+NAME                                READY   STATUS    RESTARTS   AGE     IP             NODE            NOMINATED NODE   READINESS GATES
+farm-gate-57cd676cbc-ct9fd          1/1     Running   0          7s      198.18.0.15    198.18.0.16    <none>           <none>
+farm-svr-0                          1/1     Running   0          2m41s   198.18.0.17   198.18.0.18   <none>           <none>
+farm-worker-a-8c9dcbf44-7f2w5       1/1     Running   0          116s    198.18.0.19   198.18.0.20    <none>           <none>
+farm-worker-b-5fdcbff857-xqsvk      1/1     Running   0          116s    198.18.0.21   198.18.0.22   <none>           <none>
+player-svr-0                        1/1     Running   0          2m41s   198.18.0.23   198.18.0.24    <none>           <none>
+route-controller-86b9d5ff69-msc89   1/1     Running   0          21s     198.18.0.25   198.18.0.26    <none>           <none>

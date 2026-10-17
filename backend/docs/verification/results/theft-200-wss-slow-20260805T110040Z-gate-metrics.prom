@@ -1,0 +1,622 @@
+# HELP farm_gate_boot_lease_renew_attempts_total GateBoot lease authority renew attempts.
+# TYPE farm_gate_boot_lease_renew_attempts_total counter
+farm_gate_boot_lease_renew_attempts_total 4
+# HELP farm_gate_boot_lease_renew_failures_total Failed GateBoot lease renewals; failures never extend local trust.
+# TYPE farm_gate_boot_lease_renew_failures_total counter
+farm_gate_boot_lease_renew_failures_total 0
+# HELP farm_gate_boot_lease_renew_successes_total Successful GateBoot lease renewals.
+# TYPE farm_gate_boot_lease_renew_successes_total counter
+farm_gate_boot_lease_renew_successes_total 4
+# HELP farm_gate_boot_lease_seconds_remaining Seconds remaining before this GateBoot becomes untrusted; never negative.
+# TYPE farm_gate_boot_lease_seconds_remaining gauge
+farm_gate_boot_lease_seconds_remaining 14.598846181
+# HELP farm_gate_boot_lease_trusted 1 while this exact GateBoot fence is within its last Redis-confirmed local trust deadline.
+# TYPE farm_gate_boot_lease_trusted gauge
+farm_gate_boot_lease_trusted 1
+# HELP farm_gate_command_admission_total Gate command admission pipeline stage counters (ADMITTED = passed all Gate checks before logic.ExecuteCommand).
+# TYPE farm_gate_command_admission_total counter
+farm_gate_command_admission_total{stage="ADMITTED"} 10429
+# HELP farm_gate_command_post_seconds Gate command pipeline: response encode + subscription bookkeeping.
+# TYPE farm_gate_command_post_seconds histogram
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="0.0001"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="0.0005"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="0.001"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="0.0025"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="0.005"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="0.01"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="0.025"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="0.05"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="0.1"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="0.25"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="0.5"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="1"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="2.5"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="5"} 1
+farm_gate_command_post_seconds_bucket{command_type="BUY",le="+Inf"} 1
+farm_gate_command_post_seconds_sum{command_type="BUY"} 4.108e-06
+farm_gate_command_post_seconds_count{command_type="BUY"} 1
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.0001"} 9613
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.0005"} 9627
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.001"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.0025"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.005"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.01"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.025"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.05"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.1"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.25"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.5"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="1"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="2.5"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="5"} 9630
+farm_gate_command_post_seconds_bucket{command_type="GET_OPERATION_RESULT",le="+Inf"} 9630
+farm_gate_command_post_seconds_sum{command_type="GET_OPERATION_RESULT"} 0.023050043999999967
+farm_gate_command_post_seconds_count{command_type="GET_OPERATION_RESULT"} 9630
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.0001"} 374
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.0005"} 388
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.001"} 393
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.0025"} 395
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.005"} 398
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.01"} 399
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.025"} 399
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.05"} 399
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.1"} 399
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.25"} 399
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="0.5"} 399
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="1"} 399
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="2.5"} 399
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="5"} 399
+farm_gate_command_post_seconds_bucket{command_type="JOIN_FARM",le="+Inf"} 399
+farm_gate_command_post_seconds_sum{command_type="JOIN_FARM"} 0.033798746000000046
+farm_gate_command_post_seconds_count{command_type="JOIN_FARM"} 399
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="0.0001"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="0.0005"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="0.001"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="0.0025"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="0.005"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="0.01"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="0.025"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="0.05"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="0.1"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="0.25"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="0.5"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="1"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="2.5"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="5"} 1
+farm_gate_command_post_seconds_bucket{command_type="PLANT",le="+Inf"} 1
+farm_gate_command_post_seconds_sum{command_type="PLANT"} 3.096e-06
+farm_gate_command_post_seconds_count{command_type="PLANT"} 1
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="0.0001"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="0.0005"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="0.001"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="0.0025"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="0.005"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="0.01"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="0.025"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="0.05"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="0.1"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="0.25"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="0.5"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="1"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="2.5"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="5"} 202
+farm_gate_command_post_seconds_bucket{command_type="THEFT",le="+Inf"} 202
+farm_gate_command_post_seconds_sum{command_type="THEFT"} 0.0005100399999999997
+farm_gate_command_post_seconds_count{command_type="THEFT"} 202
+# HELP farm_gate_command_pre_permit_seconds Gate command pipeline: admission/decode/lookup before permit issuance.
+# TYPE farm_gate_command_pre_permit_seconds histogram
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="0.0001"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="0.0005"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="0.001"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="0.0025"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="0.005"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="0.01"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="0.025"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="0.05"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="0.1"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="0.25"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="0.5"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="1"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="2.5"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="5"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="BUY",le="+Inf"} 1
+farm_gate_command_pre_permit_seconds_sum{command_type="BUY"} 3.1238e-05
+farm_gate_command_pre_permit_seconds_count{command_type="BUY"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.0001"} 9606
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.0005"} 9623
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.001"} 9624
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.0025"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.005"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.01"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.025"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.05"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.1"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.25"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.5"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="1"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="2.5"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="5"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="GET_OPERATION_RESULT",le="+Inf"} 9630
+farm_gate_command_pre_permit_seconds_sum{command_type="GET_OPERATION_RESULT"} 0.14294962600000016
+farm_gate_command_pre_permit_seconds_count{command_type="GET_OPERATION_RESULT"} 9630
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.0001"} 270
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.0005"} 298
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.001"} 311
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.0025"} 339
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.005"} 373
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.01"} 399
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.025"} 399
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.05"} 399
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.1"} 399
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.25"} 399
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="0.5"} 399
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="1"} 399
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="2.5"} 399
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="5"} 399
+farm_gate_command_pre_permit_seconds_bucket{command_type="JOIN_FARM",le="+Inf"} 399
+farm_gate_command_pre_permit_seconds_sum{command_type="JOIN_FARM"} 0.35014288600000004
+farm_gate_command_pre_permit_seconds_count{command_type="JOIN_FARM"} 399
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="0.0001"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="0.0005"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="0.001"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="0.0025"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="0.005"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="0.01"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="0.025"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="0.05"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="0.1"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="0.25"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="0.5"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="1"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="2.5"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="5"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="PLANT",le="+Inf"} 1
+farm_gate_command_pre_permit_seconds_sum{command_type="PLANT"} 5.9452e-05
+farm_gate_command_pre_permit_seconds_count{command_type="PLANT"} 1
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="0.0001"} 334
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="0.0005"} 358
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="0.001"} 371
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="0.0025"} 393
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="0.005"} 398
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="0.01"} 398
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="0.025"} 398
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="0.05"} 398
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="0.1"} 398
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="0.25"} 398
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="0.5"} 398
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="1"} 398
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="2.5"} 398
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="5"} 398
+farm_gate_command_pre_permit_seconds_bucket{command_type="THEFT",le="+Inf"} 398
+farm_gate_command_pre_permit_seconds_sum{command_type="THEFT"} 0.07686915899999988
+farm_gate_command_pre_permit_seconds_count{command_type="THEFT"} 398
+# HELP farm_gate_command_rpc_server_seconds Gate command pipeline: logic.ExecuteCommand RPC round-trip.
+# TYPE farm_gate_command_rpc_server_seconds histogram
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="0.0001"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="0.0005"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="0.001"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="0.0025"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="0.005"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="0.01"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="0.025"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="0.05"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="0.1"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="0.25"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="0.5"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="1"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="2.5"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="5"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="BUY",le="+Inf"} 1
+farm_gate_command_rpc_server_seconds_sum{command_type="BUY"} 0.002175649
+farm_gate_command_rpc_server_seconds_count{command_type="BUY"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.0001"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.0005"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.001"} 46
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.0025"} 727
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.005"} 905
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.01"} 3489
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.025"} 9211
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.05"} 9501
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.1"} 9630
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.25"} 9630
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="0.5"} 9630
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="1"} 9630
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="2.5"} 9630
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="5"} 9630
+farm_gate_command_rpc_server_seconds_bucket{command_type="GET_OPERATION_RESULT",le="+Inf"} 9630
+farm_gate_command_rpc_server_seconds_sum{command_type="GET_OPERATION_RESULT"} 123.79273850900006
+farm_gate_command_rpc_server_seconds_count{command_type="GET_OPERATION_RESULT"} 9630
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.0001"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.0005"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.001"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.0025"} 192
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.005"} 216
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.01"} 242
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.025"} 258
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.05"} 341
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.1"} 399
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.25"} 399
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="0.5"} 399
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="1"} 399
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="2.5"} 399
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="5"} 399
+farm_gate_command_rpc_server_seconds_bucket{command_type="JOIN_FARM",le="+Inf"} 399
+farm_gate_command_rpc_server_seconds_sum{command_type="JOIN_FARM"} 7.195900863999996
+farm_gate_command_rpc_server_seconds_count{command_type="JOIN_FARM"} 399
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="0.0001"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="0.0005"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="0.001"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="0.0025"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="0.005"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="0.01"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="0.025"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="0.05"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="0.1"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="0.25"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="0.5"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="1"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="2.5"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="5"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="PLANT",le="+Inf"} 1
+farm_gate_command_rpc_server_seconds_sum{command_type="PLANT"} 0.007025557
+farm_gate_command_rpc_server_seconds_count{command_type="PLANT"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="0.0001"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="0.0005"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="0.001"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="0.0025"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="0.005"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="0.01"} 0
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="0.025"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="0.05"} 1
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="0.1"} 3
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="0.25"} 10
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="0.5"} 18
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="1"} 61
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="2.5"} 194
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="5"} 202
+farm_gate_command_rpc_server_seconds_bucket{command_type="THEFT",le="+Inf"} 202
+farm_gate_command_rpc_server_seconds_sum{command_type="THEFT"} 278.85617196799996
+farm_gate_command_rpc_server_seconds_count{command_type="THEFT"} 202
+# HELP farm_gate_join_accept_without_snapshot_total Timed-out joins that observed ACCEPTED but no queue-accepted Snapshot.
+# TYPE farm_gate_join_accept_without_snapshot_total counter
+farm_gate_join_accept_without_snapshot_total 0
+# HELP farm_gate_join_pending_timeout_total PendingJoin records closed by their shared liveness deadline.
+# TYPE farm_gate_join_pending_timeout_total counter
+farm_gate_join_pending_timeout_total 0
+# HELP farm_gate_join_snapshot_without_accept_total Timed-out joins that queue-accepted Snapshot but did not observe ACCEPTED.
+# TYPE farm_gate_join_snapshot_without_accept_total counter
+farm_gate_join_snapshot_without_accept_total 0
+# HELP farm_gate_join_stale_callback_total Late or wrong-fence Join callbacks discarded after replacement or terminal close.
+# TYPE farm_gate_join_stale_callback_total counter
+farm_gate_join_stale_callback_total 0
+# HELP farm_gate_join_subscription_mismatch_total Join result and Snapshot callbacks rejected for different subscription IDs.
+# TYPE farm_gate_join_subscription_mismatch_total counter
+farm_gate_join_subscription_mismatch_total 0
+# HELP farm_gate_legacy_implicit_bind_total Legacy unfenced Snapshot callbacks admitted only by compatibility mode.
+# TYPE farm_gate_legacy_implicit_bind_total counter
+farm_gate_legacy_implicit_bind_total 0
+# HELP farm_gate_pending_join_age_seconds Age in seconds of the oldest non-terminal local PendingJoin.
+# TYPE farm_gate_pending_join_age_seconds gauge
+farm_gate_pending_join_age_seconds 0
+# HELP farm_gate_pending_join_current Current non-terminal PendingJoin records across local connections.
+# TYPE farm_gate_pending_join_current gauge
+farm_gate_pending_join_current 0
+# HELP farm_gate_preauth_bytes Current admitted FarmFrame bytes held by PRE_AUTH connections.
+# TYPE farm_gate_preauth_bytes gauge
+farm_gate_preauth_bytes 0
+# HELP farm_gate_preauth_connections Current transport connections waiting for ClientHello activation.
+# TYPE farm_gate_preauth_connections gauge
+farm_gate_preauth_connections 0
+# HELP farm_gate_preauth_duration_seconds Time spent waiting for ClientHello activation.
+# TYPE farm_gate_preauth_duration_seconds histogram
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="0.01"} 200
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="0.05"} 200
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="0.1"} 200
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="0.25"} 200
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="0.5"} 200
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="1"} 200
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="2"} 200
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="5"} 200
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="10"} 200
+farm_gate_preauth_duration_seconds_bucket{result="authenticated",le="+Inf"} 200
+farm_gate_preauth_duration_seconds_sum{result="authenticated"} 0.14903783700000006
+farm_gate_preauth_duration_seconds_count{result="authenticated"} 200
+# HELP farm_gate_preauth_transitions_total PRE_AUTH connection exits by result.
+# TYPE farm_gate_preauth_transitions_total counter
+farm_gate_preauth_transitions_total{result="authenticated"} 200
+# HELP farm_gate_subscription_lease_renew_batches_total BatchRenewSubscriptions RPC batches sent to Farm Holders.
+# TYPE farm_gate_subscription_lease_renew_batches_total counter
+farm_gate_subscription_lease_renew_batches_total 1
+# HELP farm_gate_subscription_lease_renew_duration_seconds BatchRenewSubscriptions RPC round-trip latency.
+# TYPE farm_gate_subscription_lease_renew_duration_seconds histogram
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.0001"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.0005"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.001"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.0025"} 0
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.005"} 1
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.01"} 1
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.025"} 1
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.05"} 1
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.1"} 1
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.25"} 1
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="0.5"} 1
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="1"} 1
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="2.5"} 1
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="5"} 1
+farm_gate_subscription_lease_renew_duration_seconds_bucket{le="+Inf"} 1
+farm_gate_subscription_lease_renew_duration_seconds_sum 0.002522583
+farm_gate_subscription_lease_renew_duration_seconds_count 1
+# HELP farm_gate_subscription_lease_renew_entries_total Individual subscription lease entries sent inside renew batches.
+# TYPE farm_gate_subscription_lease_renew_entries_total counter
+farm_gate_subscription_lease_renew_entries_total 200
+# HELP farm_gate_subscription_lease_results_total Per-entry subscription lease renew results by wire status.
+# TYPE farm_gate_subscription_lease_results_total counter
+farm_gate_subscription_lease_results_total{status="RENEWED"} 200
+# HELP farm_gate_ticket_operation_seconds Ticket store operation latency.
+# TYPE farm_gate_ticket_operation_seconds histogram
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.0001"} 0
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.0005"} 188
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.001"} 200
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.0025"} 200
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.005"} 200
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.01"} 200
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.025"} 200
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.05"} 200
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.1"} 200
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.25"} 200
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="0.5"} 200
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="1"} 200
+farm_gate_ticket_operation_seconds_bucket{operation="activate",le="+Inf"} 200
+farm_gate_ticket_operation_seconds_sum{operation="activate"} 0.07628708600000007
+farm_gate_ticket_operation_seconds_count{operation="activate"} 200
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.0001"} 0
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.0005"} 329
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.001"} 386
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.0025"} 399
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.005"} 400
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.01"} 400
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.025"} 400
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.05"} 400
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.1"} 400
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.25"} 400
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="0.5"} 400
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="1"} 400
+farm_gate_ticket_operation_seconds_bucket{operation="save",le="+Inf"} 400
+farm_gate_ticket_operation_seconds_sum{operation="save"} 0.14800161699999984
+farm_gate_ticket_operation_seconds_count{operation="save"} 400
+# HELP farm_gate_ticket_operations_total Ticket store operations by operation and result.
+# TYPE farm_gate_ticket_operations_total counter
+farm_gate_ticket_operations_total{operation="activate",result="ok"} 200
+farm_gate_ticket_operations_total{operation="save",result="ok"} 400
+# HELP farmgate_downlink_batch_items DeliverBatch request item count (ServerPush fan-out size).
+# TYPE farmgate_downlink_batch_items histogram
+farmgate_downlink_batch_items_bucket{le="1"} 220
+farmgate_downlink_batch_items_bucket{le="2"} 231
+farmgate_downlink_batch_items_bucket{le="4"} 247
+farmgate_downlink_batch_items_bucket{le="8"} 258
+farmgate_downlink_batch_items_bucket{le="16"} 265
+farmgate_downlink_batch_items_bucket{le="32"} 269
+farmgate_downlink_batch_items_bucket{le="64"} 301
+farmgate_downlink_batch_items_bucket{le="128"} 301
+farmgate_downlink_batch_items_bucket{le="256"} 301
+farmgate_downlink_batch_items_bucket{le="512"} 301
+farmgate_downlink_batch_items_bucket{le="+Inf"} 301
+farmgate_downlink_batch_items_sum 2400
+farmgate_downlink_batch_items_count 301
+# HELP farmgate_downlink_bindings_active Current connection registry bindings.
+# TYPE farmgate_downlink_bindings_active gauge
+farmgate_downlink_bindings_active 0
+# HELP farmgate_downlink_delivered_total Downlink frames successfully enqueued to connection writers.
+# TYPE farmgate_downlink_delivered_total counter
+farmgate_downlink_delivered_total 2400
+# HELP farmgate_ws_bytes_received_total Total bytes received from clients.
+# TYPE farmgate_ws_bytes_received_total counter
+farmgate_ws_bytes_received_total 1.551028e+06
+# HELP farmgate_ws_bytes_sent_total Total bytes sent to clients.
+# TYPE farmgate_ws_bytes_sent_total counter
+farmgate_ws_bytes_sent_total 2.021411e+06
+# HELP farmgate_ws_conn_active Current active websocket connections.
+# TYPE farmgate_ws_conn_active gauge
+farmgate_ws_conn_active 0
+# HELP farmgate_ws_conn_rejected_total Rejected connections (rate limit / invalid).
+# TYPE farmgate_ws_conn_rejected_total counter
+farmgate_ws_conn_rejected_total 0
+# HELP farmgate_ws_conn_total Total accepted websocket connections.
+# TYPE farmgate_ws_conn_total counter
+farmgate_ws_conn_total 200
+# HELP farmgate_ws_drain_sessions_remaining Connections remaining after drain has started.
+# TYPE farmgate_ws_drain_sessions_remaining gauge
+farmgate_ws_drain_sessions_remaining 0
+# HELP farmgate_ws_drain_total Total graceful drain transitions.
+# TYPE farmgate_ws_drain_total counter
+farmgate_ws_drain_total 0
+# HELP farmgate_ws_frame_recv_bytes Received frame size distribution.
+# TYPE farmgate_ws_frame_recv_bytes histogram
+farmgate_ws_frame_recv_bytes_bucket{le="64"} 200
+farmgate_ws_frame_recv_bytes_bucket{le="256"} 10829
+farmgate_ws_frame_recv_bytes_bucket{le="1024"} 10829
+farmgate_ws_frame_recv_bytes_bucket{le="4096"} 10829
+farmgate_ws_frame_recv_bytes_bucket{le="16384"} 10829
+farmgate_ws_frame_recv_bytes_bucket{le="65536"} 10829
+farmgate_ws_frame_recv_bytes_bucket{le="262144"} 10829
+farmgate_ws_frame_recv_bytes_bucket{le="+Inf"} 10829
+farmgate_ws_frame_recv_bytes_sum 1.551028e+06
+farmgate_ws_frame_recv_bytes_count 10829
+# HELP farmgate_ws_frame_sent_bytes Sent frame size distribution.
+# TYPE farmgate_ws_frame_sent_bytes histogram
+farmgate_ws_frame_sent_bytes_bucket{le="64"} 200
+farmgate_ws_frame_sent_bytes_bucket{le="256"} 13218
+farmgate_ws_frame_sent_bytes_bucket{le="1024"} 13428
+farmgate_ws_frame_sent_bytes_bucket{le="4096"} 13428
+farmgate_ws_frame_sent_bytes_bucket{le="16384"} 13428
+farmgate_ws_frame_sent_bytes_bucket{le="65536"} 13428
+farmgate_ws_frame_sent_bytes_bucket{le="262144"} 13428
+farmgate_ws_frame_sent_bytes_bucket{le="+Inf"} 13428
+farmgate_ws_frame_sent_bytes_sum 2.021411e+06
+farmgate_ws_frame_sent_bytes_count 13428
+# HELP farmgate_ws_handle_latency_seconds HandleBinary processing latency.
+# TYPE farmgate_ws_handle_latency_seconds histogram
+farmgate_ws_handle_latency_seconds_bucket{le="0.0001"} 200
+farmgate_ws_handle_latency_seconds_bucket{le="0.0005"} 369
+farmgate_ws_handle_latency_seconds_bucket{le="0.001"} 429
+farmgate_ws_handle_latency_seconds_bucket{le="0.005"} 1511
+farmgate_ws_handle_latency_seconds_bucket{le="0.01"} 4108
+farmgate_ws_handle_latency_seconds_bucket{le="0.05"} 10215
+farmgate_ws_handle_latency_seconds_bucket{le="0.1"} 10434
+farmgate_ws_handle_latency_seconds_bucket{le="0.5"} 10449
+farmgate_ws_handle_latency_seconds_bucket{le="1"} 10492
+farmgate_ws_handle_latency_seconds_bucket{le="+Inf"} 10829
+farmgate_ws_handle_latency_seconds_sum 999.4829922549956
+farmgate_ws_handle_latency_seconds_count 10829
+# HELP farmgate_ws_lifecycle_serving 1 while accepting traffic, 0 while draining.
+# TYPE farmgate_ws_lifecycle_serving gauge
+farmgate_ws_lifecycle_serving 1
+# HELP farmgate_ws_msg_received_total Total business frames received.
+# TYPE farmgate_ws_msg_received_total counter
+farmgate_ws_msg_received_total 10829
+# HELP farmgate_ws_msg_sent_total Total business frames sent.
+# TYPE farmgate_ws_msg_sent_total counter
+farmgate_ws_msg_sent_total 13428
+# HELP farmgate_ws_slow_client_kick_total Slow clients kicked due to full send queue.
+# TYPE farmgate_ws_slow_client_kick_total counter
+farmgate_ws_slow_client_kick_total 0
+# HELP farmgate_ws_write_batch_size Downlink frames drained per wakeup.
+# TYPE farmgate_ws_write_batch_size histogram
+farmgate_ws_write_batch_size_bucket{le="1"} 3198
+farmgate_ws_write_batch_size_bucket{le="2"} 3198
+farmgate_ws_write_batch_size_bucket{le="4"} 3198
+farmgate_ws_write_batch_size_bucket{le="8"} 3198
+farmgate_ws_write_batch_size_bucket{le="16"} 3198
+farmgate_ws_write_batch_size_bucket{le="32"} 3198
+farmgate_ws_write_batch_size_bucket{le="64"} 3198
+farmgate_ws_write_batch_size_bucket{le="+Inf"} 3198
+farmgate_ws_write_batch_size_sum 3198
+farmgate_ws_write_batch_size_count 3198
+# HELP go_gc_duration_seconds A summary of the wall-time pause (stop-the-world) duration in garbage collection cycles.
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile="0"} 0.000109176
+go_gc_duration_seconds{quantile="0.25"} 0.000168337
+go_gc_duration_seconds{quantile="0.5"} 0.000193264
+go_gc_duration_seconds{quantile="0.75"} 0.000305896
+go_gc_duration_seconds{quantile="1"} 0.002230392
+go_gc_duration_seconds_sum 0.008392737
+go_gc_duration_seconds_count 25
+# HELP go_gc_gogc_percent Heap size target percentage configured by the user, otherwise 100. This value is set by the GOGC environment variable, and the runtime/debug.SetGCPercent function. Sourced from /gc/gogc:percent.
+# TYPE go_gc_gogc_percent gauge
+go_gc_gogc_percent 100
+# HELP go_gc_gomemlimit_bytes Go runtime memory limit configured by the user, otherwise math.MaxInt64. This value is set by the GOMEMLIMIT environment variable, and the runtime/debug.SetMemoryLimit function. Sourced from /gc/gomemlimit:bytes.
+# TYPE go_gc_gomemlimit_bytes gauge
+go_gc_gomemlimit_bytes 9.223372036854776e+18
+# HELP go_goroutines Number of goroutines that currently exist.
+# TYPE go_goroutines gauge
+go_goroutines 38
+# HELP go_info Information about the Go environment.
+# TYPE go_info gauge
+go_info{version="go1.26.3-X:nodwarf5"} 1
+# HELP go_memstats_alloc_bytes Number of bytes allocated in heap and currently in use. Equals to /memory/classes/heap/objects:bytes.
+# TYPE go_memstats_alloc_bytes gauge
+go_memstats_alloc_bytes 1.287956e+07
+# HELP go_memstats_alloc_bytes_total Total number of bytes allocated in heap until now, even if released already. Equals to /gc/heap/allocs:bytes.
+# TYPE go_memstats_alloc_bytes_total counter
+go_memstats_alloc_bytes_total 1.55307208e+08
+# HELP go_memstats_buck_hash_sys_bytes Number of bytes used by the profiling bucket hash table. Equals to /memory/classes/profiling/buckets:bytes.
+# TYPE go_memstats_buck_hash_sys_bytes gauge
+go_memstats_buck_hash_sys_bytes 1.500089e+06
+# HELP go_memstats_frees_total Total number of heap objects frees. Equals to /gc/heap/frees:objects + /gc/heap/tiny/allocs:objects.
+# TYPE go_memstats_frees_total counter
+go_memstats_frees_total 1.883127e+06
+# HELP go_memstats_gc_sys_bytes Number of bytes used for garbage collection system metadata. Equals to /memory/classes/metadata/other:bytes.
+# TYPE go_memstats_gc_sys_bytes gauge
+go_memstats_gc_sys_bytes 4.300544e+06
+# HELP go_memstats_heap_alloc_bytes Number of heap bytes allocated and currently in use, same as go_memstats_alloc_bytes. Equals to /memory/classes/heap/objects:bytes.
+# TYPE go_memstats_heap_alloc_bytes gauge
+go_memstats_heap_alloc_bytes 1.287956e+07
+# HELP go_memstats_heap_idle_bytes Number of heap bytes waiting to be used. Equals to /memory/classes/heap/released:bytes + /memory/classes/heap/free:bytes.
+# TYPE go_memstats_heap_idle_bytes gauge
+go_memstats_heap_idle_bytes 2.6443776e+07
+# HELP go_memstats_heap_inuse_bytes Number of heap bytes that are in use. Equals to /memory/classes/heap/objects:bytes + /memory/classes/heap/unused:bytes
+# TYPE go_memstats_heap_inuse_bytes gauge
+go_memstats_heap_inuse_bytes 2.5198592e+07
+# HELP go_memstats_heap_objects Number of currently allocated objects. Equals to /gc/heap/objects:objects.
+# TYPE go_memstats_heap_objects gauge
+go_memstats_heap_objects 50200
+# HELP go_memstats_heap_released_bytes Number of heap bytes released to OS. Equals to /memory/classes/heap/released:bytes.
+# TYPE go_memstats_heap_released_bytes gauge
+go_memstats_heap_released_bytes 1.9857408e+07
+# HELP go_memstats_heap_sys_bytes Number of heap bytes obtained from system. Equals to /memory/classes/heap/objects:bytes + /memory/classes/heap/unused:bytes + /memory/classes/heap/released:bytes + /memory/classes/heap/free:bytes.
+# TYPE go_memstats_heap_sys_bytes gauge
+go_memstats_heap_sys_bytes 5.1642368e+07
+# HELP go_memstats_last_gc_time_seconds Number of seconds since 1970 of last garbage collection.
+# TYPE go_memstats_last_gc_time_seconds gauge
+go_memstats_last_gc_time_seconds 1.7859276844068003e+09
+# HELP go_memstats_mallocs_total Total number of heap objects allocated, both live and gc-ed. Semantically a counter version for go_memstats_heap_objects gauge. Equals to /gc/heap/allocs:objects + /gc/heap/tiny/allocs:objects.
+# TYPE go_memstats_mallocs_total counter
+go_memstats_mallocs_total 1.933327e+06
+# HELP go_memstats_mcache_inuse_bytes Number of bytes in use by mcache structures. Equals to /memory/classes/metadata/mcache/inuse:bytes.
+# TYPE go_memstats_mcache_inuse_bytes gauge
+go_memstats_mcache_inuse_bytes 73472
+# HELP go_memstats_mcache_sys_bytes Number of bytes used for mcache structures obtained from system. Equals to /memory/classes/metadata/mcache/inuse:bytes + /memory/classes/metadata/mcache/free:bytes.
+# TYPE go_memstats_mcache_sys_bytes gauge
+go_memstats_mcache_sys_bytes 80360
+# HELP go_memstats_mspan_inuse_bytes Number of bytes in use by mspan structures. Equals to /memory/classes/metadata/mspan/inuse:bytes.
+# TYPE go_memstats_mspan_inuse_bytes gauge
+go_memstats_mspan_inuse_bytes 605440
+# HELP go_memstats_mspan_sys_bytes Number of bytes used for mspan structures obtained from system. Equals to /memory/classes/metadata/mspan/inuse:bytes + /memory/classes/metadata/mspan/free:bytes.
+# TYPE go_memstats_mspan_sys_bytes gauge
+go_memstats_mspan_sys_bytes 750720
+# HELP go_memstats_next_gc_bytes Number of heap bytes when next garbage collection will take place. Equals to /gc/heap/goal:bytes.
+# TYPE go_memstats_next_gc_bytes gauge
+go_memstats_next_gc_bytes 2.2143274e+07
+# HELP go_memstats_other_sys_bytes Number of bytes used for other system allocations. Equals to /memory/classes/other:bytes.
+# TYPE go_memstats_other_sys_bytes gauge
+go_memstats_other_sys_bytes 6.936567e+06
+# HELP go_memstats_stack_inuse_bytes Number of bytes obtained from system for stack allocator in non-CGO environments. Equals to /memory/classes/heap/stacks:bytes.
+# TYPE go_memstats_stack_inuse_bytes gauge
+go_memstats_stack_inuse_bytes 2.883584e+06
+# HELP go_memstats_stack_sys_bytes Number of bytes obtained from system for stack allocator. Equals to /memory/classes/heap/stacks:bytes + /memory/classes/os-stacks:bytes.
+# TYPE go_memstats_stack_sys_bytes gauge
+go_memstats_stack_sys_bytes 2.883584e+06
+# HELP go_memstats_sys_bytes Number of bytes obtained from system. Equals to /memory/classes/total:byte.
+# TYPE go_memstats_sys_bytes gauge
+go_memstats_sys_bytes 6.8094232e+07
+# HELP go_sched_gomaxprocs_threads The current runtime.GOMAXPROCS setting, or the number of operating system threads that can execute user-level Go code simultaneously. Sourced from /sched/gomaxprocs:threads.
+# TYPE go_sched_gomaxprocs_threads gauge
+go_sched_gomaxprocs_threads 32
+# HELP go_threads Number of OS threads created.
+# TYPE go_threads gauge
+go_threads 38
+# HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.
+# TYPE process_cpu_seconds_total counter
+process_cpu_seconds_total 5.65
+# HELP process_max_fds Maximum number of open file descriptors.
+# TYPE process_max_fds gauge
+process_max_fds 524288
+# HELP process_network_receive_bytes_total Number of bytes received by the process over the network.
+# TYPE process_network_receive_bytes_total counter
+process_network_receive_bytes_total 2.41349840571e+11
+# HELP process_network_transmit_bytes_total Number of bytes sent by the process over the network.
+# TYPE process_network_transmit_bytes_total counter
+process_network_transmit_bytes_total 2.91346847901e+11
+# HELP process_open_fds Number of open file descriptors.
+# TYPE process_open_fds gauge
+process_open_fds 77
+# HELP process_resident_memory_bytes Resident memory size in bytes.
+# TYPE process_resident_memory_bytes gauge
+process_resident_memory_bytes 5.1679232e+07
+# HELP process_start_time_seconds Start time of the process since unix epoch in seconds.
+# TYPE process_start_time_seconds gauge
+process_start_time_seconds 1.78592767068e+09
+# HELP process_virtual_memory_bytes Virtual memory size in bytes.
+# TYPE process_virtual_memory_bytes gauge
+process_virtual_memory_bytes 4.111044608e+09
+# HELP process_virtual_memory_max_bytes Maximum amount of virtual memory available in bytes.
+# TYPE process_virtual_memory_max_bytes gauge
+process_virtual_memory_max_bytes 1.8446744073709552e+19
+# HELP promhttp_metric_handler_requests_in_flight Current number of scrapes being served.
+# TYPE promhttp_metric_handler_requests_in_flight gauge
+promhttp_metric_handler_requests_in_flight 1
+# HELP promhttp_metric_handler_requests_total Total number of scrapes by HTTP status code.
+# TYPE promhttp_metric_handler_requests_total counter
+promhttp_metric_handler_requests_total{code="200"} 42
+promhttp_metric_handler_requests_total{code="500"} 0
+promhttp_metric_handler_requests_total{code="503"} 0

@@ -1,0 +1,98 @@
+<view class="page">
+  <!-- Header -->
+  <view class="header">
+    <view class="header-left">
+      <text class="farm-title">经典农场</text>
+      <text class="farm-version">v{{farmVersion}}</text>
+    </view>
+    <view class="header-right">
+      <view class="status-badge {{status}}">
+        <text class="status-dot"></text>
+        <text class="status-text">{{statusText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Share banner (when viewing friend) -->
+  <view class="share-banner" wx:if="{{isVisitingFriend}}">
+    <text>正在访问好友 {{currentOwnerId}} 的农场</text>
+    <button class="back-btn" bindtap="backToMyFarm">返回我的农场</button>
+  </view>
+
+  <!-- Inventory -->
+  <view class="inventory-bar">
+    <view class="stat"><text class="stat-icon">💰</text><text class="stat-value">{{wallet}}</text></view>
+    <view class="stat"><text class="stat-icon">🥕</text><text class="stat-value">{{seeds}} 种子</text></view>
+    <view class="stat"><text class="stat-icon">🥕</text><text class="stat-value">{{carrots}} 萝卜</text></view>
+  </view>
+
+  <!-- Farm Grid -->
+  <view class="farm-grid">
+    <view
+      wx:for="{{plots}}"
+      wx:key="id"
+      class="{{plotClass(item)}}"
+      data-id="{{item.id}}"
+      bindtap="onPlotTap"
+    >
+      <text class="plot-icon">{{plotIcon(item)}}</text>
+      <text class="plot-label">{{plotLabel(item)}}</text>
+      <text wx:if="{{item.watered}}" class="water-mark">💧</text>
+    </view>
+  </view>
+
+  <!-- Tools (only for own farm) -->
+  <view class="tools-bar" wx:if="{{!isVisitingFriend}}">
+    <view class="tool-group">
+      <view class="tool-btn {{activeTool === 'plant' ? 'active' : ''}}" data-tool="plant" bindtap="selectTool">
+        <text class="tool-icon">🥕</text><text>种子</text>
+      </view>
+      <view class="tool-btn {{activeTool === 'water' ? 'active' : ''}}" data-tool="water" bindtap="selectTool">
+        <text class="tool-icon">💧</text><text>浇水</text>
+      </view>
+      <view class="tool-btn {{activeTool === 'harvest' ? 'active' : ''}}" data-tool="harvest" bindtap="selectTool">
+        <text class="tool-icon">👋</text><text>收获</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Shop actions -->
+  <view class="shop-bar" wx:if="{{!isVisitingFriend}}">
+    <button class="shop-btn" bindtap="buySeed">买种子 -10</button>
+    <button class="shop-btn" bindtap="sellCarrot">卖萝卜 +?</button>
+  </view>
+
+  <!-- Share & Friends -->
+  <view class="social-bar">
+    <button class="share-btn" bindtap="onShareAppMessage" open-type="share">
+      <text class="share-icon">📤</text> 分享农场
+    </button>
+  </view>
+
+  <view class="friends-bar" wx:if="{{friendList.length > 0}}">
+    <text class="friends-title">我的好友</text>
+    <scroll-view class="friends-scroll" scroll-x>
+      <view class="friend-item" wx:for="{{friendList}}" wx:key="playerId" data-id="{{item.playerId}}" bindtap="visitFriend">
+        <text class="friend-icon">👤</text>
+        <text class="friend-label">{{item.label}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- Message -->
+  <view class="message-bar {{isError ? 'error' : ''}}">
+    <text>{{message}}</text>
+  </view>
+
+  <!-- Accept Share Modal -->
+  <view class="modal-mask" wx:if="{{showAcceptShare}}">
+    <view class="modal-card">
+      <text class="modal-title">好友邀请</text>
+      <text class="modal-body">{{inviterLabel}} 邀请你访问农场！接受邀请后你们就互为好友了。</text>
+      <view class="modal-actions">
+        <button class="modal-btn cancel" bindtap="handleCancelShare">取消</button>
+        <button class="modal-btn confirm" bindtap="handleAcceptShare">接受邀请</button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,14 @@
+{
+  "schema_version": "cap-l2-driver-config.v1",
+  "listen": "127.0.0.1:19101",
+  "service": "gate",
+  "profile": "gate-session-qualification",
+  "maximum_inflight": 512,
+  "adapter": "gate_session_v1",
+  "gate": {
+    "http_url": "http://127.0.0.1:8080",
+    "ws_url": "ws://127.0.0.1:8080/ws",
+    "load_secret_env": "LOAD_TEST_TOKEN_SECRET",
+    "player_base": 900000000
+  }
+}

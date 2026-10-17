@@ -1,0 +1,239 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "farm-gate",
+    "labels": {
+      "app.kubernetes.io/name": "farm-gate",
+      "app.kubernetes.io/component": "gateway",
+      "app.kubernetes.io/part-of": "farm-game",
+      "farm.io/route-mode": "static"
+    }
+  },
+  "spec": {
+    "replicas": 3,
+    "revisionHistoryLimit": 3,
+    "strategy": {
+      "type": "RollingUpdate",
+      "rollingUpdate": {
+        "maxUnavailable": 0,
+        "maxSurge": 1
+      }
+    },
+    "selector": {
+      "matchLabels": {
+        "app.kubernetes.io/name": "farm-gate"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app.kubernetes.io/name": "farm-gate",
+          "app.kubernetes.io/component": "gateway",
+          "app.kubernetes.io/part-of": "farm-game",
+          "farm.io/route-mode": "static",
+          "farm.io/redis-client": "true"
+        }
+      },
+      "spec": {
+        "terminationGracePeriodSeconds": 60,
+        "securityContext": {
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        },
+        "topologySpreadConstraints": [
+          {
+            "maxSkew": 1,
+            "topologyKey": "topology.kubernetes.io/zone",
+            "whenUnsatisfiable": "ScheduleAnyway",
+            "labelSelector": {
+              "matchLabels": {
+                "app.kubernetes.io/name": "farm-gate"
+              }
+            }
+          },
+          {
+            "maxSkew": 1,
+            "topologyKey": "kubernetes.io/hostname",
+            "whenUnsatisfiable": "DoNotSchedule",
+            "labelSelector": {
+              "matchLabels": {
+                "app.kubernetes.io/name": "farm-gate"
+              }
+            }
+          }
+        ],
+        "affinity": {
+          "podAntiAffinity": {
+            "requiredDuringSchedulingIgnoredDuringExecution": [
+              {
+                "labelSelector": {
+                  "matchLabels": {
+                    "app.kubernetes.io/name": "farm-gate"
+                  }
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              }
+            ]
+          }
+        },
+        "containers": [
+          {
+            "name": "farm-gate",
+            "image": "registry.example.invalid/farm-game-runtime:static-staging-candidate",
+            "imagePullPolicy": "IfNotPresent",
+            "envFrom": [
+              {
+                "configMapRef": {
+                  "name": "farm-staging-platform"
+                }
+              }
+            ],
+            "env": [
+              {
+                "name": "FARM_SERVICE",
+                "value": "farm-gate"
+              },
+              {
+                "name": "FARM_REDIS_URL",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "farm-staging-secrets",
+                    "key": "redis-url"
+                  }
+                }
+              },
+              {
+                "name": "FARM_REDIS_CLUSTER_URLS",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "farm-staging-secrets",
+                    "key": "redis-cluster-urls",
+                    "optional": true
+                  }
+                }
+              },
+              {
+                "name": "PERMIT_SECRET",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "farm-staging-secrets",
+                    "key": "permit-secret"
+                  }
+                }
+              },
+              {
+                "name": "HTTP_SESSION_COOKIE_KEYRING",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "farm-staging-secrets",
+                    "key": "http-session-cookie-keyring"
+                  }
+                }
+              },
+              {
+                "name": "WEB_LOGIN_RATE_LIMIT_SECRET",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "farm-staging-secrets",
+                    "key": "web-login-rate-limit-secret"
+                  }
+                }
+              }
+            ],
+            "ports": [
+              {
+                "name": "http",
+                "containerPort": 8080,
+                "protocol": "TCP"
+              },
+              {
+                "name": "downlink",
+                "containerPort": 9092,
+                "protocol": "TCP"
+              },
+              {
+                "name": "control",
+                "containerPort": 9093,
+                "protocol": "TCP"
+              }
+            ],
+            "startupProbe": {
+              "httpGet": {
+                "path": "/healthz",
+                "port": "http"
+              },
+              "periodSeconds": 5,
+              "timeoutSeconds": 2,
+              "failureThreshold": 30
+            },
+            "readinessProbe": {
+              "httpGet": {
+                "path": "/readyz",
+                "port": "http"
+              },
+              "periodSeconds": 2,
+              "timeoutSeconds": 2,
+              "failureThreshold": 2,
+              "successThreshold": 1
+            },
+            "livenessProbe": {
+              "httpGet": {
+                "path": "/healthz",
+                "port": "http"
+              },
+              "periodSeconds": 10,
+              "timeoutSeconds": 2,
+              "failureThreshold": 3
+            },
+            "lifecycle": {
+              "preStop": {
+                "exec": {
+                  "command": [
+                    "/bin/sh",
+                    "-c",
+                    "kill -TERM 1"
+                  ]
+                }
+              }
+            },
+            "volumeMounts": [
+              {
+                "name": "farm-static-route",
+                "mountPath": "/etc/farm/routes",
+                "readOnly": true
+              }
+            ],
+            "resources": {
+              "requests": {
+                "cpu": "250m",
+                "memory": "256Mi"
+              },
+              "limits": {
+                "cpu": "1",
+                "memory": "1Gi"
+              }
+            }
+          }
+        ],
+        "volumes": [
+          {
+            "name": "farm-static-route",
+            "configMap": {
+              "name": "farm-static-route",
+              "items": [
+                {
+                  "key": "route-snapshot.json",
+                  "path": "route-snapshot.json",
+                  "mode": 420
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

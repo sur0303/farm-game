@@ -1,0 +1,136 @@
+{
+  "audited_at": "2026-08-09T12:27:51Z",
+  "authority": {
+    "farm": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-farm-q108091226392569922",
+        "holder_instance_id": "smoke-farm",
+        "last_transition_at_ms": "1786278406809",
+        "last_transition_digest": "64f50394d2efab04c45364d8ee0b9918f826b669ccf2769af9389a51be27537b",
+        "last_transition_id": "claim-FARM-q108091226392569922",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786278522151",
+        "lease_state": "ACTIVE",
+        "route_domain": "FARM",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-q108091226392569922:local:auth:farm:v1:s:0}:shard-authority"
+    },
+    "player": {
+      "fields": {
+        "assignment_revision": "1",
+        "authority_layout_version": "v1",
+        "hash_version": "2",
+        "holder_boot_id": "smoke-player-q108091226392569922",
+        "holder_instance_id": "smoke-player",
+        "last_transition_at_ms": "1786278406809",
+        "last_transition_digest": "e6c2168f4be7f61970b40df11bf35a46a2e25d4cf6c895115efbdcda06a3c562",
+        "last_transition_id": "claim-PLAYER-q108091226392569922",
+        "lease_epoch": "1",
+        "lease_expire_at_ms": "1786278522038",
+        "lease_state": "ACTIVE",
+        "route_domain": "PLAYER",
+        "schema_version": "1",
+        "virtual_shard_id": "0",
+        "writer_epoch": "1"
+      },
+      "redis_key": "{classic-farm:smoke-q108091226392569922:local:auth:player:v1:s:0}:shard-authority"
+    }
+  },
+  "business_oracle": {
+    "authority": {
+      "farm_version": 5,
+      "player_economy_version": 11,
+      "player_produce": 510,
+      "player_revision": 13,
+      "relation_epoch": 1,
+      "relation_id": "sid1_Rcqi-0h_px-cGCu52mdg4Qn37x6ylLsFZrrDlfyTuvo",
+      "stolen_total": 10,
+      "task_claimable_count": 0,
+      "task_growth_cursor": 1,
+      "task_state_version": 9,
+      "task_total_harvest": 1
+    },
+    "browser": {
+      "aFinalProduce": 510,
+      "aPlayerStateRevision": "13",
+      "bFarmVersionAfterTheft": "5",
+      "bStolenTotal": 10,
+      "bTheftPlotIndex": 0,
+      "friendActionMask": 13,
+      "ownerA": "1000003",
+      "ownerB": "1000002",
+      "relationEpoch": "1"
+    },
+    "checks": {
+      "farm_version": true,
+      "index_a": true,
+      "index_b": true,
+      "opportunity_models_present": true,
+      "pair_active_epoch": true,
+      "player_produce": true,
+      "player_revision": true,
+      "ready_visit_a_to_b": true,
+      "ready_visit_b_to_a": true,
+      "task_daily_growth_claimed": true,
+      "theft_total": true
+    },
+    "mismatches": [],
+    "verdict": "PASS"
+  },
+  "protocol_verdict": {
+    "finished_at": "2026-08-09T12:27:00Z",
+    "frames": 19,
+    "steps": {
+      "bootstrap": {
+        "status": "ok"
+      },
+      "bootstrap_refresh": {
+        "detail": "inventory map[2001:500] (produce landed), coin 90 unchanged",
+        "status": "ok"
+      },
+      "buy": {
+        "status": "ok"
+      },
+      "grow": {
+        "status": "ok"
+      },
+      "harvest": {
+        "status": "ok"
+      },
+      "hello": {
+        "status": "ok"
+      },
+      "join": {
+        "status": "ok"
+      },
+      "login": {
+        "status": "ok"
+      },
+      "plant": {
+        "detail": "plot=0 cycle=sid1_sDzX88y1GlgXqbUqtnVVeIkSNh5ytcVDcF185P7sCWw mature_at_ms=1786278418364 farm_version=1",
+        "status": "ok"
+      },
+      "premature_reject": {
+        "status": "ok"
+      },
+      "recovery_complete": {
+        "status": "ok"
+      },
+      "recovery_once": {
+        "detail": "ClientRecoveryComplete sent exactly once",
+        "status": "ok"
+      },
+      "register": {
+        "status": "ok"
+      }
+    },
+    "verdict": "PASS"
+  },
+  "route_snapshot_sha256": "410"
+}

@@ -1,0 +1,51 @@
+File: farm-svr
+Build ID: f974745a158477609fd90e93f0ea42b2c8e8031b
+Type: cpu
+Time: 2026-08-17 12:06:59 CST
+Duration: 12s, Total samples = 13.14s (109.49%)
+Active filters:
+   focus=farmgame
+Showing nodes accounting for 4.01s, 30.52% of 13.14s total
+Dropped 562 nodes (cum <= 0.07s)
+Showing top 40 nodes out of 385
+      flat  flat%   sum%        cum   cum%
+     0.60s  4.57%  4.57%      0.60s  4.57%  internal/runtime/syscall/linux.Syscall6
+     0.30s  2.28%  6.85%      0.30s  2.28%  runtime.memmove
+     0.28s  2.13%  8.98%      0.28s  2.13%  runtime.memclrNoHeapPointers
+     0.18s  1.37% 10.35%      0.18s  1.37%  runtime.nextFreeFast (inline)
+     0.15s  1.14% 11.49%      0.15s  1.14%  runtime.heapSetTypeSmallHeader (inline)
+     0.15s  1.14% 12.63%      0.15s  1.14%  runtime.step
+     0.13s  0.99% 13.62%      0.59s  4.49%  google.golang.org/protobuf/internal/impl.(*messageState).Range
+     0.12s  0.91% 14.54%      0.30s  2.28%  runtime.pcvalue
+     0.12s  0.91% 15.45%      0.20s  1.52%  runtime.tryDeferToSpanScan
+     0.11s  0.84% 16.29%      0.11s  0.84%  internal/runtime/maps.ctrlGroup.matchH2 (inline)
+     0.10s  0.76% 17.05%      0.10s  0.76%  aeshashbody
+     0.10s  0.76% 17.81%      0.28s  2.13%  google.golang.org/protobuf/internal/impl.(*MessageInfo).marshalAppendPointer
+     0.10s  0.76% 18.57%      0.37s  2.82%  runtime.adjustframe
+     0.09s  0.68% 19.25%      0.18s  1.37%  google.golang.org/protobuf/internal/impl.(*MessageInfo).sizePointerSlow
+     0.08s  0.61% 19.86%      1.42s 10.81%  runtime.mallocgc
+     0.07s  0.53% 20.40%      0.07s  0.53%  crypto/internal/fips140/sha256.blockSHANI
+     0.07s  0.53% 20.93%      0.07s  0.53%  farmgame/internal/storage/redis/rediskey.redisCRC16 (inline)
+     0.07s  0.53% 21.46%      0.17s  1.29%  internal/runtime/maps.(*Map).getWithoutKeySmallFastStr
+     0.07s  0.53% 21.99%      0.08s  0.61%  runtime.(*mspan).writeHeapBitsSmall
+     0.07s  0.53% 22.53%      0.74s  5.63%  runtime.mallocgcSmallScanNoHeader
+     0.07s  0.53% 23.06%      0.53s  4.03%  runtime.newobject
+     0.06s  0.46% 23.52%      0.09s  0.68%  farmgame/internal/logic/actor/activation.(*Controller).Stats
+     0.06s  0.46% 23.97%      1.43s 10.88%  farmgame/internal/storage/redis/authority.(*Store).Commit
+     0.06s  0.46% 24.43%      0.06s  0.46%  runtime.adjustpointers
+     0.06s  0.46% 24.89%      0.31s  2.36%  runtime.selectgo
+     0.06s  0.46% 25.34%      0.27s  2.05%  runtime.wbBufFlush1
+     0.06s  0.46% 25.80%      0.06s  0.46%  time.runtimeNow
+     0.05s  0.38% 26.18%      0.58s  4.41%  farmgame/internal/actormodel/fieldv2.validateNoUnknownMessage.func1
+     0.05s  0.38% 26.56%      0.37s  2.82%  google.golang.org/protobuf/internal/impl.(*MessageInfo).unmarshalPointerEager
+     0.05s  0.38% 26.94%      0.12s  0.91%  internal/runtime/maps.(*Iter).Next
+     0.05s  0.38% 27.32%      0.07s  0.53%  internal/sync.(*Mutex).Lock
+     0.05s  0.38% 27.70%      0.05s  0.38%  memeqbody
+     0.05s  0.38% 28.08%      0.05s  0.38%  reflect.Value.Elem
+     0.05s  0.38% 28.46%      0.21s  1.60%  runtime.(*stkframe).getStackMap
+     0.05s  0.38% 28.84%      0.05s  0.38%  runtime.getMCache (inline)
+     0.05s  0.38% 29.22%      0.05s  0.38%  runtime.gopark
+     0.05s  0.38% 29.60%      0.05s  0.38%  runtime.spanClass.sizeclass (inline)
+     0.04s   0.3% 29.91%      0.09s  0.68%  runtime.chansend
+     0.04s   0.3% 30.21%      0.18s  1.37%  runtime.mallocgcSmallNoscan
+     0.04s   0.3% 30.52%      0.05s  0.38%  runtime.resolveTypeOff

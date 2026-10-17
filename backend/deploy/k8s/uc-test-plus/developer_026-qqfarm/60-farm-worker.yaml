@@ -1,0 +1,395 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: farm-worker-a
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-worker-a
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: farm-worker-a
+  ports:
+    - name: health
+      port: 9201
+      targetPort: health
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: farm-worker-b
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-worker-b
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: farm-worker-b
+  ports:
+    - name: health
+      port: 9201
+      targetPort: health
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: farm-worker-a
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-worker-a
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: farm-worker-a
+  template:
+    metadata:
+      labels:
+        app: farm-worker-a
+        app.kubernetes.io/name: farm-worker-a
+        app.kubernetes.io/component: recovery-worker
+        app.kubernetes.io/part-of: farm-game
+        farm.io/worker-pool: farm-worker
+        farm.io/redis-client: "true"
+      annotations:
+        farm.io/activation-status: DYNAMIC_REMOTE_WATCH_4X4X4
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9201"
+        prometheus.io/path: /metrics
+    spec:
+      priorityClassName: high-cpu-priority
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets:
+        - name: uc-registry
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+      initContainers:
+        - name: wait-redis
+          image: redis:7-alpine
+          command: ["sh", "-c", "until redis-cli -h farm-redis ping | grep -q PONG; do sleep 1; done"]
+      containers:
+        - name: farm-worker
+          image: mirrors.tencent.com/uc-backend/farm-route-runtime@sha256:7cce9e1b9ed27c8318180b1b14afb18130cb54035fbae9b77a8edd8f683fde6e
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: farm-platform
+          env:
+            - name: FARM_SERVICE
+              value: farm-worker
+            - name: WORKER_HEALTH_LISTEN
+              value: ":9201"
+            - name: WORKER_ID
+              value: farm-worker-a
+            - name: WORKER_BOOT_ID
+              value: REPLACE_AT_APPLY
+            - name: FARM_OPPORTUNITY_WAKEUP_ENABLED
+              value: "true"
+            - name: FARM_OPPORTUNITY_WAKEUP_ASSIGNMENT_MODE
+              value: route
+            - name: FARM_OPPORTUNITY_HINT_TRANSPORT
+              value: pubsub
+            - name: FARM_OPPORTUNITY_HINT_MODE_FILE
+              value: /etc/farm/opportunity-mode/hint-transport
+            - name: FARM_OPPORTUNITY_HINT_MODE_POLL_INTERVAL
+              value: 1s
+            - name: FARM_WORKER_AUTHORITY_RENEW_TTL
+              value: 60s
+            - name: FARM_WORKER_AUTHORITY_RENEW_INTERVAL
+              value: 10s
+            - name: FARM_WORKER_AUTHORITY_RENEW_TIMEOUT
+              value: 2s
+            - name: FARM_WORKER_ROUTE_HOLDER_ONLY
+              value: "false"
+            - name: MAIL_DELIVERY_WORKER_ENABLED
+              value: "false"
+            - name: FARM_WORKER_LOGIC_ENDPOINT
+              value: farm-worker-a.developer_026-qqfarm.svc.cluster.local:9201
+            - name: FARM_WORKER_HOLDER_CONTROL_ENDPOINT
+              value: farm-worker-a.developer_026-qqfarm.svc.cluster.local:9201
+            - name: FARM_WORKER_HOLDER_TLS_DNS_IDENTITY
+              value: holder-control.developer_026-qqfarm.svc.cluster.local
+            - name: FARM_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: redis-url
+            - name: FARM_AUTHORITY_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: authority-redis-url
+            - name: FARM_RUNTIME_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: runtime-redis-url
+            - name: FARM_PROJECTION_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: projection-redis-url
+            - name: FARM_REDIS_CLUSTER
+              value: "1"
+            - name: FARM_REDIS_CLUSTER_URLS
+              valueFrom:
+                configMapKeyRef:
+                  name: farm-platform
+                  key: FARM_REDIS_CLUSTER_URLS
+            - name: PERMIT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: permit-secret
+          ports:
+            - name: health
+              containerPort: 9201
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: health
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 36
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: health
+            periodSeconds: 2
+            timeoutSeconds: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: health
+            periodSeconds: 5
+            timeoutSeconds: 1
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "4"
+              memory: 8Gi
+            limits:
+              cpu: "4"
+              memory: 8Gi
+          volumeMounts:
+            - name: route-control-tls
+              mountPath: /etc/farm/route-control
+              readOnly: true
+            - name: farm-opportunity-mode
+              mountPath: /etc/farm/opportunity-mode
+              readOnly: true
+      volumes:
+        - name: route-control-tls
+          secret:
+            secretName: farm-route-dynamic-tls
+            defaultMode: 0440
+            items:
+              - key: ca.crt
+                path: ca.crt
+              - key: route-client.crt
+                path: route-client.crt
+              - key: route-client.key
+                path: route-client.key
+        - name: farm-opportunity-mode
+          configMap:
+            name: farm-opportunity-mode
+            items:
+              - key: header-read-mode
+                path: header-read-mode
+              - key: hint-transport
+                path: hint-transport
+              - key: stage
+                path: stage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: farm-worker-b
+  namespace: developer_026-qqfarm
+  labels:
+    app.kubernetes.io/name: farm-worker-b
+    app.kubernetes.io/part-of: farm-game
+    uc.qq.com/owner: developer_026
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: farm-worker-b
+  template:
+    metadata:
+      labels:
+        app: farm-worker-b
+        app.kubernetes.io/name: farm-worker-b
+        app.kubernetes.io/component: recovery-worker
+        app.kubernetes.io/part-of: farm-game
+        farm.io/worker-pool: farm-worker
+        farm.io/redis-client: "true"
+      annotations:
+        farm.io/activation-status: DYNAMIC_REMOTE_WATCH_4X4X4
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9201"
+        prometheus.io/path: /metrics
+    spec:
+      priorityClassName: high-cpu-priority
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets:
+        - name: uc-registry
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+      initContainers:
+        - name: wait-redis
+          image: redis:7-alpine
+          command: ["sh", "-c", "until redis-cli -h farm-redis ping | grep -q PONG; do sleep 1; done"]
+      containers:
+        - name: farm-worker
+          image: mirrors.tencent.com/uc-backend/farm-route-runtime@sha256:7cce9e1b9ed27c8318180b1b14afb18130cb54035fbae9b77a8edd8f683fde6e
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: farm-platform
+          env:
+            - name: FARM_SERVICE
+              value: farm-worker
+            - name: WORKER_HEALTH_LISTEN
+              value: ":9201"
+            - name: WORKER_ID
+              value: farm-worker-b
+            - name: WORKER_BOOT_ID
+              value: REPLACE_AT_APPLY
+            - name: FARM_OPPORTUNITY_WAKEUP_ENABLED
+              value: "true"
+            - name: FARM_OPPORTUNITY_WAKEUP_ASSIGNMENT_MODE
+              value: route
+            - name: FARM_OPPORTUNITY_HINT_TRANSPORT
+              value: pubsub
+            - name: FARM_OPPORTUNITY_HINT_MODE_FILE
+              value: /etc/farm/opportunity-mode/hint-transport
+            - name: FARM_OPPORTUNITY_HINT_MODE_POLL_INTERVAL
+              value: 1s
+            - name: FARM_WORKER_AUTHORITY_RENEW_TTL
+              value: 60s
+            - name: FARM_WORKER_AUTHORITY_RENEW_INTERVAL
+              value: 10s
+            - name: FARM_WORKER_AUTHORITY_RENEW_TIMEOUT
+              value: 2s
+            - name: FARM_WORKER_ROUTE_HOLDER_ONLY
+              value: "false"
+            - name: MAIL_DELIVERY_WORKER_ENABLED
+              value: "false"
+            - name: FARM_WORKER_LOGIC_ENDPOINT
+              value: farm-worker-b.developer_026-qqfarm.svc.cluster.local:9201
+            - name: FARM_WORKER_HOLDER_CONTROL_ENDPOINT
+              value: farm-worker-b.developer_026-qqfarm.svc.cluster.local:9201
+            - name: FARM_WORKER_HOLDER_TLS_DNS_IDENTITY
+              value: holder-control.developer_026-qqfarm.svc.cluster.local
+            - name: FARM_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: redis-url
+            - name: FARM_AUTHORITY_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: authority-redis-url
+            - name: FARM_RUNTIME_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: runtime-redis-url
+            - name: FARM_PROJECTION_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: projection-redis-url
+            - name: FARM_REDIS_CLUSTER
+              value: "1"
+            - name: FARM_REDIS_CLUSTER_URLS
+              valueFrom:
+                configMapKeyRef:
+                  name: farm-platform
+                  key: FARM_REDIS_CLUSTER_URLS
+            - name: PERMIT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: farm-secrets
+                  key: permit-secret
+          ports:
+            - name: health
+              containerPort: 9201
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: health
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 36
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: health
+            periodSeconds: 2
+            timeoutSeconds: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: health
+            periodSeconds: 5
+            timeoutSeconds: 1
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "4"
+              memory: 8Gi
+            limits:
+              cpu: "4"
+              memory: 8Gi
+          volumeMounts:
+            - name: route-control-tls
+              mountPath: /etc/farm/route-control
+              readOnly: true
+            - name: farm-opportunity-mode
+              mountPath: /etc/farm/opportunity-mode
+              readOnly: true
+      volumes:
+        - name: route-control-tls
+          secret:
+            secretName: farm-route-dynamic-tls
+            defaultMode: 0440
+            items:
+              - key: ca.crt
+                path: ca.crt
+              - key: route-client.crt
+                path: route-client.crt
+              - key: route-client.key
+                path: route-client.key
+        - name: farm-opportunity-mode
+          configMap:
+            name: farm-opportunity-mode
+            items:
+              - key: header-read-mode
+                path: header-read-mode
+              - key: hint-transport
+                path: hint-transport
+              - key: stage
+                path: stage

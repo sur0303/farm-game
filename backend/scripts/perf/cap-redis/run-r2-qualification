@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
+OUT=${1:?usage: run-r2-qualification OUT_DIR}
+BUSINESS_HEAD=${CAP_REDIS_R2_BUSINESS_HEAD:-5ce43715363eea4f18e0925b6992429785053261}
+COMPARISON_HEAD=${CAP_REDIS_R2_COMPARISON_HEAD:-0187051be5a65bed470765f46c81c3d7e122d923}
+mkdir -p "$OUT"
+container="cap-redis-l1-r2-qualification-$(date -u +%Y%m%d%H%M%S)-$$"
+secret=$(openssl rand -hex 24)
+cleanup(){ docker rm -f "$container" >/dev/null 2>&1 || true; unset secret CAP_REDIS_FAULT_URL; }
+trap cleanup EXIT INT TERM
+
+docker run -d --name "$container" --cpus 2 --memory 2g --memory-swap 2g -p 127.0.0.1::6379 \
+  redis:7.4-alpine redis-server --save '' --appendonly no --protected-mode yes \
+  --requirepass "$secret" --maxmemory 1536mb --maxmemory-policy noeviction >/dev/null
+port=$(docker port "$container" 6379/tcp | awk -F: '{print $NF}')
+for _ in $(seq 1 100); do
+  docker exec -e REDISCLI_AUTH="$secret" "$container" redis-cli --no-auth-warning ping 2>/dev/null | grep -qx PONG && break
+  sleep .1
+done
+docker exec -e REDISCLI_AUTH="$secret" "$container" redis-cli --no-auth-warning ping 2>/dev/null | grep -qx PONG
+
+python3 "$ROOT/scripts/perf/cap-redis/verify-r2-static.py" --root "$ROOT" \
+  --output "$OUT/static-retirement.json" --business-head "$BUSINESS_HEAD" --comparison-head "$COMPARISON_HEAD" \
+  >"$OUT/static-retirement.txt"
+
+export CAP_REDIS_FAULT_URL="redis://:${secret}@127.0.0.1:${port}/0"
+GOFLAGS=-buildvcs=false go test "$ROOT/cmd/cap-redis" \
+  -run '^TestCAPRedisR2ModelV2MigrationAndSparseCommit$' -count=1 -v >"$OUT/model-v2-live.txt"
+unset CAP_REDIS_FAULT_URL
+
+grep -q 'R2_MODEL_V2_PASS domains=2 migrations=2 sparse_v1=2 sparse_v2=2 v1_fallback=0 namespace_residual=0' "$OUT/model-v2-live.txt"
+GOFLAGS=-buildvcs=false go test \
+  "$ROOT/internal/friendshipservice" "$ROOT/internal/gatewayapp" \
+  -run 'Test(AllFriendshipRPCMethodMappings|FriendshipRPCMapsObservationOnlyEndToEnd|AnyInstanceCanServeSharedStatelessFriendshipDomain|RemotePlayerAssemblyNeverConstructsLocalFriendAuthority|GatewayFriendshipAssemblyModeMatrixAndFailClosed)$' \
+  -count=1 -v >"$OUT/remote-player-rpc.txt"
+for required in TestAllFriendshipRPCMethodMappings TestFriendshipRPCMapsObservationOnlyEndToEnd \
+  TestAnyInstanceCanServeSharedStatelessFriendshipDomain TestRemotePlayerAssemblyNeverConstructsLocalFriendAuthority \
+  TestGatewayFriendshipAssemblyModeMatrixAndFailClosed; do
+  grep -q -- "--- PASS: $required" "$OUT/remote-player-rpc.txt"
+done
+
+dbsize=$(docker exec -e REDISCLI_AUTH="$secret" "$container" redis-cli --no-auth-warning DBSIZE | tr -d '\r')
+[[ "$dbsize" == 0 ]]
+printf 'CAP_DBSIZE_AFTER_EXACT_CLEANUP=0\nQ2R_INSTANCE_TEARDOWN=pending_exact_container_destroy\nSCRIPT_FLUSH_USED=false\nFLUSHALL_USED=false\n' >"$OUT/cleanup.txt"
+
+python3 - "$OUT" "$BUSINESS_HEAD" "$(git -C "$ROOT" rev-parse HEAD)" <<'PY'
+import hashlib,json,pathlib,re,sys
+out=pathlib.Path(sys.argv[1]); business=sys.argv[2]; verification=sys.argv[3]
+static=json.loads((out/'static-retirement.json').read_text())
+model=(out/'model-v2-live.txt').read_text()
+rpc=(out/'remote-player-rpc.txt').read_text()
+checks={
+ 'static_retirement':static.get('verdict')=='PASS',
+ 'legacy_relationship_reads_zero':static.get('legacy_relationship_read_total')==0,
+ 'legacy_relationship_writes_zero':static.get('legacy_relationship_write_total')==0,
+ 'model_v2_migration_observed':bool(re.search(r'R2_MODEL_V2_PASS domains=2 migrations=2',model)),
+ 'model_v2_sparse_commit_observed':'sparse_v2=2' in model,
+ 'v1_fallback_zero':'v1_fallback=0' in model,
+ 'namespace_residual_zero':'namespace_residual=0' in model,
+ 'remote_player_rpc_observed':all(f'--- PASS: {name}' in rpc for name in (
+  'TestAllFriendshipRPCMethodMappings','TestFriendshipRPCMapsObservationOnlyEndToEnd',
+  'TestAnyInstanceCanServeSharedStatelessFriendshipDomain','TestRemotePlayerAssemblyNeverConstructsLocalFriendAuthority',
+  'TestGatewayFriendshipAssemblyModeMatrixAndFailClosed')),
+}
+attachments={name:hashlib.sha256((out/name).read_bytes()).hexdigest() for name in (
+ 'static-retirement.json','static-retirement.txt','model-v2-live.txt','remote-player-rpc.txt','cleanup.txt')}
+report={'schema_version':'cap-redis-l1-r2.qualification.v1','business_head':business,'verification_head':verification,
+ 'legacy_relationship_read_total':0 if checks['legacy_relationship_reads_zero'] else None,
+ 'legacy_relationship_write_total':0 if checks['legacy_relationship_writes_zero'] else None,
+ 'v1_fallback_total':0 if checks['v1_fallback_zero'] else None,
+ 'model_v2_migrations_observed':2 if checks['model_v2_migration_observed'] else 0,
+ 'model_v2_sparse_commits_observed':2 if checks['model_v2_sparse_commit_observed'] else 0,
+ 'remote_player_rpc_observed':checks['remote_player_rpc_observed'],'checks':checks,'attachments':attachments,
+ 'verdict':'PASS' if all(checks.values()) else 'FAIL'}
+(out/'r2-qualification.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n')
+if report['verdict']!='PASS': raise SystemExit(1)
+print('CAP_REDIS_R2_QUALIFICATION=PASS')
+PY
+
+docker rm -f "$container" >/dev/null
+trap - EXIT INT TERM
+unset secret
+python3 - "$OUT/cleanup.txt" <<'PY'
+import pathlib,sys
+p=pathlib.Path(sys.argv[1]); text=p.read_text().replace('Q2R_INSTANCE_TEARDOWN=pending_exact_container_destroy','Q2R_INSTANCE_TEARDOWN=destroyed_unique_ephemeral_container'); p.write_text(text)
+PY
+# Cleanup content changed after the initial report; refresh the attached hash.
+python3 - "$OUT" <<'PY'
+import hashlib,json,pathlib,sys
+out=pathlib.Path(sys.argv[1]); p=out/'r2-qualification.json'; data=json.loads(p.read_text()); data['attachments']['cleanup.txt']=hashlib.sha256((out/'cleanup.txt').read_bytes()).hexdigest(); p.write_text(json.dumps(data,indent=2,sort_keys=True)+'\n')
+PY
+printf 'CAP_REDIS_R2_QUALIFICATION=PASS OUT=%s\n' "$OUT"

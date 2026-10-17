@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package friend;
+
+option go_package = "farmgame/api/gen/friend;friendpb";
+
+enum RelationStatus {
+  RELATION_STATUS_UNSPECIFIED = 0;
+  ACTIVE = 1;
+  REVOKED = 2;
+}
+
+enum FriendMutationKind {
+  FRIEND_MUTATION_KIND_UNSPECIFIED = 0;
+  ACCEPT_SHARE = 1;
+  REVOKE_RELATION = 2;
+}
+
+// FriendRosterChanged invalidates one player's cached friend roster. The
+// client still reloads /api/v1/friends as the authoritative view; this event
+// only removes polling latency.
+message FriendRosterChanged {
+  uint64 counterpart_player_id = 1;
+  uint64 relation_epoch = 2;
+  FriendMutationKind mutation = 3;
+}
+
+// FriendOpportunityChanged is a player-scoped pull hint. It deliberately
+// omits action_mask: H5 must refresh the authoritative page/navigation query
+// before enabling any interaction.
+message FriendOpportunityChanged {
+  uint64 target_owner_id = 1;
+  uint64 source_farm_version = 2;
+  // Monotonic per farm. The high bits fence authority commits; the low bits
+  // advance when time-derived WATER/PEST/MATURE boundaries are reached under
+  // the same source_farm_version.
+  uint64 opportunity_revision = 3;
+}
+
+// FriendRelation is the only authoritative row for an unordered player pair.
+// A revoked relation is retained as a tombstone so relation_epoch never moves
+// backwards when the same players become friends again.
+message FriendRelation {
+  uint64 player_low_id = 1;
+  uint64 player_high_id = 2;
+  RelationStatus status = 3;
+  uint64 relation_epoch = 4;
+  uint64 revision = 5;
+  int64 created_at_ms = 6;
+  int64 updated_at_ms = 7;
+}
+
+// FriendMutationReceipt makes an accept/revoke retry idempotent and binds the
+// operation id to one exact mutation intent.
+message FriendMutationReceipt {
+  string operation_id = 1;
+  bytes payload_hash = 2;
+  FriendMutationKind kind = 3;
+  FriendRelation result = 4;
+  bool changed = 5;
+  int64 committed_at_ms = 6;
+}
+
+enum FriendAction {
+  FRIEND_ACTION_UNSPECIFIED = 0;
+  VISIT = 1;
+  CARE = 2;
+  THEFT = 3;
+}
+
+// ActionPermit is issued by FriendshipDomain and verified at the FarmActor
+// boundary. It is invalid after relationship revoke/recreate because the
+// relation_epoch changes.
+message ActionPermit {
+  uint64 viewer_player_id = 1;
+  uint64 target_owner_id = 2;
+  uint64 relation_epoch = 3;
+  string operation_id = 4;
+  FriendAction action = 5;
+  int64 issued_at_ms = 6;
+  int64 expires_at_ms = 7;
+  bytes signature = 8;
+}

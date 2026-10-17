@@ -1,0 +1,19 @@
+{"timestamp":"2026-08-07T04:59:21.223050963Z","direction":"send","kind":"ClientHello"}
+{"timestamp":"2026-08-07T04:59:21.224143672Z","direction":"recv","kind":"ServerHello","detail":"session=7eb20c78cf0103b012744beb22201ef3 epoch=59 server_time_ms=1786078761223"}
+{"timestamp":"2026-08-07T04:59:21.224315886Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-join-smoke_bot1786078738-1786078761224179028 command_type=6"}
+{"timestamp":"2026-08-07T04:59:21.227023385Z","direction":"recv","kind":"CommandResult","detail":"join accepted sub=sub-a78dc9bce85d5b63d8de30570544fd5d"}
+{"timestamp":"2026-08-07T04:59:21.227806991Z","direction":"recv","kind":"FarmSnapshot","detail":"owner=1000002 version=0"}
+{"timestamp":"2026-08-07T04:59:21.228179473Z","direction":"recv","kind":"SubscriptionReady"}
+{"timestamp":"2026-08-07T04:59:21.228216242Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-bootstrap-smoke_bot1786078738-1786078761228204279 command_type=13"}
+{"timestamp":"2026-08-07T04:59:21.230161235Z","direction":"recv","kind":"BootstrapApplied","detail":"revision=2 coin=100 inventory=map[]"}
+{"timestamp":"2026-08-07T04:59:21.230189448Z","direction":"send","kind":"ClientRecoveryComplete"}
+{"timestamp":"2026-08-07T04:59:21.230272024Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-buy-smoke_bot1786078738-1786078761230254040 command_type=2"}
+{"timestamp":"2026-08-07T04:59:21.232038421Z","direction":"recv","kind":"BuyApplied","detail":"coin=90 seed_item=1001 inventory=map[1001:1]"}
+{"timestamp":"2026-08-07T04:59:21.232077014Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-plant-smoke_bot1786078738-1786078761232061515 command_type=4"}
+{"timestamp":"2026-08-07T04:59:21.242166066Z","direction":"recv","kind":"FarmChange","detail":"plot=0 phase=GROWING cycle=sid1_zoavHVz6vtfDudAM6a1Qxf7T8LmZpos6othm1J02BxQ plant_at_ms=1786078761240 mature_at_ms=1786078771240 plot_version=2"}
+{"timestamp":"2026-08-07T04:59:21.242232892Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-harvest-pre-smoke_bot1786078738-1786078761242202114 command_type=5"}
+{"timestamp":"2026-08-07T04:59:21.250362333Z","direction":"recv","kind":"PrematureHarvestRejected","detail":"code=ERROR_CODE_UNSPECIFIED"}
+{"timestamp":"2026-08-07T04:59:33.248180863Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-harvest-smoke_bot1786078738-1786078773248162028 command_type=5"}
+{"timestamp":"2026-08-07T04:59:33.253179499Z","direction":"recv","kind":"FarmVersionAdvanced","detail":"1 -\u003e 2"}
+{"timestamp":"2026-08-07T04:59:33.253215105Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-bootstrap-smoke_bot1786078738-1786078773253209505 command_type=13"}
+{"timestamp":"2026-08-07T04:59:33.261012882Z","direction":"recv","kind":"BootstrapApplied","detail":"revision=6 coin=90 inventory=map[2001:500]"}

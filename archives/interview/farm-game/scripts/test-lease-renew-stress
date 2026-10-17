@@ -1,0 +1,607 @@
+#!/usr/bin/env bash
+# R1-Q1 real Redis + real Gate + real Farm Subscription lease evidence.
+# No Docker, Mock, FLUSHALL, legacy Actor mode, or showcase fault capability.
+set -euo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+R1_4_COMMIT=${LEASE_REAL_R1_4_COMMIT:-1ec3dcd166a7449b40aa934ee7324154474b3c05}
+EXPECTED_BRANCH=${LEASE_REAL_EXPECT_BRANCH:-codex/r1-q1-real-lease-evidence-20260809}
+REDIS_CONFIG=${FARM_REDIS_CONFIG:-"$ROOT_DIR/deploy/secrets/redis.conf.local"}
+RESULT_ROOT=${LEASE_REAL_RESULT_ROOT:-"$ROOT_DIR/docs/verification/results/r1-q1-real-lease"}
+STAMP=${LEASE_REAL_RUN_STAMP:-$(date -u +%Y%m%dT%H%M%SZ)}
+RUN_ID="${STAMP}-$$-${RANDOM}"
+RUN_DIR="$RESULT_ROOT/$RUN_ID"
+WORK_DIR=$(mktemp -d /tmp/r1-q1-real-lease.XXXXXX)
+BIN_DIR="$WORK_DIR/bin"
+LOG_DIR="$WORK_DIR/log"
+BUILD_CACHE=${FARM_GO_BUILD_CACHE:-/tmp/farmgame-go-cache}
+mkdir -p "$RUN_DIR" "$BIN_DIR" "$LOG_DIR" "$BUILD_CACHE"
+
+PIDS=()
+gate_pid=""
+driver_pid=""
+finalized=0
+failure_reason=""
+redis_host=""
+redis_port=""
+redis_password=""
+redis_password_encoded=""
+redis_url=""
+redis_db=""
+branch=""
+source_head=""
+redis_endpoint_digest=""
+production_tree_exact=false
+
+read_config_value() {
+  local key=$1
+  sed -n -E "s/^[[:space:]]*${key}:[[:space:]]*(.*[^[:space:]])[[:space:]]*$/\\1/p" "$REDIS_CONFIG" | head -n 1
+}
+
+uri_encode() {
+  local input=$1 output="" char encoded index
+  LC_ALL=C
+  for ((index=0; index<${#input}; index++)); do
+    char=${input:index:1}
+    case "$char" in
+      [a-zA-Z0-9.~_-]) output+="$char" ;;
+      *) printf -v encoded '%%%02X' "'$char"; output+="$encoded" ;;
+    esac
+  done
+  printf '%s' "$output"
+}
+
+sanitize_log() {
+  local source=$1 destination=$2
+  [[ -f "$source" ]] || return 0
+  REDACT_PASSWORD=$redis_password REDACT_ENCODED_PASSWORD=$redis_password_encoded \
+  REDACT_URL=$redis_url REDACT_HOST=$redis_host REDACT_PORT=$redis_port \
+    python3 - "$source" "$destination" <<'PY'
+import os, sys
+source, destination = sys.argv[1:]
+text = open(source, "r", encoding="utf-8", errors="replace").read()
+replacements = [
+    (os.environ.get("REDACT_URL", ""), "<redis-url-redacted>"),
+    (os.environ.get("REDACT_PASSWORD", ""), "<redis-password-redacted>"),
+    (os.environ.get("REDACT_ENCODED_PASSWORD", ""), "<redis-password-redacted>"),
+]
+host, port = os.environ.get("REDACT_HOST", ""), os.environ.get("REDACT_PORT", "")
+if host and port:
+    replacements.append((host + ":" + port, "<redis-endpoint-redacted>"))
+if host:
+    replacements.append((host, "<redis-host-redacted>"))
+for old, new in sorted((item for item in replacements if item[0]), key=lambda item: len(item[0]), reverse=True):
+    text = text.replace(old, new)
+open(destination, "w", encoding="utf-8").write(text)
+PY
+}
+
+copy_sanitized_logs() {
+  local source
+  shopt -s nullglob
+  for source in "$LOG_DIR"/*.log; do
+    sanitize_log "$source" "$RUN_DIR/$(basename "$source")"
+  done
+  shopt -u nullglob
+}
+
+cleanup() {
+  local pid
+  for ((pid_index=${#PIDS[@]}-1; pid_index>=0; pid_index--)); do
+    pid=${PIDS[$pid_index]}
+    if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then
+      kill "$pid" 2>/dev/null || true
+    fi
+  done
+  for pid in "${PIDS[@]:-}"; do
+    if [[ -n "$pid" ]]; then
+      wait "$pid" 2>/dev/null || true
+    fi
+  done
+  copy_sanitized_logs
+  if [[ -d "$WORK_DIR" && "$WORK_DIR" == /tmp/r1-q1-real-lease.* ]]; then
+    rm -rf -- "$WORK_DIR"
+  fi
+}
+
+finalize() {
+  local reason=${1:-}
+  ((finalized == 0)) || return 0
+  finalized=1
+  if [[ ! -f "$RUN_DIR/run-manifest.json" ]]; then
+    FALLBACK_REASON=$reason FALLBACK_R1_4=$R1_4_COMMIT FALLBACK_RUN_ID=$RUN_ID \
+    FALLBACK_SOURCE=${source_head:-UNAVAILABLE} FALLBACK_BRANCH=${branch:-UNAVAILABLE} \
+    FALLBACK_REDIS_DIGEST=${redis_endpoint_digest:-UNAVAILABLE} FALLBACK_PRODUCTION_EXACT=$production_tree_exact \
+      python3 - "$RUN_DIR/run-manifest.json" <<'PY'
+import json, os, pathlib, sys
+value = {
+    "schema_version": "r1-q1-real-lease-run-manifest/v1",
+    "assembly_manifest_generated_before_start": True,
+    "run_id": os.environ["FALLBACK_RUN_ID"], "branch": os.environ["FALLBACK_BRANCH"],
+    "r1_4_commit": os.environ["FALLBACK_R1_4"], "source_head": os.environ["FALLBACK_SOURCE"],
+    "r1_4_production_tree_exact": os.environ["FALLBACK_PRODUCTION_EXACT"] == "true",
+    "redis_endpoint_digest": {"algorithm": "sha256", "canonical_fields": ["scheme", "host", "port", "db"], "digest": os.environ["FALLBACK_REDIS_DIGEST"]},
+    "redis_url_recorded": False, "redis_password_recorded": False,
+    "lease_config": {}, "rounds": {"a": {"subscriptions": 200, "minimum_cycles": 20}, "b": {"subscriptions": 20}},
+    "assembly_status": "INCONCLUSIVE", "assembly_reason": os.environ.get("FALLBACK_REASON", ""),
+}
+pathlib.Path(sys.argv[1]).write_text(json.dumps(value, indent=2, sort_keys=True)+"\n")
+PY
+  fi
+  copy_sanitized_logs
+  set +e
+  python3 "$ROOT_DIR/scripts/lease-real-report.py" --run-dir "$RUN_DIR" --reason "$reason" >"$LOG_DIR/report.log" 2>&1
+  local report_status=$?
+  sanitize_log "$LOG_DIR/report.log" "$RUN_DIR/report.log"
+  set -e
+  return "$report_status"
+}
+
+on_exit() {
+  local status=$?
+  set +e
+  if ((finalized == 0)); then
+    if [[ -z "$failure_reason" ]]; then
+      failure_reason="orchestrator exited before both rounds completed (status=$status)"
+    fi
+    finalize "$failure_reason"
+  fi
+  cleanup
+  printf 'R1-Q1 real lease evidence: %s\n' "$RUN_DIR"
+  exit "$status"
+}
+trap on_exit EXIT INT TERM
+
+fail() {
+  failure_reason=$1
+  printf 'INCONCLUSIVE: %s\n' "$failure_reason" >&2
+  finalize "$failure_reason" || true
+  exit 1
+}
+
+if [[ ! -f "$REDIS_CONFIG" ]]; then
+  fail "Redis config unavailable"
+fi
+redis_host=$(read_config_value host)
+redis_port=$(read_config_value port)
+redis_password=$(read_config_value password)
+redis_db=$(read_config_value db)
+redis_db=${redis_db:-0}
+if [[ -z "$redis_host" || -z "$redis_port" || -z "$redis_password" ]]; then
+  fail "Redis config requires host, port and password"
+fi
+redis_password_encoded=$(uri_encode "$redis_password")
+redis_url="redis://:${redis_password_encoded}@${redis_host}:${redis_port}/${redis_db}"
+redis_endpoint_digest=$(printf 'redis|%s|%s|%s' "$redis_host" "$redis_port" "$redis_db" | sha256sum | awk '{print $1}')
+
+cd "$ROOT_DIR"
+branch=$(git branch --show-current)
+source_head=$(git rev-parse HEAD)
+[[ "$branch" == "$EXPECTED_BRANCH" ]] || fail "unexpected branch (set LEASE_REAL_EXPECT_BRANCH only for an intentional controller checkout)"
+git cat-file -e "${R1_4_COMMIT}^{commit}" 2>/dev/null || fail "R1-4 commit object missing"
+git merge-base --is-ancestor "$R1_4_COMMIT" HEAD || fail "R1-4 commit is not an ancestor of source HEAD"
+production_diff=$({ git diff --name-only "$R1_4_COMMIT" --; git ls-files --others --exclude-standard; } | sort -u | awk '!($0 ~ /^scripts\/.*lease/ || $0 ~ /^cmd\/.*lease/ || $0 ~ /^docs\/verification\/results\/r1-q1-real-lease\//) {print}')
+if [[ -n "$production_diff" ]]; then
+  fail "source differs from R1-4 outside the allowed test/evidence scope"
+fi
+production_tree_exact=true
+worktree_clean=false
+if [[ -z "$(git status --short)" ]]; then worktree_clean=true; fi
+
+declare -A PORTS=()
+declare -A PORT_USED=()
+pick_port() {
+  local key=$1 override_name=$2 value
+  value=${!override_name:-}
+  if [[ -z "$value" ]]; then
+    if ! value=$(python3 - <<'PY' 2>>"$LOG_DIR/port-probe.log"
+import socket
+s = socket.socket()
+s.bind(("127.0.0.1", 0))
+print(s.getsockname()[1])
+s.close()
+PY
+    ); then
+      fail "loopback socket unavailable during dynamic port allocation"
+    fi
+  fi
+  [[ "$value" =~ ^[0-9]+$ ]] && ((value > 1024 && value < 65536)) || fail "invalid port override $override_name"
+  [[ -z "${PORT_USED[$value]:-}" ]] || fail "duplicate requested port $value"
+  python3 - "$value" <<'PY' 2>>"$LOG_DIR/port-probe.log" || fail "port conflict or loopback socket unavailable before startup"
+import socket, sys
+s = socket.socket()
+try:
+    s.bind(("127.0.0.1", int(sys.argv[1])))
+finally:
+    s.close()
+PY
+  PORTS[$key]=$value
+  PORT_USED[$value]=1
+}
+
+pick_port player LEASE_REAL_PLAYER_PORT
+pick_port player_health LEASE_REAL_PLAYER_HEALTH_PORT
+pick_port farm_a LEASE_REAL_FARM_A_PORT
+pick_port farm_a_health LEASE_REAL_FARM_A_HEALTH_PORT
+pick_port farm_b LEASE_REAL_FARM_B_PORT
+pick_port farm_b_health LEASE_REAL_FARM_B_HEALTH_PORT
+pick_port proxy_a LEASE_REAL_PROXY_A_PORT
+pick_port proxy_a_admin LEASE_REAL_PROXY_A_ADMIN_PORT
+pick_port proxy_b LEASE_REAL_PROXY_B_PORT
+pick_port proxy_b_admin LEASE_REAL_PROXY_B_ADMIN_PORT
+pick_port gate LEASE_REAL_GATE_PORT
+pick_port gate_downlink LEASE_REAL_GATE_DOWNLINK_PORT
+pick_port gate_control LEASE_REAL_GATE_CONTROL_PORT
+
+printf 'building linked-worktree binaries with -buildvcs=false\n'
+build_status=0
+for service in player-svr farm-svr farm-gate lease-real-fixture lease-fault-proxy lease-stress; do
+  GOCACHE="$BUILD_CACHE" CGO_ENABLED=0 go build -buildvcs=false -trimpath -o "$BIN_DIR/$service" "./cmd/$service" >>"$LOG_DIR/build.log" 2>&1 || build_status=$?
+  ((build_status == 0)) || break
+done
+((build_status == 0)) || fail "Go binary build failed"
+
+namespace="lq1$(date -u +%s)$$"
+namespace=${namespace:0:30}
+profile="lease-real-${RUN_ID,,}"
+profile=${profile//[^a-z0-9-]/}
+profile=${profile:0:48}
+realm="lease-real-${RUN_ID,,}"
+realm=${realm//[^a-z0-9-]/}
+realm=${realm:0:48}
+prefix="lease-real:${RUN_ID}"
+player_holder="lease-real-player"
+farm_a_holder="lease-real-farm-a"
+farm_b_holder="lease-real-farm-b"
+player_boot="player-${RUN_ID}"
+farm_a_boot="farm-a-${RUN_ID}"
+farm_b_boot="farm-b-${RUN_ID}"
+load_secret=$(printf 'load-secret:%s' "$RUN_ID" | sha256sum | awk '{print $1}')
+permit_secret=$(printf 'permit-secret:%s' "$RUN_ID" | sha256sum | awk '{print $1}')
+
+export MANIFEST_RUN_ID=$RUN_ID MANIFEST_BRANCH=$branch MANIFEST_SOURCE_HEAD=$source_head
+export MANIFEST_R1_4=$R1_4_COMMIT MANIFEST_CLEAN=$worktree_clean
+export MANIFEST_REDIS_DIGEST=$redis_endpoint_digest MANIFEST_NAMESPACE=$namespace
+export MANIFEST_PROFILE=$profile MANIFEST_REALM=$realm MANIFEST_PREFIX=$prefix
+export MANIFEST_PLAYER_PORT=${PORTS[player]} MANIFEST_PLAYER_HEALTH=${PORTS[player_health]}
+export MANIFEST_FARM_A=${PORTS[farm_a]} MANIFEST_FARM_A_HEALTH=${PORTS[farm_a_health]}
+export MANIFEST_FARM_B=${PORTS[farm_b]} MANIFEST_FARM_B_HEALTH=${PORTS[farm_b_health]}
+export MANIFEST_PROXY_A=${PORTS[proxy_a]} MANIFEST_PROXY_A_ADMIN=${PORTS[proxy_a_admin]}
+export MANIFEST_PROXY_B=${PORTS[proxy_b]} MANIFEST_PROXY_B_ADMIN=${PORTS[proxy_b_admin]}
+export MANIFEST_GATE=${PORTS[gate]} MANIFEST_GATE_DOWNLINK=${PORTS[gate_downlink]} MANIFEST_GATE_CONTROL=${PORTS[gate_control]}
+export MANIFEST_BIN_DIR=$BIN_DIR
+python3 - "$RUN_DIR/run-manifest.json" <<'PY'
+import hashlib, json, os, pathlib, sys
+binary_dir = pathlib.Path(os.environ["MANIFEST_BIN_DIR"])
+binaries = {}
+for path in sorted(binary_dir.iterdir()):
+    binaries[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
+ports = {key.removeprefix("MANIFEST_").lower(): int(value) for key, value in os.environ.items() if key.startswith("MANIFEST_") and key in {
+    "MANIFEST_PLAYER_PORT", "MANIFEST_PLAYER_HEALTH", "MANIFEST_FARM_A", "MANIFEST_FARM_A_HEALTH",
+    "MANIFEST_FARM_B", "MANIFEST_FARM_B_HEALTH", "MANIFEST_PROXY_A", "MANIFEST_PROXY_A_ADMIN",
+    "MANIFEST_PROXY_B", "MANIFEST_PROXY_B_ADMIN", "MANIFEST_GATE", "MANIFEST_GATE_DOWNLINK", "MANIFEST_GATE_CONTROL"}}
+manifest = {
+    "schema_version": "r1-q1-real-lease-run-manifest/v1",
+    "assembly_manifest_generated_before_start": True,
+    "run_id": os.environ["MANIFEST_RUN_ID"], "branch": os.environ["MANIFEST_BRANCH"],
+    "source_head": os.environ["MANIFEST_SOURCE_HEAD"], "r1_4_commit": os.environ["MANIFEST_R1_4"],
+    "r1_4_production_tree_exact": True, "worktree_clean_before": os.environ["MANIFEST_CLEAN"] == "true",
+    "redis_endpoint_digest": {"algorithm": "sha256", "canonical_fields": ["scheme", "host", "port", "db"], "digest": os.environ["MANIFEST_REDIS_DIGEST"]},
+    "redis_url_recorded": False, "redis_password_recorded": False,
+    "namespace": os.environ["MANIFEST_NAMESPACE"], "physical_profile": os.environ["MANIFEST_PROFILE"],
+    "realm": os.environ["MANIFEST_REALM"], "prefix": os.environ["MANIFEST_PREFIX"], "ports": ports,
+    "authority": {"actor_mode": "authority", "membership_mode": "composed", "player_shards": 1, "farm_shards": 2, "real_redis_store": True},
+    "topology": {"player_holders": 1, "farm_holders": 2, "gate_processes": 1, "fault_proxies": 2, "docker_socket": False},
+    "lease_config": {"route_ttl_ms": 4000, "subscription_ttl_ms": 4000, "route_safety_margin_ms": 500, "subscription_safety_margin_ms": 500, "renew_interval_ms": 750, "max_jitter_ms": 10, "batch_max_items": 64, "batch_max_bytes": 65536, "max_dispatch_ms": 500, "scheduler_tick_ms": 5, "due_lag_waterline_ms": 500, "deadline_remaining_waterline_ms": 500},
+    "rounds": {"a": {"owners": 1, "visitors": 199, "subscriptions": 200, "minimum_cycles": 20}, "b": {"owners": 2, "visitors": 18, "subscriptions": 20, "expected_terminal_items": 2}},
+    "binaries_sha256": binaries,
+    "forbidden_operations": {"mock_pass": False, "flushall": False, "docker_socket": False, "legacy_actor_mode": False},
+    "formal_entry": "./scripts/test-lease-renew-stress",
+}
+pathlib.Path(sys.argv[1]).write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+PY
+
+# The assembly manifest above is durable before the first Redis mutation or process start.
+FARM_REDIS_URL=$redis_url "$BIN_DIR/lease-real-fixture" \
+  -namespace "$namespace" -profile "$profile" -realm "$realm" -run-id "$RUN_ID" \
+  -route-out "$RUN_DIR/assembly-route.json" -report-out "$RUN_DIR/fixture.json" \
+  -player-holder "$player_holder" -player-boot "$player_boot" -player-endpoint "127.0.0.1:${PORTS[player]}" \
+  -farm-a-holder "$farm_a_holder" -farm-a-boot "$farm_a_boot" -farm-a-endpoint "127.0.0.1:${PORTS[proxy_a]}" \
+  -farm-b-holder "$farm_b_holder" -farm-b-boot "$farm_b_boot" -farm-b-endpoint "127.0.0.1:${PORTS[proxy_b]}" \
+  -authority-lease-ttl 60s >"$LOG_DIR/fixture.log" 2>&1 || fail "Redis Authority fixture/route assembly failed"
+
+start_process() {
+  local log_name=$1
+  shift
+  "$@" >"$LOG_DIR/$log_name.log" 2>&1 &
+  local pid=$!
+  PIDS+=("$pid")
+  last_pid=$pid
+}
+
+wait_http() {
+  local url=$1 service=$2
+  for _ in $(seq 1 200); do
+    if curl -fsS --max-time 1 "$url" >/dev/null 2>&1; then return 0; fi
+    sleep 0.05
+  done
+  fail "$service did not become ready"
+}
+
+wait_file() {
+  local path=$1 service=$2
+  for _ in $(seq 1 1200); do
+    [[ -f "$path" ]] && return 0
+    if [[ -n "$driver_pid" ]] && ! kill -0 "$driver_pid" 2>/dev/null; then
+      fail "$service exited before Ready barrier"
+    fi
+    sleep 0.05
+  done
+  fail "$service Ready barrier timeout"
+}
+
+start_process proxy-a "$BIN_DIR/lease-fault-proxy" \
+  -listen "127.0.0.1:${PORTS[proxy_a]}" -admin-listen "127.0.0.1:${PORTS[proxy_a_admin]}" \
+  -upstream "127.0.0.1:${PORTS[farm_a]}" -holder "$farm_a_holder" -events-out "$RUN_DIR/proxy-a-events.ndjson" \
+  -max-items 64 -max-bytes 65536 -max-dispatch 500ms -safety-margin 500ms
+proxy_a_pid=$last_pid
+start_process proxy-b "$BIN_DIR/lease-fault-proxy" \
+  -listen "127.0.0.1:${PORTS[proxy_b]}" -admin-listen "127.0.0.1:${PORTS[proxy_b_admin]}" \
+  -upstream "127.0.0.1:${PORTS[farm_b]}" -holder "$farm_b_holder" -events-out "$RUN_DIR/proxy-b-events.ndjson" \
+  -max-items 64 -max-bytes 65536 -max-dispatch 500ms -safety-margin 500ms
+proxy_b_pid=$last_pid
+wait_http "http://127.0.0.1:${PORTS[proxy_a_admin]}/healthz" proxy-a
+wait_http "http://127.0.0.1:${PORTS[proxy_b_admin]}/healthz" proxy-b
+
+common_authority=(
+  "ACTOR_AUTHORITY_MODE=authority" "AUTHORITY_MEMBERSHIP_MODE=composed"
+  "ACTOR_ROUTE_SNAPSHOT=$RUN_DIR/assembly-route.json"
+  "ACTOR_AUTHORITY_LEASE_TTL=60s" "ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN=10s" "ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL=5s"
+  "REDIS_PHYSICAL_PROFILE_VERSION=$profile" "REDIS_NAMESPACE_ENVIRONMENT=$namespace" "REDIS_NAMESPACE_ZONE=local"
+  "REDIS_AUTHORITY_LAYOUT_VERSION=v1" "REDIS_WORKFLOW_LAYOUT_VERSION=v1" "REDIS_WORKFLOW_HASH_VERSION=1" "REDIS_WORKFLOW_BUCKET_COUNT=256"
+  "FARM_REDIS_URL=$redis_url" "WORKFLOW_STORE_PREFIX=${prefix}:workflow"
+)
+
+start_process player env "${common_authority[@]}" \
+  "ACTOR_HOLDER_POD=$player_holder" "ACTOR_HOLDER_BOOT_ID=$player_boot" \
+  "PLAYER_LISTEN=127.0.0.1:${PORTS[player]}" "PLAYER_HEALTH_LISTEN=127.0.0.1:${PORTS[player_health]}" \
+  "PERMIT_SECRET=$permit_secret" "$BIN_DIR/player-svr"
+player_pid=$last_pid
+
+start_process farm-a env "${common_authority[@]}" \
+  "ACTOR_HOLDER_POD=$farm_a_holder" "ACTOR_HOLDER_BOOT_ID=$farm_a_boot" \
+  "FARM_LISTEN=127.0.0.1:${PORTS[farm_a]}" "FARM_HEALTH_LISTEN=127.0.0.1:${PORTS[farm_a_health]}" \
+  "PLAYER_ADDR=127.0.0.1:${PORTS[player]}" "GATEWAY_DOWNLINK_ADDR=127.0.0.1:${PORTS[gate_downlink]}" \
+  "PERMIT_SECRET=$permit_secret" "THEFT_PRF_MODE=test" "THEFT_PRF_HMAC_SECRET=${permit_secret}theft-a" \
+  "GATE_BOOT_REAPER_MODE=disabled" "FARM_SUBSCRIPTION_LEASE_INITIAL_TTL=4s" "FARM_SUBSCRIPTION_LEASE_MAX_EXTENSION=4s" \
+  "$BIN_DIR/farm-svr"
+farm_a_pid=$last_pid
+
+start_process farm-b env "${common_authority[@]}" \
+  "ACTOR_HOLDER_POD=$farm_b_holder" "ACTOR_HOLDER_BOOT_ID=$farm_b_boot" \
+  "FARM_LISTEN=127.0.0.1:${PORTS[farm_b]}" "FARM_HEALTH_LISTEN=127.0.0.1:${PORTS[farm_b_health]}" \
+  "PLAYER_ADDR=127.0.0.1:${PORTS[player]}" "GATEWAY_DOWNLINK_ADDR=127.0.0.1:${PORTS[gate_downlink]}" \
+  "PERMIT_SECRET=$permit_secret" "THEFT_PRF_MODE=test" "THEFT_PRF_HMAC_SECRET=${permit_secret}theft-b" \
+  "GATE_BOOT_REAPER_MODE=disabled" "FARM_SUBSCRIPTION_LEASE_INITIAL_TTL=4s" "FARM_SUBSCRIPTION_LEASE_MAX_EXTENSION=4s" \
+  "$BIN_DIR/farm-svr"
+farm_b_pid=$last_pid
+
+wait_http "http://127.0.0.1:${PORTS[player_health]}/readyz" player-svr
+wait_http "http://127.0.0.1:${PORTS[farm_a_health]}/readyz" farm-a
+wait_http "http://127.0.0.1:${PORTS[farm_b_health]}/readyz" farm-b
+
+start_process gate env \
+  "FARM_APP_PROFILE=test" "GATEWAY_LISTEN=127.0.0.1:${PORTS[gate]}" "GATEWAY_ID=lease-real-gate" \
+  "GATEWAY_DOWNLINK_LISTEN=127.0.0.1:${PORTS[gate_downlink]}" "GATE_CONTROL_LISTEN=127.0.0.1:${PORTS[gate_control]}" \
+  "GATE_TRANSPORT=websocket" "GATE_WS_PATH=/ws" "GATE_WS_METRICS=1" "GATE_WS_RATE_PER_SEC=10000" "GATE_WS_RATE_BURST=20000" \
+  "GATE_WS_MAX_CONNS=512" "GATE_PREAUTH_MAX_CONNECTIONS=512" "GATE_PREAUTH_MAX_CONNECTIONS_PER_IP=512" \
+  "ACTOR_ROUTE_SNAPSHOT=$RUN_DIR/assembly-route.json" "PLAYER_ADDR=127.0.0.1:${PORTS[player]}" "FARM_ADDR=127.0.0.1:${PORTS[proxy_a]}" \
+  "LOGIC_HEALTH_ADDR=http://127.0.0.1:${PORTS[farm_a_health]}" "FARM_REDIS_URL=$redis_url" \
+  "REDIS_NAMESPACE_ENVIRONMENT=$namespace" "REDIS_NAMESPACE_ZONE=local" \
+  "SHARE_STORE_PREFIX=${prefix}:share" "WEB_ACCOUNT_STORE_PREFIX=${prefix}:web" \
+  "WEB_LOGIN_RATE_LIMIT_PREFIX=${prefix}:login-rate" "GATE_BOOT_LEASE_PREFIX=${prefix}:gate-boot" \
+  "LOAD_TEST_TOKEN_SECRET=$load_secret" "PERMIT_SECRET=$permit_secret" "WSS_ENDPOINT=ws://127.0.0.1:${PORTS[gate]}/ws" \
+  "GATE_ROUTE_LEASE_TTL=4s" "GATE_ROUTE_LEASE_SAFETY_MARGIN=500ms" "GATE_ROUTE_LEASE_RENEW_INTERVAL=750ms" \
+  "GATE_ROUTE_LEASE_BUCKETS=32" "GATE_ROUTE_LEASE_MAX_JITTER=10ms" "GATE_ROUTE_LEASE_BATCH_MAX_ITEMS=64" \
+  "GATE_ROUTE_LEASE_BATCH_MAX_BYTES=65536" "GATE_ROUTE_LEASE_MAX_DISPATCH_DURATION=500ms" \
+  "GATE_SUBSCRIPTION_LEASE_TTL=4s" "GATE_SUBSCRIPTION_LEASE_SAFETY_MARGIN=500ms" "GATE_SUBSCRIPTION_LEASE_RENEW_INTERVAL=750ms" \
+  "GATE_SUBSCRIPTION_LEASE_BUCKETS=32" "GATE_SUBSCRIPTION_LEASE_MAX_JITTER=10ms" "GATE_SUBSCRIPTION_LEASE_BATCH_MAX_ITEMS=64" \
+  "GATE_SUBSCRIPTION_LEASE_BATCH_MAX_BYTES=65536" "GATE_SUBSCRIPTION_LEASE_RENEW_TIMEOUT=500ms" \
+  "GATE_LEASE_SCHEDULER_TICK=5ms" "GATE_WS_DRAIN_WAIT=2s" "GATE_WS_SHUTDOWN_TIMEOUT=5s" \
+  "$BIN_DIR/farm-gate"
+gate_pid=$last_pid
+wait_http "http://127.0.0.1:${PORTS[gate]}/readyz" farm-gate
+
+round_a_owner=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["farm_ids"]["shard_0_owner_1"])' "$RUN_DIR/fixture.json")
+owner_a=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["farm_ids"]["shard_0_owner_2"])' "$RUN_DIR/fixture.json")
+owner_b=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["farm_ids"]["shard_1_owner_1"])' "$RUN_DIR/fixture.json")
+
+curl_json() {
+  local method=$1 url=$2 data=${3:-}
+  if [[ "$method" == POST ]]; then
+    curl -fsS --max-time 2 -X POST -H 'content-type: application/json' --data "$data" "$url"
+  else
+    curl -fsS --max-time 2 "$url"
+  fi
+}
+
+scrape() {
+  local url=$1 output=$2
+  curl -fsS --max-time 2 "$url" >"$output" || fail "metrics scrape failed"
+}
+
+scrape_quiescent_gate() {
+  local url=$1 output=$2 sample="$WORK_DIR/quiescent-gate.prom"
+  local attempt
+  for attempt in $(seq 1 500); do
+    curl -fsS --max-time 2 "$url" >"$sample" || fail "metrics scrape failed"
+    if python3 - "$sample" <<'PY'
+import re, sys
+values = {}
+for line in open(sys.argv[1], encoding="utf-8"):
+    if not line.startswith("farm_gate_lease_batch_in_flight{"):
+        continue
+    lane = re.search(r'lane="([^"]+)"', line)
+    if lane:
+        values[lane.group(1)] = float(line.rsplit(" ", 1)[1])
+if any(values.get(lane) != 0 for lane in ("session_route", "subscription")):
+    raise SystemExit(1)
+PY
+    then
+      mv "$sample" "$output"
+      return 0
+    fi
+    sleep 0.001
+  done
+  fail "Gate lease metrics did not reach a zero-in-flight scrape boundary"
+}
+
+reset_proxy_windows() {
+  curl_json POST "http://127.0.0.1:${PORTS[proxy_a_admin]}/admin/reset-window" '{}' >/dev/null
+  curl_json POST "http://127.0.0.1:${PORTS[proxy_b_admin]}/admin/reset-window" '{}' >/dev/null
+}
+
+printf 'Round A: 1 owner + 199 visitors, 20+ renewal cycles\n'
+round_a_ready="$WORK_DIR/round-a.ready"
+round_a_start="$WORK_DIR/round-a.start"
+round_a_done="$WORK_DIR/round-a.done"
+round_a_stop="$WORK_DIR/round-a.stop"
+"$BIN_DIR/lease-stress" -round a \
+  -gate-http "http://127.0.0.1:${PORTS[gate]}" -gate-ws "ws://127.0.0.1:${PORTS[gate]}/ws" \
+  -metrics-url "http://127.0.0.1:${PORTS[gate]}/metrics" -load-test-secret "$load_secret" \
+  -bootstrap-prefix "round-a-$RUN_ID" -player-base 920000000 -owner-a "$round_a_owner" -viewers 199 -join-concurrency 1 \
+  -duration 18s -step-timeout 30s -ready-file "$round_a_ready" -start-file "$round_a_start" \
+  -window-complete-file "$round_a_done" -stop-file "$round_a_stop" \
+  -expected-rejoins 0 -output "$RUN_DIR/round-a-client.json" >"$LOG_DIR/round-a-driver.log" 2>&1 &
+driver_pid=$!
+PIDS+=("$driver_pid")
+wait_file "$round_a_ready" Round-A-driver
+reset_proxy_windows
+scrape_quiescent_gate "http://127.0.0.1:${PORTS[gate]}/metrics" "$RUN_DIR/round-a-gate-before.prom"
+scrape "http://127.0.0.1:${PORTS[farm_a_health]}/metrics" "$RUN_DIR/round-a-farm-a-before.prom"
+touch "$round_a_start"
+wait_file "$round_a_done" Round-A-window
+# Capture both boundaries while the 200 subscriptions remain live and only
+# when the counters prove that no batch is in flight. Round B separately owns
+# terminal close and Drain evidence.
+scrape_quiescent_gate "http://127.0.0.1:${PORTS[gate]}/metrics" "$RUN_DIR/round-a-gate-after.prom"
+scrape "http://127.0.0.1:${PORTS[farm_a_health]}/metrics" "$RUN_DIR/round-a-farm-a-after.prom"
+curl_json GET "http://127.0.0.1:${PORTS[proxy_a_admin]}/admin/state" >"$RUN_DIR/round-a-proxy-a.json"
+curl_json GET "http://127.0.0.1:${PORTS[proxy_b_admin]}/admin/state" >"$RUN_DIR/round-a-proxy-b.json"
+touch "$round_a_stop"
+round_a_status=0
+wait "$driver_pid" || round_a_status=$?
+driver_pid=""
+((round_a_status == 0)) || fail "Round A protocol driver failed"
+
+printf 'Round B: real partial results + temporary Holder failure + Gate Drain\n'
+round_b_ready="$WORK_DIR/round-b.ready"
+round_b_start="$WORK_DIR/round-b.start"
+round_b_stop="$WORK_DIR/round-b.stop"
+"$BIN_DIR/lease-stress" -round b \
+  -gate-http "http://127.0.0.1:${PORTS[gate]}" -gate-ws "ws://127.0.0.1:${PORTS[gate]}/ws" \
+  -metrics-url "http://127.0.0.1:${PORTS[gate]}/metrics" -load-test-secret "$load_secret" \
+  -bootstrap-prefix "round-b-$RUN_ID" -player-base 930000000 -owner-a "$owner_a" -owner-b "$owner_b" \
+  -viewers 18 -join-concurrency 1 -duration 30s -step-timeout 30s \
+  -ready-file "$round_b_ready" -start-file "$round_b_start" -stop-file "$round_b_stop" \
+  -expected-rejoins 2 -require-drain -output "$RUN_DIR/round-b-client.json" >"$LOG_DIR/round-b-driver.log" 2>&1 &
+driver_pid=$!
+PIDS+=("$driver_pid")
+wait_file "$round_b_ready" Round-B-driver
+reset_proxy_windows
+scrape "http://127.0.0.1:${PORTS[gate]}/metrics" "$RUN_DIR/round-b-gate-before.prom"
+touch "$round_b_start"
+
+curl_json POST "http://127.0.0.1:${PORTS[proxy_a_admin]}/admin/plan" \
+  '{"inject_partial_once":true,"stale_entries":1,"closed_entries":1,"closed_delay_ms":15}' >/dev/null
+partial_ready=0
+for _ in $(seq 1 240); do
+  curl_json GET "http://127.0.0.1:${PORTS[proxy_a_admin]}/admin/state" >"$WORK_DIR/proxy-a-state.json" || true
+  if python3 - "$WORK_DIR/proxy-a-state.json" <<'PY' 2>/dev/null
+import json, sys
+v=json.load(open(sys.argv[1]))
+raise SystemExit(0 if v.get("partial_injected") and v.get("injected_stale")==1 and v.get("injected_closed")==1 else 1)
+PY
+  then partial_ready=1; break; fi
+  sleep 0.05
+done
+((partial_ready == 1)) || fail "Round B real per-item STALE/CLOSED injection did not complete"
+
+curl_json POST "http://127.0.0.1:${PORTS[proxy_a_admin]}/admin/plan" '{"unavailable_for_ms":1000}' >/dev/null
+holder_recovered=0
+for _ in $(seq 1 300); do
+  curl_json GET "http://127.0.0.1:${PORTS[proxy_a_admin]}/admin/state" >"$WORK_DIR/proxy-a-state.json" || true
+  if python3 - "$WORK_DIR/proxy-a-state.json" <<'PY' 2>/dev/null
+import json, sys
+v=json.load(open(sys.argv[1]))
+raise SystemExit(0 if v.get("unavailable_calls",0)>0 and v.get("first_recovery_success_ms",0)>=v.get("unavailable_window_until_ms",1)>0 else 1)
+PY
+  then holder_recovered=1; break; fi
+  sleep 0.05
+done
+((holder_recovered == 1)) || fail "Round B temporary Holder failure did not recover"
+sleep 2
+scrape "http://127.0.0.1:${PORTS[gate]}/metrics" "$RUN_DIR/round-b-gate-pre-drain.prom"
+curl_json GET "http://127.0.0.1:${PORTS[proxy_a_admin]}/admin/state" >"$RUN_DIR/round-b-proxy-a.json"
+curl_json GET "http://127.0.0.1:${PORTS[proxy_b_admin]}/admin/state" >"$RUN_DIR/round-b-proxy-b.json"
+
+kill -TERM "$gate_pid"
+drain_one=0
+for _ in $(seq 1 200); do
+  if curl -fsS --max-time 1 "http://127.0.0.1:${PORTS[gate]}/metrics" >"$WORK_DIR/drain.prom" 2>/dev/null && \
+    python3 - "$WORK_DIR/drain.prom" <<'PY' 2>/dev/null
+import sys
+text=open(sys.argv[1]).read()
+ok=(
+ 'farm_gate_lease_batch_drain_total{lane="session_route"} 1' in text and
+ 'farm_gate_lease_batch_drain_total{lane="subscription"} 1' in text and
+ 'farm_gate_lease_batch_backlog{lane="session_route"} 0' in text and
+ 'farm_gate_lease_batch_backlog{lane="subscription"} 0' in text and
+ 'farmgate_ws_lifecycle_serving 0' in text)
+raise SystemExit(0 if ok else 1)
+PY
+  then
+    cp "$WORK_DIR/drain.prom" "$RUN_DIR/round-b-gate-drain-1.prom"
+    curl_json GET "http://127.0.0.1:${PORTS[proxy_a_admin]}/admin/state" >"$RUN_DIR/round-b-proxy-a-drain-1.json"
+    curl_json GET "http://127.0.0.1:${PORTS[proxy_b_admin]}/admin/state" >"$RUN_DIR/round-b-proxy-b-drain-1.json"
+    drain_one=1
+    break
+  fi
+  sleep 0.01
+done
+((drain_one == 1)) || fail "Gate Drain planner-zero snapshot unavailable"
+
+drain_two=0
+for _ in $(seq 1 180); do
+  if curl -fsS --max-time 1 "http://127.0.0.1:${PORTS[gate]}/metrics" >"$WORK_DIR/drain.prom" 2>/dev/null && \
+    awk '$1=="farmgate_ws_conn_active" && $2==0 {found=1} END {exit(found?0:1)}' "$WORK_DIR/drain.prom"; then
+    cp "$WORK_DIR/drain.prom" "$RUN_DIR/round-b-gate-drain-2.prom"
+    curl_json GET "http://127.0.0.1:${PORTS[proxy_a_admin]}/admin/state" >"$RUN_DIR/round-b-proxy-a-drain-2.json"
+    curl_json GET "http://127.0.0.1:${PORTS[proxy_b_admin]}/admin/state" >"$RUN_DIR/round-b-proxy-b-drain-2.json"
+    drain_two=1
+    break
+  fi
+  sleep 0.01
+done
+((drain_two == 1)) || fail "Gate Drain zero-connection snapshot unavailable"
+
+touch "$round_b_stop"
+round_b_status=0
+wait "$driver_pid" || round_b_status=$?
+driver_pid=""
+gate_exit=0
+wait "$gate_pid" || gate_exit=$?
+python3 - "$RUN_DIR/gate-exit.json" "$gate_exit" <<'PY'
+import json, pathlib, sys
+pathlib.Path(sys.argv[1]).write_text(json.dumps({"exit_code": int(sys.argv[2]), "process_exited": True}, indent=2)+"\n")
+PY
+gate_pid=""
+((round_b_status == 0)) || fail "Round B protocol/Drain driver failed"
+((gate_exit == 0)) || fail "farm-gate did not exit cleanly after Drain"
+
+failure_reason=""
+finalize "" || {
+  failure_reason="machine assertions failed"
+  exit 1
+}
+printf 'PASS: Round A and Round B real lease evidence complete\n'

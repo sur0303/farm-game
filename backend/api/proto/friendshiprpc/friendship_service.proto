@@ -1,0 +1,270 @@
+syntax = "proto3";
+
+package friendshiprpc;
+
+option go_package = "farmgame/api/gen/friendshiprpc;friendshiprpcpb";
+
+// FriendshipService is an internal-only, ServiceLB-addressed boundary.  The
+// caller identity is established by the co-deployed trusted service; none of
+// these messages are accepted from the public HTTP/WSS transports directly.
+service FriendshipService {
+  rpc CreateShare(CreateShareRequest) returns (CreateShareResponse);
+  rpc ResolveShare(ResolveShareRequest) returns (ResolveShareResponse);
+  rpc RedeemShare(RedeemShareRequest) returns (RedeemShareResponse);
+  rpc GetFriendList(GetFriendListRequest) returns (GetFriendListResponse);
+  rpc DeleteFriend(DeleteFriendRequest) returns (PairMutationResponse);
+  rpc BlockFriend(BlockFriendRequest) returns (PairMutationResponse);
+  rpc UnblockFriend(UnblockFriendRequest) returns (PairMutationResponse);
+  rpc GetNextFriendOpportunity(GetNextFriendOpportunityRequest) returns (GetNextFriendOpportunityResponse);
+  rpc AuthorizeVisit(AuthorizeVisitRequest) returns (AuthorizeVisitResponse);
+  rpc CommitFriendActionAdmission(CommitFriendActionAdmissionRequest) returns (FriendActionAdmissionResponse);
+  rpc GetFriendActionAdmission(GetFriendActionAdmissionRequest) returns (FriendActionAdmissionResponse);
+}
+
+enum OutcomeStatus {
+  OUTCOME_STATUS_UNSPECIFIED = 0;
+  OUTCOME_STATUS_SUCCEEDED = 1;
+  OUTCOME_STATUS_REJECTED = 2;
+  OUTCOME_STATUS_NO_CHANGE = 3;
+}
+
+enum RelationStatus {
+  RELATION_STATUS_UNSPECIFIED = 0;
+  RELATION_STATUS_NONE = 1;
+  RELATION_STATUS_ACTIVE = 2;
+  RELATION_STATUS_DELETED = 3;
+}
+
+enum OpportunityStatus {
+  OPPORTUNITY_STATUS_UNSPECIFIED = 0;
+  OPPORTUNITY_STATUS_READY = 1;
+  OPPORTUNITY_STATUS_UNKNOWN = 2;
+}
+
+enum NextOpportunityStatus {
+  NEXT_OPPORTUNITY_STATUS_UNSPECIFIED = 0;
+  NEXT_OPPORTUNITY_STATUS_FOUND = 1;
+  NEXT_OPPORTUNITY_STATUS_NONE = 2;
+  NEXT_OPPORTUNITY_STATUS_UNKNOWN = 3;
+}
+
+enum ActionScope {
+  ACTION_SCOPE_UNSPECIFIED = 0;
+  ACTION_SCOPE_VISIT_FARM = 1;
+  ACTION_SCOPE_CARE = 2;
+  ACTION_SCOPE_THEFT = 3;
+}
+
+message Outcome {
+  OutcomeStatus status = 1;
+  string reason = 2;
+  uint64 committed_epoch = 3;
+  string detail = 4;
+  bytes canonical_payload_hash = 5;
+  CommitIdentity identity = 6;
+  int64 committed_at_authority_ms = 7;
+}
+
+message PairState {
+  string relation_id = 1;
+  uint64 relation_epoch = 2;
+  RelationStatus status = 3;
+  bool changed = 4;
+}
+
+message PublicProfile {
+  uint64 player_id = 1;
+  string display_name = 2;
+  uint32 avatar_id = 3;
+  uint32 level = 4;
+}
+
+message FriendTheftTarget {
+  uint32 plot_id = 1;
+  string crop_cycle_id = 2;
+}
+
+message FriendCard {
+  uint64 owner_player_id = 1;
+  PublicProfile public_profile = 2;
+  string relation_id = 3;
+  uint64 relation_epoch = 4;
+  uint32 action_mask = 5;
+  OpportunityStatus opportunity_status = 6;
+  uint64 opportunity_revision = 7;
+  repeated FriendTheftTarget eligible_theft_targets = 8;
+  int64 validated_at_ms = 9;
+}
+
+message CreateShareRequest {
+  uint64 subject_player_id = 1;
+  string operation_id = 2;
+  // Shadow callers set observation_only after the formal local mutation.
+  // The server must perform only a canonical read in this mode.
+  bool observation_only = 3;
+}
+
+message CreateShareResponse {
+  Outcome outcome = 1;
+  string share_token = 2;
+  string accept_mode = 3;
+  uint64 token_generation = 4;
+  int64 issued_at_ms = 5;
+  int64 expires_at_ms = 6;
+}
+
+message ResolveShareRequest {
+  string share_token = 1;
+}
+
+message ResolveShareResponse {
+  uint64 inviter_player_id = 1;
+  PublicProfile inviter_profile = 2;
+  string accept_mode = 3;
+}
+
+message RedeemShareRequest {
+  uint64 redeemer_player_id = 1;
+  string share_token = 2;
+  string operation_id = 3;
+  bool observation_only = 4;
+}
+
+message RedeemShareResponse {
+  Outcome outcome = 1;
+  PairState pair = 2;
+  uint64 inviter_player_id = 3;
+  PublicProfile inviter_profile = 4;
+}
+
+message GetFriendListRequest {
+  uint64 viewer_player_id = 1;
+  string cursor = 2;
+  uint32 page_size = 3;
+}
+
+message GetFriendListResponse {
+  repeated FriendCard friends = 1;
+  string next_cursor = 2;
+  uint64 roster_revision = 3;
+  int64 validated_at_ms = 4;
+}
+
+message DeleteFriendRequest {
+  uint64 caller_player_id = 1;
+  uint64 peer_player_id = 2;
+  string operation_id = 3;
+  bool observation_only = 4;
+}
+
+message BlockFriendRequest {
+  uint64 caller_player_id = 1;
+  uint64 peer_player_id = 2;
+  string operation_id = 3;
+  bool observation_only = 4;
+}
+
+message UnblockFriendRequest {
+  uint64 caller_player_id = 1;
+  uint64 peer_player_id = 2;
+  string operation_id = 3;
+  bool observation_only = 4;
+}
+
+message PairMutationResponse {
+  Outcome outcome = 1;
+  PairState pair = 2;
+}
+
+message FriendOpportunityHintedTarget {
+  uint64 owner_id = 1;
+  uint64 opportunity_revision = 2;
+}
+
+message GetNextFriendOpportunityRequest {
+  uint64 viewer_player_id = 1;
+  repeated FriendOpportunityHintedTarget hinted_targets = 2;
+}
+
+message GetNextFriendOpportunityResponse {
+  NextOpportunityStatus status = 1;
+  FriendCard friend = 2;
+}
+
+message AuthorizeVisitRequest {
+  uint64 viewer_player_id = 1;
+  uint64 owner_player_id = 2;
+  uint64 target_farm_id = 3;
+  string join_operation_id = 4;
+  string join_attempt_id = 5;
+  int64 authority_now_ms = 6;
+  int64 accepted_ttl_ms = 7;
+}
+
+message VisitPermit {
+  string permit_id = 1;
+  uint64 viewer_player_id = 2;
+  uint64 owner_player_id = 3;
+  uint64 target_farm_id = 4;
+  string relation_id = 5;
+  uint64 relation_epoch = 6;
+  string join_operation_id = 7;
+  string join_attempt_id = 8;
+  int64 issued_at_authority_ms = 9;
+  int64 expire_at_authority_ms = 10;
+  bytes payload_hash = 11;
+}
+
+message AuthorizeVisitResponse {
+  Outcome outcome = 1;
+  VisitPermit permit = 2;
+}
+
+message CommitIdentity {
+  uint64 subject_player_id = 1;
+  string command_type = 2;
+  string operation_id = 3;
+  string work_address_id = 4;
+  string participant_invocation_id = 5;
+  string participant_step = 6;
+}
+
+message CommitFriendActionAdmissionRequest {
+  CommitIdentity identity = 1;
+  bytes canonical_payload_hash = 2;
+  uint64 visitor_player_id = 3;
+  uint64 owner_player_id = 4;
+  uint64 target_farm_id = 5;
+  ActionScope action_scope = 6;
+  bytes target_binding_hash = 7;
+  int64 authority_now_ms = 8;
+  int64 permit_ttl_ms = 9;
+  int64 workflow_ttl_ms = 10;
+}
+
+message GetFriendActionAdmissionRequest {
+  CommitFriendActionAdmissionRequest admission = 1;
+}
+
+message ActionPermit {
+  string permit_id = 1;
+  string relation_id = 2;
+  uint64 relation_epoch = 3;
+  uint64 visitor_player_id = 4;
+  uint64 owner_player_id = 5;
+  uint64 target_farm_id = 6;
+  string operation_id = 7;
+  ActionScope action_scope = 8;
+  bytes canonical_payload_hash = 9;
+  bytes target_binding_hash = 10;
+  int64 issued_at_authority_ms = 11;
+  int64 expire_at_authority_ms = 12;
+  int64 execution_accepted_at_authority_ms = 13;
+}
+
+message FriendActionAdmissionResponse {
+  Outcome outcome = 1;
+  ActionPermit permit = 2;
+  string dispatch_order_id = 3;
+  int64 workflow_deadline_at_ms = 4;
+}

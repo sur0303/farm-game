@@ -1,0 +1,10 @@
+2026/08/11 21:35:29 permit secret policy=authority insecure_development=false development_switch=false
+2026/08/11 21:35:29 farm-svr using persistent canonical Friendship Pair/Quota/Share repositories
+2026/08/11 21:35:29 farm-svr authority mode enabled holder=foperf-b2-farm boot=foperf-b2-farm-fofinalb2fence-boot snapshot=/data/home/developer_026/CodeBuddy/20260519141303/farm-game-fo-optimized-20260811/.local-state/friend-opportunity-real-ab/fofinalb2fence/b2/route-snapshot.json membership=legacy
+2026/08/11 21:35:29 GateBootReaper mode=disabled; subscription lifecycle owned by BatchRenew leases (contract 26 section 11.5)
+2026/08/11 21:35:29 using routed player participants across 1 endpoints
+2026/08/11 21:35:29 friend opportunity header read mode=narrow full_fallback=8
+2026/08/11 21:35:29 Care direct dispatcher enabled on shared Authority SourceOrder/WorkLease
+2026/08/11 21:35:29 friend Pair Authority ActionAdmission enabled for CARE
+2026/08/11 21:35:29 using single farm-gate downlink at 127.0.0.1:54795
+2026/08/11 21:35:29 farm-svr listening on 127.0.0.1:41663, version=0.0.0-dev

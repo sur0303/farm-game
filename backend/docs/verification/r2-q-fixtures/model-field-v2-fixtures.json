@@ -1,0 +1,139 @@
+{
+  "schema": "farm.r2-q.fixture/model-field-v2/v1",
+  "fixture_id": "model-field-v2-v1",
+  "contract_status": "SKIPPED_NOT_COMPOSED",
+  "deterministic": true,
+  "production_semantics_changed": false,
+  "authority_fences": {
+    "writer_claim": "exactly_one_per_actor",
+    "record_version": "exactly_one_per_authority_group",
+    "persistence_lane": "exactly_one_per_actor",
+    "actor_fence_bypass": false,
+    "no_dual_write": true,
+    "max_unresolved_operations": 1
+  },
+  "layout_v2": {
+    "metadata_fields": ["_meta:authority_layout_version", "_meta:schema_version", "_meta:record_version", "_meta:writer_claim_id", "_meta:model_manifest", "_meta:model_total_bytes"],
+    "envelope_prefixes": {
+      "receipt": "receipt:*",
+      "outcome": "outcome:*",
+      "order": "order:*",
+      "due": "due:*"
+    },
+    "unknown_or_over_capacity": "FAIL_CLOSED"
+  },
+  "domains": {
+    "player": {
+      "authoritative_models": ["profile", "economy", "inventory", "progression", "task", "pet", "compendium", "mail_claim_state"],
+      "core_physical_models": ["profile", "economy", "inventory", "progression", "task", "pet", "compendium", "mail_claim_state"],
+      "derived_models": ["public_profile"],
+      "envelope_classes": ["receipt:*", "outcome:*", "order:*", "due:*"]
+    },
+    "farm": {
+      "authoritative_models": ["farm_meta", "plots", "guard", "activity_summary", "opportunity_header", "opportunity_facts"],
+      "core_physical_models": ["farm_meta", "plots", "guard", "activity_summary", "opportunity_header", "opportunity_facts"],
+      "derived_models": [],
+      "envelope_classes": ["receipt:*", "outcome:*", "order:*", "due:*"]
+    }
+  },
+  "golden_cases": [
+    {
+      "case_id": "player-initial-v1-v2",
+      "domain": "player",
+      "input": {
+        "layout_version": "v1",
+        "v1_blob_bytes_hex": "7232712d706c617965722d76312d696e697469616c2d303031",
+        "record_version": 17,
+        "writer_claim_id": "claim-player-golden-001"
+      },
+      "expected": {
+        "layout_version": "v2",
+        "model_fields": ["model:profile", "model:economy", "model:inventory", "model:progression", "model:task", "model:pet", "model:compendium", "model:mail_claim_state"],
+        "envelope_prefixes": ["receipt:*", "outcome:*", "order:*", "due:*"] ,
+        "v1_v2_business_state_equal": true,
+        "record_version_increment": 1,
+        "writer_claim_count": 1,
+        "persistence_lane_count": 1,
+        "old_blob_present_after_commit": false,
+        "old_blob_deleted_atomically": true,
+        "v1_fallback": false,
+        "v1_retention": "none"
+      }
+    },
+    {
+      "case_id": "farm-initial-v1-v2",
+      "domain": "farm",
+      "input": {
+        "layout_version": "v1",
+        "v1_blob_bytes_hex": "7232712d6661726d2d76312d696e697469616c2d303031",
+        "record_version": 23,
+        "writer_claim_id": "claim-farm-golden-001"
+      },
+      "expected": {
+        "layout_version": "v2",
+        "model_fields": ["model:farm_meta", "model:plots", "model:guard", "model:activity_summary", "model:opportunity_header", "model:opportunity_facts"],
+        "envelope_prefixes": ["receipt:*", "outcome:*", "order:*", "due:*"] ,
+        "v1_v2_business_state_equal": true,
+        "record_version_increment": 1,
+        "writer_claim_count": 1,
+        "persistence_lane_count": 1,
+        "old_blob_present_after_commit": false,
+        "old_blob_deleted_atomically": true,
+        "v1_fallback": false,
+        "v1_retention": "none"
+      }
+    },
+    {
+      "case_id": "malformed-manifest-fail-closed",
+      "domain": "player",
+      "input": {"layout_version": "v2", "manifest": ["model:profile", "model:unknown"]},
+      "expected": {"status": "FAIL_CLOSED", "actor_install": false, "business_read": false, "v1_fallback": false}
+    }
+  ],
+  "mutation_cases": [
+    {"case_id": "buy", "dirty_models": ["economy", "inventory"], "receipt_envelopes": ["receipt:*"], "outcome_envelopes": ["outcome:*"], "order_envelopes": [], "due_envelopes": [], "writer_claims": 1, "record_versions": 1, "persistence_lanes": 1, "dual_write": false},
+    {"case_id": "task-claim", "dirty_models": ["task", "progression", "economy"], "receipt_envelopes": ["receipt:*"], "outcome_envelopes": ["outcome:*"], "order_envelopes": [], "due_envelopes": [], "writer_claims": 1, "record_versions": 1, "persistence_lanes": 1, "dual_write": false},
+    {"case_id": "water-farm", "dirty_models": ["plots", "activity_summary", "opportunity_header"], "receipt_envelopes": ["receipt:*"], "outcome_envelopes": ["outcome:*"], "order_envelopes": ["order:*"], "due_envelopes": ["due:*"], "writer_claims": 1, "record_versions": 1, "persistence_lanes": 1, "dual_write": false},
+    {"case_id": "theft-farm", "dirty_models": ["plots", "activity_summary", "opportunity_header"], "receipt_envelopes": ["receipt:*"], "outcome_envelopes": ["outcome:*"], "order_envelopes": ["order:*"], "due_envelopes": ["due:*"], "writer_claims": 1, "record_versions": 1, "persistence_lanes": 1, "dual_write": false},
+    {"case_id": "theft-player", "dirty_models": ["inventory", "task"], "receipt_envelopes": ["receipt:*"], "outcome_envelopes": ["outcome:*"], "order_envelopes": ["order:*"], "due_envelopes": ["due:*"], "writer_claims": 1, "record_versions": 1, "persistence_lanes": 1, "dual_write": false}
+  ],
+  "migration_cases": [
+    {"case_id": "v1-migration-committed", "response": "COMMITTED", "layout_before": "v1", "layout_after": "v2", "record_version_delta": 1, "writer_claims": 1, "persistence_lanes": 1, "old_holder_can_commit": false, "old_blob_present_after_commit": false, "old_blob_deleted_atomically": true, "v1_fallback": false, "v1_retention": "none", "retry_result": "COMMITTED_REPLAY"},
+    {"case_id": "v1-migration-not-committed", "response": "NOT_COMMITTED", "layout_before": "v1", "layout_after": "v1", "record_version_delta": 0, "old_holder_can_commit": false, "old_blob_present_after_commit": true, "old_blob_deleted_atomically": false, "v1_fallback": false, "actor_state": "MIGRATION_REQUIRED", "retry_requires_current_claim": true},
+    {"case_id": "v1-migration-timeout-unknown", "response": "TIMEOUT_UNKNOWN", "resolution": "FenceAndClaim", "resolved_responses": ["COMMITTED", "NOT_COMMITTED"], "old_blob_presence_by_resolution": {"COMMITTED": false, "NOT_COMMITTED": true}, "v1_fallback": false, "max_unresolved_operations": 1, "old_holder_can_commit": false},
+    {"case_id": "old-holder-claim-fenced", "response": "WRITER_CLAIM_MISMATCH", "old_holder_can_commit": false, "record_version_delta": 0, "old_blob_present_after_commit": true, "v1_fallback": false},
+    {"case_id": "committed-cannot-revert-v1", "response": "FAIL_CLOSED", "layout_before": "v2", "layout_after": "v2", "old_blob_present_after_commit": false, "v1_fallback": false, "v1_retention": "none"}
+  ],
+  "crash_after_each_phase": [
+    {"phase": "load_and_claim_v1", "expected": "CLAIMED_MIGRATION_REQUIRED", "old_blob_present": true, "retry": "same_writer_claim"},
+    {"phase": "construct_v2_fields", "expected": "v1_unchanged", "old_blob_present": true, "retry": "reconstruct_from_same_snapshot"},
+    {"phase": "prepare_commit_attempt", "expected": "resolve_attempt_cursor", "old_blob_present": true, "retry": "same_commit_attempt"},
+    {"phase": "send_commit", "expected": "TIMEOUT_UNKNOWN", "old_blob_presence_after_resolution": {"COMMITTED": false, "NOT_COMMITTED": true}, "retry": "fence_and_claim"},
+    {"phase": "commit_response_before_install", "expected": "resolve_commit_and_old_blob_atomically", "old_blob_present_after_commit": false, "v1_fallback": false, "retry": "install_only_after_committed"},
+    {"phase": "atomic_commit_and_old_blob_delete", "expected": "COMMITTED_ONLY", "old_blob_present_after_commit": false, "old_blob_deleted_atomically": true, "retry": "same_writer_claim"},
+    {"phase": "layout_v2_visible", "expected": "v2_is_authoritative", "old_blob_present_after_commit": false, "v1_fallback": false, "retry": "v2_idempotent"}
+  ],
+  "dirty_model_command_matrix": {
+    "required_columns": ["command", "domain", "dirty_models", "receipt_envelopes", "outcome_envelopes", "order_envelopes", "due_envelopes", "record_version_delta", "writer_claim_count", "persistence_lane_count", "dual_write", "old_blob_present_after_commit"],
+    "commands": ["BUY", "SELL", "CLAIM_TASK", "UNLOCK_PLOT", "PLANT", "HARVEST", "CARE", "WATER", "THEFT", "APPLY_GUARD_SNAPSHOT"]
+  },
+  "redis_comparison": {
+    "required_metrics": ["operation_count", "request_bytes", "response_bytes", "model_bytes", "receipt_bytes", "outcome_bytes", "order_bytes", "due_bytes", "duration_ms"],
+    "comparison": "same_input_same_config_same_writer_claim",
+    "v1_and_v2_physical_measurements_required": true,
+    "measurements_are_m1_observations": true,
+    "redis_flushall_allowed": false,
+    "status": "SKIPPED_NOT_COMPOSED"
+  },
+  "cases": [
+    "golden_field_equality",
+    "mutation_one_claim_one_record_version_one_lane",
+    "migration_committed_deletes_old_blob_atomically",
+    "migration_not_committed_and_timeout_unknown",
+    "old_holder_fenced",
+    "crash_after_each_migration_phase",
+    "idempotent_retry",
+    "dirty_model_command_matrix",
+    "redis_operation_byte_comparison"
+  ]
+}

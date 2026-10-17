@@ -1,0 +1,23 @@
+{
+  "authority_oracle": "PASS",
+  "browser": "PASS",
+  "exact_traced_commands": [
+    "BUY",
+    "CLAIM_TASK",
+    "HARVEST",
+    "PLANT",
+    "SELL",
+    "THEFT",
+    "WATER"
+  ],
+  "identity_policy": "SOURCE_ARTIFACTS_RETAINED_OUTSIDE_PUBLISHED_ALLOWLIST; ONLY HASHES_AND_CLOSED_VERDICTS_PERSISTED",
+  "protocol": "PASS",
+  "schema_version": "cap-redis-business-correctness-witness-v1",
+  "source_sha256": {
+    "authority-after.json": "1125d55778614fc964dc737d454a012adeb3cff4559b7de64471d1d913e4560b",
+    "browser-verdict.json": "9f32b605491a256763634fbebf4be0f7388f120d7d663e21b9bde05ced7316a7",
+    "protocol-verdict.json": "354eb318ac92ad8054a2902b031695733c51a17a4242452e8f671086fd28ce80",
+    "verdict.json": "d3f0faf1442c7d09eed0b4f144af37ce8f7e1b748af48f1dc1c4171e9c7e70f1"
+  },
+  "stack": "PASS"
+}

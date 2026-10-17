@@ -1,0 +1,27 @@
+{
+  "schema_version": "friend-opportunity-c0.plan.v1",
+  "name": "friend-opportunity-c0-30m-model",
+  "description": "C0 capacity matrix for friend_count 20/100/300. Comparable cells only; not a 30M DAU proof.",
+  "claims_30m_dau": false,
+  "transport": {
+    "expected": "direct",
+    "effective_required": "direct",
+    "unsupported": ["pubsub", "online-ratio", "friend-base"]
+  },
+  "fixture": {
+    "density_percent": 20,
+    "fake_base": 7000000000
+  },
+  "matrix": {
+    "friend_counts": [20, 100, 300],
+    "scenarios": ["friend-list", "next-opportunity", "hint"]
+  },
+  "identity": {
+    "conns": 1,
+    "viewer_must_equal_login": true
+  },
+  "redis_safety": {
+    "ephemeral_only": true,
+    "forbidden": ["CONFIG SET", "SLOWLOG RESET", "FLUSHALL", "FLUSHDB", "broad SCAN+DEL"]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": "cap-l2-driver-config.v1",
+  "listen": "127.0.0.1:19103",
+  "service": "farm",
+  "profile": "FARM_LEGAL_INGRESS_REVIEW_PENDING",
+  "maximum_inflight": 2025,
+  "adapter": "design_blocker"
+}

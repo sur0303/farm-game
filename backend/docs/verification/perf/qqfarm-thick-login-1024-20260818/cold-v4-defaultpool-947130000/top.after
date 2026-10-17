@@ -1,0 +1,2 @@
+error: pod [NAME | -l label]
+See 'kubectl top pod -h' for help and examples

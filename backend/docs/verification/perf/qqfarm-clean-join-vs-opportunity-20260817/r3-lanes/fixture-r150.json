@@ -1,0 +1,20 @@
+{
+  "run_id": "qqfarm-lanes-50x300-r3-150",
+  "namespace": "uctestscaleplanqqfarm20260816",
+  "zone": "z1",
+  "viewer_player_id": 934000300,
+  "viewer_count": 300,
+  "viewer_end": 934000599,
+  "target_owner_id": 0,
+  "friend_count": 50,
+  "verified_friend_count": 50,
+  "fake_players": 50,
+  "density_percent": 20,
+  "initialized_players": 50,
+  "activated_pairs": 15000,
+  "index_rows_applied": 30000,
+  "farm_records_seeded": 50,
+  "elapsed_ms": 28361,
+  "cleanup_hint": "dedicated qqfarm load-test data; clear only through prepare-qqfarm-loadtest clean reset",
+  "cleanup_scope": "uctestscaleplanqqfarm20260816:z1"
+}

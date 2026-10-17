@@ -1,0 +1,92 @@
+{
+  "classification": {
+    "baseline_eligible": false,
+    "business_head": "5ce43715363eea4f18e0925b6992429785053261",
+    "capacity_claim": "NONE",
+    "h5_head": "60707faaa30797a8d739af6686186fd8f113626a",
+    "purpose": "r2_exact_product_redis_and_serialization_qualification",
+    "supports_30m_dau": false
+  },
+  "client": {
+    "go_gc": "100",
+    "go_mem_limit": "4GiB",
+    "min_idle_conns": 400,
+    "pool_size": 400,
+    "protocol": 2
+  },
+  "lease_profile": {
+    "actor_shard_lease": "4h",
+    "session_route_initial_lease": "2h",
+    "session_route_renewal": "30m",
+    "subscription_batch_sizes": [
+      1,
+      4
+    ],
+    "workflow_lease": "30s"
+  },
+  "matrix": {
+    "concurrency": [
+      1,
+      10,
+      100,
+      300
+    ],
+    "formal_rounds": 5,
+    "key_distributions": [
+      "uniform",
+      "hot"
+    ],
+    "operations_per_cell": 600,
+    "payload_distribution_bytes": {
+      "max": 16384,
+      "p50": 256,
+      "p95": 1024,
+      "p99": 4096
+    },
+    "warmup_rounds": 1
+  },
+  "model_layout_version": "R2:authority-v1+workflow-v1+friend-authority-v1;Model-Field-V2-runtime-enabled;legacy-relationship-roster-removed",
+  "r2_hard_assertions": {
+    "correctness_violations": 0,
+    "due_residual": 0,
+    "friend_batch_script_calls_equal_unique_buckets": true,
+    "friend_complete_snapshot_v2_observed": true,
+    "invalid_order_total": 0,
+    "legacy_relationship_read_total": 0,
+    "legacy_relationship_write_total": 0,
+    "model_v2_migration_observed": true,
+    "model_v2_sparse_commit_observed": true,
+    "namespace_residual_total": 0,
+    "observability_required_gaps": 0,
+    "remote_player_rpc_observed": true,
+    "v1_fallback_total": 0,
+    "workflow_step_unknown_residual": 0
+  },
+  "redis": {
+    "appendonly": "no",
+    "bind": "temporary Docker port published on 127.0.0.1 only",
+    "container_cpu_limit": "4",
+    "container_memory_limit": "4g",
+    "image": "redis:7.4-alpine",
+    "image_id": "sha256:2a51817f79255c8b69f86a974459c2e0359aff81417d80158f2b9e541e6f4b33",
+    "maxmemory": "3gb",
+    "maxmemory_policy": "noeviction",
+    "protected_mode": "yes",
+    "save": "",
+    "slowlog_log_slower_than_us": 0,
+    "slowlog_max_len": 1000000
+  },
+  "route_snapshot": {
+    "farm_virtual_shards": 64,
+    "friend_pair_buckets": 64,
+    "friend_quota_buckets": 64,
+    "friend_share_buckets": 64,
+    "hash_seed": 202608030001,
+    "hash_version": 2,
+    "player_virtual_shards": 64,
+    "realm": "cap-redis-l1-r2-realm",
+    "workflow_buckets": 64
+  },
+  "schema_version": "cap-redis-l1-r2.profile.v1",
+  "task_id": "CAP-REDIS-L1-R2"
+}

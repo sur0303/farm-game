@@ -1,0 +1,212 @@
+--- 04:18:42
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   545m         137Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   566m         134Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   622m         161Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   439m         170Mi           
+--- 04:18:46
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   545m         137Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   566m         134Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   622m         161Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   439m         170Mi           
+--- 04:18:50
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   545m         137Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   483m         135Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   530m         166Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   415m         170Mi           
+--- 04:18:54
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         142Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   483m         135Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   530m         166Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   415m         170Mi           
+--- 04:18:58
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         142Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   483m         135Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   530m         166Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   415m         170Mi           
+--- 04:19:02
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         142Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   483m         135Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   530m         166Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   415m         170Mi           
+--- 04:19:06
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         142Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   483m         135Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   530m         166Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   415m         170Mi           
+--- 04:19:10
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         142Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   483m         135Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   530m         166Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   415m         170Mi           
+--- 04:19:14
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         142Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   483m         135Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   530m         166Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   415m         170Mi           
+--- 04:19:18
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   348m         142Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   483m         135Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   530m         166Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   415m         170Mi           
+--- 04:19:23
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   13m          160Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   15m          147Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   13m          183Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   11m          208Mi           
+--- 04:19:28
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   13m          160Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   15m          147Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   13m          183Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   11m          208Mi           
+--- 04:19:33
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   13m          160Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   15m          147Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   13m          183Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   11m          208Mi           
+--- 04:19:37
+pod=farm-gate-6d664d9846-xrdhp
+Error from server (NotFound): pods "farm-gate-6d664d9846-xrdhp" not found
+pod=player-svr-0
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   13m          160Mi           
+pod=player-svr-1
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   15m          147Mi           
+pod=farm-svr-0
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   13m          183Mi           
+pod=farm-svr-1
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   11m          208Mi           
+--- 04:19:41
+pod=farm-gate-6d664d9846-xrdhp

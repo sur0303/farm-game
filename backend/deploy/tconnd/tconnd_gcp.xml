@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<tconnd __version="13">
+    <MaxFD>4096</MaxFD>
+    <ConnLogFlag>1</ConnLogFlag>
+
+    <PDUList type="PDUList">
+        <Count>1</Count>
+        <PDUs type="PDU">
+            <Name>farm_ws_pdu</Name>
+            <UpSize>1048576</UpSize>
+            <DownSize>1048576</DownSize>
+            <LenParsertype>BY_WS</LenParsertype>
+            <LenParser type="PDULenParser">
+                <WSParser type="PDULenWSParser">
+                    <!-- NoAuth=1: skip Apollo/platform auth (local dev only).
+                         Application auth is STILL enforced by farm-gate
+                         ClientHello ticket; NoAuth never bypasses ticket. -->
+                    <NoAuth>1</NoAuth>
+                    <IsIDMappingOn>0</IsIDMappingOn>
+                    <!-- Transparent=0: standard WS mode. Per KM 317872 this is
+                         the mode where TCONND runs the WS control protocol
+                         (queue/close/pass text frames) AND drives the TBUS
+                         lifecycle (START -> GameSvr ack -> pass -> data -> STOP).
+                         Transparent=1 is a dumb byte pipe that does NOT emit the
+                         client notifications and likely no lifecycle either, so
+                         we keep it 0 for the T1 probe to observe START/INPROC. -->
+                    <EnableTransparent>0</EnableTransparent>
+                    <IsAuthRefreshOn>0</IsAuthRefreshOn>
+                </WSParser>
+            </LenParser>
+        </PDUs>
+    </PDUList>
+
+    <ListenerList type="ListenerList">
+        <Count>1</Count>
+        <Listeners type="Listener">
+            <Name>farm_ws_listener</Name>
+            <Url>tcp://0.0.0.0:9980?reuse=1</Url>
+            <SendBuff>1048576</SendBuff>
+            <RecvBuff>1048576</RecvBuff>
+            <MaxIdle>120</MaxIdle>
+            <BackLog>128</BackLog>
+            <NoDelay>1</NoDelay>
+        </Listeners>
+    </ListenerList>
+
+    <SerializerList type="SerializerList">
+        <Serializers type="Serializer">
+            <Name>farm_ws_serializer</Name>
+            <Url>198.18.0.9</Url>
+        </Serializers>
+    </SerializerList>
+
+    <NetTrans type="NetTrans">
+        <Name>farm_ws_net</Name>
+        <UseTimeStamp>0</UseTimeStamp>
+        <UseWaitQueue>0</UseWaitQueue>
+        <PDU>farm_ws_pdu</PDU>
+        <Listener>farm_ws_listener</Listener>
+        <Serializer>farm_ws_serializer</Serializer>
+        <TransLimit>
+            <PkgSpeed>0</PkgSpeed>
+            <ByteSpeed>0</ByteSpeed>
+            <LimitAction>1</LimitAction>
+        </TransLimit>
+        <SerVersion>0</SerVersion>
+        <RunMode>0</RunMode>
+    </NetTrans>
+</tconnd>

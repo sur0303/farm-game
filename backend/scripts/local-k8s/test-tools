@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+for script in bootstrap-k3s start-registry probe-cpu-manager apply-local-redis apply-route-bootstrap materialize-local-tls materialize-route-control-tls materialize-functional-secrets publish-frozen-images publish-route-runtime-image publish-dynamic-h5-image materialize-dynamic-route-tls materialize-dynamic-route-secrets bootstrap-dynamic-route verify-dynamic-route-state apply-dynamic-route-profile; do
+  [[ -x "$script_dir/$script" ]] || { echo "test-tools: $script must be executable" >&2; exit 1; }
+  bash -n "$script_dir/$script"
+done
+[[ -x "$script_dir/verify-dynamic-h5-product-e2e" ]] || { echo "test-tools: verify-dynamic-h5-product-e2e must be executable" >&2; exit 1; }
+[[ -x "$script_dir/verify-dynamic-final-g1" ]] || { echo "test-tools: verify-dynamic-final-g1 must be executable" >&2; exit 1; }
+[[ -x "$script_dir/verify-dynamic-g2-planned-migration" ]] || { echo "test-tools: verify-dynamic-g2-planned-migration must be executable" >&2; exit 1; }
+[[ -x "$script_dir/verify-dynamic-g3-crash-takeover" ]] || { echo "test-tools: verify-dynamic-g3-crash-takeover must be executable" >&2; exit 1; }
+PYTHONPYCACHEPREFIX="$tmp/pycache" python3 -m py_compile "$script_dir/lab-status" "$script_dir/render-route-intent.py" "$script_dir/validate-functional-render" "$script_dir/bind-functional-render" "$script_dir/materialize-route-bootstrap-render.py" "$script_dir/observe-route-liveness.py" "$script_dir/finalize-route-runtime-candidate.py" "$script_dir/materialize-dynamic-route-profile.py" "$script_dir/extract_dynamic_worker_route_holders.py" "$script_dir/patch-dynamic-opportunity-mode" "$script_dir/verify-dynamic-h5-product-e2e" "$script_dir/verify-dynamic-final-g1" "$script_dir/verify-dynamic-g2-planned-migration" "$script_dir/verify-dynamic-g3-crash-takeover" "$script_dir/test_dynamic_route_profile.py" "$script_dir/test_dynamic_opportunity_mode.py" "$script_dir/test_dynamic_h5_product_e2e.py" "$script_dir/test_dynamic_final_g1.py" "$script_dir/test_dynamic_g23.py"
+python3 "$script_dir/test_route_intent.py"
+PYTHONPYCACHEPREFIX="$tmp/pycache" python3 "$script_dir/test_dynamic_route_profile.py"
+PYTHONPYCACHEPREFIX="$tmp/pycache" python3 "$script_dir/test_dynamic_opportunity_mode.py"
+PYTHONPYCACHEPREFIX="$tmp/pycache" python3 "$script_dir/test_dynamic_h5_product_e2e.py"
+PYTHONPYCACHEPREFIX="$tmp/pycache" python3 "$script_dir/test_dynamic_final_g1.py"
+PYTHONPYCACHEPREFIX="$tmp/pycache" python3 "$script_dir/test_dynamic_g23.py"
+"$script_dir/validate-functional-render" >"$tmp/functional-render.json"
+
+"$script_dir/bootstrap-k3s" --dry-run >"$tmp/k3s.json"
+"$script_dir/start-registry" --dry-run >"$tmp/registry.json"
+ROUTE_RUN_ID=tool-test "$script_dir/materialize-route-control-tls" --dry-run >"$tmp/route-tls.json"
+ROUTE_RUN_ID=tool-test "$script_dir/publish-route-runtime-image" --dry-run >"$tmp/route-image.json"
+ROUTE_RUN_ID=tool-test "$script_dir/publish-dynamic-h5-image" --dry-run >"$tmp/h5-image.json"
+"$script_dir/lab-status" >"$tmp/status.json"
+
+python3 - "$tmp" "$script_dir" <<'PY'
+import json
+import sys
+from pathlib import Path
+root = Path(sys.argv[1])
+scripts = Path(sys.argv[2])
+repo = scripts.parents[1]
+k3s = json.loads((root / "k3s.json").read_text())
+assert k3s["status"] == "DRY_RUN_NOT_INSTALLED"
+assert k3s["k3s_version"] == "v1.36.2+k3s1"
+assert k3s["k3s_binary_sha256"] == "65a55ec56c24eab44383086166ec620a491952b7e23941a49ddca6e8a4c4b4de"
+assert k3s["lab_root"] == "/data/farm-l2-r2"
+assert k3s["reserved_cpus"] == "0-3,8-15,28-31"
+assert k3s["company_redis_contacted"] is False
+registry = json.loads((root / "registry.json").read_text())
+assert registry["status"] == "DRY_RUN_NOT_STARTED"
+assert registry["listen"] == "127.0.0.1:5001"
+assert registry["image"].startswith("registry@sha256:")
+route_tls = json.loads((root / "route-tls.json").read_text())
+assert route_tls["status"] == "DRY_RUN_NOT_MATERIALIZED"
+assert route_tls["exact_single_san_identities"] is True
+assert route_tls["company_redis_contacted"] is False
+tls_source = (scripts / "materialize-route-control-tls").read_text()
+assert "O = farm-local-route-control" in tls_source
+assert "CN = $identity" not in tls_source
+assert 'leaf_common_name_present\":False' in tls_source
+route_image = json.loads((root / "route-image.json").read_text())
+assert route_image["status"] == "DRY_RUN_NOT_BUILT"
+assert route_image["company_redis_contacted"] is False
+h5_image = json.loads((root / "h5-image.json").read_text())
+assert h5_image["status"] == "DRY_RUN_NOT_BUILT"
+assert h5_image["source_commit"] == "fc7be57174e9ff4f18e6dfeb5fc1610d681172cf"
+assert h5_image["source_tree"] == "cfeb47072287a2f8533dc7366481c006c4010012"
+assert h5_image["build_mode"] == "web"
+assert h5_image["company_redis_contacted"] is False
+assert h5_image["cluster_applied"] is False
+assert h5_image["capacity_eligible"] is False
+h5_publisher = (scripts / "publish-dynamic-h5-image").read_text()
+assert "os.O_EXCL" in h5_publisher
+assert "PUBLISHED_LOCAL_DYNAMIC_H5_NOT_DEPLOYED" in h5_publisher
+assert "npm run audit:build" in h5_publisher
+assert "npm run validate:handoff" in h5_publisher
+assert h5_publisher.count("npm run build:web") == 2
+assert '"mode": "verified-host-web-showcase-dist"' in h5_publisher
+assert '--file "$IMAGE_CONTEXT/Dockerfile"' in h5_publisher
+assert '"product_contract_tests": contract_evidence' in h5_publisher
+assert "hint_burst_300ms_merge" in h5_publisher
+assert "login_home_pull_recovery" in h5_publisher
+assert "visible_pull_recovery" in h5_publisher
+render = json.loads((root / "functional-render.json").read_text())
+assert render["status"] == "FUNCTIONAL_RENDERED_NOT_ACTIVATABLE"
+assert render["route_status"] == "PLACEMENT_INTENT_NOT_AUTHORITY_INITIALIZED"
+assert render["cluster_applied"] is False
+status = json.loads((root / "status.json").read_text())
+assert status["environment_class"] == "LOCAL_K8S_CAPACITY_LAB"
+assert status["company_redis_contacted"] is False
+assert status["formal_l2_authorized"] is False
+for patch_name in ("player-patch.json", "farm-patch.json"):
+    patch = json.loads((repo / "deploy/k8s/static-staging/overlays/local-capacity-r2/functional" / patch_name).read_text())
+    resources = next(op["value"] for op in patch if op["path"] == "/spec/template/spec/containers/0/resources")
+    assert resources["requests"]["cpu"] == resources["limits"]["cpu"] == "2"
+controller = (repo / "deploy/k8s/static-staging/overlays/local-capacity-r2/functional/route-controller.bootstrap-template.yaml").read_text()
+assert controller.count('cpu: "2"') == 2
+assert 'cpu: "1"' not in controller
+assert "runAsUser: 10001" in controller
+assert "runAsGroup: 10001" in controller
+assert "fsGroup: 10001" in controller
+assert "defaultMode: 288" in controller
+assert "ROUTE_CONTROLLER_HOLDER_CLIENT_CERT" in controller
+assert "ROUTE_CONTROLLER_LEASE_PROJECTION_MODE" in controller
+assert "value: all-active" in controller
+materialize_source = (scripts / "materialize-route-bootstrap-render.py").read_text()
+assert 'headless["spec"]["publishNotReadyAddresses"] = True' in materialize_source
+assert 'render.count(b"publishNotReadyAddresses: true") != 2' in materialize_source
+assert "route-bootstrap-dns-barrier" in materialize_source
+assert 'render.count(b\"name: route-bootstrap-dns-barrier\") != 2' in materialize_source
+assert '"HOLDER_ALLOW_INITIAL_SERVING": "true"' in materialize_source
+assert "STATIC_BOOTSTRAP_EXPLICIT" in materialize_source
+assert 'receipt.get("bootstrap_materializable") is not True' in materialize_source
+assert 'receipt.get("activatable") is not False' in materialize_source
+for retry_contract in (
+    '"ACTOR_ROUTE_MAX_RESYNC_ATTEMPTS": "32"',
+    '"ACTOR_ROUTE_MAX_WATCH_FAILURES": "32"',
+    '"ACTOR_ROUTE_RETRY_BACKOFF": "100ms"',
+    '"ACTOR_ROUTE_MAX_RETRY_BACKOFF": "1s"',
+    '"minimum_backoff_horizon_ms": 28500',
+):
+    assert retry_contract in materialize_source
+liveness_source = (scripts / "observe-route-liveness.py").read_text()
+assert '"milestone": "CP-LOCAL-ROUTE-RUNTIME-R2-CANDIDATE"' in liveness_source
+assert "HOLDER_ROUTE_CONTROL_LIVENESS_LOCAL_PASS" in liveness_source
+assert '"full_product_route_liveness_proven": False' in liveness_source
+assert '"local_provisional_binding_eligible": False' in liveness_source
+assert "farm-local-holder-route-control-liveness-receipt.v3" in liveness_source
+assert "DEADLINE_PROJECTION_CHANGED_MEMBERSHIP_GENERATION" in liveness_source
+assert "budget_strictly_below_minimum_remaining" in liveness_source
+candidate_source = (scripts / "finalize-route-runtime-candidate.py").read_text()
+assert '"status": "READY_FOR_INDEPENDENT_REVIEW"' in candidate_source
+assert '"gate_route_consumer_liveness": "NOT_RUN"' in candidate_source
+assert '"local_provisional_binding_eligible": False' in candidate_source
+assert '"route_controller_recovery": "PENDING"' in candidate_source
+assert '"checkpoint": "CP-LOCAL-ROUTE-LIVENESS-R2"' in candidate_source
+assert '"identity_binding"' in candidate_source
+assert 'if dirty:' in candidate_source
+apply_source = (scripts / "apply-route-bootstrap").read_text()
+assert "--server-side --dry-run=server" in apply_source
+assert "farm-route-admission-probe" in apply_source
+assert "terminationGracePeriodSeconds: 1" in apply_source
+assert "APPLY_FAILED_WORKLOADS_ROLLED_BACK" in apply_source
+assert "failure_evidence_captured" in apply_source
+for dockerfile in ("Dockerfile.runtime", "Dockerfile.runtime.prebuilt"):
+    image_source = (repo / dockerfile).read_text()
+    assert "USER 10001:10001" in image_source
+    assert "USER farm" not in image_source
+    assert "org.opencontainers.image.revision" in image_source
+    assert "FARM_IMAGE_REVISION" in image_source
+runtime_image = (repo / "Dockerfile.runtime").read_text()
+assert "-tags timetzdata" in runtime_image
+assert "farmgame.GitCommit" in runtime_image
+assert "farmgame.ImageRevision" in runtime_image
+publish_image = (scripts / "publish-route-runtime-image").read_text()
+assert "-tags timetzdata" in publish_image
+assert "farmgame.GitCommit=$HEAD" in publish_image
+assert "farmgame.ImageRevision=$HEAD" in publish_image
+assert '--build-arg IMAGE_REVISION="$HEAD"' in publish_image
+PY
+
+printf '%s\n' 'local-k8s tool tests passed'

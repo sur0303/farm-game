@@ -1,0 +1,28 @@
+File: farm-gate
+Build ID: b0d69fe8c3d01668e868c1247097ed61a8e14826
+Type: cpu
+Time: 2026-08-17 12:05:51 CST
+Duration: 12s, Total samples = 140ms ( 1.17%)
+Showing nodes accounting for 140ms, 100% of 140ms total
+Showing top 20 nodes out of 75
+      flat  flat%   sum%        cum   cum%
+      20ms 14.29% 14.29%       20ms 14.29%  internal/runtime/syscall/linux.Syscall6
+      10ms  7.14% 21.43%       10ms  7.14%  compress/flate.matchLen (inline)
+      10ms  7.14% 28.57%       10ms  7.14%  farmgame/internal/gateway/command.(*Gate).leaseNow
+      10ms  7.14% 35.71%       10ms  7.14%  farmgame/internal/gateway/leasebatch.(*Planner[go.shape.459dd4b2cc8aed3f0c1a5945c63118a201f03b7e69ad52c1f9fe4d99f97b5b5a]).Plan
+      10ms  7.14% 42.86%       10ms  7.14%  internal/runtime/atomic.(*Uint32).CompareAndSwap
+      10ms  7.14% 50.00%       10ms  7.14%  internal/runtime/atomic.(*Uint8).Load
+      10ms  7.14% 57.14%       10ms  7.14%  internal/runtime/maps.(*Iter).Init
+      10ms  7.14% 64.29%       30ms 21.43%  internal/runtime/syscall/linux.EpollWait
+      10ms  7.14% 71.43%       10ms  7.14%  runtime.(*gcControllerState).releaseNextGCMarkWorker
+      10ms  7.14% 78.57%       10ms  7.14%  runtime.(*mspan).writeHeapBitsSmall
+      10ms  7.14% 85.71%       10ms  7.14%  runtime.acquirepNoTrace
+      10ms  7.14% 92.86%       10ms  7.14%  runtime.futex
+      10ms  7.14%   100%       10ms  7.14%  runtime.notesleep
+         0     0%   100%       10ms  7.14%  bufio.(*Writer).Flush
+         0     0%   100%       10ms  7.14%  compress/flate.(*Writer).Write (inline)
+         0     0%   100%       10ms  7.14%  compress/flate.(*compressor).deflate
+         0     0%   100%       10ms  7.14%  compress/flate.(*compressor).findMatch
+         0     0%   100%       10ms  7.14%  compress/flate.(*compressor).write
+         0     0%   100%       10ms  7.14%  compress/gzip.(*Writer).Write
+         0     0%   100%       10ms  7.14%  context.(*cancelCtx).cancel

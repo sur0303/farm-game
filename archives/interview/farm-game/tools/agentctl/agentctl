@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+"""Executable entry point for AC1 Agent Controller."""
+
+from agentctl import main
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

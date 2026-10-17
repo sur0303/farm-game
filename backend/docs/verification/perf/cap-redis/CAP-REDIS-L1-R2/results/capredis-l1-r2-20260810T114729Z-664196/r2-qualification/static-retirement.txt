@@ -1,0 +1,1 @@
+R2_STATIC_QUALIFICATION=PASS OUTPUT=/data/home/developer_026/CodeBuddy/20260519141303/farm-game-cap-redis-l1-r2-20260810/docs/verification/perf/cap-redis/CAP-REDIS-L1-R2/results/capredis-l1-r2-20260810T114729Z-664196/r2-qualification/static-retirement.json

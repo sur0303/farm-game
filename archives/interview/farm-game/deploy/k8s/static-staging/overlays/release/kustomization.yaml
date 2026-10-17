@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+namespace: farm-staging-system
+images:
+  - name: registry.example.invalid/farm-game-runtime
+    newName: registry.example.invalid/farm-game-runtime
+    digest: sha256:REPLACE_WITH_64_HEX_RUNTIME_DIGEST
+  - name: registry.example.invalid/classic-farm-h5
+    newName: registry.example.invalid/classic-farm-h5
+    digest: sha256:REPLACE_WITH_64_HEX_H5_DIGEST
+patches:
+  - path: platform-release-patch.json
+  - path: ingress-release-patch.json
+  - path: redis-egress-release-patch.json

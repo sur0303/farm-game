@@ -1,0 +1,556 @@
+--- 2026-08-18T05:51:05Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   198m         323Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   326m         290Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   273m         177Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   191m         189Mi           
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   317m         15Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   273m         16Mi            
+--- 2026-08-18T05:51:13Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   198m         323Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   326m         290Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   273m         177Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   191m         189Mi           
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   317m         15Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   273m         16Mi            
+--- 2026-08-18T05:51:21Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   342m         674Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   569m         771Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   441m         896Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   531m         784Mi           
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   313m         19Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   248m         19Mi            
+--- 2026-08-18T05:51:29Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   342m         674Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   569m         771Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   441m         896Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   531m         784Mi           
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   313m         19Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   248m         19Mi            
+--- 2026-08-18T05:51:37Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   342m         674Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   569m         771Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   441m         896Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   531m         784Mi           
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   313m         19Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   248m         19Mi            
+--- 2026-08-18T05:51:45Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   342m         674Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   569m         771Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   441m         896Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   531m         784Mi           
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   313m         19Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   248m         19Mi            
+--- 2026-08-18T05:51:53Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   354m         1082Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   580m         1150Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   420m         1080Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   534m         1298Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   479m         20Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   351m         21Mi            
+--- 2026-08-18T05:52:02Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   354m         1082Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   580m         1150Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   420m         1080Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   534m         1298Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   479m         20Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   351m         21Mi            
+--- 2026-08-18T05:52:10Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   354m         1082Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   580m         1150Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   420m         1080Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   534m         1298Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   479m         20Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   351m         21Mi            
+--- 2026-08-18T05:52:18Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   354m         1082Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   580m         1150Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   420m         1080Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   534m         1298Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   479m         20Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   351m         21Mi            
+--- 2026-08-18T05:52:26Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   355m         1496Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   592m         1375Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   432m         1613Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   549m         1587Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   323m         21Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   254m         20Mi            
+--- 2026-08-18T05:52:34Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   355m         1496Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   592m         1375Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   432m         1613Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   549m         1587Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   323m         21Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   254m         20Mi            
+--- 2026-08-18T05:52:42Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   355m         1496Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   592m         1375Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   432m         1613Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   549m         1587Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   323m         21Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   254m         20Mi            
+--- 2026-08-18T05:52:50Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   355m         1496Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   707m         1925Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   439m         2044Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   555m         2139Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   591m         21Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   516m         22Mi            
+--- 2026-08-18T05:52:58Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   371m         1846Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   707m         1925Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   439m         2044Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   555m         2139Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   591m         21Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   516m         22Mi            
+--- 2026-08-18T05:53:06Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   371m         1846Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   707m         1925Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   439m         2044Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   555m         2139Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   591m         21Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   516m         22Mi            
+--- 2026-08-18T05:53:14Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   371m         1846Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   707m         1925Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   439m         2044Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   555m         2139Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   591m         21Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   516m         22Mi            
+--- 2026-08-18T05:53:22Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   382m         2172Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   791m         2291Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   493m         2429Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   565m         2373Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   493m         23Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   406m         23Mi            
+--- 2026-08-18T05:53:30Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   382m         2172Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   791m         2291Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   493m         2429Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   565m         2373Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   493m         23Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   406m         23Mi            
+--- 2026-08-18T05:53:39Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   382m         2172Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   791m         2291Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   493m         2429Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   565m         2373Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   493m         23Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   406m         23Mi            
+--- 2026-08-18T05:53:47Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   382m         2172Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   791m         2291Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   493m         2429Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   565m         2373Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   493m         23Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   406m         23Mi            
+--- 2026-08-18T05:53:55Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   390m         2727Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   964m         2852Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   473m         2972Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   568m         2917Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   622m         38Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   558m         39Mi            
+--- 2026-08-18T05:54:03Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   390m         2727Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   964m         2852Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   473m         2972Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   568m         2917Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   622m         38Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   558m         39Mi            
+--- 2026-08-18T05:54:11Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   390m         2727Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   964m         2852Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   473m         2972Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   568m         2917Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   622m         38Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   558m         39Mi            
+--- 2026-08-18T05:54:19Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   390m         2727Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   936m         3284Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   479m         3291Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   579m         3568Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   473m         40Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   402m         38Mi            
+--- 2026-08-18T05:54:28Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   392m         3049Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   936m         3284Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   479m         3291Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   579m         3568Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   473m         40Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   402m         38Mi            
+--- 2026-08-18T05:54:36Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   392m         3049Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   936m         3284Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   479m         3291Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   579m         3568Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   473m         40Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   402m         38Mi            
+--- 2026-08-18T05:54:44Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   392m         3049Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   936m         3284Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   479m         3291Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   579m         3568Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   473m         40Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   402m         38Mi            
+--- 2026-08-18T05:54:52Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   384m         3663Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   909m         3551Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   479m         4035Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   548m         3958Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   512m         39Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   423m         39Mi            
+--- 2026-08-18T05:55:00Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   384m         3663Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   909m         3551Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   479m         4035Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   548m         3958Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   512m         39Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   423m         39Mi            
+--- 2026-08-18T05:55:09Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   384m         3663Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   909m         3551Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   479m         4035Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   548m         3958Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   512m         39Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   423m         39Mi            
+--- 2026-08-18T05:55:17Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   384m         3663Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   909m         3551Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   479m         4035Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   548m         3958Mi          
+NAME                                            CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-27334-lngfz   512m         39Mi            
+NAME                                           CPU(cores)   MEMORY(bytes)   
+ws-stress-cold-thick-login-135022-4378-ggswl   423m         39Mi            
+--- 2026-08-18T05:55:25Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   337m         3733Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   950m         4225Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   448m         4452Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   560m         4373Mi          
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-27334-lngfz" not found
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-4378-ggswl" not found
+--- 2026-08-18T05:55:33Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   337m         3733Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   950m         4225Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   448m         4452Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   560m         4373Mi          
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-27334-lngfz" not found
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-4378-ggswl" not found
+--- 2026-08-18T05:55:41Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   337m         3733Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   950m         4225Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   448m         4452Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   560m         4373Mi          
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-27334-lngfz" not found
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-4378-ggswl" not found
+--- 2026-08-18T05:55:49Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   337m         3733Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   950m         4225Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   448m         4452Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   256m         4612Mi          
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-27334-lngfz" not found
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-4378-ggswl" not found
+--- 2026-08-18T05:55:58Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   248m         4012Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   228m         4225Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   199m         4451Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   256m         4612Mi          
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-27334-lngfz" not found
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-4378-ggswl" not found
+--- 2026-08-18T05:56:06Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   248m         4012Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   228m         4225Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   199m         4451Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   256m         4612Mi          
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-27334-lngfz" not found
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-4378-ggswl" not found
+--- 2026-08-18T05:56:14Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   248m         4012Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   228m         4225Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   199m         4451Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   256m         4612Mi          
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-27334-lngfz" not found
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-4378-ggswl" not found
+--- 2026-08-18T05:56:22Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   26m          4013Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   76m          4225Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   27m          4457Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   38m          4659Mi          
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-27334-lngfz" not found
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-4378-ggswl" not found
+--- 2026-08-18T05:56:30Z gate=farm-gate-6d664d9846-qm957
+Error from server (NotFound): pods "farm-gate" not found
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   26m          4013Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   76m          4225Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   27m          4457Mi          
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   38m          4659Mi          
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-27334-lngfz" not found
+Error from server (NotFound): pods "ws-stress-cold-thick-login-135022-4378-ggswl" not found

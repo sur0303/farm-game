@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+KUBECONFIG="${KUBECONFIG:-$LAB_ROOT/runtime/kubeconfig}"
+RUN_ID="${ROUTE_RUN_ID:-}"
+MODE="${1:---dry-run}"
+NAMESPACE="farm-l2-r2"
+SECRET="farm-route-control-tls"
+
+case "$MODE" in --dry-run|--apply) ;; *) echo "usage: ROUTE_RUN_ID=<id> $0 [--dry-run|--apply]" >&2; exit 2;; esac
+[[ "$RUN_ID" =~ ^[a-z0-9][a-z0-9-]{0,62}$ ]] || { echo "materialize-route-control-tls: ROUTE_RUN_ID is required" >&2; exit 1; }
+TLS_DIR="$LAB_ROOT/runtime/tls/route-control/$RUN_ID"
+RECEIPT="$LAB_ROOT/receipts/route-control-tls-$RUN_ID.json"
+
+if [[ "$MODE" == "--dry-run" ]]; then
+  printf '%s\n' '{"schema_version":"farm-local-route-control-tls-plan.v1","status":"DRY_RUN_NOT_MATERIALIZED","namespace":"farm-l2-r2","secret":"farm-route-control-tls","exact_single_san_identities":true,"company_redis_contacted":false,"active_binding_authorized":false}'
+  exit 0
+fi
+
+[[ -s "$KUBECONFIG" ]] || { echo "materialize-route-control-tls: kubeconfig missing" >&2; exit 1; }
+[[ "$(KUBECONFIG="$KUBECONFIG" kubectl config current-context)" == "farm-l2-r2" ]] || { echo "materialize-route-control-tls: refusing non-lab context" >&2; exit 1; }
+install -d -m 0700 "$TLS_DIR"
+
+if [[ ! -s "$TLS_DIR/ca.key" || ! -s "$TLS_DIR/ca.crt" ]]; then
+  openssl req -x509 -newkey rsa:3072 -nodes -sha256 -days 14 \
+    -subj "/CN=farm-l2-r2-route-control-ca" \
+    -keyout "$TLS_DIR/ca.key" -out "$TLS_DIR/ca.crt" >/dev/null 2>&1
+fi
+
+generate_leaf() {
+  local name="$1" identity="$2"
+  local key="$TLS_DIR/$name.key" cert="$TLS_DIR/$name.crt" csr="$TLS_DIR/$name.csr" config="$TLS_DIR/$name.cnf"
+  if [[ -s "$key" && -s "$cert" ]]; then
+    [[ "$(openssl x509 -in "$cert" -noout -ext subjectAltName | tail -n 1 | xargs)" == "DNS:$identity" ]] || {
+      echo "materialize-route-control-tls: existing $name identity mismatch" >&2; exit 1;
+    }
+    ! openssl x509 -in "$cert" -noout -subject -nameopt RFC2253 | grep -Eq '(^|[,=])CN=' || {
+      echo "materialize-route-control-tls: existing $name Common Name rejected" >&2; exit 1;
+    }
+    return
+  fi
+  cat >"$config" <<EOF
+[req]
+distinguished_name = dn
+prompt = no
+req_extensions = req_ext
+[dn]
+O = farm-local-route-control
+[req_ext]
+subjectAltName = DNS:$identity
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = serverAuth,clientAuth
+[leaf_ext]
+subjectAltName = DNS:$identity
+basicConstraints = critical,CA:FALSE
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = serverAuth,clientAuth
+EOF
+  openssl req -new -newkey rsa:3072 -nodes -sha256 -config "$config" -keyout "$key" -out "$csr" >/dev/null 2>&1
+  openssl x509 -req -days 14 -sha256 -in "$csr" -CA "$TLS_DIR/ca.crt" -CAkey "$TLS_DIR/ca.key" -CAcreateserial \
+    -extfile "$config" -extensions leaf_ext -out "$cert" >/dev/null 2>&1
+}
+
+generate_leaf route-controller route-controller.farm-l2-r2.svc.cluster.local
+generate_leaf route-client route-client.farm-l2-r2.local
+generate_leaf gate-verifier farm-gate-verifier.farm-l2-r2.svc.cluster.local
+generate_leaf holder-server holder-control.farm-l2-r2.svc.cluster.local
+chmod 0600 "$TLS_DIR"/*
+
+KUBECONFIG="$KUBECONFIG" kubectl -n "$NAMESPACE" create secret generic "$SECRET" \
+  --from-file=ca.crt="$TLS_DIR/ca.crt" \
+  --from-file=route-controller.crt="$TLS_DIR/route-controller.crt" \
+  --from-file=route-controller.key="$TLS_DIR/route-controller.key" \
+  --from-file=route-client.crt="$TLS_DIR/route-client.crt" \
+  --from-file=route-client.key="$TLS_DIR/route-client.key" \
+  --from-file=gate-verifier.crt="$TLS_DIR/gate-verifier.crt" \
+  --from-file=gate-verifier.key="$TLS_DIR/gate-verifier.key" \
+  --from-file=holder-server.crt="$TLS_DIR/holder-server.crt" \
+  --from-file=holder-server.key="$TLS_DIR/holder-server.key" \
+  --dry-run=client -o yaml | KUBECONFIG="$KUBECONFIG" kubectl apply -f - >/dev/null
+
+python3 - "$RECEIPT" "$RUN_ID" "$TLS_DIR" <<'PY'
+import hashlib,json,os,sys,tempfile
+path,run_id,root=sys.argv[1:]
+identities={
+ "route-controller":"route-controller.farm-l2-r2.svc.cluster.local",
+ "route-client":"route-client.farm-l2-r2.local",
+ "gate-verifier":"farm-gate-verifier.farm-l2-r2.svc.cluster.local",
+ "holder-server":"holder-control.farm-l2-r2.svc.cluster.local",
+}
+def sha(name):
+ return hashlib.sha256(open(os.path.join(root,name),'rb').read()).hexdigest()
+value={
+ "schema_version":"farm-local-route-control-tls-receipt.v1",
+ "status":"MATERIALIZED_LOCAL_FUNCTIONAL_ONLY",
+ "run_id":run_id,"namespace":"farm-l2-r2","secret":"farm-route-control-tls",
+ "identities":identities,"ca_certificate_sha256":sha("ca.crt"),
+ "leaf_certificate_sha256":{name:sha(name+".crt") for name in identities},
+ "leaf_exactly_one_dns_san":True,"leaf_common_name_present":False,
+ "private_key_persisted_in_evidence":False,"company_redis_contacted":False,
+ "active_binding_authorized":False,"capacity_constant_eligible":False,
+}
+os.makedirs(os.path.dirname(path),exist_ok=True)
+fd,temp=tempfile.mkstemp(prefix=".route-tls-",dir=os.path.dirname(path),text=True)
+with os.fdopen(fd,"w") as out:
+ json.dump(value,out,sort_keys=True,indent=2); out.write("\n"); out.flush(); os.fsync(out.fileno())
+os.replace(temp,path); os.chmod(path,0o640)
+print(json.dumps(value,sort_keys=True,indent=2))
+PY

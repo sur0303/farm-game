@@ -1,0 +1,36 @@
+{
+  "run_id": "dkqhqvfzpy0c",
+  "scenario": "thick-login",
+  "configured_connections": 200,
+  "player_start": 921000000,
+  "connect_rate_per_second": 100,
+  "configured_duration_seconds": 20,
+  "attempted": 200,
+  "ready": 15,
+  "peak_active": 41,
+  "login_errors": 0,
+  "connect_errors": 0,
+  "hello_errors": 0,
+  "join_errors": 0,
+  "scenario_errors": 185,
+  "unexpected_disconnects": 0,
+  "failure_reasons": {
+    "friends_429": 136,
+    "opportunity_429": 49
+  },
+  "thick_login": {
+    "bootstrap_errors": 0,
+    "friend_startup_errors": 185,
+    "profiles_loaded": 200,
+    "task_summaries_loaded": 200,
+    "mail_summaries_loaded": 200,
+    "compendium_summaries_loaded": 200,
+    "pet_summaries_loaded": 200,
+    "friend_rosters_loaded": 15,
+    "friend_roster_cards_loaded": 300,
+    "friend_opportunity_found": 15
+  },
+  "gate_friendship_http_rate_per_sec": 20,
+  "gate_friendship_http_burst": 40,
+  "classification": "RATE_LIMITED_NOT_CAPACITY_PASS"
+}

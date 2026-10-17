@@ -1,0 +1,8 @@
+=== RUN   TestCAPRedisConnectionReconstructionAfterServerKill
+    fault_gates_live_test.go:92: CONNECTION_REBUILD_PASS client_id_hash=d4b449917721e5b01649340abc86a9c57fbea0f404ecb0e0e4d699d15dadc64a dials_before=2 dials_after=3 durable_readback=true
+--- PASS: TestCAPRedisConnectionReconstructionAfterServerKill (0.12s)
+=== RUN   TestCAPRedisPostWriteResponseLossResolvesCommitted
+    fault_gates_live_test.go:181: TIMEOUT_UNKNOWN_RESPONSE_LOSS_PASS commit=TIMEOUT_UNKNOWN resolution=COMMITTED record_version=2 receipt_match=true
+--- PASS: TestCAPRedisPostWriteResponseLossResolvesCommitted (0.03s)
+PASS
+ok  	farmgame/cmd/cap-redis	0.158s

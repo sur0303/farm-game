@@ -1,0 +1,16 @@
+NAME                                READY   STATUS    RESTARTS   AGE     IP             NODE            NOMINATED NODE   READINESS GATES
+farm-gate-57cd676cbc-thz4t          1/1     Running   0          2m34s   198.18.0.78   198.18.0.80    <none>           <none>
+farm-grafana-64f7f46898-z58tr       1/1     Running   0          27h     198.18.0.29    198.18.0.30    <none>           <none>
+farm-prometheus-5966b58fdf-6xrnv    1/1     Running   0          27h     198.18.0.31   198.18.0.32    <none>           <none>
+farm-redis-0                        1/1     Running   0          22h     198.18.0.81   198.18.0.82    <none>           <none>
+farm-redis-1                        1/1     Running   0          22h     198.18.0.83    198.18.0.36   <none>           <none>
+farm-redis-2                        1/1     Running   0          22h     198.18.0.84   198.18.0.24    <none>           <none>
+farm-redis-3                        1/1     Running   0          22h     198.18.0.85    198.18.0.22   <none>           <none>
+farm-redis-4                        1/1     Running   0          22h     198.18.0.86   198.18.0.30    <none>           <none>
+farm-redis-5                        1/1     Running   0          22h     198.18.0.87   198.18.0.88    <none>           <none>
+farm-route-bootstrap                1/1     Running   0          3m44s   198.18.0.89   198.18.0.46    <none>           <none>
+farm-svr-0                          1/1     Running   0          3m47s   198.18.0.90   198.18.0.38   <none>           <none>
+farm-worker-a-8c9dcbf44-vkc98       1/1     Running   0          2m43s   198.18.0.91   198.18.0.51    <none>           <none>
+farm-worker-b-5fdcbff857-zzr4t      1/1     Running   0          2m43s   198.18.0.92   198.18.0.93   <none>           <none>
+player-svr-0                        1/1     Running   0          3m47s   198.18.0.94   198.18.0.20    <none>           <none>
+route-controller-76776f44b8-hhv5l   1/1     Running   0          42s     198.18.0.95    198.18.0.96    <none>           <none>

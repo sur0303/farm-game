@@ -1,0 +1,38 @@
+{
+  "apiVersion": "networking.k8s.io/v1",
+  "kind": "Ingress",
+  "metadata": {
+    "name": "farm-staging-web"
+  },
+  "spec": {
+    "tls": [
+      {
+        "hosts": [
+          "REPLACE_WITH_FORMAL_STAGING_HOST"
+        ],
+        "secretName": "farm-staging-tls"
+      }
+    ],
+    "rules": [
+      {
+        "host": "REPLACE_WITH_FORMAL_STAGING_HOST",
+        "http": {
+          "paths": [
+            {
+              "path": "/",
+              "pathType": "Prefix",
+              "backend": {
+                "service": {
+                  "name": "farm-h5",
+                  "port": {
+                    "name": "http"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

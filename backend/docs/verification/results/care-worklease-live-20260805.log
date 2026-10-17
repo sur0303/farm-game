@@ -1,0 +1,5 @@
+=== RUN   TestLiveCareWorkLeaseClaimComplete
+    live_test.go:205: live Care lease: ns=live911343 actor=10001 work=sid1_isqmgMlwzDRI-edzAzSg8YyL7K7-FlVzDFCqesuk-EM claim_epoch=1 completed via Redis TIME/EVALSHA
+--- PASS: TestLiveCareWorkLeaseClaimComplete (0.01s)
+PASS
+ok  	farmgame/internal/storage/redis/authority	0.017s

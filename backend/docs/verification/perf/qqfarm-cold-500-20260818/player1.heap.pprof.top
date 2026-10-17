@@ -1,0 +1,43 @@
+File: player-svr
+Build ID: 0565d61ea6e95006db33febdf1265cfc4ebf0546
+Type: inuse_space
+Time: 2026-08-18 13:51:05 CST
+Showing nodes accounting for 255.87MB, 96.39% of 265.46MB total
+Dropped 178 nodes (cum <= 1.33MB)
+Showing top 35 nodes out of 40
+      flat  flat%   sum%        cum   cum%
+  232.67MB 87.65% 87.65%   232.67MB 87.65%  farmgame/internal/logic/actor/runtime.(*Executor).mailboxFor
+   10.50MB  3.96% 91.60%    10.50MB  3.96%  farmgame/internal/logic/actor/authority.cloneAuthorityModelState (inline)
+    3.69MB  1.39% 93.00%     3.69MB  1.39%  farmgame/internal/actorrouting.cloneRouteSnapshot (inline)
+    3.50MB  1.32% 94.31%     3.50MB  1.32%  runtime.mallocgc
+    2.50MB  0.94% 95.26%     2.50MB  0.94%  fmt.Sprintf
+       1MB  0.38% 95.63%     4.67MB  1.76%  farmgame/internal/logic/actor/authority.(*Provider).ClaimWithModelLayout
+       1MB  0.38% 96.01%     1.50MB  0.57%  farmgame/internal/authoritycomposition.(*leaseEntry).run
+       1MB  0.38% 96.39%    19.17MB  7.22%  farmgame/internal/logic/actor/runtime.(*Executor).run
+         0     0% 96.39%   232.67MB 87.65%  farmgame/api/gen/logicrpc._BootstrapService_EnsureOwnerInitialized_Handler
+         0     0% 96.39%   232.67MB 87.65%  farmgame/api/gen/logicrpc._BootstrapService_EnsureOwnerInitialized_Handler.func1
+         0     0% 96.39%     3.17MB  1.19%  farmgame/internal/actorrouting.(*DynamicAssignmentProvider).CurrentSnapshot
+         0     0% 96.39%     3.17MB  1.19%  farmgame/internal/actorrouting.(*DynamicAssignmentProvider).Snapshot
+         0     0% 96.39%    10.50MB  3.96%  farmgame/internal/logic/actor/authority.(*Binding).CASEpochModelStateWithOutcomeAndOrders (inline)
+         0     0% 96.39%    10.50MB  3.96%  farmgame/internal/logic/actor/authority.(*Binding).casepochModelStateWithOutcomeOrdersAndSchedules
+         0     0% 96.39%    10.50MB  3.96%  farmgame/internal/logic/actor/authority.(*Binding).syncSnapshot
+         0     0% 96.39%     3.17MB  1.19%  farmgame/internal/logic/actor/authority.(*DynamicFenceSource).WriteFence
+         0     0% 96.39%     2.50MB  0.94%  farmgame/internal/logic/actor/authority.(*Provider).NewClaimIdentity
+         0     0% 96.39%   232.67MB 87.65%  farmgame/internal/logic/actor/runtime.(*Executor).Submit
+         0     0% 96.39%   232.67MB 87.65%  farmgame/internal/logic/actor/runtime.(*Executor).SubmitUser (inline)
+         0     0% 96.39%   232.67MB 87.65%  farmgame/internal/logic/actor/runtime.(*Executor).SubmitUserSized
+         0     0% 96.39%    18.17MB  6.85%  farmgame/internal/logic/actor/runtime.(*Executor).execJob
+         0     0% 96.39%    18.17MB  6.85%  farmgame/internal/logic/actor/runtime.(*Executor).execJob.func2
+         0     0% 96.39%   232.67MB 87.65%  farmgame/internal/player/actor.(*Registry).EnsureWithProfile
+         0     0% 96.39%     7.17MB  2.70%  farmgame/internal/player/actor.(*Registry).bindingFor
+         0     0% 96.39%   232.67MB 87.65%  farmgame/internal/player/actor.(*Registry).ensureAuthority
+         0     0% 96.39%     7.67MB  2.89%  farmgame/internal/player/actor.(*Registry).ensureAuthority.func1
+         0     0% 96.39%    10.50MB  3.96%  farmgame/internal/player/actor.(*Registry).submitAuthorityVersioned.func1
+         0     0% 96.39%   232.67MB 87.65%  farmgame/internal/player/ingress.(*Service).EnsureOwnerInitialized
+         0     0% 96.39%   234.17MB 88.21%  google.golang.org/grpc.(*Server).handleStream
+         0     0% 96.39%   234.17MB 88.21%  google.golang.org/grpc.(*Server).processUnaryRPC
+         0     0% 96.39%   234.17MB 88.21%  google.golang.org/grpc.(*Server).serveStreams.func2.1
+         0     0% 96.39%   233.67MB 88.02%  main.run.(*Metrics).UnaryServerInterceptor.func24
+         0     0% 96.39%     1.54MB  0.58%  runtime.doInit (inline)
+         0     0% 96.39%     1.54MB  0.58%  runtime.doInit1
+         0     0% 96.39%     2.61MB  0.98%  runtime.main

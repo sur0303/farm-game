@@ -1,0 +1,10 @@
+{
+  "context": "uc-test-plus",
+  "namespace": "developer_026-qqfarm",
+  "reset_challenge": "481b9070a62e969f0060d34bdd5ee97e",
+  "runtime_image": "mirrors.tencent.com/uc-backend/farm-route-runtime@sha256:70da4dbc883a279b0a9122959eacafd65564e0055615331f7c4bda9945a3c3c9",
+  "topology": {"gate": 1, "player": 2, "farm": 2, "worker": 2, "redis": 3, "shards": 1024},
+  "holder_split": {"player": "2", "farm": "2", "worker_a": 512, "worker_b": 512},
+  "gate_redis_pool": 64,
+  "activation": {"max_concurrent_actor_loads": 4000, "max_pending_actor_loads": 8192}
+}

@@ -1,0 +1,94 @@
+{
+  "schema_version": "cap-single-pod-l2-r2.stop-conditions.v0.1",
+  "evaluation_interval_seconds": 1,
+  "immediate_correctness_stop": {
+    "verdict": "FAIL_CORRECTNESS",
+    "any_nonzero": [
+      "duplicate_grant_total",
+      "duplicate_debit_total",
+      "stale_holder_commit_success_total",
+      "farm_version_gap_total",
+      "workflow_step_unknown_residual",
+      "due_residual_unexpected",
+      "h5_pending_journal_residual",
+      "authority_client_mismatch_total",
+      "silent_drop_total",
+      "unexpected_lease_expiry_total",
+      "friend_pair_index_unrepaired",
+      "invalid_order_total",
+      "wrong_scope_dispatch_total",
+      "record_version_regression_total",
+      "receipt_conflict_leak_total"
+    ],
+    "actions": [
+      "stop_new_arrivals_immediately",
+      "do_not_discard_inflight_outcomes",
+      "capture_bounded_point_read_diagnostics",
+      "preserve_original_evidence",
+      "skip_all_remaining_tiers_and_formal_rounds"
+    ]
+  },
+  "target_saturation_stop": {
+    "verdict": "FAIL_TARGET_SATURATION",
+    "conditions": [
+      {"metric": "measured_service_cpu_percent", "operator": ">=", "value": 90, "sustain_seconds": 60},
+      {"metric": "measured_service_memory_percent_of_limit", "operator": ">=", "value": 90, "sustain_seconds": 60},
+      {"metric": "measured_service_oom_kill_total", "operator": ">", "value": 0, "sustain_seconds": 0},
+      {"metric": "measured_service_fd_percent_of_limit", "operator": ">=", "value": 85, "sustain_seconds": 60},
+      {"metric": "primary_queue_positive_slope_windows", "operator": ">=", "value": 3, "sustain_seconds": 0},
+      {"metric": "p99_non_linear_degradation_vs_previous_tier", "operator": ">=", "value": 2.0, "sustain_seconds": 120},
+      {"metric": "controlled_rejection_or_timeout_percent", "operator": ">=", "value": 5, "sustain_seconds": 60}
+    ],
+    "actions": ["stop_new_arrivals", "controlled_drain", "mark_current_tier_not_safe", "retain_overload_evidence"]
+  },
+  "load_generator_stop": {
+    "verdict": "INCONCLUSIVE_LOAD_GENERATOR",
+    "conditions": [
+      {"metric": "actual_to_planned_ratio", "operator": "<", "value": 0.95, "sustain_seconds": 30},
+      {"metric": "driver_cpu_percent", "operator": ">=", "value": 80, "sustain_seconds": 60},
+      {"metric": "arrival_lag_p99_ms", "operator": ">", "value": 50, "sustain_seconds": 60},
+      {"metric": "arrival_lag_positive_slope_windows", "operator": ">=", "value": 3, "sustain_seconds": 0},
+      {"metric": "driver_event_backlog_positive_slope_windows", "operator": ">=", "value": 3, "sustain_seconds": 0},
+      {"metric": "driver_socket_error_positive_slope_windows", "operator": ">=", "value": 3, "sustain_seconds": 0}
+    ]
+  },
+  "dependency_stop": {
+    "verdict": "INCONCLUSIVE_DEPENDENCY",
+    "conditions": [
+      {"metric": "dependency_cpu_percent", "operator": ">=", "value": 85, "sustain_seconds": 60},
+      {"metric": "dependency_memory_percent_of_limit", "operator": ">=", "value": 90, "sustain_seconds": 60},
+      {"metric": "redis_pool_wait_positive_slope_windows", "operator": ">=", "value": 3, "sustain_seconds": 0},
+      {"metric": "dependency_error_percent", "operator": ">=", "value": 1, "sustain_seconds": 30},
+      {"metric": "support_service_primary_queue_positive_slope_windows", "operator": ">=", "value": 3, "sustain_seconds": 0}
+    ]
+  },
+  "observability_stop": {
+    "verdict": "INCONCLUSIVE_OBSERVABILITY",
+    "conditions": [
+      {"metric": "required_metric_missing_count", "operator": ">", "value": 0, "sustain_seconds": 0},
+      {"metric": "metric_scrape_gap_seconds", "operator": ">", "value": 5, "sustain_seconds": 0},
+      {"metric": "oracle_observation_complete", "operator": "==", "value": false, "sustain_seconds": 0},
+      {"metric": "evidence_write_error_total", "operator": ">", "value": 0, "sustain_seconds": 0}
+    ]
+  },
+  "environment_stop": {
+    "verdict": "INCONCLUSIVE_ENVIRONMENT",
+    "conditions": [
+      {"metric": "identity_drift", "operator": "==", "value": true, "sustain_seconds": 0},
+      {"metric": "cgroup_limit_drift", "operator": "==", "value": true, "sustain_seconds": 0},
+      {"metric": "host_clock_step_ms", "operator": ">", "value": 50, "sustain_seconds": 0},
+      {"metric": "host_cpu_steal_percent", "operator": ">", "value": 2, "sustain_seconds": 30},
+      {"metric": "host_background_cpu_percent", "operator": ">", "value": 10, "sustain_seconds": 60},
+      {"metric": "unexpected_container_restart_total", "operator": ">", "value": 0, "sustain_seconds": 0},
+      {"metric": "namespace_residual_before_run", "operator": ">", "value": 0, "sustain_seconds": 0}
+    ]
+  },
+  "precedence": [
+    "FAIL_CORRECTNESS",
+    "INCONCLUSIVE_ENVIRONMENT",
+    "INCONCLUSIVE_OBSERVABILITY",
+    "INCONCLUSIVE_LOAD_GENERATOR",
+    "INCONCLUSIVE_DEPENDENCY",
+    "FAIL_TARGET_SATURATION"
+  ]
+}

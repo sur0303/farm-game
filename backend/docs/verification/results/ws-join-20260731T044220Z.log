@@ -1,0 +1,27 @@
+2026/07/31 12:42:47 ws-stress HTTP=http://127.0.0.1:8080 WSS=ws://127.0.0.1:8080/ws conns=100 rate=25/s duration=1m0s scenario=join
+{
+  "scenario": "join",
+  "configured_connections": 100,
+  "connect_rate_per_second": 25,
+  "configured_duration_seconds": 60,
+  "started_at": "2026-07-31T04:42:47.690445292Z",
+  "finished_at": "2026-07-31T04:43:47.694290041Z",
+  "attempted": 100,
+  "ready": 100,
+  "active_at_end": 0,
+  "peak_active": 100,
+  "login_errors": 0,
+  "connect_errors": 0,
+  "hello_errors": 0,
+  "join_errors": 0,
+  "scenario_attempted": 0,
+  "scenario_succeeded": 0,
+  "scenario_errors": 0,
+  "unexpected_disconnects": 0,
+  "ready_rate": 1,
+  "ready_p50_ms": 6.631952,
+  "ready_p95_ms": 7.595958,
+  "ready_p99_ms": 8.752376,
+  "ready_max_ms": 11.029396,
+  "scenario_p95_ms": 0
+}

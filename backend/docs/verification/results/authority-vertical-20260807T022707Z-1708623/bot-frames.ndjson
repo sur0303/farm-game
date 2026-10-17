@@ -1,0 +1,14 @@
+{"timestamp":"2026-08-07T02:27:29.452846174Z","direction":"send","kind":"ClientHello"}
+{"timestamp":"2026-08-07T02:27:29.453906643Z","direction":"recv","kind":"ServerHello","detail":"session=e15cd2e8a17898fe0994ad5bc2a5e2af epoch=10 server_time_ms=1786069649453"}
+{"timestamp":"2026-08-07T02:27:29.454077986Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-join-smoke_bot1786069627-1786069649453939144 command_type=6"}
+{"timestamp":"2026-08-07T02:27:29.457213026Z","direction":"recv","kind":"CommandResult","detail":"join accepted sub=sub-b3f2f1667a70fa4accd71a9e775ec8a2"}
+{"timestamp":"2026-08-07T02:27:29.458207801Z","direction":"recv","kind":"FarmSnapshot","detail":"owner=1000002 version=0"}
+{"timestamp":"2026-08-07T02:27:29.458461629Z","direction":"recv","kind":"SubscriptionReady"}
+{"timestamp":"2026-08-07T02:27:29.458496195Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-bootstrap-smoke_bot1786069627-1786069649458475315 command_type=13"}
+{"timestamp":"2026-08-07T02:27:29.460729385Z","direction":"recv","kind":"BootstrapApplied","detail":"revision=2 coin=100 items=0"}
+{"timestamp":"2026-08-07T02:27:29.460772155Z","direction":"send","kind":"ClientRecoveryComplete"}
+{"timestamp":"2026-08-07T02:27:29.460864099Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-buy-smoke_bot1786069627-1786069649460842398 command_type=2"}
+{"timestamp":"2026-08-07T02:27:29.462624487Z","direction":"recv","kind":"BuyApplied"}
+{"timestamp":"2026-08-07T02:27:29.462675243Z","direction":"send","kind":"ClientCommand","detail":"operation_id=q1-plant-smoke_bot1786069627-1786069649462648102 command_type=4"}
+{"timestamp":"2026-08-07T02:27:29.473998609Z","direction":"recv","kind":"FarmChange","detail":"plot=0 phase=GROWING cycle=sid1_F8N2SiS6DS55tnHQNopmaDEepWVq-S_bGCmj1app9as plant_at_ms=1786069649472 mature_at_ms=1786069659472 plot_version=2"}
+{"timestamp":"2026-08-07T02:27:29.480879421Z","direction":"recv","kind":"PlantApplied","detail":"plot=0"}

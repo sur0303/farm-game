@@ -1,0 +1,176 @@
+#!/usr/bin/env bash
+# Cheap static/assembly regression for the canonical friendship authority
+# smoke harness. It never starts Redis, a service, Xvfb, or a browser.
+set -Eeuo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+SMOKE="$ROOT_DIR/scripts/run-authority-vertical-smoke"
+CPB="$ROOT_DIR/scripts/run-cp-vertical-b-smoke"
+TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/authority-vertical-smoke-test.XXXXXX")"
+cleanup() { rm -rf -- "$TMP_DIR"; }
+trap cleanup EXIT
+
+bash -n "$SMOKE" "$CPB"
+
+diagnostic="$(env \
+  SMOKE_START_DIAGNOSTIC_TEST=1 \
+  SMOKE_TEST_REDIS_URL='redis://:sentinel-redis-userinfo@127.0.0.1:6379/0' \
+  SMOKE_TEST_REDIS_TLS_URL='rediss://sentinel-user:sentinel-rediss-userinfo@127.0.0.1:6380/0' \
+  SMOKE_TEST_PERMIT_SECRET='sentinel-permit-secret' \
+  SMOKE_TEST_THEFT_SECRET='sentinel-theft-prf-secret' \
+  SMOKE_TEST_PLATFORM_TOKEN='sentinel-platform-token' \
+  "$SMOKE")"
+for sentinel in sentinel-redis-userinfo sentinel-rediss-userinfo sentinel-permit-secret \
+  sentinel-theft-prf-secret sentinel-platform-token; do
+  [[ "$diagnostic" != *"$sentinel"* ]] || {
+    echo "redacted start diagnostic leaked sentinel: $sentinel" >&2
+    exit 1
+  }
+done
+for visible in /tmp/farm-gate remote_player 127.0.0.1:19191 127.0.0.1:19292 \
+  smoke:test:share 127.0.0.1:6379 127.0.0.1:6380; do
+  [[ "$diagnostic" == *"$visible"* ]] || {
+    echo "redacted start diagnostic lost non-secret field: $visible" >&2
+    exit 1
+  }
+done
+[[ "$diagnostic" == *"redacted"* ]] || {
+  echo "redacted start diagnostic did not render a redaction marker" >&2
+  exit 1
+}
+[[ "$diagnostic" != *"FRIEND_STORE_PREFIX"* ]] || {
+  echo "retired friendship roster prefix remains in diagnostic" >&2
+  exit 1
+}
+
+synthetic_root="$TMP_DIR/h5-root"
+match="$(env SMOKE_H5_PROCESS_MATCH_TEST=1 SMOKE_TEST_H5_ROOT="$synthetic_root" \
+  SMOKE_TEST_H5_PORT=5194 "$SMOKE" node "$synthetic_root/node_modules/.bin/vite" \
+  --mode web --host 127.0.0.1 --port 5194)"
+other_port="$(env SMOKE_H5_PROCESS_MATCH_TEST=1 SMOKE_TEST_H5_ROOT="$synthetic_root" \
+  SMOKE_TEST_H5_PORT=5194 "$SMOKE" node "$synthetic_root/node_modules/.bin/vite" \
+  --mode web --host 127.0.0.1 --port 5197)"
+other_root="$(env SMOKE_H5_PROCESS_MATCH_TEST=1 SMOKE_TEST_H5_ROOT="$synthetic_root" \
+  SMOKE_TEST_H5_PORT=5194 "$SMOKE" node "$TMP_DIR/other/node_modules/.bin/vite" \
+  --mode web --host 127.0.0.1 --port 5194)"
+resolved_vite="$(env SMOKE_H5_PROCESS_MATCH_TEST=1 SMOKE_TEST_H5_ROOT="$synthetic_root" \
+  SMOKE_TEST_H5_PORT=5194 "$SMOKE" node "$synthetic_root/node_modules/vite/bin/vite.js" \
+  --mode web --host 127.0.0.1 --port=5194)"
+[[ "$match" == "match" && "$resolved_vite" == "match" && "$other_port" == "no-match" && "$other_root" == "no-match" ]] || {
+  echo "run-specific H5 process matching failed: match=$match resolved=$resolved_vite other_port=$other_port other_root=$other_root" >&2
+  exit 1
+}
+
+for script in "$SMOKE" "$CPB"; do
+  for value in "" "dual_write"; do
+    set +e
+    env SMOKE_FRIENDSHIP_SERVICE_MODE="$value" H5_ROOT="$TMP_DIR/missing-h5" \
+      SMOKE_OUT="$TMP_DIR/out-${value:-empty}-$(basename "$script")" \
+      "$script" >"$TMP_DIR/stdout" 2>"$TMP_DIR/stderr"
+    code=$?
+    set -e
+    [[ "$code" -eq 2 ]] || {
+      echo "$script value=${value:-<empty>} must fail closed with exit 2, got $code" >&2
+      sed -n '1,40p' "$TMP_DIR/stderr" >&2
+      exit 1
+    }
+  done
+done
+
+python3 - "$ROOT_DIR" "$SMOKE" "$CPB" <<'PY'
+import pathlib
+import sys
+
+root = pathlib.Path(sys.argv[1])
+smoke = pathlib.Path(sys.argv[2]).read_text()
+cpb = pathlib.Path(sys.argv[3]).read_text()
+
+assert "local_gate|remote_shadow|remote_player" in smoke
+assert 'SMOKE_FRIENDSHIP_SERVICE_MODE="local_gate"' in smoke
+assert 'FRIENDSHIP_SERVICE_MODE=$SMOKE_FRIENDSHIP_SERVICE_MODE' in smoke
+assert 'SHARE_PREFIX="smoke:${STAMP}:share"' in smoke
+assert "'friendship_service_mode':'${SMOKE_FRIENDSHIP_SERVICE_MODE}'" in smoke
+assert "'share_store_prefix':'${SHARE_PREFIX}'" in smoke
+assert 'diagnostic_command="$(render_start_command "$@")"' in smoke
+assert '"$@" >"$log" 2>&1 &' in smoke
+assert 'eval ' not in smoke
+assert 'FARM_E2E_H5_PORT="$H5_PORT"' in smoke
+assert 'cleanup_h5_vite' in smoke
+assert 'pkill -f "$H5_ROOT/node_modules/.bin/vite"' not in smoke
+assert 'player-metrics.prom' not in smoke
+assert 'friend-legacy-observation-summary.json' not in smoke
+assert '/metrics' not in smoke
+
+gate = smoke[smoke.index('GATE_CMD=(env'):smoke.index('start "$OUT/gate.log"')]
+player = smoke[smoke.index('start "$OUT/player.log"'):smoke.index('# farm-svr')]
+for block in (gate, player):
+    assert 'SHARE_STORE_PREFIX=$SHARE_PREFIX' in block
+    assert 'FARM_ADDR=127.0.0.1:$FARM_PORT' in block
+    assert 'FRIEND_STORE_PREFIX' not in block
+    assert 'FRIEND_LEGACY_MODE' not in block
+assert 'FRIENDSHIP_SERVICE_MODE=$SMOKE_FRIENDSHIP_SERVICE_MODE' in gate
+farm = smoke[smoke.index('start "$OUT/farm.log"'):smoke.index('# farm-worker')]
+assert 'FRIEND_STORE_PREFIX' not in farm
+assert 'FRIEND_LEGACY_MODE' not in farm
+
+manifest_line = next(line for line in smoke.splitlines() if "manifest={'run_id'" in line)
+for forbidden in ('REDIS_URL', 'PERMIT_SECRET', 'PASSWORD', 'friend_legacy_mode',
+                  'friend_store_prefix', 'player_metrics'):
+    assert forbidden not in manifest_line
+
+assert 'export SMOKE_FRIENDSHIP_SERVICE_MODE' in cpb
+assert 'export SMOKE_H5_PORT="${SMOKE_H5_PORT:-5194}"' in cpb
+assert 'local_gate|remote_shadow|remote_player' in cpb
+
+production_roots = [
+    root / "cmd/farm-gate",
+    root / "cmd/player-svr",
+    root / "cmd/farm-svr",
+    root / "internal/gatewayapp",
+]
+production_files = [root / "internal/gateway/auth/share.go"]
+for directory in production_roots:
+    production_files.extend(directory.rglob("*.go"))
+production = "\n".join(path.read_text() for path in production_files)
+for forbidden in (
+    "FRIEND_LEGACY_MODE",
+    "FRIEND_STORE_PREFIX",
+    "RedisLegacyRosterReader",
+    "LegacyObserver",
+    "NewLegacyObserver",
+    "friend.NewRedisStore",
+    "friend.Store",
+    "NewShareHandler",
+):
+    assert forbidden not in production, forbidden
+
+for removed in (
+    "internal/friend/store.go",
+    "internal/friend/memory.go",
+    "internal/friend/redis.go",
+    "internal/friendshipservice/legacy_mode.go",
+    "internal/friendshipservice/legacy_observer.go",
+    "internal/friendshipservice/redis_legacy_roster.go",
+    "internal/gateway/auth/share_redis.go",
+    "scripts/summarize-friend-legacy-metrics",
+):
+    assert not (root / removed).exists(), removed
+
+redis_keys = (root / "internal/storage/redis/rediskey/rediskey.go").read_text()
+assert "FriendSummary(" not in redis_keys
+assert "friend:summary:" not in redis_keys
+
+gateway_share = (root / "internal/gateway/auth/share.go").read_text()
+assert "NewFriendshipShareHandler" in gateway_share
+assert "friendshipClient" in gateway_share
+for forbidden in ("redis.NewScript", ".Eval(", "MutationReceipt", "ShareStore"):
+    assert forbidden not in gateway_share, forbidden
+
+player = "\n".join(path.read_text() for path in (root / "cmd/player-svr").glob("*.go"))
+gate_factory = (root / "internal/gatewayapp/friendship.go").read_text()
+assert "NewRedisFriendshipRepositories" in player
+assert "NewRedisFriendshipRepositories" in gate_factory
+assert "NewRedisShareProjectionStore" in player
+assert "NewRedisShareProjectionStore" in gate_factory
+print("authority vertical smoke canonical friendship wiring: PASS")
+PY

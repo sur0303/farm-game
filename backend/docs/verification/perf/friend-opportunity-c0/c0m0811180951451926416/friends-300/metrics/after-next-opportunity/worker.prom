@@ -1,0 +1,736 @@
+# HELP farm_friend_opportunity_hint_direct_connection_not_found_total Direct opportunity Hint items rejected because the connection was not found.
+# TYPE farm_friend_opportunity_hint_direct_connection_not_found_total counter
+farm_friend_opportunity_hint_direct_connection_not_found_total 0
+# HELP farm_friend_opportunity_hint_direct_missing_routes_total Online-candidate Hint targets omitted because their active SessionRoute was missing or fenced.
+# TYPE farm_friend_opportunity_hint_direct_missing_routes_total counter
+farm_friend_opportunity_hint_direct_missing_routes_total 0
+# HELP farm_friend_opportunity_hint_direct_queue_full_total Direct opportunity Hint items rejected by a bounded queue.
+# TYPE farm_friend_opportunity_hint_direct_queue_full_total counter
+farm_friend_opportunity_hint_direct_queue_full_total 0
+# HELP farm_friend_opportunity_hint_direct_targets_total Targeted opportunity Hint viewer targets considered by direct transport.
+# TYPE farm_friend_opportunity_hint_direct_targets_total counter
+farm_friend_opportunity_hint_direct_targets_total 0
+# HELP farm_friend_opportunity_hint_direct_unavailable_total Direct opportunity Hint items that could not reach or enter a Gate.
+# TYPE farm_friend_opportunity_hint_direct_unavailable_total counter
+farm_friend_opportunity_hint_direct_unavailable_total 0
+# HELP farm_opportunity_wakeup_advanced_total Schedules advanced to their next farm boundary.
+# TYPE farm_opportunity_wakeup_advanced_total counter
+farm_opportunity_wakeup_advanced_total 0
+# HELP farm_opportunity_wakeup_bucket_scan_total Owned FARM authority buckets inspected by opportunity wakeup discovery.
+# TYPE farm_opportunity_wakeup_bucket_scan_total counter
+farm_opportunity_wakeup_bucket_scan_total 55
+# HELP farm_opportunity_wakeup_candidate_total Due schedule candidates inspected.
+# TYPE farm_opportunity_wakeup_candidate_total counter
+farm_opportunity_wakeup_candidate_total 0
+# HELP farm_opportunity_wakeup_claimed_total Opportunity schedules claimed.
+# TYPE farm_opportunity_wakeup_claimed_total counter
+farm_opportunity_wakeup_claimed_total 0
+# HELP farm_opportunity_wakeup_completed_total Schedules completed because no future boundary remains.
+# TYPE farm_opportunity_wakeup_completed_total counter
+farm_opportunity_wakeup_completed_total 0
+# HELP farm_opportunity_wakeup_due_backlog Due schedule references observed across owned shards in the latest round.
+# TYPE farm_opportunity_wakeup_due_backlog gauge
+farm_opportunity_wakeup_due_backlog 0
+# HELP farm_opportunity_wakeup_due_lag_ms Oldest due lag in milliseconds observed in the latest round.
+# TYPE farm_opportunity_wakeup_due_lag_ms gauge
+farm_opportunity_wakeup_due_lag_ms 0
+# HELP farm_opportunity_wakeup_due_ref_scanned_total Due references returned by opportunity wakeup discovery.
+# TYPE farm_opportunity_wakeup_due_ref_scanned_total counter
+farm_opportunity_wakeup_due_ref_scanned_total 0
+# HELP farm_opportunity_wakeup_empty_shard_total Owned FARM shards with an empty due index in a round.
+# TYPE farm_opportunity_wakeup_empty_shard_total counter
+farm_opportunity_wakeup_empty_shard_total 55
+# HELP farm_opportunity_wakeup_failed_total Opportunity wakeup item failures.
+# TYPE farm_opportunity_wakeup_failed_total counter
+farm_opportunity_wakeup_failed_total 0
+# HELP farm_opportunity_wakeup_hint_published_total Targeted invalidation Hints published.
+# TYPE farm_opportunity_wakeup_hint_published_total counter
+farm_opportunity_wakeup_hint_published_total 0
+# HELP farm_opportunity_wakeup_owned_shards FARM shards owned by this opportunity wakeup worker.
+# TYPE farm_opportunity_wakeup_owned_shards gauge
+farm_opportunity_wakeup_owned_shards 1
+# HELP farm_opportunity_wakeup_round_budget_exhausted_total Rounds that stopped early because RoundTimeBudget elapsed.
+# TYPE farm_opportunity_wakeup_round_budget_exhausted_total counter
+farm_opportunity_wakeup_round_budget_exhausted_total 0
+# HELP farm_opportunity_wakeup_round_duration_seconds Bounded opportunity wakeup round duration.
+# TYPE farm_opportunity_wakeup_round_duration_seconds histogram
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="0.005"} 55
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="0.01"} 55
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="0.025"} 55
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="0.05"} 55
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="0.1"} 55
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="0.25"} 55
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="0.5"} 55
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="1"} 55
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="2.5"} 55
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="5"} 55
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="10"} 55
+farm_opportunity_wakeup_round_duration_seconds_bucket{le="+Inf"} 55
+farm_opportunity_wakeup_round_duration_seconds_sum 0.034778604000000005
+farm_opportunity_wakeup_round_duration_seconds_count 55
+# HELP farm_opportunity_wakeup_round_total Bounded opportunity wakeup rounds.
+# TYPE farm_opportunity_wakeup_round_total counter
+farm_opportunity_wakeup_round_total 55
+# HELP farm_opportunity_wakeup_stale_generation_total Stale schedule generations fenced without publishing.
+# TYPE farm_opportunity_wakeup_stale_generation_total counter
+farm_opportunity_wakeup_stale_generation_total 0
+# HELP farm_redis_workload_batch_size Number of commands in one dispatch (single command or pipeline); recorded once per dispatch, never per command.
+# TYPE farm_redis_workload_batch_size histogram
+farm_redis_workload_batch_size_bucket{component="opportunity_wakeup",le="1"} 111
+farm_redis_workload_batch_size_bucket{component="opportunity_wakeup",le="2"} 112
+farm_redis_workload_batch_size_bucket{component="opportunity_wakeup",le="4"} 112
+farm_redis_workload_batch_size_bucket{component="opportunity_wakeup",le="8"} 112
+farm_redis_workload_batch_size_bucket{component="opportunity_wakeup",le="16"} 112
+farm_redis_workload_batch_size_bucket{component="opportunity_wakeup",le="32"} 112
+farm_redis_workload_batch_size_bucket{component="opportunity_wakeup",le="64"} 112
+farm_redis_workload_batch_size_bucket{component="opportunity_wakeup",le="128"} 112
+farm_redis_workload_batch_size_bucket{component="opportunity_wakeup",le="256"} 112
+farm_redis_workload_batch_size_bucket{component="opportunity_wakeup",le="512"} 112
+farm_redis_workload_batch_size_bucket{component="opportunity_wakeup",le="+Inf"} 112
+farm_redis_workload_batch_size_sum{component="opportunity_wakeup"} 113
+farm_redis_workload_batch_size_count{component="opportunity_wakeup"} 112
+farm_redis_workload_batch_size_bucket{component="unspecified",le="1"} 14943
+farm_redis_workload_batch_size_bucket{component="unspecified",le="2"} 14948
+farm_redis_workload_batch_size_bucket{component="unspecified",le="4"} 14948
+farm_redis_workload_batch_size_bucket{component="unspecified",le="8"} 14948
+farm_redis_workload_batch_size_bucket{component="unspecified",le="16"} 14948
+farm_redis_workload_batch_size_bucket{component="unspecified",le="32"} 14948
+farm_redis_workload_batch_size_bucket{component="unspecified",le="64"} 14948
+farm_redis_workload_batch_size_bucket{component="unspecified",le="128"} 14948
+farm_redis_workload_batch_size_bucket{component="unspecified",le="256"} 14948
+farm_redis_workload_batch_size_bucket{component="unspecified",le="512"} 14948
+farm_redis_workload_batch_size_bucket{component="unspecified",le="+Inf"} 14950
+farm_redis_workload_batch_size_sum{component="unspecified"} 23145
+farm_redis_workload_batch_size_count{component="unspecified"} 14950
+# HELP farm_redis_workload_commands_total Observed Redis commands in the opt-in workload window; arguments are never recorded.
+# TYPE farm_redis_workload_commands_total counter
+farm_redis_workload_commands_total{command="client",component="opportunity_wakeup",outcome="ok"} 2
+farm_redis_workload_commands_total{command="client",component="unspecified",outcome="ok"} 10
+farm_redis_workload_commands_total{command="eval",component="unspecified",outcome="ok"} 275
+farm_redis_workload_commands_total{command="evalsha",component="unspecified",outcome="ok"} 55
+farm_redis_workload_commands_total{command="other",component="opportunity_wakeup",outcome="ok"} 1
+farm_redis_workload_commands_total{command="other",component="unspecified",outcome="ok"} 5
+farm_redis_workload_commands_total{command="time",component="opportunity_wakeup",outcome="ok"} 55
+farm_redis_workload_commands_total{command="time",component="unspecified",outcome="ok"} 400
+farm_redis_workload_commands_total{command="zcount",component="unspecified",outcome="ok"} 8247
+farm_redis_workload_commands_total{command="zrangebyscore",component="opportunity_wakeup",outcome="ok"} 55
+farm_redis_workload_commands_total{command="zrangebyscore",component="unspecified",outcome="ok"} 14153
+# HELP farm_redis_workload_pipeline_width Number of commands in one go-redis pipeline dispatch.
+# TYPE farm_redis_workload_pipeline_width histogram
+farm_redis_workload_pipeline_width_bucket{component="opportunity_wakeup",le="1"} 0
+farm_redis_workload_pipeline_width_bucket{component="opportunity_wakeup",le="2"} 1
+farm_redis_workload_pipeline_width_bucket{component="opportunity_wakeup",le="4"} 1
+farm_redis_workload_pipeline_width_bucket{component="opportunity_wakeup",le="8"} 1
+farm_redis_workload_pipeline_width_bucket{component="opportunity_wakeup",le="16"} 1
+farm_redis_workload_pipeline_width_bucket{component="opportunity_wakeup",le="32"} 1
+farm_redis_workload_pipeline_width_bucket{component="opportunity_wakeup",le="64"} 1
+farm_redis_workload_pipeline_width_bucket{component="opportunity_wakeup",le="128"} 1
+farm_redis_workload_pipeline_width_bucket{component="opportunity_wakeup",le="256"} 1
+farm_redis_workload_pipeline_width_bucket{component="opportunity_wakeup",le="512"} 1
+farm_redis_workload_pipeline_width_bucket{component="opportunity_wakeup",le="+Inf"} 1
+farm_redis_workload_pipeline_width_sum{component="opportunity_wakeup"} 2
+farm_redis_workload_pipeline_width_count{component="opportunity_wakeup"} 1
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="1"} 0
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="2"} 5
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="4"} 5
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="8"} 5
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="16"} 5
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="32"} 5
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="64"} 5
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="128"} 5
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="256"} 5
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="512"} 5
+farm_redis_workload_pipeline_width_bucket{component="unspecified",le="+Inf"} 7
+farm_redis_workload_pipeline_width_sum{component="unspecified"} 8202
+farm_redis_workload_pipeline_width_count{component="unspecified"} 7
+# HELP farm_redis_workload_request_bytes_total RESP request bytes calculated from in-memory command arguments; values are not exported.
+# TYPE farm_redis_workload_request_bytes_total counter
+farm_redis_workload_request_bytes_total{command="client",component="opportunity_wakeup"} 134
+farm_redis_workload_request_bytes_total{command="client",component="unspecified"} 670
+farm_redis_workload_request_bytes_total{command="eval",component="unspecified"} 540925
+farm_redis_workload_request_bytes_total{command="evalsha",component="unspecified"} 16610
+farm_redis_workload_request_bytes_total{command="other",component="opportunity_wakeup"} 22
+farm_redis_workload_request_bytes_total{command="other",component="unspecified"} 110
+farm_redis_workload_request_bytes_total{command="time",component="opportunity_wakeup"} 770
+farm_redis_workload_request_bytes_total{command="time",component="unspecified"} 5600
+farm_redis_workload_request_bytes_total{command="zcount",component="unspecified"} 1.101338e+06
+farm_redis_workload_request_bytes_total{command="zrangebyscore",component="opportunity_wakeup"} 9460
+farm_redis_workload_request_bytes_total{command="zrangebyscore",component="unspecified"} 2.621732e+06
+# HELP farm_redis_workload_response_bytes_total ESTIMATED RESP response bytes reconstructed from in-memory command arguments and command-specific reply shapes; never exact wire truth (use a Harness proxy for exact bytes).
+# TYPE farm_redis_workload_response_bytes_total counter
+farm_redis_workload_response_bytes_total{command="client",component="opportunity_wakeup",estimated="true"} 10
+farm_redis_workload_response_bytes_total{command="client",component="unspecified",estimated="true"} 50
+farm_redis_workload_response_bytes_total{command="eval",component="unspecified",estimated="true"} 4400
+farm_redis_workload_response_bytes_total{command="evalsha",component="unspecified",estimated="true"} 880
+farm_redis_workload_response_bytes_total{command="other",component="opportunity_wakeup",estimated="true"} 16
+farm_redis_workload_response_bytes_total{command="other",component="unspecified",estimated="true"} 80
+farm_redis_workload_response_bytes_total{command="time",component="opportunity_wakeup",estimated="true"} 275
+farm_redis_workload_response_bytes_total{command="time",component="unspecified",estimated="true"} 2000
+farm_redis_workload_response_bytes_total{command="zcount",component="unspecified",estimated="true"} 131952
+farm_redis_workload_response_bytes_total{command="zrangebyscore",component="opportunity_wakeup",estimated="true"} 10780
+farm_redis_workload_response_bytes_total{command="zrangebyscore",component="unspecified",estimated="true"} 2.774184e+06
+# HELP farm_redis_workload_round_trip_duration_seconds go-redis process and pipeline dispatch latency.
+# TYPE farm_redis_workload_round_trip_duration_seconds histogram
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.0001"} 0
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.00025"} 0
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.0005"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.001"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.0025"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.005"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.01"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.025"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.05"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.1"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.25"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="0.5"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="1"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="2.5"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="pipeline",le="+Inf"} 1
+farm_redis_workload_round_trip_duration_seconds_sum{component="opportunity_wakeup",kind="pipeline"} 0.000321596
+farm_redis_workload_round_trip_duration_seconds_count{component="opportunity_wakeup",kind="pipeline"} 1
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.0001"} 0
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.00025"} 71
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.0005"} 95
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.001"} 109
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.0025"} 111
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.005"} 111
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.01"} 111
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.025"} 111
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.05"} 111
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.1"} 111
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.25"} 111
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="0.5"} 111
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="1"} 111
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="2.5"} 111
+farm_redis_workload_round_trip_duration_seconds_bucket{component="opportunity_wakeup",kind="single",le="+Inf"} 111
+farm_redis_workload_round_trip_duration_seconds_sum{component="opportunity_wakeup",kind="single"} 0.03283125099999999
+farm_redis_workload_round_trip_duration_seconds_count{component="opportunity_wakeup",kind="single"} 111
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.0001"} 0
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.00025"} 4
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.0005"} 5
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.001"} 5
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.0025"} 5
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.005"} 6
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.01"} 6
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.025"} 7
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.05"} 7
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.1"} 7
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.25"} 7
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="0.5"} 7
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="1"} 7
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="2.5"} 7
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="pipeline",le="+Inf"} 7
+farm_redis_workload_round_trip_duration_seconds_sum{component="unspecified",kind="pipeline"} 0.01925756
+farm_redis_workload_round_trip_duration_seconds_count{component="unspecified",kind="pipeline"} 7
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.0001"} 57
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.00025"} 13943
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.0005"} 14445
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.001"} 14743
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.0025"} 14941
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.005"} 14943
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.01"} 14943
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.025"} 14943
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.05"} 14943
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.1"} 14943
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.25"} 14943
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="0.5"} 14943
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="1"} 14943
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="2.5"} 14943
+farm_redis_workload_round_trip_duration_seconds_bucket{component="unspecified",kind="single",le="+Inf"} 14943
+farm_redis_workload_round_trip_duration_seconds_sum{component="unspecified",kind="single"} 2.6388437209999895
+farm_redis_workload_round_trip_duration_seconds_count{component="unspecified",kind="single"} 14943
+# HELP farm_redis_workload_round_trips_total go-redis process and pipeline dispatches.
+# TYPE farm_redis_workload_round_trips_total counter
+farm_redis_workload_round_trips_total{component="opportunity_wakeup",kind="pipeline",outcome="ok"} 1
+farm_redis_workload_round_trips_total{component="opportunity_wakeup",kind="single",outcome="ok"} 111
+farm_redis_workload_round_trips_total{component="unspecified",kind="pipeline",outcome="ok"} 7
+farm_redis_workload_round_trips_total{component="unspecified",kind="single",outcome="ok"} 14943
+# HELP farm_theft_recovery_completed_total Theft dispatch orders completed by recovery.
+# TYPE farm_theft_recovery_completed_total counter
+farm_theft_recovery_completed_total 0
+# HELP farm_theft_recovery_discovered_total Pair DueIndex candidates discovered by Theft recovery.
+# TYPE farm_theft_recovery_discovered_total counter
+farm_theft_recovery_discovered_total 0
+# HELP farm_theft_recovery_result_completed_total Theft result publish orders completed and released.
+# TYPE farm_theft_recovery_result_completed_total counter
+farm_theft_recovery_result_completed_total 0
+# HELP farm_theft_recovery_round_duration_seconds Dedicated Theft recovery round duration.
+# TYPE farm_theft_recovery_round_duration_seconds histogram
+farm_theft_recovery_round_duration_seconds_bucket{le="0.005"} 0
+farm_theft_recovery_round_duration_seconds_bucket{le="0.01"} 0
+farm_theft_recovery_round_duration_seconds_bucket{le="0.025"} 96
+farm_theft_recovery_round_duration_seconds_bucket{le="0.05"} 101
+farm_theft_recovery_round_duration_seconds_bucket{le="0.1"} 107
+farm_theft_recovery_round_duration_seconds_bucket{le="0.25"} 108
+farm_theft_recovery_round_duration_seconds_bucket{le="0.5"} 108
+farm_theft_recovery_round_duration_seconds_bucket{le="1"} 108
+farm_theft_recovery_round_duration_seconds_bucket{le="2.5"} 108
+farm_theft_recovery_round_duration_seconds_bucket{le="5"} 108
+farm_theft_recovery_round_duration_seconds_bucket{le="10"} 108
+farm_theft_recovery_round_duration_seconds_bucket{le="+Inf"} 108
+farm_theft_recovery_round_duration_seconds_sum 2.500569771
+farm_theft_recovery_round_duration_seconds_count 108
+# HELP farm_theft_recovery_round_error_total Dedicated Theft recovery round failures.
+# TYPE farm_theft_recovery_round_error_total counter
+farm_theft_recovery_round_error_total 0
+# HELP farm_theft_recovery_round_total Dedicated Theft recovery rounds.
+# TYPE farm_theft_recovery_round_total counter
+farm_theft_recovery_round_total 108
+# HELP farm_worker_claimed_total Durable work leases claimed by recovery Family.
+# TYPE farm_worker_claimed_total counter
+farm_worker_claimed_total{family="CARE"} 0
+farm_worker_claimed_total{family="FRIEND_PROJECTION"} 0
+farm_worker_claimed_total{family="GUARD_SYNC"} 0
+farm_worker_claimed_total{family="HARVEST"} 0
+farm_worker_claimed_total{family="MAIL"} 0
+farm_worker_claimed_total{family="PLANT"} 0
+farm_worker_claimed_total{family="THEFT"} 0
+# HELP farm_worker_completed_total Durable recovery work completed by Family.
+# TYPE farm_worker_completed_total counter
+farm_worker_completed_total{family="CARE"} 0
+farm_worker_completed_total{family="FRIEND_PROJECTION"} 0
+farm_worker_completed_total{family="GUARD_SYNC"} 0
+farm_worker_completed_total{family="HARVEST"} 0
+farm_worker_completed_total{family="MAIL"} 0
+farm_worker_completed_total{family="PLANT"} 0
+farm_worker_completed_total{family="THEFT"} 0
+# HELP farm_worker_direct_dispatch_hit_ratio Direct dispatch hits divided by direct hits plus worker takeovers, or NaN when unavailable.
+# TYPE farm_worker_direct_dispatch_hit_ratio gauge
+farm_worker_direct_dispatch_hit_ratio{family="CARE"} NaN
+farm_worker_direct_dispatch_hit_ratio{family="FRIEND_PROJECTION"} NaN
+farm_worker_direct_dispatch_hit_ratio{family="GUARD_SYNC"} NaN
+farm_worker_direct_dispatch_hit_ratio{family="HARVEST"} NaN
+farm_worker_direct_dispatch_hit_ratio{family="MAIL"} NaN
+farm_worker_direct_dispatch_hit_ratio{family="PLANT"} NaN
+farm_worker_direct_dispatch_hit_ratio{family="THEFT"} NaN
+# HELP farm_worker_due_depth Proven due work depth, or NaN when unavailable.
+# TYPE farm_worker_due_depth gauge
+farm_worker_due_depth{family="CARE"} 0
+farm_worker_due_depth{family="FRIEND_PROJECTION"} NaN
+farm_worker_due_depth{family="GUARD_SYNC"} NaN
+farm_worker_due_depth{family="HARVEST"} 0
+farm_worker_due_depth{family="MAIL"} NaN
+farm_worker_due_depth{family="PLANT"} 0
+farm_worker_due_depth{family="THEFT"} 0
+# HELP farm_worker_family_ready Whether the Family is READY (1) or not (0).
+# TYPE farm_worker_family_ready gauge
+farm_worker_family_ready{family="CARE"} 1
+farm_worker_family_ready{family="FRIEND_PROJECTION"} 0
+farm_worker_family_ready{family="GUARD_SYNC"} 0
+farm_worker_family_ready{family="HARVEST"} 1
+farm_worker_family_ready{family="MAIL"} 0
+farm_worker_family_ready{family="PLANT"} 1
+farm_worker_family_ready{family="THEFT"} 1
+# HELP farm_worker_oldest_due_age_ms Proven oldest due age in milliseconds, or NaN when unavailable.
+# TYPE farm_worker_oldest_due_age_ms gauge
+farm_worker_oldest_due_age_ms{family="CARE"} 0
+farm_worker_oldest_due_age_ms{family="FRIEND_PROJECTION"} NaN
+farm_worker_oldest_due_age_ms{family="GUARD_SYNC"} NaN
+farm_worker_oldest_due_age_ms{family="HARVEST"} 0
+farm_worker_oldest_due_age_ms{family="MAIL"} NaN
+farm_worker_oldest_due_age_ms{family="PLANT"} 0
+farm_worker_oldest_due_age_ms{family="THEFT"} 0
+# HELP farm_worker_retried_total Durable recovery retries scheduled by Family.
+# TYPE farm_worker_retried_total counter
+farm_worker_retried_total{family="CARE"} 0
+farm_worker_retried_total{family="FRIEND_PROJECTION"} 0
+farm_worker_retried_total{family="GUARD_SYNC"} 0
+farm_worker_retried_total{family="HARVEST"} 0
+farm_worker_retried_total{family="MAIL"} 0
+farm_worker_retried_total{family="PLANT"} 0
+farm_worker_retried_total{family="THEFT"} 0
+# HELP farm_worker_scan_duration_ms Duration in milliseconds of one bounded recovery scan by Family.
+# TYPE farm_worker_scan_duration_ms histogram
+farm_worker_scan_duration_ms_bucket{family="CARE",le="1"} 42
+farm_worker_scan_duration_ms_bucket{family="CARE",le="5"} 54
+farm_worker_scan_duration_ms_bucket{family="CARE",le="10"} 54
+farm_worker_scan_duration_ms_bucket{family="CARE",le="25"} 55
+farm_worker_scan_duration_ms_bucket{family="CARE",le="50"} 55
+farm_worker_scan_duration_ms_bucket{family="CARE",le="100"} 55
+farm_worker_scan_duration_ms_bucket{family="CARE",le="250"} 55
+farm_worker_scan_duration_ms_bucket{family="CARE",le="500"} 55
+farm_worker_scan_duration_ms_bucket{family="CARE",le="1000"} 55
+farm_worker_scan_duration_ms_bucket{family="CARE",le="2500"} 55
+farm_worker_scan_duration_ms_bucket{family="CARE",le="5000"} 55
+farm_worker_scan_duration_ms_bucket{family="CARE",le="10000"} 55
+farm_worker_scan_duration_ms_bucket{family="CARE",le="30000"} 55
+farm_worker_scan_duration_ms_bucket{family="CARE",le="+Inf"} 55
+farm_worker_scan_duration_ms_sum{family="CARE"} 68.31079700000001
+farm_worker_scan_duration_ms_count{family="CARE"} 55
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="1"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="5"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="10"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="25"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="50"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="100"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="250"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="500"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="1000"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="2500"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="5000"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="10000"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="30000"} 0
+farm_worker_scan_duration_ms_bucket{family="FRIEND_PROJECTION",le="+Inf"} 0
+farm_worker_scan_duration_ms_sum{family="FRIEND_PROJECTION"} 0
+farm_worker_scan_duration_ms_count{family="FRIEND_PROJECTION"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="1"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="5"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="10"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="25"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="50"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="100"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="250"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="500"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="1000"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="2500"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="5000"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="10000"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="30000"} 0
+farm_worker_scan_duration_ms_bucket{family="GUARD_SYNC",le="+Inf"} 0
+farm_worker_scan_duration_ms_sum{family="GUARD_SYNC"} 0
+farm_worker_scan_duration_ms_count{family="GUARD_SYNC"} 0
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="1"} 47
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="5"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="10"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="25"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="50"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="100"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="250"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="500"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="1000"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="2500"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="5000"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="10000"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="30000"} 55
+farm_worker_scan_duration_ms_bucket{family="HARVEST",le="+Inf"} 55
+farm_worker_scan_duration_ms_sum{family="HARVEST"} 46.73927700000001
+farm_worker_scan_duration_ms_count{family="HARVEST"} 55
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="1"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="5"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="10"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="25"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="50"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="100"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="250"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="500"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="1000"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="2500"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="5000"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="10000"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="30000"} 0
+farm_worker_scan_duration_ms_bucket{family="MAIL",le="+Inf"} 0
+farm_worker_scan_duration_ms_sum{family="MAIL"} 0
+farm_worker_scan_duration_ms_count{family="MAIL"} 0
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="1"} 16
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="5"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="10"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="25"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="50"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="100"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="250"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="500"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="1000"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="2500"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="5000"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="10000"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="30000"} 55
+farm_worker_scan_duration_ms_bucket{family="PLANT",le="+Inf"} 55
+farm_worker_scan_duration_ms_sum{family="PLANT"} 72.40276199999998
+farm_worker_scan_duration_ms_count{family="PLANT"} 55
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="1"} 0
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="5"} 0
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="10"} 0
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="25"} 96
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="50"} 101
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="100"} 107
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="250"} 108
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="500"} 108
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="1000"} 108
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="2500"} 108
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="5000"} 108
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="10000"} 108
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="30000"} 108
+farm_worker_scan_duration_ms_bucket{family="THEFT",le="+Inf"} 108
+farm_worker_scan_duration_ms_sum{family="THEFT"} 2501.5564170000002
+farm_worker_scan_duration_ms_count{family="THEFT"} 108
+# HELP farm_worker_step_unknown_total Participant steps with an unknown response boundary by Family.
+# TYPE farm_worker_step_unknown_total counter
+farm_worker_step_unknown_total{family="CARE"} 0
+farm_worker_step_unknown_total{family="FRIEND_PROJECTION"} 0
+farm_worker_step_unknown_total{family="GUARD_SYNC"} 0
+farm_worker_step_unknown_total{family="HARVEST"} 0
+farm_worker_step_unknown_total{family="MAIL"} 0
+farm_worker_step_unknown_total{family="PLANT"} 0
+farm_worker_step_unknown_total{family="THEFT"} 0
+# HELP farm_worker_terminal_latency_ms Creation-to-terminal latency in milliseconds when the durable repository exposes both timestamps.
+# TYPE farm_worker_terminal_latency_ms histogram
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="10"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="25"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="50"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="100"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="250"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="500"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="1000"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="2500"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="5000"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="10000"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="30000"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="60000"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="300000"} 0
+farm_worker_terminal_latency_ms_bucket{family="CARE",le="+Inf"} 0
+farm_worker_terminal_latency_ms_sum{family="CARE"} 0
+farm_worker_terminal_latency_ms_count{family="CARE"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="10"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="25"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="50"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="100"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="250"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="500"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="1000"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="2500"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="5000"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="10000"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="30000"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="60000"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="300000"} 0
+farm_worker_terminal_latency_ms_bucket{family="FRIEND_PROJECTION",le="+Inf"} 0
+farm_worker_terminal_latency_ms_sum{family="FRIEND_PROJECTION"} 0
+farm_worker_terminal_latency_ms_count{family="FRIEND_PROJECTION"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="10"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="25"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="50"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="100"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="250"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="500"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="1000"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="2500"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="5000"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="10000"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="30000"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="60000"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="300000"} 0
+farm_worker_terminal_latency_ms_bucket{family="GUARD_SYNC",le="+Inf"} 0
+farm_worker_terminal_latency_ms_sum{family="GUARD_SYNC"} 0
+farm_worker_terminal_latency_ms_count{family="GUARD_SYNC"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="10"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="25"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="50"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="100"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="250"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="500"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="1000"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="2500"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="5000"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="10000"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="30000"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="60000"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="300000"} 0
+farm_worker_terminal_latency_ms_bucket{family="HARVEST",le="+Inf"} 0
+farm_worker_terminal_latency_ms_sum{family="HARVEST"} 0
+farm_worker_terminal_latency_ms_count{family="HARVEST"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="10"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="25"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="50"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="100"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="250"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="500"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="1000"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="2500"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="5000"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="10000"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="30000"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="60000"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="300000"} 0
+farm_worker_terminal_latency_ms_bucket{family="MAIL",le="+Inf"} 0
+farm_worker_terminal_latency_ms_sum{family="MAIL"} 0
+farm_worker_terminal_latency_ms_count{family="MAIL"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="10"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="25"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="50"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="100"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="250"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="500"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="1000"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="2500"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="5000"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="10000"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="30000"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="60000"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="300000"} 0
+farm_worker_terminal_latency_ms_bucket{family="PLANT",le="+Inf"} 0
+farm_worker_terminal_latency_ms_sum{family="PLANT"} 0
+farm_worker_terminal_latency_ms_count{family="PLANT"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="10"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="25"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="50"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="100"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="250"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="500"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="1000"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="2500"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="5000"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="10000"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="30000"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="60000"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="300000"} 0
+farm_worker_terminal_latency_ms_bucket{family="THEFT",le="+Inf"} 0
+farm_worker_terminal_latency_ms_sum{family="THEFT"} 0
+farm_worker_terminal_latency_ms_count{family="THEFT"} 0
+# HELP farm_worker_worker_takeover_ratio Worker takeovers divided by direct hits plus worker takeovers, or NaN when unavailable.
+# TYPE farm_worker_worker_takeover_ratio gauge
+farm_worker_worker_takeover_ratio{family="CARE"} NaN
+farm_worker_worker_takeover_ratio{family="FRIEND_PROJECTION"} NaN
+farm_worker_worker_takeover_ratio{family="GUARD_SYNC"} NaN
+farm_worker_worker_takeover_ratio{family="HARVEST"} NaN
+farm_worker_worker_takeover_ratio{family="MAIL"} NaN
+farm_worker_worker_takeover_ratio{family="PLANT"} NaN
+farm_worker_worker_takeover_ratio{family="THEFT"} NaN
+# HELP farm_workflow_backlog Due workflows pending claim at last poll (recovery storm backlog).
+# TYPE farm_workflow_backlog gauge
+farm_workflow_backlog 0
+# HELP farm_workflow_claim_batch_size Most recent due claim batch size.
+# TYPE farm_workflow_claim_batch_size gauge
+farm_workflow_claim_batch_size 0
+# HELP farm_workflow_claim_error_total Workflow due-queue claim errors.
+# TYPE farm_workflow_claim_error_total counter
+farm_workflow_claim_error_total 1
+# HELP farm_workflow_recovery_claimed_total Claimed workflow recovery records by bounded work family.
+# TYPE farm_workflow_recovery_claimed_total counter
+farm_workflow_recovery_claimed_total{family="LEGACY"} 0
+farm_workflow_recovery_claimed_total{family="PLANT"} 0
+farm_workflow_recovery_claimed_total{family="UNLOCK_PLOT"} 0
+# HELP farm_workflow_recovery_completed_total Completed workflow recovery records by bounded work family.
+# TYPE farm_workflow_recovery_completed_total counter
+farm_workflow_recovery_completed_total{family="LEGACY"} 0
+farm_workflow_recovery_completed_total{family="PLANT"} 0
+farm_workflow_recovery_completed_total{family="UNLOCK_PLOT"} 0
+# HELP farm_workflow_recovery_lease_lost_total Lease-lost workflow recovery records by bounded work family.
+# TYPE farm_workflow_recovery_lease_lost_total counter
+farm_workflow_recovery_lease_lost_total{family="LEGACY"} 0
+farm_workflow_recovery_lease_lost_total{family="PLANT"} 0
+farm_workflow_recovery_lease_lost_total{family="UNLOCK_PLOT"} 0
+# HELP farm_workflow_recovery_retried_total Retried workflow recovery records by bounded work family.
+# TYPE farm_workflow_recovery_retried_total counter
+farm_workflow_recovery_retried_total{family="LEGACY"} 0
+farm_workflow_recovery_retried_total{family="PLANT"} 0
+farm_workflow_recovery_retried_total{family="UNLOCK_PLOT"} 0
+# HELP go_gc_duration_seconds A summary of the wall-time pause (stop-the-world) duration in garbage collection cycles.
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile="0"} 8.2597e-05
+go_gc_duration_seconds{quantile="0.25"} 9.0681e-05
+go_gc_duration_seconds{quantile="0.5"} 0.000103046
+go_gc_duration_seconds{quantile="0.75"} 0.000127141
+go_gc_duration_seconds{quantile="1"} 0.000313129
+go_gc_duration_seconds_sum 0.001672975
+go_gc_duration_seconds_count 13
+# HELP go_gc_gogc_percent Heap size target percentage configured by the user, otherwise 100. This value is set by the GOGC environment variable, and the runtime/debug.SetGCPercent function. Sourced from /gc/gogc:percent.
+# TYPE go_gc_gogc_percent gauge
+go_gc_gogc_percent 100
+# HELP go_gc_gomemlimit_bytes Go runtime memory limit configured by the user, otherwise math.MaxInt64. This value is set by the GOMEMLIMIT environment variable, and the runtime/debug.SetMemoryLimit function. Sourced from /gc/gomemlimit:bytes.
+# TYPE go_gc_gomemlimit_bytes gauge
+go_gc_gomemlimit_bytes 9.223372036854776e+18
+# HELP go_goroutines Number of goroutines that currently exist.
+# TYPE go_goroutines gauge
+go_goroutines 34
+# HELP go_info Information about the Go environment.
+# TYPE go_info gauge
+go_info{version="go1.26.3-X:nodwarf5"} 1
+# HELP go_memstats_alloc_bytes Number of bytes allocated in heap and currently in use. Equals to /memory/classes/heap/objects:bytes.
+# TYPE go_memstats_alloc_bytes gauge
+go_memstats_alloc_bytes 4.683304e+06
+# HELP go_memstats_alloc_bytes_total Total number of bytes allocated in heap until now, even if released already. Equals to /gc/heap/allocs:bytes.
+# TYPE go_memstats_alloc_bytes_total counter
+go_memstats_alloc_bytes_total 3.038192e+07
+# HELP go_memstats_buck_hash_sys_bytes Number of bytes used by the profiling bucket hash table. Equals to /memory/classes/profiling/buckets:bytes.
+# TYPE go_memstats_buck_hash_sys_bytes gauge
+go_memstats_buck_hash_sys_bytes 1.445012e+06
+# HELP go_memstats_frees_total Total number of heap objects frees. Equals to /gc/heap/frees:objects + /gc/heap/tiny/allocs:objects.
+# TYPE go_memstats_frees_total counter
+go_memstats_frees_total 367401
+# HELP go_memstats_gc_sys_bytes Number of bytes used for garbage collection system metadata. Equals to /memory/classes/metadata/other:bytes.
+# TYPE go_memstats_gc_sys_bytes gauge
+go_memstats_gc_sys_bytes 3.560176e+06
+# HELP go_memstats_heap_alloc_bytes Number of heap bytes allocated and currently in use, same as go_memstats_alloc_bytes. Equals to /memory/classes/heap/objects:bytes.
+# TYPE go_memstats_heap_alloc_bytes gauge
+go_memstats_heap_alloc_bytes 4.683304e+06
+# HELP go_memstats_heap_idle_bytes Number of heap bytes waiting to be used. Equals to /memory/classes/heap/released:bytes + /memory/classes/heap/free:bytes.
+# TYPE go_memstats_heap_idle_bytes gauge
+go_memstats_heap_idle_bytes 8.445952e+06
+# HELP go_memstats_heap_inuse_bytes Number of heap bytes that are in use. Equals to /memory/classes/heap/objects:bytes + /memory/classes/heap/unused:bytes
+# TYPE go_memstats_heap_inuse_bytes gauge
+go_memstats_heap_inuse_bytes 6.889472e+06
+# HELP go_memstats_heap_objects Number of currently allocated objects. Equals to /gc/heap/objects:objects.
+# TYPE go_memstats_heap_objects gauge
+go_memstats_heap_objects 26356
+# HELP go_memstats_heap_released_bytes Number of heap bytes released to OS. Equals to /memory/classes/heap/released:bytes.
+# TYPE go_memstats_heap_released_bytes gauge
+go_memstats_heap_released_bytes 7.012352e+06
+# HELP go_memstats_heap_sys_bytes Number of heap bytes obtained from system. Equals to /memory/classes/heap/objects:bytes + /memory/classes/heap/unused:bytes + /memory/classes/heap/released:bytes + /memory/classes/heap/free:bytes.
+# TYPE go_memstats_heap_sys_bytes gauge
+go_memstats_heap_sys_bytes 1.5335424e+07
+# HELP go_memstats_last_gc_time_seconds Number of seconds since 1970 of last garbage collection.
+# TYPE go_memstats_last_gc_time_seconds gauge
+go_memstats_last_gc_time_seconds 1.7864718173129978e+09
+# HELP go_memstats_mallocs_total Total number of heap objects allocated, both live and gc-ed. Semantically a counter version for go_memstats_heap_objects gauge. Equals to /gc/heap/allocs:objects + /gc/heap/tiny/allocs:objects.
+# TYPE go_memstats_mallocs_total counter
+go_memstats_mallocs_total 393757
+# HELP go_memstats_mcache_inuse_bytes Number of bytes in use by mcache structures. Equals to /memory/classes/metadata/mcache/inuse:bytes.
+# TYPE go_memstats_mcache_inuse_bytes gauge
+go_memstats_mcache_inuse_bytes 73472
+# HELP go_memstats_mcache_sys_bytes Number of bytes used for mcache structures obtained from system. Equals to /memory/classes/metadata/mcache/inuse:bytes + /memory/classes/metadata/mcache/free:bytes.
+# TYPE go_memstats_mcache_sys_bytes gauge
+go_memstats_mcache_sys_bytes 80360
+# HELP go_memstats_mspan_inuse_bytes Number of bytes in use by mspan structures. Equals to /memory/classes/metadata/mspan/inuse:bytes.
+# TYPE go_memstats_mspan_inuse_bytes gauge
+go_memstats_mspan_inuse_bytes 245920
+# HELP go_memstats_mspan_sys_bytes Number of bytes used for mspan structures obtained from system. Equals to /memory/classes/metadata/mspan/inuse:bytes + /memory/classes/metadata/mspan/free:bytes.
+# TYPE go_memstats_mspan_sys_bytes gauge
+go_memstats_mspan_sys_bytes 261120
+# HELP go_memstats_next_gc_bytes Number of heap bytes when next garbage collection will take place. Equals to /gc/heap/goal:bytes.
+# TYPE go_memstats_next_gc_bytes gauge
+go_memstats_next_gc_bytes 7.190642e+06
+# HELP go_memstats_other_sys_bytes Number of bytes used for other system allocations. Equals to /memory/classes/other:bytes.
+# TYPE go_memstats_other_sys_bytes gauge
+go_memstats_other_sys_bytes 3.22038e+06
+# HELP go_memstats_stack_inuse_bytes Number of bytes obtained from system for stack allocator in non-CGO environments. Equals to /memory/classes/heap/stacks:bytes.
+# TYPE go_memstats_stack_inuse_bytes gauge
+go_memstats_stack_inuse_bytes 1.441792e+06
+# HELP go_memstats_stack_sys_bytes Number of bytes obtained from system for stack allocator. Equals to /memory/classes/heap/stacks:bytes + /memory/classes/os-stacks:bytes.
+# TYPE go_memstats_stack_sys_bytes gauge
+go_memstats_stack_sys_bytes 1.441792e+06
+# HELP go_memstats_sys_bytes Number of bytes obtained from system. Equals to /memory/classes/total:byte.
+# TYPE go_memstats_sys_bytes gauge
+go_memstats_sys_bytes 2.5344264e+07
+# HELP go_sched_gomaxprocs_threads The current runtime.GOMAXPROCS setting, or the number of operating system threads that can execute user-level Go code simultaneously. Sourced from /sched/gomaxprocs:threads.
+# TYPE go_sched_gomaxprocs_threads gauge
+go_sched_gomaxprocs_threads 32
+# HELP go_threads Number of OS threads created.
+# TYPE go_threads gauge
+go_threads 18
+# HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.
+# TYPE process_cpu_seconds_total counter
+process_cpu_seconds_total 1.23
+# HELP process_max_fds Maximum number of open file descriptors.
+# TYPE process_max_fds gauge
+process_max_fds 524287
+# HELP process_network_receive_bytes_total Number of bytes received by the process over the network.
+# TYPE process_network_receive_bytes_total counter
+process_network_receive_bytes_total 4.49500062469e+11
+# HELP process_network_transmit_bytes_total Number of bytes sent by the process over the network.
+# TYPE process_network_transmit_bytes_total counter
+process_network_transmit_bytes_total 7.1437902481e+11
+# HELP process_open_fds Number of open file descriptors.
+# TYPE process_open_fds gauge
+process_open_fds 18
+# HELP process_resident_memory_bytes Resident memory size in bytes.
+# TYPE process_resident_memory_bytes gauge
+process_resident_memory_bytes 2.572288e+07
+# HELP process_start_time_seconds Start time of the process since unix epoch in seconds.
+# TYPE process_start_time_seconds gauge
+process_start_time_seconds 1.78647180435e+09
+# HELP process_virtual_memory_bytes Virtual memory size in bytes.
+# TYPE process_virtual_memory_bytes gauge
+process_virtual_memory_bytes 1.31639296e+09
+# HELP process_virtual_memory_max_bytes Maximum amount of virtual memory available in bytes.
+# TYPE process_virtual_memory_max_bytes gauge
+process_virtual_memory_max_bytes 1.8446744073709552e+19

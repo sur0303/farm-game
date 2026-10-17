@@ -1,0 +1,44 @@
+File: player-svr
+Build ID: 0565d61ea6e95006db33febdf1265cfc4ebf0546
+Type: cpu
+Time: 2026-08-18 13:51:05 CST
+Duration: 30s, Total samples = 9.61s (32.03%)
+Showing nodes accounting for 5.16s, 53.69% of 9.61s total
+Dropped 606 nodes (cum <= 0.05s)
+Showing top 35 nodes out of 366
+      flat  flat%   sum%        cum   cum%
+     1.60s 16.65% 16.65%      1.60s 16.65%  internal/runtime/syscall/linux.Syscall6
+     0.43s  4.47% 21.12%      0.43s  4.47%  runtime.futex
+     0.38s  3.95% 25.08%      0.38s  3.95%  runtime.memmove
+     0.34s  3.54% 28.62%      0.34s  3.54%  runtime.memclrNoHeapPointers
+     0.23s  2.39% 31.01%      0.23s  2.39%  runtime.nextFreeFast (inline)
+     0.23s  2.39% 33.40%      0.38s  3.95%  runtime.scanObject
+     0.13s  1.35% 34.76%      0.17s  1.77%  runtime.step
+     0.11s  1.14% 35.90%      0.25s  2.60%  runtime.(*unwinder).resolveInternal
+     0.10s  1.04% 36.94%      0.10s  1.04%  farmgame/internal/storage/redis/rediskey.redisCRC16
+     0.09s  0.94% 37.88%      0.22s  2.29%  runtime.(*stkframe).getStackMap
+     0.09s  0.94% 38.81%      0.09s  0.94%  runtime.findfunc
+     0.09s  0.94% 39.75%      0.09s  0.94%  runtime.nanotime
+     0.09s  0.94% 40.69%      0.46s  4.79%  runtime.newobject
+     0.09s  0.94% 41.62%      0.09s  0.94%  runtime.spanClass.sizeclass (inline)
+     0.09s  0.94% 42.56%      0.09s  0.94%  runtime.typePointers.nextFast (inline)
+     0.08s  0.83% 43.39%      0.08s  0.83%  runtime.(*mspan).writeHeapBitsSmall
+     0.07s  0.73% 44.12%      0.07s  0.73%  crypto/internal/fips140/sha256.blockSHANI
+     0.07s  0.73% 44.85%      0.07s  0.73%  internal/runtime/maps.(*Map).getWithoutKeySmallFastStr
+     0.07s  0.73% 45.58%      0.07s  0.73%  memeqbody
+     0.06s  0.62% 46.20%      0.06s  0.62%  internal/strconv.formatBase10
+     0.06s  0.62% 46.83%      0.06s  0.62%  runtime.acquirem (inline)
+     0.06s  0.62% 47.45%      0.06s  0.62%  runtime.adjustpointers
+     0.06s  0.62% 48.07%      0.63s  6.56%  runtime.mallocgcSmallScanNoHeader
+     0.05s  0.52% 48.60%      0.05s  0.52%  cmpbody
+     0.05s  0.52% 49.12%      0.30s  3.12%  google.golang.org/protobuf/internal/impl.(*messageState).Range
+     0.05s  0.52% 49.64%      0.07s  0.73%  internal/runtime/maps.(*Iter).Next
+     0.05s  0.52% 50.16%      0.06s  0.62%  runtime.(*spanSet).push
+     0.05s  0.52% 50.68%      0.05s  0.52%  runtime.getMCache (inline)
+     0.05s  0.52% 51.20%      0.17s  1.77%  runtime.tryDeferToSpanScan
+     0.05s  0.52% 51.72%      0.12s  1.25%  slices.insertionSortOrdered[go.shape.string]
+     0.04s  0.42% 52.13%      1.21s 12.59%  runtime.mallocgc
+     0.04s  0.42% 52.55%      0.33s  3.43%  runtime.netpoll
+     0.04s  0.42% 52.97%      0.25s  2.60%  runtime.pcvalue
+     0.04s  0.42% 53.38%      0.10s  1.04%  runtime.sweepone
+     0.03s  0.31% 53.69%      0.11s  1.14%  crypto/internal/fips140/sha256.(*Digest).Write

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+OUT="${1:-$ROOT/.bin/cap-single-pod}"
+[[ "$OUT" = /* ]] || { echo "absolute output path required" >&2; exit 2; }
+if [[ -n "$(git -C "$ROOT" status --porcelain --untracked-files=all)" ]]; then
+  echo "refusing to build review/runtime binary from a dirty worktree" >&2
+  exit 2
+fi
+mkdir -p "$(dirname "$OUT")"
+tmp="${OUT}.tmp.$$"
+trap 'rm -f "$tmp"' EXIT
+(
+  cd "$ROOT"
+  GOFLAGS="${GOFLAGS:-} -buildvcs=false" go build -trimpath -o "$tmp" ./cmd/cap-single-pod
+)
+chmod 0755 "$tmp"
+mv "$tmp" "$OUT"
+trap - EXIT
+printf 'HARNESS_COMMIT=%s\n' "$(git -C "$ROOT" rev-parse HEAD)"
+printf 'HARNESS_BINARY_SHA256=%s\n' "$(sha256sum "$OUT" | awk '{print $1}')"

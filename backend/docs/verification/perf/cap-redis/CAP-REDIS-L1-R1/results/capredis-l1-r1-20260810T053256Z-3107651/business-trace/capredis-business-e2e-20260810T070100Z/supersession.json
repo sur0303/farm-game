@@ -1,0 +1,9 @@
+{
+  "aggregate_sha256": "f7b43351f56a26885927128a3206f7c2f26e6e7c2aa95c1d6c6852fe9863c5d3",
+  "original_verdict": "PASS",
+  "reason": "SAME_PAIR_THEFT_WARMUP_CHANGED_MEASURED_PAIR_HISTORY; RETAINED WITHOUT REWRITING",
+  "schema_version": "cap-redis-business-trace-supersession-v1",
+  "selection": "NOT_SELECTED",
+  "trace_run": "capredis-business-e2e-20260810T070100Z",
+  "trace_sha256": "5c90084e61313c6f802a15c0047291e7c7b2ce43e5546981ecc45d2def480622"
+}

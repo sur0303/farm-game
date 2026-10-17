@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
+TASK_DIR="$ROOT/docs/verification/perf/cap-redis/CAP-REDIS-L1-R2"
+MANIFEST="$TASK_DIR/manifest.json"
+PROFILE="$TASK_DIR/profile.json"
+MODE=${1:-full}
+case "$MODE" in smoke|matrix-smoke|full) ;; *) echo "usage: $0 [smoke|matrix-smoke|full]" >&2; exit 2;; esac
+
+BUSINESS_HEAD=5ce43715363eea4f18e0925b6992429785053261
+EVIDENCE_HEAD=5ce43715363eea4f18e0925b6992429785053261
+H5_HEAD=60707faaa30797a8d739af6686186fd8f113626a
+BACKEND_IMAGE=sha256:672cf6862dcf06a4a5bfbb6146263b98bf04de930b113f7eb8fd8e8efb3493e9
+H5_IMAGE=sha256:2d4fcba11bc0fdd83e49f97e1cca11bc190e0434b9a93dc5a2cf2672c380faa3
+HANDOFF="$ROOT/../.agentctl-cp-route-state/AGENT-A-TO-B-R2-CAP-BINDING-HANDOFF-20260810.md"
+RECEIPT="$ROOT/../.agentctl-cp-route-state/evidence/r2-heavy-evidence-inheritance-receipt-20260810T105701Z/SHA256SUMS"
+
+[[ "$(sha256sum "$HANDOFF"|awk '{print $1}')" == 2e6f08c771ea55467907b03708c97cad0b3cdb4efd41bf3ccfbd436f9bea30f9 ]]
+[[ "$(sha256sum "$RECEIPT"|awk '{print $1}')" == e751bd8ba4834862be392b892fd8a5dc0c5beded4f736c1421adc002b0a4dd05 ]]
+git -C "$ROOT" merge-base --is-ancestor "$BUSINESS_HEAD" HEAD
+if [[ -n "$(git -C "$ROOT" status --porcelain --untracked-files=all)" ]]; then echo "R2 CAP worktree must be clean" >&2; exit 1; fi
+out_of_scope=$(git -C "$ROOT" diff --name-only "$BUSINESS_HEAD"..HEAD | grep -vE '^(cmd/cap-redis/|scripts/perf/cap-redis/|docs/verification/perf/cap-redis/)' || true)
+[[ -z "$out_of_scope" ]] || { echo "non-test-only diff from Business Head: $out_of_scope" >&2; exit 1; }
+[[ "$(docker image inspect redis:7.4-alpine --format '{{.Id}}')" == sha256:2a51817f79255c8b69f86a974459c2e0359aff81417d80158f2b9e541e6f4b33 ]]
+[[ "$(docker image inspect cap-redis-l1-r2-backend:5ce4371 --format '{{.Id}}')" == "$BACKEND_IMAGE" ]]
+[[ "$(docker image inspect cap-redis-l1-r2-backend:5ce4371 --format '{{index .Config.Labels "cap.redis.business-head"}}')" == "$BUSINESS_HEAD" ]]
+[[ "$(docker image inspect cap-redis-l1-r2-h5:60707fa --format '{{.Id}}')" == "$H5_IMAGE" ]]
+[[ "$(docker image inspect cap-redis-l1-r2-h5:60707fa --format '{{index .Config.Labels "cap.redis.h5-head"}}')" == "$H5_HEAD" ]]
+python3 "$ROOT/scripts/perf/cap-redis/verify_manifest.py" --profile "$PROFILE" --manifest "$MANIFEST"
+
+build_dir=$(mktemp -d /tmp/cap-redis-l1-r2-build.XXXXXX)
+active_container=""
+cleanup(){ [[ -z "$active_container" ]] || docker rm -f "$active_container" >/dev/null 2>&1 || true; rm -rf "$build_dir"; }
+trap cleanup EXIT INT TERM
+GOFLAGS=-buildvcs=false go build -trimpath -o "$build_dir/cap-redis" "$ROOT/cmd/cap-redis"
+binary_sha=$(sha256sum "$build_dir/cap-redis"|awk '{print $1}')
+profile_sha=$(sha256sum "$PROFILE"|awk '{print $1}')
+manifest_sha=$(sha256sum "$MANIFEST"|awk '{print $1}')
+stamp=$(date -u +%Y%m%dT%H%M%SZ)
+train_id="capredis-l1-r2-${stamp}-$$"
+train_dir="$TASK_DIR/results/$train_id"
+mkdir -p "$train_dir/rounds"
+printf '%s\n' "$binary_sha" >"$train_dir/harness-binary.sha256"
+printf '%s\n' "$profile_sha" >"$train_dir/profile-file.sha256"
+printf '%s\n' "$manifest_sha" >"$train_dir/manifest-file.sha256"
+git -C "$ROOT" rev-parse HEAD >"$train_dir/verification-head.txt"
+CAP_REDIS_R2_BUSINESS_HEAD="$BUSINESS_HEAD" "$ROOT/scripts/perf/cap-redis/run-r2-qualification" "$train_dir/r2-qualification"
+
+if [[ "$MODE" == smoke ]]; then rounds=("smoke:1");operations=4;concurrency=1;distributions=uniform;scenarios=""
+elif [[ "$MODE" == matrix-smoke ]]; then rounds=("smoke:1");operations=300;concurrency=1,10,100,300;distributions=uniform,hot;scenarios=""
+else rounds=("warmup:1" "formal:1" "formal:2" "formal:3" "formal:4" "formal:5");operations=600;concurrency=1,10,100,300;distributions=uniform,hot;scenarios="";fi
+operations=${CAP_REDIS_OPERATIONS:-$operations};concurrency=${CAP_REDIS_CONCURRENCY:-$concurrency};distributions=${CAP_REDIS_KEY_DISTRIBUTIONS:-$distributions};scenarios=${CAP_REDIS_SCENARIOS:-$scenarios}
+
+for item in "${rounds[@]}"; do
+  kind=${item%%:*};number=${item##*:}
+  active_container="cap-redis-l1-r2-${stamp,,}-${kind}-${number}-$$"
+  secret=$(openssl rand -hex 24)
+  docker run -d --name "$active_container" --cpus 4 --memory 4g --memory-swap 4g -p 127.0.0.1::6379 redis:7.4-alpine \
+    redis-server --save '' --appendonly no --protected-mode yes --requirepass "$secret" --maxmemory 3gb \
+      --maxmemory-policy noeviction --slowlog-log-slower-than 0 --slowlog-max-len 1000000 >/dev/null
+  port=$(docker port "$active_container" 6379/tcp|awk -F: '{print $NF}')
+  for _ in $(seq 1 100);do docker exec -e REDISCLI_AUTH="$secret" "$active_container" redis-cli --no-auth-warning ping 2>/dev/null|grep -qx PONG&&break;sleep .1;done
+  docker exec -e REDISCLI_AUTH="$secret" "$active_container" redis-cli --no-auth-warning ping 2>/dev/null|grep -qx PONG
+  round_id="$train_id-$kind-$number";zone=$(printf 'r%s%s' "$number" "$(date +%s%N)"|tail -c 31);output="$train_dir/rounds/$kind-$number.json"
+  export CAP_REDIS_URL="redis://:${secret}@127.0.0.1:${port}/0" GOGC=100 GOMEMLIMIT=4GiB
+  args=(--manifest "$MANIFEST" --output "$output" --run-id "$round_id" --round-kind "$kind" --round-number "$number" \
+    --environment capr2 --zone "$zone" --operations "$operations" --concurrency "$concurrency" --key-distributions "$distributions")
+  [[ -z "$scenarios" ]]||args+=(--scenarios "$scenarios")
+  "$build_dir/cap-redis" "${args[@]}"|tee "$train_dir/rounds/$kind-$number.stdout"
+  unset CAP_REDIS_URL
+  docker inspect "$active_container" --format '{{.HostConfig.NanoCpus}} {{.HostConfig.Memory}} {{.HostConfig.MemorySwap}} {{.Image}}' >"$train_dir/rounds/$kind-$number.container-limits.txt"
+  docker exec -e REDISCLI_AUTH="$secret" "$active_container" redis-cli --no-auth-warning CONFIG GET appendonly maxmemory maxmemory-policy save slowlog-log-slower-than slowlog-max-len >"$train_dir/rounds/$kind-$number.redis-config.txt"
+  docker rm -f "$active_container" >/dev/null;active_container="";unset secret
+done
+summary_mode=$MODE;[[ "$summary_mode" != matrix-smoke ]]||summary_mode=smoke
+python3 "$ROOT/scripts/perf/cap-redis/summarize.py" --train-dir "$train_dir" --profile "$PROFILE" --manifest "$MANIFEST" --mode "$summary_mode"
+printf 'CAP_REDIS_TRAIN=%s MODE=%s REPORT=%s\n' "$train_id" "$MODE" "$train_dir/report.md"

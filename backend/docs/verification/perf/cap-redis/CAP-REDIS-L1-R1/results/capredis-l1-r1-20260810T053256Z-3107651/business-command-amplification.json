@@ -1,0 +1,85 @@
+{
+  "schema_version": "cap-redis-l1-r1.business-amplification.v1",
+  "measurement_source": "TRANSPARENT_RESP_PROXY_OPERATION_BOUND_REAL_H5_END_TO_END_TRACE",
+  "trace_run": "capredis-business-e2e-20260810T072200Z",
+  "aggregate_sha256": "3a7006f2122c2cd5d6ae8e2d9af6cbd97656459a339196f84b3a49bfcbe11f89",
+  "rows": [
+    {
+      "command": "BUY",
+      "actor_commit": 1,
+      "workflow_writes": 0,
+      "orders": 0,
+      "due": 0,
+      "receipts": 1,
+      "redis_ops": 1,
+      "total_bytes": 2246,
+      "verdict": "MEASURED"
+    },
+    {
+      "command": "PLANT",
+      "actor_commit": 3,
+      "workflow_writes": 7,
+      "orders": 0,
+      "due": 7,
+      "receipts": 3,
+      "redis_ops": 10,
+      "total_bytes": 43542,
+      "verdict": "MEASURED"
+    },
+    {
+      "command": "HARVEST",
+      "actor_commit": 2,
+      "workflow_writes": 5,
+      "orders": 0,
+      "due": 5,
+      "receipts": 2,
+      "redis_ops": 7,
+      "total_bytes": 25230,
+      "verdict": "MEASURED"
+    },
+    {
+      "command": "SELL",
+      "actor_commit": 1,
+      "workflow_writes": 0,
+      "orders": 0,
+      "due": 0,
+      "receipts": 1,
+      "redis_ops": 1,
+      "total_bytes": 3580,
+      "verdict": "MEASURED"
+    },
+    {
+      "command": "WATER",
+      "actor_commit": 1,
+      "workflow_writes": 0,
+      "orders": 1,
+      "due": 1,
+      "receipts": 1,
+      "redis_ops": 7,
+      "total_bytes": 19284,
+      "verdict": "MEASURED"
+    },
+    {
+      "command": "THEFT",
+      "actor_commit": 2,
+      "workflow_writes": 5,
+      "orders": 0,
+      "due": 5,
+      "receipts": 2,
+      "redis_ops": 17,
+      "total_bytes": 50401,
+      "verdict": "MEASURED"
+    },
+    {
+      "command": "CLAIM_TASK",
+      "actor_commit": 1,
+      "workflow_writes": 0,
+      "orders": 0,
+      "due": 0,
+      "receipts": 1,
+      "redis_ops": 1,
+      "total_bytes": 5825,
+      "verdict": "MEASURED"
+    }
+  ]
+}

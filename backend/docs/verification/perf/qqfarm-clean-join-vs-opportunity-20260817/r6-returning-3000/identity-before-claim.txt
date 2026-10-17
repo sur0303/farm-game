@@ -1,0 +1,5 @@
+player_uid=8b5759f5-d5f0-4278-a397-ea759ba8c2d7 expected=8b5759f5-d5f0-4278-a397-ea759ba8c2d7 restart=0
+farm_uid=a19da52a-b2fc-4be6-a84e-31cb62b2b6c2 expected=a19da52a-b2fc-4be6-a84e-31cb62b2b6c2 restart=0
+gate_uid=421cb50b-6007-455e-bd1b-82297f6e3227 ready=1
+worker_a_uid=d4a66f93-d864-4aaa-bbf4-7ee426cc5dfd boot=farm-worker-a-60b45f25aecdd662fb511b74512c6dd7 restart=0
+worker_b_uid=51e45ad7-d774-4de5-8c0e-e4e8cf77352c boot=farm-worker-b-6f895d79c68356098c66682f6b47e236 restart=0

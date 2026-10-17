@@ -1,0 +1,199 @@
+--- 03:59:01
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115857-9667-6978q" not found
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115857-12978-cs96z" not found
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   14m          19Mi            
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   9m           28Mi            
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   11m          25Mi            
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   14m          25Mi            
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   12m          26Mi            
+--- 03:59:06
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115857-9667-6978q" not found
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115857-12978-cs96z" not found
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   14m          19Mi            
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   9m           28Mi            
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   11m          25Mi            
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   14m          25Mi            
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   12m          26Mi            
+--- 03:59:10
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115857-9667-6978q" not found
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115857-12978-cs96z" not found
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   14m          19Mi            
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   9m           28Mi            
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   11m          25Mi            
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   14m          25Mi            
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   12m          26Mi            
+--- 03:59:15
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115857-9667-6978q" not found
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115857-12978-cs96z" not found
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   14m          19Mi            
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   9m           28Mi            
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   11m          25Mi            
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   14m          25Mi            
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   12m          26Mi            
+--- 03:59:19
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115857-9667-6978q" not found
+Error from server (NotFound): podmetrics.metrics.k8s.io "developer_026-qqfarm/ws-stress-thick-login-115857-12978-cs96z" not found
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   14m          19Mi            
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   300m         327Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   388m         338Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   258m         521Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   248m         539Mi           
+--- 03:59:24
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-9667-6978q   510m         258Mi           
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-12978-cs96z   314m         241Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   669m         1035Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   300m         327Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   388m         338Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   258m         521Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   248m         539Mi           
+--- 03:59:29
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-9667-6978q   510m         258Mi           
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-12978-cs96z   314m         241Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   669m         1035Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   300m         327Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   388m         338Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   258m         521Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   248m         539Mi           
+--- 03:59:33
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-9667-6978q   510m         258Mi           
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-12978-cs96z   314m         241Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   669m         1035Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   300m         327Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   388m         338Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   258m         521Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   248m         539Mi           
+--- 03:59:38
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-9667-6978q   510m         258Mi           
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-12978-cs96z   314m         241Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   669m         1035Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   300m         327Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   388m         338Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   258m         521Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   248m         539Mi           
+--- 03:59:42
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-9667-6978q   510m         258Mi           
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-12978-cs96z   314m         241Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   669m         1035Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   300m         327Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   388m         338Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   258m         521Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   248m         539Mi           
+--- 03:59:47
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-9667-6978q   510m         258Mi           
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-12978-cs96z   314m         241Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   669m         1035Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   300m         327Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   388m         338Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   258m         521Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   248m         539Mi           
+--- 03:59:52
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-9667-6978q   17m          258Mi           
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-12978-cs96z   17m          241Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   151m         1130Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   12m          327Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   16m          338Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   100m         555Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   95m          544Mi           
+--- 03:59:56
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-9667-6978q   17m          258Mi           
+NAME                                       CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-12978-cs96z   17m          241Mi           
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   151m         1130Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   12m          327Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   16m          338Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   100m         555Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   95m          544Mi           
+--- 04:00:01
+NAME                                      CPU(cores)   MEMORY(bytes)   
+ws-stress-thick-login-115857-9667-6978q   17m          258Mi           
+Error from server (NotFound): pods "ws-stress-thick-login-115857-12978-cs96z" not found
+NAME                         CPU(cores)   MEMORY(bytes)   
+farm-gate-6d664d9846-r4snj   151m         1130Mi          
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-0   12m          327Mi           
+NAME           CPU(cores)   MEMORY(bytes)   
+player-svr-1   16m          338Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-0   100m         555Mi           
+NAME         CPU(cores)   MEMORY(bytes)   
+farm-svr-1   95m          544Mi           

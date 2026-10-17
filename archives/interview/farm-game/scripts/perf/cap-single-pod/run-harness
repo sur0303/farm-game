@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+
+PLAN=""
+OUT=""
+BINARY="${CAP_SINGLE_POD_BINARY:-$ROOT/.bin/cap-single-pod}"
+while (($#)); do
+  case "$1" in
+    --plan) PLAN="${2:?missing --plan value}"; shift 2 ;;
+    --out) OUT="${2:?missing --out value}"; shift 2 ;;
+    --binary) BINARY="${2:?missing --binary value}"; shift 2 ;;
+    *) echo "unknown argument: $1" >&2; exit 2 ;;
+  esac
+done
+
+[[ "$PLAN" = /* && "$OUT" = /* && "$BINARY" = /* ]] || {
+  echo "absolute --plan, --out and --binary are required" >&2
+  exit 2
+}
+[[ -f "$PLAN" ]] || { echo "run plan missing" >&2; exit 2; }
+
+python3 "$ROOT/scripts/perf/cap-single-pod/verify-json-schema.py" \
+  --schema "$ROOT/docs/verification/perf/cap-single-pod/run-plan.schema.json" \
+  --document "$PLAN"
+
+read_plan_value() {
+  python3 - "$PLAN" "$1" <<'PY'
+import json, pathlib, sys
+value = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))[sys.argv[2]]
+if not isinstance(value, str) or not value.startswith("/"):
+    raise SystemExit(2)
+print(value)
+PY
+}
+
+MANIFEST="$(read_plan_value manifest_path)"
+MANIFEST_SCHEMA="$(read_plan_value manifest_schema_path)"
+python3 "$ROOT/scripts/perf/cap-single-pod/verify-json-schema.py" \
+  --schema "$MANIFEST_SCHEMA" \
+  --document "$MANIFEST"
+
+[[ -x "$BINARY" ]] || { echo "harness binary missing or not executable" >&2; exit 2; }
+exec "$BINARY" run --plan "$PLAN" --out "$OUT"

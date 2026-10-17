@@ -1,0 +1,7 @@
+{
+  "schema_version": "cap-single-pod-l2.correctness-oracle-adapter.v0.1",
+  "listen": "127.0.0.1:19092",
+  "oracle_path": "/oracle",
+  "sources": "${PROMETHEUS_SOURCES}",
+  "gates": "${CORRECTNESS_GATE_MAPPINGS}"
+}

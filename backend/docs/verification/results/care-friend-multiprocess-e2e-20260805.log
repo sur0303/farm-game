@@ -1,0 +1,31 @@
+2026/08/05 15:06:40.695276 PO1 E2E using external Redis at 198.18.0.14:6380 (namespace=cdkgtj9w1ye8r)
+2026/08/05 15:06:45 player-svr using company persistent Redis for workflow records
+2026/08/05 15:06:45 player-svr authority mode enabled holder=po1-player boot=po1-player-dkgtj9w1ye8r snapshot=/tmp/po1-final-online-plant-1902642437/route-snapshot.json
+2026/08/05 15:06:45 player-svr listening on 127.0.0.1:37119, version=0.0.0-dev
+2026/08/05 15:06:46.052735 CARE raw evidence: Pair Authority friendship activated pair=sid1_2__JJhOX0NoIatr9Bb4x7_qlZFlIOvlY83vN2NL5jEg owner=900000693104998 friend=900000693104999
+2026/08/05 15:06:46.055510 CARE raw evidence: Pair Authority friendship activated pair=sid1_cPzuKMX0yeiYD4gqE00qQ1fLcV3sJQGoTK4TT5ZrYy4 owner=900000693104998 friend=900000693105000
+2026/08/05 15:06:46.058047 CARE raw evidence: Pair Authority friendship activated pair=sid1_36QSfMVzRO9q54D-_hbW5p8gMq1mqPu_A2Tl7R9yusk owner=900000693104998 friend=900000693105001
+2026/08/05 15:06:46.060686 CARE raw evidence: Pair Authority friendship activated pair=sid1_bWxdSAo10-FD5E-CF8L_bUoDY1VfcsRV2BGQoQJymN0 owner=900000693104998 friend=900000693105002
+2026/08/05 15:06:46.063185 CARE raw evidence: Pair Authority friendship activated pair=sid1_OI7NBgMuNfcSZdVxa5dhI7XSH9DG_wr5qBizpIII5Yg owner=900000693104998 friend=900000693105003
+2026/08/05 15:06:46.065922 CARE raw evidence: Pair Authority friendship activated pair=sid1_1RJ6Fwa7ovmuqRjV3ewpV5qbcJKUmTT9YNY8FvYZcLE owner=900000693104998 friend=900000693105004
+2026/08/05 15:06:46.068635 CARE raw evidence: Pair Authority friendship activated pair=sid1_PNCjk3ujG8NZDxYziWEbNZ5-2H5Ss0marRWhQKllRbQ owner=900000693104998 friend=900000693105005
+2026/08/05 15:06:46.071519 CARE raw evidence: Pair Authority friendship activated pair=sid1_wENNqPRbKLZDdfYR82vyRGRhlbMt8zY7-SHjeqR0eUQ owner=900000693104998 friend=900000693105006
+2026/08/05 15:06:46 farm-svr using company persistent Redis for friend/workflow records
+2026/08/05 15:06:46 farm-svr authority mode enabled holder=po1-farm boot=po1-farm-dkgtj9w1ye8r snapshot=/tmp/po1-final-online-plant-1902642437/route-snapshot.json
+2026/08/05 15:06:46 GateBootReaper mode=disabled; subscription lifecycle owned by BatchRenew leases (contract 26 section 11.5)
+2026/08/05 15:06:46 using routed player participants across 1 endpoints
+2026/08/05 15:06:46 Care direct dispatcher enabled on shared Authority SourceOrder/WorkLease
+2026/08/05 15:06:46 friend Pair Authority ActionAdmission enabled for CARE
+2026/08/05 15:06:46 using single farm-gate downlink at 127.0.0.1:43955
+2026/08/05 15:06:46 farm-svr listening on 127.0.0.1:44617, version=0.0.0-dev
+2026/08/05 15:06:46.174023 CARE raw evidence: backend=real Redis (198.18.0.14:6380 external=true ns=cdkgtj9w1ye8r), processes=farm-svr/player-svr/farm-worker(authority), friends=8, mocks=GatewayDownlink capture only
+2026/08/05 15:06:46 worker actor routing enabled with 2 connections
+2026/08/05 15:06:46 CareRewardOrder authority recovery enabled with bounded FARM bucket scans
+2026/08/05 15:06:46 farm-worker shared generic recovery enabled for PLANT and HARVEST
+2026/08/05 15:06:46 farm-worker running, worker_id=po1-e2e-worker boot_id=po1-e2e-worker-dkgtj9w1ye8r version=0.0.0-dev
+2026/08/05 15:06:46 recovery round combined={Claimed:1 Resumed:1 Completed:1 Retried:0 LeaseLost:0 Skipped:0 Failed:0} legacy={Claimed:0 Resumed:0 Completed:0 Retried:0 LeaseLost:0 Skipped:0 Failed:0}
+2026/08/05 15:06:46.815754 CARE raw evidence: planted crop_cycle_id=sid1_pQm1mV3q4wS1wSTcwOpJXZ3gRVX_gw_L5TRcjhG5xVk incident_id=sid1_tGOHYJdgpVEPOX9Nl76WpGuxLYJvcbPTXpvY6lsaIck
+2026/08/05 15:06:46.824622 CARE raw evidence: waiting 11s for WATER incident due window
+2026/08/05 15:06:57.847951 CARE raw evidence: multi-friend concurrent CARE same incident: succeeded=1 no_change=7 order=sid1_4OHijj-3dpijDlWFrKZ9VePXQo8QccLiJejp0wKt1bQ resolved_by=900000693104999
+2026/08/05 15:06:57.950472 CARE raw evidence: CareRewardOrder COMPLETED; winner=900000693104999 exp before=0 after=1
+2026/08/05 15:06:57.950535 CARE E2E PASS: real Redis -> Pair ActionAdmission -> multi-friend concurrent CARE same Incident (1 SUCCEEDED) -> CareRewardOrder COMPLETED

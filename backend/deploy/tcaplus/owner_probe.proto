@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+// 上传到 TcaplusDB 控制台“新建表格”页面的 PB 表定义文件。
+// 该文件只依赖 Tcaplus 控制台内置的公共 option 定义，不要把项目内
+// api/proto/tcapluspb/options.proto 一并上传。
+import "tcaplusservice.optionv1.proto";
+
+// Tcaplus 的 message 名就是 SDK 请求使用的表名。
+message owner_probe {
+  option(tcaplusservice.tcaplus_primary_key) = "owner_id";
+
+  int64 owner_id = 1;
+  int64 counter = 2;
+  bytes blob = 3;
+}

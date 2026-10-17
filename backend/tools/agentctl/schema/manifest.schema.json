@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://farm-game.invalid/ac1/agentctl/manifest.schema.json",
+  "title": "AC1 Agent Controller Task Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "repo",
+    "worktree",
+    "branch",
+    "base_commit",
+    "prompt_file",
+    "owned_write_set",
+    "forbidden_write_set",
+    "authoritative_inputs",
+    "acceptance_commands",
+    "review_scope"
+  ],
+  "anyOf": [
+    {
+      "required": ["model", "reasoning_effort"]
+    },
+    {
+      "required": ["execution_policy"]
+    }
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    },
+    "repo": { "type": "string", "minLength": 1 },
+    "worktree": { "type": "string", "minLength": 1 },
+    "branch": { "type": "string", "minLength": 1 },
+    "base_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{7,64}$"
+    },
+    "model": { "type": "string", "minLength": 1 },
+    "reasoning_effort": { "type": "string", "minLength": 1 },
+    "execution_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "initial_writer_profile",
+        "fixer_profile",
+        "reviewer_profile",
+        "diagnoser_profile"
+      ],
+      "properties": {
+        "initial_writer_profile": { "type": "string", "minLength": 1 },
+        "fixer_profile": { "type": "string", "minLength": 1 },
+        "reviewer_profile": { "type": "string", "minLength": 1 },
+        "diagnoser_profile": { "type": "string", "minLength": 1 },
+        "backup_profile": { "type": "string", "minLength": 1 },
+        "max_fix_cycles_before_diagnosis": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "max_post_diagnosis_fix_cycles": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "require_fresh_review_session": { "type": "boolean" },
+        "automatic_provider_switch": { "type": "boolean" }
+      }
+    },
+    "prompt_file": { "type": "string", "minLength": 1 },
+    "owned_write_set": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "forbidden_write_set": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "authoritative_inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "section"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "section": { "type": "string", "minLength": 1 },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          }
+        }
+      }
+    },
+    "acceptance_commands": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "review_scope": {
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      ]
+    },
+    "frozen_summary": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "semantic_locks": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "risk": {
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        { "type": "object" }
+      ]
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "type": "string", "minLength": 1 },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "anyOf": [
+              { "required": ["path"] },
+              { "required": ["repo"] },
+              { "required": ["worktree"] }
+            ],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "repo": { "type": "string", "minLength": 1 },
+              "worktree": { "type": "string", "minLength": 1 },
+              "commit": { "type": "string", "pattern": "^[0-9a-fA-F]{7,64}$" }
+            }
+          }
+        ]
+      }
+    },
+    "role": {
+      "type": "string",
+      "enum": ["writer", "reviewer"]
+    },
+    "review_of": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    },
+    "writer_task_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    }
+  }
+}

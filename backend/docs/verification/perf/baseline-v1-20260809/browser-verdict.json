@@ -1,0 +1,63 @@
+{
+  "verdict": "FAIL",
+  "flow": "login->buy->plant->harvest->share-friend->friend-farm->water->theft->home",
+  "steps": [
+    {
+      "step": "login",
+      "detail": {
+        "ownerA": "1000003",
+        "ownerB": "1000002"
+      }
+    },
+    {
+      "step": "buy-and-plant",
+      "detail": {
+        "aHarvestPlot": "plot-0",
+        "bTheftPlot": "plot-0"
+      }
+    },
+    {
+      "step": "harvest"
+    },
+    {
+      "step": "reverse-visit-b-to-a-ready"
+    },
+    {
+      "step": "share-and-join-friend"
+    },
+    {
+      "step": "f1-lost-care-result-recovered",
+      "detail": {
+        "farmVersion": "3",
+        "revision": "8",
+        "generationBefore": "1"
+      }
+    },
+    {
+      "step": "friend-farm-simulated-disconnect-recovery"
+    },
+    {
+      "step": "f2-gate-drain-restored-friend-target"
+    },
+    {
+      "step": "water-cycle-cleared-on-harvest"
+    }
+  ],
+  "details": {
+    "ownerA": "1000003",
+    "ownerB": "1000002",
+    "relationEpoch": "1",
+    "friendActionMask": 13
+  },
+  "console_errors": [
+    "B: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "A: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "A: WebSocket connection to 'ws://127.0.0.1:45697/ws' failed: Error during WebSocket handshake: Unexpected response code: 503",
+    "B: WebSocket connection to 'ws://127.0.0.1:45697/ws' failed: Error during WebSocket handshake: Unexpected response code: 503",
+    "B: WebSocket connection to 'ws://127.0.0.1:45697/ws' failed: Error during WebSocket handshake: Unexpected response code: 503",
+    "B: WebSocket connection to 'ws://127.0.0.1:45697/ws' failed: Error during WebSocket handshake: Unexpected response code: 503",
+    "A: WebSocket connection to 'ws://127.0.0.1:45697/ws' failed: Error during WebSocket handshake: Unexpected response code: 503"
+  ],
+  "failure": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 30000ms exceeded while waiting on the predicate",
+  "finished_at": "2026-08-09T10:11:01.897Z"
+}

@@ -1,0 +1,222 @@
+syntax = "proto3";
+
+// 这是上传到 TcaplusDB 控制台的单文件表定义包。
+// canonical 源文件仍是 api/proto/ownercore/ownercore.proto；本文件只为控制台
+// 不能自动解析跨目录 import 的场景提供单文件上传物，字段号和 wire type 必须保持一致。
+// 控制台内置 tcaplusservice.optionv1.proto，不要把该公共依赖另存为业务表。
+package tcaplusservice;
+
+import "tcaplusservice.optionv1.proto";
+
+enum CommandStatus {
+  COMMAND_STATUS_UNSPECIFIED = 0;
+  SUCCEEDED = 1;
+  PROCESSING = 2;
+  NO_CHANGE = 3;
+  REJECTED = 4;
+  UNAVAILABLE = 5;
+  ACCEPTED = 6;
+}
+
+enum ErrorCode {
+  ERROR_CODE_UNSPECIFIED = 0;
+  OK = 1;
+  ERR_BAD_FRAME = 1001;
+  ERR_DECODE = 1002;
+  ERR_UNSUPPORTED_VERSION = 1003;
+  ERR_MESSAGE_TOO_LARGE = 1004;
+  ERR_UNKNOWN_COMMAND = 1005;
+  ERR_RATE_LIMITED = 1006;
+  ERR_UNAUTHENTICATED = 2001;
+  ERR_SESSION_EXPIRED = 2002;
+  ERR_SESSION_PERMIT_INVALID = 2003;
+  ERR_LOGIN_ELSEWHERE = 2004;
+  ERR_CONNECTION_TICKET_INVALID = 2005;
+  ERR_NOT_FRIEND = 3001;
+  ERR_FRIEND_PERMIT_INVALID = 3002;
+  ERR_FRIEND_LIMIT = 3003;
+  ERR_SHARE_LINK_INVALID = 3004;
+  ERR_PERMISSION_DENIED = 3005;
+  ERR_INSUFFICIENT_COIN = 4001;
+  ERR_INSUFFICIENT_ITEM = 4002;
+  ERR_OFFER_NOT_FOUND = 4003;
+  ERR_RULE_VERSION_MISMATCH = 4004;
+  ERR_PLOT_NOT_EMPTY = 5001;
+  ERR_PLOT_EMPTY = 5002;
+  ERR_CROP_NOT_MATURE = 5003;
+  ERR_VERSION_CONFLICT = 5004;
+  ERR_PLOT_NOT_FOUND = 5005;
+  ERR_FARM_FULL = 6001;
+  ERR_NOT_IN_FARM = 6002;
+  ERR_ACTOR_REDIRECT = 6003;
+  ERR_DOWNLINK_OVERFLOW = 6004;
+  ERR_STEAL_ALREADY_DONE = 7001;
+  ERR_STEAL_QUOTA_EXHAUSTED = 7002;
+  ERR_STEAL_BLOCKED_BY_PET = 7003;
+  ERR_SETTLEMENT_NOT_FOUND = 7004;
+  ERR_INTERNAL = 9001;
+  ERR_STORE_CAS_CONFLICT = 9002;
+  ERR_STORE_UNAVAILABLE = 9003;
+  ERR_TIMEOUT = 9004;
+}
+
+message OwnerMeta {
+  uint64 owner_id = 1;
+  uint64 owner_epoch = 2;
+  uint64 state_version = 3;
+  int32 schema_version = 4;
+  string bootstrap_id = 5;
+  int32 applied_bootstrap_rule_version = 6;
+}
+
+message Wallet { int64 coin = 1; }
+
+message ItemStack {
+  int32 item_id = 1;
+  int64 count = 2;
+}
+
+message Inventory { repeated ItemStack stacks = 1; }
+
+message Progression {
+  int32 level = 1;
+  int64 exp = 2;
+  repeated int32 unlocked = 3;
+}
+
+message PlayerProfile {
+  string nickname = 1;
+  int32 avatar_id = 2;
+  int64 created_at = 3;
+  int64 last_login_at = 4;
+}
+
+enum CropPhase {
+  CROP_PHASE_UNSPECIFIED = 0;
+  GROWING = 1;
+  MATURE = 2;
+}
+
+message CropCycle {
+  string crop_cycle_id = 1;
+  int32 plot_index = 2;
+  int32 crop_definition_id = 3;
+  int32 rule_version = 4;
+  int64 plant_at = 5;
+  int64 mature_at = 6;
+  int32 base_yield = 7;
+  int32 stealable_limit = 8;
+  int32 stolen_total = 9;
+  bool watered = 10;
+  int32 mutation_result = 11;
+}
+
+message Plot {
+  int32 index = 1;
+  uint64 plot_version = 2;
+  string active_crop_cycle_id = 3;
+}
+
+message FarmCore {
+  uint64 farm_id = 1;
+  uint64 farm_version = 2;
+  repeated Plot plots = 3;
+  repeated CropCycle crop_cycles = 4;
+}
+
+message TaskState {
+  message TaskProgress {
+    int32 task_id = 1;
+    int64 progress = 2;
+    bool claimed = 3;
+  }
+  repeated TaskProgress tasks = 1;
+}
+
+message MailReceipts {
+  message MailReceipt {
+    string mail_id = 1;
+    bool read = 2;
+    bool attachment_claimed = 3;
+  }
+  repeated MailReceipt receipts = 1;
+}
+
+message PetState {
+  int32 active_pet_id = 1;
+  int64 guard_until = 2;
+}
+
+message AlbumState { repeated int32 unlocked_entries = 1; }
+
+message OperationResult {
+  string operation_id = 1;
+  CommandStatus status = 2;
+  ErrorCode error_code = 3;
+  int64 committed_at = 4;
+  bytes result_payload = 5;
+}
+
+enum TheftSettlementState {
+  THEFT_STATE_UNSPECIFIED = 0;
+  TARGET_COMMITTED = 1;
+  GRANTED = 2;
+  COMPLETED = 3;
+}
+
+message TheftSettlement {
+  string settlement_id = 1;
+  uint64 visitor_id = 2;
+  uint64 target_owner_id = 3;
+  string crop_cycle_id = 4;
+  int32 amount = 5;
+  TheftSettlementState state = 6;
+  int64 created_at = 7;
+  int64 next_retry_at = 8;
+}
+
+message LootReceipt {
+  string settlement_id = 1;
+  int32 amount = 2;
+  int32 item_id = 3;
+  int64 granted_at = 4;
+}
+
+enum OutboxKind {
+  OUTBOX_KIND_UNSPECIFIED = 0;
+  GRANT_LOOT = 1;
+  COMPLETE_THEFT = 2;
+  NOTIFY_MATURE = 3;
+}
+
+message PendingOutbox {
+  string outbox_id = 1;
+  OutboxKind kind = 2;
+  string settlement_id = 3;
+  uint64 target_owner_id = 4;
+  int32 attempts = 5;
+  int64 next_retry_at = 6;
+  bytes payload = 7;
+}
+
+// 主表：控制台将使用该 message 名创建表 OwnerCoreRecord。
+// 主键必须是 owner_id；不要改成 owner_core 或 owner_probe。
+message OwnerCoreRecord {
+  option (tcaplusservice.tcaplus_primary_key) = "owner_id";
+
+  uint64 owner_id = 1;
+  OwnerMeta owner_meta = 2;
+  PlayerProfile player_profile = 3;
+  Progression progression = 4;
+  Wallet wallet = 5;
+  Inventory inventory = 6;
+  FarmCore farm = 7;
+  TaskState task_state = 8;
+  MailReceipts mail_receipts = 9;
+  PetState pet_state = 10;
+  AlbumState album_state = 11;
+  repeated OperationResult recent_operation_results = 12;
+  repeated PendingOutbox pending_outbox = 13;
+  repeated TheftSettlement active_theft_settlements = 14;
+  repeated LootReceipt recent_loot_receipts = 15;
+}

@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+package farm;
+
+option go_package = "farmgame/api/gen/farm;farmpb";
+
+import "common/enums.proto";
+
+// CropPhase 由 mature_at 与服务器时间派生,不落库为可写状态(交接文档 §5.2)。
+enum CropPhase {
+  CROP_PHASE_UNSPECIFIED = 0;
+  GROWING = 1;   // now < mature_at
+  MATURE = 2;    // now >= mature_at
+}
+
+// CropCycle 是一茬作物的完整生命周期。关键规则参数在播种时冻结,
+// 后续配置变更只影响新种下的作物(交接文档 §6.6)。
+message CropCycle {
+  string crop_cycle_id = 1;      // 本茬唯一 id
+  int32 plot_index = 2;          // 所在地块
+  int32 crop_definition_id = 3;  // 作物定义
+  int32 rule_version = 4;        // 冻结的规则版本
+
+  int64 plant_at = 5;            // 播种时间(epoch ms)
+  int64 mature_at = 6;           // 成熟时间(epoch ms),phase 由它派生
+  int32 base_yield = 7;          // 基础产量(默认 10)
+  int32 stealable_limit = 8;     // 本茬最大总可偷量(默认 3)
+
+  int32 stolen_total = 9;        // 已被偷总量(<= stealable_limit)
+  bool watered = 10;             // 是否已浇水(护理状态)
+  int32 mutation_result = 11;    // 变异结果(P0 预留)
+}
+
+// PlotLockState is the durable FarmActor fact used by every public projection
+// and write admission.  UNSPECIFIED is retained for migration of old records;
+// a loaded record is deterministically normalized to UNLOCKED for plots 1..5
+// and LOCKED for plots 6..24.
+enum PlotLockState {
+  PLOT_LOCK_STATE_UNSPECIFIED = 0;
+  PLOT_LOCK_STATE_UNLOCKED = 1;
+  PLOT_LOCK_STATE_LOCKED = 2;
+}
+
+// Plot 是一块地。空地 active_crop_cycle_id 为空。
+message Plot {
+  int32 index = 1;
+  uint64 plot_version = 2;              // 地块乐观版本
+  string active_crop_cycle_id = 3;      // 当前作物,空表示空地
+  PlotLockState lock_state = 4;
+  string unlock_workflow_id = 5;
+  uint64 unlock_rule_version = 6;
+  int64 unlocked_at_ms = 7;
+}
+
+// FarmCore 是玩家唯一私有农场的权威模型。
+message FarmCore {
+  uint64 farm_id = 1;
+  uint64 farm_version = 2;              // 农场公开变化的单调版本
+  repeated Plot plots = 3;
+  repeated CropCycle crop_cycles = 4;   // 活跃茬次(收获后 Ended 的茬次移出)
+}
+
+// FarmRecord is the farm_id consistency group used by FarmActor. It is
+// deliberately separate from PlayerRecord even while farm_id == player_id.
+message FarmRecord {
+  uint64 farm_id = 1;
+  FarmCore core = 2;
+  repeated FarmOperationReceipt recent_operation_receipts = 3;
+  repeated FarmSettlement active_settlements = 4;
+  repeated TheftAttemptReceipt recent_theft_attempts = 5;
+  repeated CareAttemptReceipt recent_care_attempts = 6;
+  // Logical actor version restored after dirty-writeback reactivation. It is
+  // independent from both FarmVersion and physical Redis RecordVersion.
+  uint64 actor_memory_version = 7;
+}
+
+message FarmOperationReceipt {
+  string operation_id = 1;
+  common.CommandStatus status = 2;
+  common.ErrorCode error_code = 3;
+  bytes result_payload = 4;
+  int64 committed_at_ms = 5;
+  bytes payload_hash = 6;
+}
+
+enum FarmSettlementKind {
+  FARM_SETTLEMENT_KIND_UNSPECIFIED = 0;
+  HARVEST = 1;
+  THEFT = 2;
+  CARE = 3;
+}
+
+enum FarmSettlementState {
+  FARM_SETTLEMENT_STATE_UNSPECIFIED = 0;
+  TARGET_COMMITTED = 1;
+  PLAYER_GRANTED = 2;
+  COMPLETED = 3;
+}
+
+message FarmSettlement {
+  string settlement_id = 1;
+  FarmSettlementKind kind = 2;
+  FarmSettlementState state = 3;
+  uint64 beneficiary_player_id = 4;
+  int32 item_id = 5;
+  int64 item_count = 6;
+  string crop_cycle_id = 7;
+  int64 updated_at_ms = 8;
+  repeated FarmSettlementParticipant participants = 9;
+  uint64 relation_epoch = 10;
+}
+
+enum FarmParticipantRole {
+  FARM_PARTICIPANT_ROLE_UNSPECIFIED = 0;
+  OWNER = 1;
+  VISITOR = 2;
+  HELPER = 3;
+  HARVESTER = 4;
+}
+
+message FarmSettlementParticipant {
+  uint64 player_id = 1;
+  FarmParticipantRole role = 2;
+  int32 item_id = 3;
+  int64 item_count = 4;
+  int64 coin_delta = 5;
+  int64 exp_delta = 6;
+  // Non-zero only when this reward proves that the player harvested the crop.
+  // It is persisted with the settlement so farm-worker can recover the unlock.
+  int32 codex_crop_definition_id = 7;
+}
+
+message TheftAttemptReceipt {
+  uint64 visitor_player_id = 1;
+  string crop_cycle_id = 2;
+  string operation_id = 3;
+  int64 committed_at_ms = 4;
+}
+
+message CareAttemptReceipt {
+  uint64 helper_player_id = 1;
+  string crop_cycle_id = 2;
+  string operation_id = 3;
+  int64 committed_at_ms = 4;
+}
+
+message PlantCropRequest {
+  uint32 plot_index = 1;
+  int32 crop_definition_id = 2;
+}
+
+message HarvestCropRequest {
+  uint32 plot_index = 1;
+}
+
+message WaterCropRequest {
+  uint32 plot_index = 1;
+}
+
+message BeginTheftRequest {
+  uint32 plot_index = 1;
+}

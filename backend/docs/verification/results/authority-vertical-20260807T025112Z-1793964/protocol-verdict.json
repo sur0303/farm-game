@@ -1,0 +1,42 @@
+{
+  "finished_at": "2026-08-07T02:52:06Z",
+  "frames": 17,
+  "steps": {
+    "bootstrap": {
+      "status": "ok"
+    },
+    "buy": {
+      "status": "ok"
+    },
+    "grow": {
+      "status": "ok"
+    },
+    "harvest": {
+      "status": "fail",
+      "detail": "harvest timeout waiting version advance"
+    },
+    "hello": {
+      "status": "ok"
+    },
+    "join": {
+      "status": "ok"
+    },
+    "login": {
+      "status": "ok"
+    },
+    "plant": {
+      "status": "ok",
+      "detail": "plot=0 cycle=sid1_-WmxsLLE5YefVl1SeTq_eMkXv6BsIvOEs94sduxqZmw mature_at_ms=1786071109349 farm_version=1"
+    },
+    "premature_reject": {
+      "status": "ok"
+    },
+    "recovery_complete": {
+      "status": "ok"
+    },
+    "register": {
+      "status": "ok"
+    }
+  },
+  "verdict": "FAIL"
+}

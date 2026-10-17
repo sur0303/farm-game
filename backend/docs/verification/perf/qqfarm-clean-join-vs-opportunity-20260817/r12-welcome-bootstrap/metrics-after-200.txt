@@ -1,0 +1,35 @@
+queue_full_after_200=0
+=== top after 200 ===
+NAME                               CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-lbw2f         79m          328Mi           
+farm-grafana-64f7f46898-z58tr      1m           49Mi            
+farm-prometheus-5966b58fdf-6xrnv   3m           75Mi            
+farm-redis-0                       34m          781Mi           
+farm-redis-1                       30m          797Mi           
+farm-redis-2                       35m          780Mi           
+farm-redis-3                       14m          773Mi           
+farm-redis-4                       12m          773Mi           
+farm-redis-5                       26m          790Mi           
+farm-route-bootstrap               0m           2Mi             
+farm-svr-0                         35m          278Mi           
+farm-worker-a-8c9dcbf44-pctpx      30m          15Mi            
+farm-worker-b-5fdcbff857-b95jg     34m          15Mi            
+player-svr-0                       326m         512Mi           
+route-controller-994877cdc-jkkbm   6m           13Mi            
+=== restarts after 200 ===
+farm-gate-5b5b595d85-lbw2f r=0 ready=true
+farm-grafana-64f7f46898-z58tr r=0 ready=true
+farm-prometheus-5966b58fdf-6xrnv r=0 ready=true
+farm-redis-0 r=0 ready=true
+farm-redis-1 r=0 ready=true
+farm-redis-2 r=0 ready=true
+farm-redis-3 r=0 ready=true
+farm-redis-4 r=0 ready=true
+farm-redis-5 r=0 ready=true
+farm-route-bootstrap r=0 ready=true
+farm-svr-0 r=0 ready=true
+farm-worker-a-8c9dcbf44-pctpx r=0 ready=true
+farm-worker-b-5fdcbff857-b95jg r=0 ready=true
+player-svr-0 r=0 ready=true
+route-controller-994877cdc-jkkbm r=0 ready=true
+ws-stress-thick-login-195055-kbgw9 r=0 ready=false

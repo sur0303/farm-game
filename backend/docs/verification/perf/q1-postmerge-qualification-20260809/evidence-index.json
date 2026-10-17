@@ -1,0 +1,83 @@
+{
+  "schema": "farm-game.q1-postmerge-qualification.v1",
+  "checkpoint": "CP-Q1-POSTMERGE-QUALIFICATION",
+  "result": "PASS",
+  "rounds": "1/1",
+  "backend_integration_commit": "4824c9c02fe70873b2f9a8eab3ce274d227063a8",
+  "h5_integration_commit": "525c4d324100b17a891f02797c4880fa9a02f70a",
+  "integration_checkpoint_tag": "cp-q1-scope-filter-correctness-20260809",
+  "images": {
+    "backend_image_digest": "sha256:f36a4d8f5f8c05ac44ed173895e46f5348af6d5b133835e6d25d13da2b51c39b",
+    "h5_image_digest": "sha256:9bfdedaa70f7cbf8bac86bb25cc2ff62dba1cf7832fb5d8f66c72c1f113486fd",
+    "backend_build_method": "host exact-commit CGO_ENABLED=0 binaries copied into reviewed runtime shape after canonical container build could not resolve private module DNS",
+    "h5_build_method": "host exact-commit npm build:web dist copied into nginx runtime after canonical container npm ci failed in the isolated builder",
+    "backend_prebuilt_dockerfile_hash": "sha256:3812495aaa428e4eafe903963fa6c408aac71156cffafc0aa05e0c1444e9e66e",
+    "h5_prebuilt_dockerfile_hash": "sha256:3d37415b906f52aa3913f17f4a2d7a5e53b6ed84dac5b8f95db4629c495da9f4"
+  },
+  "server_config_hash": "sha256:906a5ebb05e4862960f23c6ab6625cbf679d09f369d5cb657091cceec041018a",
+  "load_profile": {
+    "path": "deploy/load/q1-perf-baseline-v1-f3-triage.json",
+    "schema": "farm-game.q1-perf-profile.v1",
+    "hash": "sha256:6f714f96b1a3969381791a5cc89182bdef924114ee6d5ab1277bcdd8e84296eb",
+    "baseline_eligible": false
+  },
+  "fixture": {
+    "fixture_id": "q1perf-postmerge-0809150124",
+    "fixture_hash": "sha256:57049316cc456c714b5a8a55cd3fb6ec2eee1d9d9d73977fdffb549f26a02744",
+    "recorded_random_seed": "20260809150001",
+    "random_seed_consumer": "qualification harness has no random-seed input; value is recorded for train continuity, not claimed as consumed"
+  },
+  "redis": {
+    "cleanup_completed": true,
+    "cleanup_strategy": "destroy_exact_ephemeral_container",
+    "endpoint_hash": "sha256:2d4592e423be9b037f740836bc401710855a9393a485fddc3bae298e2651bf22",
+    "flushall_allowed": false,
+    "mode": "ephemeral_local",
+    "namespace": "q1perf-postmerge-0809150124",
+    "secret_recorded": false
+  },
+  "machine_spec_hash": "sha256:e2601c8b7b361b034d2ed44621ad4b461ed9625242069f78057c47a9cdcd41b5",
+  "test_window": {
+    "started_at": "2026-08-09T15:01:25.007795Z",
+    "finished_at": "2026-08-09T15:02:43.997230Z"
+  },
+  "mechanical_gates": {
+    "backend_go_test_all": "PASS",
+    "backend_focused_race": "PASS",
+    "backend_go_vet": "PASS",
+    "backend_go_build_cmd_all": "PASS",
+    "legacy_due_compatibility": "PASS",
+    "harness_negative_and_clean_controls": "PASS",
+    "h5_unit_204": "PASS",
+    "h5_tsc": "PASS",
+    "h5_build_web": "PASS"
+  },
+  "product_gate": {
+    "run_id": "q1perf-postmerge-0809150124",
+    "scenario_status": "PASS",
+    "f3_classification": "F3_CHAIN_PASS",
+    "invalid_order_classification": "NO_INVALID_PAIR_DUE_RESIDUE",
+    "invalid_processing_observations": 0,
+    "physical_pair_due_residual": 0,
+    "unmatched_pair_due_residual": 0,
+    "care_completed_two": true,
+    "wire_theft_after_first_click": 0,
+    "wire_theft_after_second_click": 1,
+    "hard_correctness_incident_count": 0,
+    "worker_invalid_orders_nonzero": false,
+    "evidence_hashes": {
+      "baseline-run-manifest.json": "sha256:9f07b4c1e4037e13f5399fa83e057f253f1caff418dac80dc09f69de155f2f84",
+      "baseline-verdict.json": "sha256:faeec774806f3241d25070ef8a8d674e8aff2e9c04745785d7f6f8998494586c",
+      "scenarios/product-correctness-anchor.json": "sha256:87092a82163785d0d1900896d1eef2bb13073c5e3f311664159d6c009cdf6486",
+      "evidence/product-correctness-anchor/f3-fault-chain-triage.json": "sha256:e55eed8068adf763e2959eb2d2affbeb102369924383658e90db2eab25cf4432",
+      "evidence/product-correctness-anchor/theft-invalid-order-triage.json": "sha256:eac5df69251353ebf9f70cdf16689635fa985081c2a012cf0a8e2cf4d13d784e",
+      "evidence/product-correctness-anchor/browser-verdict.json": "sha256:bc0a6be738126d5e5221fbf4e1f667f28f2cd925e652afa88b9ec703da00b50f",
+      "evidence/product-correctness-anchor/authority-after.json": "sha256:6ad03946d7f1dc25df6b2e3a506f09d114e6917d8413a4994db45c403d13cd39"
+    }
+  },
+  "purpose": "postmerge_correctness_qualification",
+  "baseline_eligible": false,
+  "formal_performance_baseline": "NOT_RECORDED",
+  "supports_30m_dau": false,
+  "next_work_package": "CAP-REDIS-L1"
+}

@@ -1,0 +1,12 @@
+player_uid=b0afbfb7-9e2b-42ee-8e5b-5b579cb1d37f
+farm_uid=b1958862-36c2-4ad7-b30b-91340ff1d88e
+worker_a_uid=ba27b40e-0415-48b8-88cb-dac00f1906e7
+worker_b_uid=375d40b4-2120-4023-a6a4-7da8736d1010
+gate_uid=6dc23d3f-2aee-4b42-a1e3-1d259551b999
+player_restart=0
+farm_restart=0
+worker_a_restart=0
+worker_b_restart=0
+gate_restart=0
+player_phase=Running
+farm_phase=Running

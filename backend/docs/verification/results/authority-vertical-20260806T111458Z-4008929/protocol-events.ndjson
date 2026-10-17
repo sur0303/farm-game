@@ -1,0 +1,2 @@
+{"timestamp":"2026-08-06T11:15:07.780989481Z","type":"DELIVER_BATCH_OK","method":"DeliverBatch","item_id":"sub-8d98eaa3cd6231171ce5d9068b7e1cf8:snapshot:0","presence_epoch":1,"status":"QUEUE_ACCEPTED"}
+{"timestamp":"2026-08-06T11:15:07.782106044Z","type":"ACTIVATE_SUBSCRIPTION","method":"ActivateSubscription","status":"DELIVERY_QUEUE_ACCEPTED"}

@@ -1,0 +1,153 @@
+{
+  "run_id": "warm-ramp-50-final2-20260820",
+  "start": "2026-08-19T16:40:02.057188568Z",
+  "finish": "2026-08-19T16:45:06.242521233Z",
+  "window_seconds": 334,
+  "queries": {
+    "commands": [
+      {
+        "metric": {
+          "command_type": "BUY",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787157911.243,
+          "892.036923076923"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "JOIN_FARM",
+          "error_code": "NONE",
+          "status": "ACCEPTED"
+        },
+        "value": [
+          1787157911.243,
+          "51.38461538461539"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "PLANT",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787157911.243,
+          "891.0092307692307"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "UNLOCK_PLOT",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787157911.243,
+          "951.6430769230769"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "CARE",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787157911.243,
+          "579.6184615384616"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "HARVEST",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787157911.243,
+          "839.6246153846154"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "GET_PLAYER_BOOTSTRAP",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787157911.243,
+          "835.5138461538462"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "SELL",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787157911.243,
+          "835.5138461538462"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "GET_OPERATION_RESULT",
+          "error_code": "NONE",
+          "status": "SUCCEEDED"
+        },
+        "value": [
+          1787157911.243,
+          "0"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "UNLOCK_PLOT",
+          "error_code": "NONE",
+          "status": "PROCESSING"
+        },
+        "value": [
+          1787157911.243,
+          "2.0553846153846154"
+        ]
+      },
+      {
+        "metric": {
+          "command_type": "PLANT",
+          "error_code": "NONE",
+          "status": "PROCESSING"
+        },
+        "value": [
+          1787157911.243,
+          "1.0276923076923077"
+        ]
+      }
+    ],
+    "rpc_non_ok": [
+      {
+        "metric": {
+          "code": "Unavailable"
+        },
+        "value": [
+          1787157911.243,
+          "1.0121212121212122"
+        ]
+      },
+      {
+        "metric": {
+          "code": "FailedPrecondition"
+        },
+        "value": [
+          1787157911.243,
+          "1.0121212121212122"
+        ]
+      }
+    ],
+    "client_rpc_non_ok": [],
+    "backend_rejected": []
+  }
+}

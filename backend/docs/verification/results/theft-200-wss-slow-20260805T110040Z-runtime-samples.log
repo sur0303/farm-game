@@ -1,0 +1,1554 @@
+sample_time=2026-08-05T11:01:12.157Z
+3700885 20.0 34660   21 player-svr
+3700886  5.0 29652   16 farm-svr
+3700935 24.0 27584   16 farm-worker
+3700963 62.5 33244   30 farm-gate
+3701005 15.2 52696   19 caddy
+3701312  0.0 14576    8 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 9
+farmgate_downlink_delivered_total 9
+farmgate_ws_conn_active 9
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 9
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 66
+go_memstats_alloc_bytes 5.343976e+06
+go_memstats_alloc_bytes_total 1.406264e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 57
+go_memstats_alloc_bytes 4.466576e+06
+go_memstats_alloc_bytes_total 8.12384e+06
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 9.270696e+06
+go_memstats_alloc_bytes_total 1.5839024e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.42112e+06
+go_memstats_alloc_bytes_total 8.482272e+06
+sample_time=2026-08-05T11:01:12.501Z
+3700885 19.3 35044   21 player-svr
+3700886 14.8 33544   19 farm-svr
+3700935 25.1 27804   17 farm-worker
+3700963 64.1 36488   30 farm-gate
+3701005 23.3 58884   21 caddy
+3701312 57.1 21212   20 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 77
+farmgate_downlink_delivered_total 78
+farmgate_ws_conn_active 77
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 77
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 271
+go_memstats_alloc_bytes 7.856896e+06
+go_memstats_alloc_bytes_total 2.0834256e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 195
+go_memstats_alloc_bytes 8.370856e+06
+go_memstats_alloc_bytes_total 1.3955216e+07
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 1.02216e+07
+go_memstats_alloc_bytes_total 1.6789928e+07
+metrics_service=worker
+go_goroutines 20
+go_memstats_alloc_bytes 3.855256e+06
+go_memstats_alloc_bytes_total 9.88772e+06
+sample_time=2026-08-05T11:01:12.843Z
+3700885 18.5 36420   21 player-svr
+3700886 20.6 38476   25 farm-svr
+3700935 24.8 27964   17 farm-worker
+3700963 66.0 41676   30 farm-gate
+3701005 28.3 67640   22 caddy
+3701312 53.6 25588   22 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 146
+farmgate_downlink_delivered_total 146
+farmgate_ws_conn_active 146
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 146
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 478
+go_memstats_alloc_bytes 1.1506408e+07
+go_memstats_alloc_bytes_total 2.805468e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 331
+go_memstats_alloc_bytes 9.921832e+06
+go_memstats_alloc_bytes_total 2.1275288e+07
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 1.1129616e+07
+go_memstats_alloc_bytes_total 1.7697944e+07
+metrics_service=worker
+go_goroutines 21
+go_memstats_alloc_bytes 4.77916e+06
+go_memstats_alloc_bytes_total 1.0811624e+07
+sample_time=2026-08-05T11:01:13.184Z
+3700885 18.3 37888   21 player-svr
+3700886 23.3 39832   25 farm-svr
+3700935 25.5 28620   17 farm-worker
+3700963 64.8 45888   30 farm-gate
+3701005 30.2 75220   22 caddy
+3701312 48.5 28744   22 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 201
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.2836248e+07
+go_memstats_alloc_bytes_total 3.386432e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 435
+go_memstats_alloc_bytes 1.4446136e+07
+go_memstats_alloc_bytes_total 2.5799592e+07
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 1.190788e+07
+go_memstats_alloc_bytes_total 1.8476208e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.243744e+06
+go_memstats_alloc_bytes_total 1.2189568e+07
+sample_time=2026-08-05T11:01:13.524Z
+3700885 15.9 37996   21 player-svr
+3700886 20.6 40332   25 farm-svr
+3700935 24.8 28880   17 farm-worker
+3700963 55.7 45936   30 farm-gate
+3701005 25.3 75220   22 caddy
+3701312 36.4 28744   22 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 201
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.3046152e+07
+go_memstats_alloc_bytes_total 3.4074224e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 435
+go_memstats_alloc_bytes 1.4905888e+07
+go_memstats_alloc_bytes_total 2.6259344e+07
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 1.2051784e+07
+go_memstats_alloc_bytes_total 1.8620112e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.43792e+06
+go_memstats_alloc_bytes_total 1.3498432e+07
+sample_time=2026-08-05T11:01:13.865Z
+3700885 14.0 38228   21 player-svr
+3700886 18.9 40960   25 farm-svr
+3700935 24.7 28888   17 farm-worker
+3700963 48.6 46052   30 farm-gate
+3701005 21.8 75220   22 caddy
+3701312 29.2 28744   22 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 201
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.330356e+07
+go_memstats_alloc_bytes_total 3.4331632e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 435
+go_memstats_alloc_bytes 1.5350304e+07
+go_memstats_alloc_bytes_total 2.670376e+07
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 1.2223256e+07
+go_memstats_alloc_bytes_total 1.8791584e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.386192e+06
+go_memstats_alloc_bytes_total 1.4446704e+07
+sample_time=2026-08-05T11:01:14.204Z
+3700885 12.6 38412   21 player-svr
+3700886 16.9 41556   25 farm-svr
+3700935 24.9 28768   17 farm-worker
+3700963 43.1 46128   30 farm-gate
+3701005 19.1 75220   22 caddy
+3701312 24.5 28744   22 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 201
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.3540472e+07
+go_memstats_alloc_bytes_total 3.4568544e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 435
+go_memstats_alloc_bytes 1.57872e+07
+go_memstats_alloc_bytes_total 2.7140656e+07
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 1.244476e+07
+go_memstats_alloc_bytes_total 1.9013088e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.916624e+06
+go_memstats_alloc_bytes_total 1.5819208e+07
+sample_time=2026-08-05T11:01:14.551Z
+3700885 11.9 40532   25 player-svr
+3700886 15.8 42428   27 farm-svr
+3700935 24.7 29080   17 farm-worker
+3700963 38.6 46276   30 farm-gate
+3701005 16.9 75220   22 caddy
+3701312 20.8 28744   22 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 201
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.3761336e+07
+go_memstats_alloc_bytes_total 3.4789408e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 435
+go_memstats_alloc_bytes 1.2283104e+07
+go_memstats_alloc_bytes_total 2.8938296e+07
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 9.550264e+06
+go_memstats_alloc_bytes_total 2.0540888e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.960712e+06
+go_memstats_alloc_bytes_total 1.6863296e+07
+sample_time=2026-08-05T11:01:14.890Z
+3700885 10.9 40608   25 player-svr
+3700886 26.3 67560   38 farm-svr
+3700935 23.8 29152   17 farm-worker
+3700963 42.1 61596   36 farm-gate
+3701005 17.0 75596   37 caddy
+3701312 20.8 30216   28 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.515716e+07
+go_memstats_alloc_bytes_total 4.8488456e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 435
+go_memstats_alloc_bytes 2.6578184e+07
+go_memstats_alloc_bytes_total 6.4214048e+07
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 9.649336e+06
+go_memstats_alloc_bytes_total 2.063996e+07
+metrics_service=worker
+go_goroutines 20
+go_memstats_alloc_bytes 3.764272e+06
+go_memstats_alloc_bytes_total 1.7713944e+07
+sample_time=2026-08-05T11:01:15.229Z
+3700885 10.0 40792   25 player-svr
+3700886 45.0 74956   44 farm-svr
+3700935 22.3 29484   17 farm-worker
+3700963 39.1 61672   36 farm-gate
+3701005 15.5 75596   37 caddy
+3701312 18.5 30216   28 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.5510696e+07
+go_memstats_alloc_bytes_total 4.8841992e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 436
+go_memstats_alloc_bytes 2.882252e+07
+go_memstats_alloc_bytes_total 9.3417272e+07
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 9.879264e+06
+go_memstats_alloc_bytes_total 2.0869888e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.145232e+06
+go_memstats_alloc_bytes_total 1.8094904e+07
+sample_time=2026-08-05T11:01:15.572Z
+3700885  9.3 40848   25 player-svr
+3700886 75.1 76936   45 farm-svr
+3700935 20.8 29556   17 farm-worker
+3700963 36.3 61696   36 farm-gate
+3701005 14.2 75596   37 caddy
+3701312 16.6 30220   28 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.5780136e+07
+go_memstats_alloc_bytes_total 4.9111432e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 429
+go_memstats_alloc_bytes 3.4649624e+07
+go_memstats_alloc_bytes_total 1.17355648e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 1.0012144e+07
+go_memstats_alloc_bytes_total 2.1002768e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.491552e+06
+go_memstats_alloc_bytes_total 1.8441224e+07
+sample_time=2026-08-05T11:01:15.921Z
+3700885  8.8 40988   25 player-svr
+3700886  101 79160   45 farm-svr
+3700935 19.8 30092   17 farm-worker
+3700963 33.6 61728   36 farm-gate
+3701005 13.1 75596   37 caddy
+3701312 15.1 30220   28 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.6045576e+07
+go_memstats_alloc_bytes_total 4.9376872e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 427
+go_memstats_alloc_bytes 3.8224048e+07
+go_memstats_alloc_bytes_total 1.41681416e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 1.0320864e+07
+go_memstats_alloc_bytes_total 2.1311488e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.685336e+06
+go_memstats_alloc_bytes_total 1.9721376e+07
+sample_time=2026-08-05T11:01:16.270Z
+3700885  8.6 41104   25 player-svr
+3700886  124 81404   45 farm-svr
+3700935 18.8 30244   17 farm-worker
+3700963 31.6 61764   36 farm-gate
+3701005 12.3 75596   37 caddy
+3701312 13.8 30228   28 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 640
+go_memstats_alloc_bytes 1.6401856e+07
+go_memstats_alloc_bytes_total 4.9733152e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 428
+go_memstats_alloc_bytes 2.9214576e+07
+go_memstats_alloc_bytes_total 1.71477368e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 1.0795328e+07
+go_memstats_alloc_bytes_total 2.1785952e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.279496e+06
+go_memstats_alloc_bytes_total 2.0315536e+07
+sample_time=2026-08-05T11:01:16.615Z
+3700885  8.3 41224   25 player-svr
+3700886  145 82628   45 farm-svr
+3700935 18.0 30516   17 farm-worker
+3700963 29.8 61788   36 farm-gate
+3701005 11.5 75596   37 caddy
+3701312 12.7 30228   28 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.6730064e+07
+go_memstats_alloc_bytes_total 5.006136e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 425
+go_memstats_alloc_bytes 3.5276304e+07
+go_memstats_alloc_bytes_total 1.97395816e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 226
+go_memstats_alloc_bytes 1.12684e+07
+go_memstats_alloc_bytes_total 2.2259024e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.727016e+06
+go_memstats_alloc_bytes_total 2.0763056e+07
+sample_time=2026-08-05T11:01:16.963Z
+3700885  8.1 41352   25 player-svr
+3700886  163 82980   45 farm-svr
+3700935 17.1 30112   17 farm-worker
+3700963 28.4 61832   36 farm-gate
+3701005 11.0 75596   37 caddy
+3701312 12.0 30272   28 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.7224176e+07
+go_memstats_alloc_bytes_total 5.0555472e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 421
+go_memstats_alloc_bytes 2.8496104e+07
+go_memstats_alloc_bytes_total 2.27489424e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 1.2506992e+07
+go_memstats_alloc_bytes_total 2.3497616e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.757784e+06
+go_memstats_alloc_bytes_total 2.2031696e+07
+sample_time=2026-08-05T11:01:17.309Z
+3700885  8.1 41692   25 player-svr
+3700886  177 83356   45 farm-svr
+3700935 16.5 30128   17 farm-worker
+3700963 27.2 61856   36 farm-gate
+3701005 10.3 75596   37 caddy
+3701312 11.6 30328   28 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.7751272e+07
+go_memstats_alloc_bytes_total 5.1082568e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 416
+go_memstats_alloc_bytes 3.661456e+07
+go_memstats_alloc_bytes_total 2.55163064e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 1.3765392e+07
+go_memstats_alloc_bytes_total 2.4756016e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.26204e+06
+go_memstats_alloc_bytes_total 2.2535952e+07
+sample_time=2026-08-05T11:01:17.657Z
+3700885  8.3 39796   26 player-svr
+3700886  192 83160   45 farm-svr
+3700935 15.9 30152   17 farm-worker
+3700963 26.3 61880   36 farm-gate
+3701005  9.9 75596   37 caddy
+3701312 10.9 30332   28 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.8404872e+07
+go_memstats_alloc_bytes_total 5.1736168e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 413
+go_memstats_alloc_bytes 2.8140624e+07
+go_memstats_alloc_bytes_total 2.85446736e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 227
+go_memstats_alloc_bytes 1.044684e+07
+go_memstats_alloc_bytes_total 2.7263152e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.80076e+06
+go_memstats_alloc_bytes_total 2.3074672e+07
+sample_time=2026-08-05T11:01:18.003Z
+3700885 15.8 60256   39 player-svr
+3700886  197 78800   45 farm-svr
+3700935 15.5 30800   19 farm-worker
+3700963 27.3 62292   37 farm-gate
+3701005 10.5 75648   37 caddy
+3701312 11.6 31132   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.63984e+07
+go_memstats_alloc_bytes_total 5.6821144e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 275
+go_memstats_alloc_bytes 3.2092656e+07
+go_memstats_alloc_bytes_total 3.0677016e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 242
+go_memstats_alloc_bytes 2.8354168e+07
+go_memstats_alloc_bytes_total 6.118924e+07
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.5244e+06
+go_memstats_alloc_bytes_total 2.4878976e+07
+sample_time=2026-08-05T11:01:18.353Z
+3700885 25.1 61592   39 player-svr
+3700886  200 77012   45 farm-svr
+3700935 15.3 30212   19 farm-worker
+3700963 29.3 60392   37 farm-gate
+3701005 11.2 75652   37 caddy
+3701312 12.4 31452   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 640
+go_memstats_alloc_bytes 1.4882744e+07
+go_memstats_alloc_bytes_total 6.399676e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 274
+go_memstats_alloc_bytes 3.5387136e+07
+go_memstats_alloc_bytes_total 3.27144176e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 231
+go_memstats_alloc_bytes 2.2449824e+07
+go_memstats_alloc_bytes_total 1.0092032e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.799744e+06
+go_memstats_alloc_bytes_total 2.6794712e+07
+sample_time=2026-08-05T11:01:18.700Z
+3700885 33.4 64292   39 player-svr
+3700886  202 77496   45 farm-svr
+3700935 15.0 30264   19 farm-worker
+3700963 31.1 60164   37 farm-gate
+3701005 11.9 75660   37 caddy
+3701312 13.1 31028   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.3210392e+07
+go_memstats_alloc_bytes_total 7.0651232e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 275
+go_memstats_alloc_bytes 2.7707936e+07
+go_memstats_alloc_bytes_total 3.5312716e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 274
+go_memstats_alloc_bytes 2.8668e+07
+go_memstats_alloc_bytes_total 1.3444044e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 5.148928e+06
+go_memstats_alloc_bytes_total 2.8143896e+07
+sample_time=2026-08-05T11:01:19.055Z
+3700885 41.4 65360   39 player-svr
+3700886  205 77496   45 farm-svr
+3700935 14.9 30568   19 farm-worker
+3700963 32.6 60232   37 farm-gate
+3701005 12.5 75660   37 caddy
+3701312 13.7 31092   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.7939632e+07
+go_memstats_alloc_bytes_total 7.5380472e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 276
+go_memstats_alloc_bytes 3.9152704e+07
+go_memstats_alloc_bytes_total 3.64571928e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 275
+go_memstats_alloc_bytes 2.403012e+07
+go_memstats_alloc_bytes_total 1.70657496e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.380592e+06
+go_memstats_alloc_bytes_total 2.97688e+07
+sample_time=2026-08-05T11:01:19.404Z
+3700885 48.5 64860   39 player-svr
+3700886  207 77572   45 farm-svr
+3700935 14.6 30600   19 farm-worker
+3700963 34.1 59380   37 farm-gate
+3701005 13.2 75676   37 caddy
+3701312 14.3 31412   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 640
+go_memstats_alloc_bytes 1.6099192e+07
+go_memstats_alloc_bytes_total 8.147136e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 277
+go_memstats_alloc_bytes 3.294532e+07
+go_memstats_alloc_bytes_total 3.7807212e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 246
+go_memstats_alloc_bytes 2.73836e+07
+go_memstats_alloc_bytes_total 2.02112496e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.493032e+06
+go_memstats_alloc_bytes_total 3.1543536e+07
+sample_time=2026-08-05T11:01:19.747Z
+3700885 55.1 65472   39 player-svr
+3700886  209 77696   45 farm-svr
+3700935 14.6 30072   19 farm-worker
+3700963 35.5 58244   37 farm-gate
+3701005 13.7 75696   37 caddy
+3701312 15.1 31640   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.3644808e+07
+go_memstats_alloc_bytes_total 8.7853704e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 277
+go_memstats_alloc_bytes 3.0722824e+07
+go_memstats_alloc_bytes_total 3.94574632e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 242
+go_memstats_alloc_bytes 2.2482448e+07
+go_memstats_alloc_bytes_total 2.38756616e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.61804e+06
+go_memstats_alloc_bytes_total 3.2668544e+07
+sample_time=2026-08-05T11:01:20.099Z
+3700885 61.0 65484   39 player-svr
+3700886  211 77700   45 farm-svr
+3700935 14.3 30392   19 farm-worker
+3700963 36.7 58252   37 farm-gate
+3701005 14.1 75696   37 caddy
+3701312 15.7 31768   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.883188e+07
+go_memstats_alloc_bytes_total 9.3040776e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 278
+go_memstats_alloc_bytes 2.5413728e+07
+go_memstats_alloc_bytes_total 4.0859368e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 243
+go_memstats_alloc_bytes 2.7175824e+07
+go_memstats_alloc_bytes_total 2.70562024e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.021984e+06
+go_memstats_alloc_bytes_total 3.4348936e+07
+sample_time=2026-08-05T11:01:20.450Z
+3700885 66.3 65160   39 player-svr
+3700886  212 77748   45 farm-svr
+3700935 14.1 30480   19 farm-worker
+3700963 37.7 60540   37 farm-gate
+3701005 14.6 75704   37 caddy
+3701312 16.1 31824   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.3414168e+07
+go_memstats_alloc_bytes_total 9.9422224e+07
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 280
+go_memstats_alloc_bytes 2.553588e+07
+go_memstats_alloc_bytes_total 4.27151376e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 246
+go_memstats_alloc_bytes 2.1905232e+07
+go_memstats_alloc_bytes_total 3.07363872e+08
+metrics_service=worker
+go_goroutines 20
+go_memstats_alloc_bytes 4.962672e+06
+go_memstats_alloc_bytes_total 3.5289624e+07
+sample_time=2026-08-05T11:01:20.802Z
+3700885 71.4 64656   39 player-svr
+3700886  214 78560   45 farm-svr
+3700935 13.9 30576   19 farm-worker
+3700963 38.7 60656   37 farm-gate
+3701005 14.9 75716   37 caddy
+3701312 16.5 31844   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.8240648e+07
+go_memstats_alloc_bytes_total 1.04248704e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 266
+go_memstats_alloc_bytes 3.1309384e+07
+go_memstats_alloc_bytes_total 4.4987084e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 242
+go_memstats_alloc_bytes 2.3957688e+07
+go_memstats_alloc_bytes_total 3.37821328e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.61636e+06
+go_memstats_alloc_bytes_total 3.7204208e+07
+sample_time=2026-08-05T11:01:21.149Z
+3700885 75.7 64992   39 player-svr
+3700886  216 78936   45 farm-svr
+3700935 13.9 30764   19 farm-worker
+3700963 39.6 60672   37 farm-gate
+3701005 15.3 75724   37 caddy
+3701312 17.0 31432   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 640
+go_memstats_alloc_bytes 2.3213592e+07
+go_memstats_alloc_bytes_total 1.09221648e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 268
+go_memstats_alloc_bytes 3.7996136e+07
+go_memstats_alloc_bytes_total 4.7394788e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 244
+go_memstats_alloc_bytes 2.4166e+07
+go_memstats_alloc_bytes_total 3.68883008e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.225112e+06
+go_memstats_alloc_bytes_total 3.9016528e+07
+sample_time=2026-08-05T11:01:21.498Z
+3700885 79.1 63036   39 player-svr
+3700886  217 77756   45 farm-svr
+3700935 13.9 30492   19 farm-worker
+3700963 40.5 63084   37 farm-gate
+3701005 15.5 75736   37 caddy
+3701312 17.3 31488   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 640
+go_memstats_alloc_bytes 1.8752128e+07
+go_memstats_alloc_bytes_total 1.16462168e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 267
+go_memstats_alloc_bytes 3.2253984e+07
+go_memstats_alloc_bytes_total 5.03860184e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 238
+go_memstats_alloc_bytes 2.1095712e+07
+go_memstats_alloc_bytes_total 3.97390064e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.728288e+06
+go_memstats_alloc_bytes_total 4.1222368e+07
+sample_time=2026-08-05T11:01:21.847Z
+3700885 82.0 62152   39 player-svr
+3700886  219 76992   45 farm-svr
+3700935 13.8 30492   19 farm-worker
+3700963 41.2 63384   37 farm-gate
+3701005 15.8 75736   37 caddy
+3701312 17.5 31488   33 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 400
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 2.3120616e+07
+go_memstats_alloc_bytes_total 1.20830656e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 262
+go_memstats_alloc_bytes 2.7008096e+07
+go_memstats_alloc_bytes_total 5.3684848e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 237
+go_memstats_alloc_bytes 3.0063696e+07
+go_memstats_alloc_bytes_total 4.22312816e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.650984e+06
+go_memstats_alloc_bytes_total 4.3701368e+07
+sample_time=2026-08-05T11:01:22.212Z
+3700885 84.2 63168   39 player-svr
+3700886  220 76648   45 farm-svr
+3700935 13.8 30700   19 farm-worker
+3700963 41.8 63444   37 farm-gate
+3701005 16.0 75748   37 caddy
+3701312 17.8 32392   35 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 800
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 639
+go_memstats_alloc_bytes 1.8706416e+07
+go_memstats_alloc_bytes_total 1.26952384e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 261
+go_memstats_alloc_bytes 2.5637216e+07
+go_memstats_alloc_bytes_total 5.70275944e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 235
+go_memstats_alloc_bytes 2.5334944e+07
+go_memstats_alloc_bytes_total 4.47151896e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.906712e+06
+go_memstats_alloc_bytes_total 4.6124808e+07
+sample_time=2026-08-05T11:01:22.562Z
+3700885 85.9 65000   39 player-svr
+3700886  222 76656   45 farm-svr
+3700935 13.9 31016   19 farm-worker
+3700963 42.8 64452   37 farm-gate
+3701005 16.8 75788   38 caddy
+3701312 18.6 32112   37 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 200
+farmgate_downlink_delivered_total 2200
+farmgate_ws_conn_active 200
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 640
+go_memstats_alloc_bytes 1.432388e+07
+go_memstats_alloc_bytes_total 1.3600896e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 283
+go_memstats_alloc_bytes 4.1379392e+07
+go_memstats_alloc_bytes_total 6.02924376e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 236
+go_memstats_alloc_bytes 2.103536e+07
+go_memstats_alloc_bytes_total 4.7232092e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.229152e+06
+go_memstats_alloc_bytes_total 4.8687992e+07
+sample_time=2026-08-05T11:01:22.924Z
+3700885 87.0 62820   39 player-svr
+3700886  225 77864   45 farm-svr
+3700935 13.9 31108   19 farm-worker
+3700963 43.5 59476   37 farm-gate
+3701005 17.0 76172   38 caddy
+3701312 18.7 32496   37 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 81
+farmgate_downlink_delivered_total 2400
+farmgate_ws_conn_active 81
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 282
+go_memstats_alloc_bytes 1.2318008e+07
+go_memstats_alloc_bytes_total 1.44079432e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 265
+go_memstats_alloc_bytes 3.200068e+07
+go_memstats_alloc_bytes_total 6.47738832e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 233
+go_memstats_alloc_bytes 2.299188e+07
+go_memstats_alloc_bytes_total 4.88847624e+08
+metrics_service=worker
+go_goroutines 20
+go_memstats_alloc_bytes 4.623992e+06
+go_memstats_alloc_bytes_total 5.1417224e+07
+sample_time=2026-08-05T11:01:23.270Z
+3700885 87.2 62340   39 player-svr
+3700886  227 78068   45 farm-svr
+3700935 13.8 30872   19 farm-worker
+3700963 43.2 59476   37 farm-gate
+3701005 16.9 76200   38 caddy
+3701312 18.7 32344   37 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 74
+farmgate_downlink_delivered_total 2400
+farmgate_ws_conn_active 75
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 263
+go_memstats_alloc_bytes 1.4723128e+07
+go_memstats_alloc_bytes_total 1.46484552e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 268
+go_memstats_alloc_bytes 3.4376248e+07
+go_memstats_alloc_bytes_total 6.85085232e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 231
+go_memstats_alloc_bytes 2.2068864e+07
+go_memstats_alloc_bytes_total 5.03286792e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.141032e+06
+go_memstats_alloc_bytes_total 5.333824e+07
+sample_time=2026-08-05T11:01:23.615Z
+3700885 86.9 62620   39 player-svr
+3700886  231 77980   45 farm-svr
+3700935 13.8 30872   19 farm-worker
+3700963 43.0 59488   37 farm-gate
+3701005 16.8 76208   38 caddy
+3701312 18.4 32440   37 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 69
+farmgate_downlink_delivered_total 2400
+farmgate_ws_conn_active 69
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 246
+go_memstats_alloc_bytes 1.6775288e+07
+go_memstats_alloc_bytes_total 1.48536712e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 272
+go_memstats_alloc_bytes 3.5823384e+07
+go_memstats_alloc_bytes_total 7.22641952e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 228
+go_memstats_alloc_bytes 3.1204368e+07
+go_memstats_alloc_bytes_total 5.12422296e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.926536e+06
+go_memstats_alloc_bytes_total 5.556776e+07
+sample_time=2026-08-05T11:01:23.962Z
+3700885 86.1 60984   39 player-svr
+3700886  234 78940   45 farm-svr
+3700935 13.8 30960   19 farm-worker
+3700963 42.5 59488   37 farm-gate
+3701005 16.6 76216   38 caddy
+3701312 18.2 32496   37 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 65
+farmgate_downlink_delivered_total 2400
+farmgate_ws_conn_active 65
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 234
+go_memstats_alloc_bytes 1.8375528e+07
+go_memstats_alloc_bytes_total 1.50136952e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 280
+go_memstats_alloc_bytes 2.7820168e+07
+go_memstats_alloc_bytes_total 7.70507968e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 228
+go_memstats_alloc_bytes 2.3865216e+07
+go_memstats_alloc_bytes_total 5.21076976e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.814216e+06
+go_memstats_alloc_bytes_total 5.778524e+07
+sample_time=2026-08-05T11:01:24.309Z
+3700885 84.9 60984   39 player-svr
+3700886  238 79320   45 farm-svr
+3700935 13.7 31088   19 farm-worker
+3700963 41.9 59512   37 farm-gate
+3701005 16.3 76224   38 caddy
+3701312 18.0 32528   37 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 61
+farmgate_downlink_delivered_total 2400
+farmgate_ws_conn_active 61
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 222
+go_memstats_alloc_bytes 1.9545488e+07
+go_memstats_alloc_bytes_total 1.51306912e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 283
+go_memstats_alloc_bytes 2.766568e+07
+go_memstats_alloc_bytes_total 8.08876456e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 227
+go_memstats_alloc_bytes 2.8598032e+07
+go_memstats_alloc_bytes_total 5.25809792e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.983016e+06
+go_memstats_alloc_bytes_total 5.895404e+07
+sample_time=2026-08-05T11:01:24.658Z
+3700885 83.2 60984   39 player-svr
+3700886  243 77908   45 farm-svr
+3700935 13.6 31384   19 farm-worker
+3700963 41.2 54892   37 farm-gate
+3701005 16.0 76236   38 caddy
+3701312 17.5 32568   37 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 52
+farmgate_downlink_delivered_total 2400
+farmgate_ws_conn_active 52
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 195
+go_memstats_alloc_bytes 1.0812464e+07
+go_memstats_alloc_bytes_total 1.53240112e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 285
+go_memstats_alloc_bytes 3.2697296e+07
+go_memstats_alloc_bytes_total 8.50639152e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 3.0938272e+07
+go_memstats_alloc_bytes_total 5.28150032e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 5.026752e+06
+go_memstats_alloc_bytes_total 6.116564e+07
+sample_time=2026-08-05T11:01:25.005Z
+3700885 81.4 60992   39 player-svr
+3700886  248 77292   45 farm-svr
+3700935 13.7 31436   19 farm-worker
+3700963 40.4 54896   37 farm-gate
+3701005 15.6 76244   38 caddy
+3701312 17.1 32568   37 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 45
+farmgate_downlink_delivered_total 2400
+farmgate_ws_conn_active 45
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 175
+go_memstats_alloc_bytes 1.1253864e+07
+go_memstats_alloc_bytes_total 1.53681512e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 279
+go_memstats_alloc_bytes 3.7407872e+07
+go_memstats_alloc_bytes_total 8.73423328e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 3.160352e+07
+go_memstats_alloc_bytes_total 5.2881528e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.72684e+06
+go_memstats_alloc_bytes_total 6.2593432e+07
+sample_time=2026-08-05T11:01:25.357Z
+3700885 79.5 60996   39 player-svr
+3700886  252 77428   45 farm-svr
+3700935 13.7 30856   19 farm-worker
+3700963 39.4 54900   37 farm-gate
+3701005 15.3 76244   38 caddy
+3701312 16.7 32568   37 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 38
+farmgate_downlink_delivered_total 2400
+farmgate_ws_conn_active 38
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 153
+go_memstats_alloc_bytes 1.1541392e+07
+go_memstats_alloc_bytes_total 1.5396904e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 273
+go_memstats_alloc_bytes 4.0544416e+07
+go_memstats_alloc_bytes_total 8.96252976e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 3.188552e+07
+go_memstats_alloc_bytes_total 5.2909728e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.360328e+06
+go_memstats_alloc_bytes_total 6.322692e+07
+sample_time=2026-08-05T11:01:25.707Z
+3700885 77.6 61000   39 player-svr
+3700886  256 77880   45 farm-svr
+3700935 13.6 30856   19 farm-worker
+3700963 38.6 54904   37 farm-gate
+3701005 14.9 76256   38 caddy
+3701312 16.3 32568   37 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 30
+farmgate_downlink_delivered_total 2400
+farmgate_ws_conn_active 30
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 129
+go_memstats_alloc_bytes 1.1797776e+07
+go_memstats_alloc_bytes_total 1.54225424e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 265
+go_memstats_alloc_bytes 3.9633824e+07
+go_memstats_alloc_bytes_total 9.15757368e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 3.1951184e+07
+go_memstats_alloc_bytes_total 5.29162944e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 5.00012e+06
+go_memstats_alloc_bytes_total 6.3866712e+07
+sample_time=2026-08-05T11:01:26.054Z
+3700885 75.8 61000   39 player-svr
+3700886  258 77976   45 farm-svr
+3700935 13.8 30856   19 farm-worker
+3700963 37.8 54904   37 farm-gate
+3701005 14.6 76296   38 caddy
+3701312 15.9 32568   37 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 16
+farmgate_downlink_delivered_total 2400
+farmgate_ws_conn_active 16
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 87
+go_memstats_alloc_bytes 1.2202064e+07
+go_memstats_alloc_bytes_total 1.54629712e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 250
+go_memstats_alloc_bytes 3.6533152e+07
+go_memstats_alloc_bytes_total 9.33905128e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 3.2136296e+07
+go_memstats_alloc_bytes_total 5.29348056e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 3.657456e+06
+go_memstats_alloc_bytes_total 6.5337672e+07
+sample_time=2026-08-05T11:01:26.400Z
+3700885 74.1 61000   39 player-svr
+3700886  256 76704   45 farm-svr
+3700935 14.2 31148   19 farm-worker
+3700963 37.0 54908   37 farm-gate
+3701005 14.2 76332   38 caddy
+3701312 15.6     0    2 ws-stress
+metrics_service=gate
+farmgate_downlink_bindings_active 0
+farmgate_downlink_delivered_total 2400
+farmgate_ws_conn_active 0
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_conn_total 200
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 38
+go_memstats_alloc_bytes 1.2627664e+07
+go_memstats_alloc_bytes_total 1.55055312e+08
+metrics_service=farm
+farm_actor_mailbox_max_depth{actor_kind="farm"} 0
+farm_actor_mailbox_rejected_total{actor_kind="farm"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="farm"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="farm"} 0
+go_goroutines 235
+go_memstats_alloc_bytes 2.5513752e+07
+go_memstats_alloc_bytes_total 9.43297688e+08
+metrics_service=player
+farm_actor_mailbox_max_depth{actor_kind="player"} 0
+farm_actor_mailbox_rejected_total{actor_kind="player"} 0
+farm_actor_user_mailbox_oldest_wait_seconds{actor_kind="player"} 0
+farm_actor_user_mailbox_rejected_total{actor_kind="player"} 0
+go_goroutines 225
+go_memstats_alloc_bytes 3.2340344e+07
+go_memstats_alloc_bytes_total 5.29552104e+08
+metrics_service=worker
+go_goroutines 19
+go_memstats_alloc_bytes 4.689024e+06
+go_memstats_alloc_bytes_total 6.636924e+07

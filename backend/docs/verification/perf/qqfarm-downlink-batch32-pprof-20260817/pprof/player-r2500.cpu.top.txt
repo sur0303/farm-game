@@ -1,0 +1,28 @@
+File: player-svr
+Build ID: b4b4fd29dabb6098a68c799db712ab12bc8b93ac
+Type: cpu
+Time: 2026-08-17 12:05:51 CST
+Duration: 12s, Total samples = 40ms ( 0.33%)
+Showing nodes accounting for 40ms, 100% of 40ms total
+Showing top 20 nodes out of 59
+      flat  flat%   sum%        cum   cum%
+      10ms 25.00% 25.00%       10ms 25.00%  compress/flate.(*compressor).deflate
+      10ms 25.00% 50.00%       10ms 25.00%  github.com/redis/go-redis/v9.(*baseClient)._getConn
+      10ms 25.00% 75.00%       10ms 25.00%  runtime.futex
+      10ms 25.00%   100%       10ms 25.00%  runtime.mapaccess1_faststr
+         0     0%   100%       10ms 25.00%  bufio.(*Writer).Flush
+         0     0%   100%       10ms 25.00%  compress/flate.(*Writer).Write (inline)
+         0     0%   100%       10ms 25.00%  compress/flate.(*compressor).write
+         0     0%   100%       10ms 25.00%  compress/gzip.(*Writer).Write
+         0     0%   100%       10ms 25.00%  farmgame/internal/authoritycomposition.(*leaseEntry).renewOnce
+         0     0%   100%       10ms 25.00%  farmgame/internal/authoritycomposition.(*leaseEntry).run
+         0     0%   100%       10ms 25.00%  farmgame/internal/holdercontrol.(*HolderAgent).registryHeartbeat.func1
+         0     0%   100%       10ms 25.00%  farmgame/internal/holdercontrol.boundedAgentCall[go.shape.8100f9739fc7b636f1ab5c936f421ed3680a0dde54122ea597ec17d61ec3da63].func1
+         0     0%   100%       10ms 25.00%  farmgame/internal/logic/actor/authority.(*HolderLeaseRuntime).PrepareRenew
+         0     0%   100%       20ms 50.00%  farmgame/internal/observability/actorlayout.(*Metrics).ProcessHook.func1
+         0     0%   100%       20ms 50.00%  farmgame/internal/observability/redisworkload.(*dependencyHook).ProcessHook.dependencyHook.ProcessHook.func1
+         0     0%   100%       10ms 25.00%  farmgame/internal/routecontrol.(*HolderRegistry).Heartbeat
+         0     0%   100%       10ms 25.00%  farmgame/internal/storage/redis/authority.(*ScriptRegistry).RunNoRetry (inline)
+         0     0%   100%       10ms 25.00%  farmgame/internal/storage/redis/authority.(*ScriptRegistry).run
+         0     0%   100%       10ms 25.00%  farmgame/internal/storage/redis/authority.(*Store).RenewShardAuthority
+         0     0%   100%       10ms 25.00%  farmgame/internal/storage/redis/authority.evalShaNoRetry

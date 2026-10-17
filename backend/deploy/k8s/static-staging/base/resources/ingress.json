@@ -1,0 +1,44 @@
+{
+  "apiVersion": "networking.k8s.io/v1",
+  "kind": "Ingress",
+  "metadata": {
+    "name": "farm-staging-web",
+    "annotations": {
+      "nginx.ingress.kubernetes.io/proxy-read-timeout": "3600",
+      "nginx.ingress.kubernetes.io/proxy-send-timeout": "3600",
+      "nginx.ingress.kubernetes.io/proxy-http-version": "1.1"
+    }
+  },
+  "spec": {
+    "ingressClassName": "nginx",
+    "tls": [
+      {
+        "hosts": [
+          "staging.farm.example.invalid"
+        ],
+        "secretName": "farm-staging-tls"
+      }
+    ],
+    "rules": [
+      {
+        "host": "staging.farm.example.invalid",
+        "http": {
+          "paths": [
+            {
+              "path": "/",
+              "pathType": "Prefix",
+              "backend": {
+                "service": {
+                  "name": "farm-h5",
+                  "port": {
+                    "name": "http"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

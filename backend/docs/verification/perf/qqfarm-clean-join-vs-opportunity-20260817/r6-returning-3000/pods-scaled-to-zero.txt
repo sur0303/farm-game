@@ -1,0 +1,9 @@
+farm-grafana-64f7f46898-z58tr      1/1   Running   0     29h
+farm-prometheus-5966b58fdf-6xrnv   1/1   Running   0     29h
+farm-redis-0                       1/1   Running   0     39m
+farm-redis-1                       1/1   Running   0     39m
+farm-redis-2                       1/1   Running   0     39m
+farm-redis-3                       1/1   Running   0     39m
+farm-redis-4                       1/1   Running   0     39m
+farm-redis-5                       1/1   Running   0     39m
+farm-route-bootstrap               1/1   Running   0     38m

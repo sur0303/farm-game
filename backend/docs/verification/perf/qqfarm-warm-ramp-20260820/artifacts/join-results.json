@@ -1,0 +1,8 @@
+{
+  "scenario": "join-accepted",
+  "skip_friend_opportunity": true,
+  "runs": [
+    {"connections": 50, "rate": 50, "player_start": 3502700000, "ready": 50, "attempted": 50, "ready_rate": 1.0, "qps": 48.66981691466145, "launch_qps": 49.96031776860434, "ready_p95_ms": 28.916739, "login_p95_ms": 17.513891, "join_p95_ms": 7.301585},
+    {"connections": 100, "rate": 100, "player_start": 3502800000, "ready": 100, "attempted": 100, "ready_rate": 1.0, "qps": 97.16136126316206, "launch_qps": 99.95473180137867, "ready_p95_ms": 33.72604, "login_p95_ms": 17.567327, "join_p95_ms": 8.134961}
+  ]
+}

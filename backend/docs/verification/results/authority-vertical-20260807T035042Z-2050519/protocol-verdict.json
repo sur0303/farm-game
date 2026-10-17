@@ -1,0 +1,45 @@
+{
+  "finished_at": "2026-08-07T03:51:21Z",
+  "frames": 19,
+  "steps": {
+    "bootstrap": {
+      "status": "ok"
+    },
+    "bootstrap_refresh": {
+      "status": "fail",
+      "detail": "harvest produce not converged: inventory=map[] (seed_item=1001)"
+    },
+    "buy": {
+      "status": "ok"
+    },
+    "grow": {
+      "status": "ok"
+    },
+    "harvest": {
+      "status": "ok"
+    },
+    "hello": {
+      "status": "ok"
+    },
+    "join": {
+      "status": "ok"
+    },
+    "login": {
+      "status": "ok"
+    },
+    "plant": {
+      "status": "ok",
+      "detail": "plot=0 cycle=sid1_Sx5G_uzdt21tVRtMW1C3WdybcR4hTuQcVHsk5LjwOzQ mature_at_ms=1786074679839 farm_version=1"
+    },
+    "premature_reject": {
+      "status": "ok"
+    },
+    "recovery_complete": {
+      "status": "ok"
+    },
+    "register": {
+      "status": "ok"
+    }
+  },
+  "verdict": "FAIL"
+}

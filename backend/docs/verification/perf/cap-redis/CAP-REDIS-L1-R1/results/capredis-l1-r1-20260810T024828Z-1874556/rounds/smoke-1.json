@@ -1,0 +1,187 @@
+{
+  "schema_version": "cap-redis-l1-r1.v1",
+  "purpose": "redis_serialization_baseline_r1",
+  "baseline_eligible": false,
+  "supports_30m_dau": false,
+  "frozen_identity": {
+    "task_id": "CAP-REDIS-L1-R1",
+    "backend_business_commit": "4824c9c02fe70873b2f9a8eab3ce274d227063a8",
+    "backend_evidence_head": "54c6d0a15cd2e0555d309b59319f1ce30fab268c",
+    "h5_commit": "525c4d324100b17a891f02797c4880fa9a02f70a",
+    "backend_image_digest": "sha256:f36a4d8f5f8c05ac44ed173895e46f5348af6d5b133835e6d25d13da2b51c39b",
+    "h5_image_digest": "sha256:9bfdedaa70f7cbf8bac86bb25cc2ff62dba1cf7832fb5d8f66c72c1f113486fd"
+  },
+  "runtime_identity": {
+    "run_id": "capredis-l1-r1-20260810T024828Z-1874556-smoke-1",
+    "round_kind": "smoke",
+    "round_number": 1,
+    "started_at_utc": "2026-08-10T02:48:28.773308591Z",
+    "completed_at_utc": "2026-08-10T02:48:29.286100019Z",
+    "redis_endpoint_hash": "0bc51101cbf091422f61baa41a140fbdc9a20d783af9c2f7b7d7f3ea845ae0bf",
+    "redis_config_hash": "62bbe51e7ff885f80952f3ef742ec245b771510300b4af740cab9bb5a52079b9",
+    "namespace": "capr1:r11786330108609264273",
+    "machine_spec_hash": "b411797bb948b74a8c08e8a3dfa186d98316662a0f450503985f43e4a09a75a1",
+    "machine_spec": {
+      "cpu_model": "AMD EPYC 7K62 48-Core Processor",
+      "docker_server": "29.3.1",
+      "go_version": "go1.26.3-X:nodwarf5 linux/amd64",
+      "kernel": "Linux 6.6.119-49.20.tl4.x86_64 #1 SMP Sat May  2 07:46:47 CST 2026 x86_64 GNU/Linux",
+      "logical_cpus": "32",
+      "memory_bytes": "66879913984"
+    },
+    "cpu_governor": "unavailable",
+    "container_cpu_limit": "4",
+    "container_memory_limit": "4g",
+    "go_gc": "100",
+    "go_mem_limit": "4GiB",
+    "redis_pool_size": 400,
+    "redis_min_idle_conns": 400,
+    "model_layout_version": "R1:authority-v1+workflow-v1+friend-v1;Model-Field-V2-not-yet-claimed",
+    "route_snapshot_hash": "3a4cff47a12d0e2b78ca3988c2b2698a9104e9c344805849d8700caf16f7c5a7",
+    "lease_profile_hash": "acb6428cca9364ba3eb0d2aeaaca9d3a7a488444515b6f2bdd0ba77ed2acb464",
+    "profile_hash": "eb4ee6ee0a69b760423495eb42bf3778d0e69309ac55be6eb161df52efff7729",
+    "random_seed": 2026080901
+  },
+  "cells": [
+    {
+      "operation": "friend_pair_activate",
+      "group": "friend_authority",
+      "key_distribution": "uniform_pair_keys",
+      "concurrency": 10,
+      "planned_operations": 300,
+      "completed_operations": 290,
+      "failed_operations": 10,
+      "correctness_violations": 10,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 9.836666666666666,
+      "pipeline_items_per_op": 0.06,
+      "request_bytes_per_op": 5830.52,
+      "response_bytes_per_op": 699.7066666666667,
+      "logical_request_bytes": {
+        "p50": 152,
+        "p95": 155,
+        "p99": 155,
+        "min": 146,
+        "max": 155
+      },
+      "logical_response_bytes": {
+        "p50": 48,
+        "p95": 48,
+        "p99": 48,
+        "min": 48,
+        "max": 48
+      },
+      "payload_bytes": {
+        "p50": 32,
+        "p95": 32,
+        "p99": 32,
+        "min": 32,
+        "max": 32
+      },
+      "client_latency_us": {
+        "p50": 12193.167,
+        "p95": 16234.621,
+        "p99": 18194.472,
+        "min": 3030.498,
+        "max": 19068.781
+      },
+      "lua_execution_us": {
+        "p50": 595,
+        "p95": 866,
+        "p99": 1289,
+        "min": 125,
+        "max": 1481
+      },
+      "network_rtt_us": {
+        "p50": 103.255,
+        "p95": 136.747,
+        "p99": 136.747,
+        "min": 94.288,
+        "max": 136.747
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.16,
+        "p95": 0.29,
+        "p99": 0.48,
+        "min": 0.04,
+        "max": 0.551
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 534.5066666666667,
+      "client_cpu_us_per_op": 839.9166666666666,
+      "redis_cpu_us_per_op": 1161.1166666666666,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "CLIENT",
+          "count": 18
+        },
+        {
+          "name": "EVALSHA",
+          "count": 580
+        },
+        {
+          "name": "HELLO",
+          "count": 9
+        },
+        {
+          "name": "HGET",
+          "count": 290
+        },
+        {
+          "name": "HLEN",
+          "count": 236
+        },
+        {
+          "name": "HMGET",
+          "count": 526
+        },
+        {
+          "name": "TYPE",
+          "count": 600
+        },
+        {
+          "name": "ZCARD",
+          "count": 692
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:3a8941295f78ba43f70e86c72f12d6569c434695",
+        "EVALSHA:ecd60e214245a8e88bc16f3a540f43474b8d36da"
+      ],
+      "outcome_counts": {
+        "SUCCEEDED": 290
+      }
+    }
+  ],
+  "faults": null,
+  "hard_correctness_gates": {
+    "duplicate_grant_total": 0,
+    "duplicate_debit_total": 0,
+    "stale_holder_commit_success_total": 0,
+    "farm_version_gap_total": 0,
+    "workflow_step_unknown_residual": 0,
+    "invalid_order_total": 0,
+    "due_residual": 0,
+    "h5_pending_journal_residual": 0,
+    "authority_client_mismatch_total": 0,
+    "silent_drop_total": 0,
+    "unexpected_lease_expiry_total": 0,
+    "friend_pair_index_unrepaired": 0,
+    "friend_authority_reconcile_required_total": 10
+  },
+  "correctness_observation_complete": false,
+  "observability_required_gaps": null,
+  "verdict": "FAIL_CORRECTNESS",
+  "verdict_reasons": [
+    "friend_pair_activate/uniform/c10: friend: commit attempt reconcile required: bucket receipt count"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "classification": "FAIL",
+  "comparison": null,
+  "finished_at": "2026-08-09T10:11:14.247790Z",
+  "hard_correctness_invariant_count": 2,
+  "reasons": [
+    "hard correctness invariant count=2",
+    "failed correctness scenarios=product-correctness-anchor",
+    "remaining pressure profiles were not executed because the correctness stop condition fired"
+  ],
+  "run_id": "q1perf-b1-20260809100947-1793411",
+  "scenario_statuses": {
+    "product-correctness-anchor": "FAIL"
+  },
+  "schema": "farm-game.q1-perf-evidence.v1",
+  "supports_30m_dau": false,
+  "task_id": "Q1-PERF-BASELINE-V1",
+  "verdict": "FAIL_CORRECTNESS"
+}

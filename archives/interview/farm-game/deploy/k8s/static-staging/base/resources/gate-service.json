@@ -1,0 +1,38 @@
+{
+  "apiVersion": "v1",
+  "kind": "Service",
+  "metadata": {
+    "name": "farm-gate",
+    "labels": {
+      "app.kubernetes.io/name": "farm-gate",
+      "app.kubernetes.io/component": "gateway",
+      "app.kubernetes.io/part-of": "farm-game"
+    }
+  },
+  "spec": {
+    "type": "ClusterIP",
+    "selector": {
+      "app.kubernetes.io/name": "farm-gate"
+    },
+    "ports": [
+      {
+        "name": "http",
+        "port": 8080,
+        "targetPort": "http",
+        "protocol": "TCP"
+      },
+      {
+        "name": "downlink",
+        "port": 9092,
+        "targetPort": "downlink",
+        "protocol": "TCP"
+      },
+      {
+        "name": "control",
+        "port": 9093,
+        "targetPort": "control",
+        "protocol": "TCP"
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+=== before-1000-r2 2026-08-17T13:03:27Z ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-48qgt          11m          242Mi           
+farm-grafana-64f7f46898-z58tr       2m           49Mi            
+farm-prometheus-5966b58fdf-6xrnv    4m           122Mi           
+farm-redis-0                        26m          777Mi           
+farm-redis-1                        22m          790Mi           
+farm-redis-2                        26m          775Mi           
+farm-redis-3                        9m           768Mi           
+farm-redis-4                        7m           770Mi           
+farm-redis-5                        8m           782Mi           
+farm-route-bootstrap                0m           2Mi             
+farm-svr-0                          3m           359Mi           
+farm-worker-a-8c9dcbf44-4cfdl       38m          15Mi            
+farm-worker-b-5fdcbff857-wfvr7      33m          16Mi            
+player-svr-0                        3m           789Mi           
+route-controller-77dd868794-bhwzn   8m           15Mi            
+--- player ---
+go_goroutines 5068
+process_cpu_seconds_total 70.7
+process_resident_memory_bytes 8.47085568e+08
+--- farm ---
+farm_downlink_lanes_current 0
+farm_downlink_queue_full_total 0
+go_goroutines 5676
+process_cpu_seconds_total 19.99
+process_resident_memory_bytes 3.98503936e+08

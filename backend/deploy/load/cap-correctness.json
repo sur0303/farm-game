@@ -1,0 +1,17 @@
+{
+  "schema_version": "cap-correctness-config.v1",
+  "listen": "127.0.0.1:19093",
+  "services": {
+    "farm-svr": "http://127.0.0.1:19081/metrics",
+    "farm-gate": "http://127.0.0.1:19080/metrics"
+  },
+  "audit": {
+    "redis_addr": "127.0.0.1:19079",
+    "work_store_prefix": "farm:v121:m1:workflow",
+    "route_snapshot": "deploy/k8s/static-staging/base/route-snapshot.v1.json",
+    "namespace": "dev",
+    "zone": "z1",
+    "dedicated_schedule_index": false,
+    "interval_seconds": 30
+  }
+}

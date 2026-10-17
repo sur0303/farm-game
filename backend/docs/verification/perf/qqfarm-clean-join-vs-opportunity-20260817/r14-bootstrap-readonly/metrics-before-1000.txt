@@ -1,0 +1,41 @@
+=== before-1000 2026-08-17T13:01:20Z ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-5b5b595d85-48qgt          236m         323Mi           
+farm-grafana-64f7f46898-z58tr       1m           49Mi            
+farm-prometheus-5966b58fdf-6xrnv    4m           114Mi           
+farm-redis-0                        79m          774Mi           
+farm-redis-1                        87m          788Mi           
+farm-redis-2                        60m          774Mi           
+farm-redis-3                        26m          767Mi           
+farm-redis-4                        19m          767Mi           
+farm-redis-5                        27m          781Mi           
+farm-route-bootstrap                0m           2Mi             
+farm-svr-0                          272m         258Mi           
+farm-worker-a-8c9dcbf44-4cfdl       40m          15Mi            
+farm-worker-b-5fdcbff857-wfvr7      33m          15Mi            
+player-svr-0                        463m         531Mi           
+route-controller-77dd868794-bhwzn   8m           13Mi            
+--- player ---
+go_goroutines 5319
+process_cpu_seconds_total 39.5
+process_resident_memory_bytes 5.77732608e+08
+--- farm ---
+farm_downlink_lanes_current 0
+farm_downlink_queue_full_total 0
+go_goroutines 3100
+process_cpu_seconds_total 14.44
+process_resident_memory_bytes 3.40779008e+08
+--- gate ---
+farmgate_ws_conn_active 0
+farmgate_ws_conn_rejected_total 0
+farmgate_ws_slow_client_kick_total 0
+go_goroutines 70
+process_cpu_seconds_total 21.29
+process_resident_memory_bytes 3.74939648e+08
+--- pods ---
+farm-gate-5b5b595d85-48qgt           1/1     Running     0          12m
+farm-svr-0                           1/1     Running     0          17m
+farm-worker-a-8c9dcbf44-4cfdl        1/1     Running     0          15m
+farm-worker-b-5fdcbff857-wfvr7       1/1     Running     0          15m
+player-svr-0                         1/1     Running     0          17m
+route-controller-77dd868794-bhwzn    1/1     Running     0          9m38s

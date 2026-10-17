@@ -1,0 +1,23 @@
+{
+  "apiVersion": "v1",
+  "kind": "ConfigMap",
+  "metadata": {
+    "name": "farm-staging-platform"
+  },
+  "data": {
+    "FARM_APP_PROFILE": "showcase",
+    "CAPACITY_PROFILE_VERSION": "local-capacity-r2-functional-render-v1",
+    "FRIENDSHIP_SERVICE_MODE": "remote_player",
+    "AUTHORITY_MEMBERSHIP_MODE": "composed",
+    "REDIS_NAMESPACE_ENVIRONMENT": "l2r2renderonly",
+    "REDIS_NAMESPACE_ZONE": "z1",
+    "ACTOR_AUTHORITY_LEASE_TTL": "30s",
+    "ACTOR_AUTHORITY_LEASE_SAFETY_MARGIN": "5s",
+    "ACTOR_AUTHORITY_LEASE_RENEW_INTERVAL": "10s",
+    "H5_PUBLIC_HOST": "farm.l2.local",
+    "H5_PUBLIC_ORIGIN": "https://farm.l2.local",
+    "H5_PUBLIC_WSS": "wss://farm.l2.local/ws",
+    "GATE_WS_ALLOWED_ORIGINS": "farm.l2.local",
+    "WSS_ENDPOINT": "wss://farm.l2.local/ws"
+  }
+}

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+cd "$ROOT_DIR"
+
+: "${TCONND_IMAGE:?Set TCONND_IMAGE, for example mirrors.tencent.com/mfcn/tconnd:0.0.13}"
+: "${GATEPROXY_IMAGE:?Set GATEPROXY_IMAGE, for example mirrors.tencent.com/mfcn/gateproxy:0.0.34}"
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "docker is required" >&2
+  exit 2
+fi
+
+for image in "$TCONND_IMAGE" "$GATEPROXY_IMAGE"; do
+  if ! docker image inspect "$image" >/dev/null 2>&1; then
+    echo "image is not present locally: $image" >&2
+    echo "pull it with docker pull (registry credentials may be required)" >&2
+    exit 3
+  fi
+  docker image inspect --format '{{.RepoTags}} {{.RepoDigests}} {{.Architecture}}/{{.Os}}' "$image"
+done
+
+echo "--- TCONND config/assets (read-only image inspection) ---"
+docker run --rm --entrypoint /bin/sh "$TCONND_IMAGE" -c \
+  'find / -type f \( -name "*.xml" -o -name "tconnd" \) 2>/dev/null | head -80' || true
+docker run --rm --entrypoint /bin/sh "$TCONND_IMAGE" -c \
+  'if command -v strings >/dev/null 2>&1; then strings -n 4 /app/bin/tconnd 2>/dev/null | grep -E "BY_WS|PDULENPARSERID|EnableNoAuth|NoAuth|AuthMode|Websocket|WSHandler" | head -80; else echo "strings utility is not installed in the image; skipping binary string scan"; fi' || true
+
+echo "--- gateproxy process/help (read-only image inspection) ---"
+docker run --rm --entrypoint /bin/sh "$GATEPROXY_IMAGE" -c \
+  'test -x /app/gateproxy && echo "/app/gateproxy" && (command -v file >/dev/null 2>&1 && file /app/gateproxy || true) && ldd /app/gateproxy && (command -v strings >/dev/null 2>&1 && strings /app/gateproxy | grep -E "sock_addr|liveness|GateStream" | head -40 || echo "strings utility is not installed in the image; skipping binary string scan")' || true
+
+echo "asset inspection completed; BY_WS support still requires a real WebSocket + GateStream run"

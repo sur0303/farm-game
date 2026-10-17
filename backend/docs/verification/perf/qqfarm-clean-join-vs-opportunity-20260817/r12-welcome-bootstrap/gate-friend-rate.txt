@@ -1,0 +1,4 @@
+10000
+20000
+farm-gate
+farm-gate=farm-gate.developer_026-qqfarm.svc.cluster.local:9092

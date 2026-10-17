@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="login-card">
+    <text class="title">经典农场</text>
+    <text class="subtitle">WeChat Mini-Program</text>
+
+    <view class="logo-area">
+      <text class="logo">🌾</text>
+    </view>
+
+    <button
+      class="login-btn {{loading ? 'loading' : ''}}"
+      bindtap="handleLogin"
+      disabled="{{loading}}"
+    >
+      {{loading ? '登录中...' : '微信一键登录'}}
+    </button>
+
+    <text class="error" wx:if="{{errorMessage}}">{{errorMessage}}</text>
+  </view>
+</view>

@@ -1,0 +1,52 @@
+# Prometheus 配置：抓取本地四个运行角色的 /metrics。
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: farm-game
+    env: dev
+
+scrape_configs:
+  - job_name: farm-gate
+    static_configs:
+      - targets:
+          - host.docker.internal:8080
+        labels:
+          service: farm-gate
+          transport: websocket
+    metrics_path: /metrics
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  - job_name: player-svr
+    static_configs:
+      - targets: ['host.docker.internal:19101']
+        labels:
+          service: player-svr
+    metrics_path: /metrics
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  - job_name: farm-svr
+    static_configs:
+      - targets: ['host.docker.internal:19001']
+        labels:
+          service: farm-svr
+    metrics_path: /metrics
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  - job_name: farm-worker
+    static_configs:
+      - targets: ['host.docker.internal:19201']
+        labels:
+          service: farm-worker
+    metrics_path: /metrics
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # 自监控
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']

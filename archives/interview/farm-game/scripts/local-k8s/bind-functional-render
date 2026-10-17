@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import tempfile
+from pathlib import Path
+
+SCRIPT = Path(__file__).resolve()
+REPO = SCRIPT.parents[2]
+LAB_ROOT = Path(os.environ.get("FARM_L2_LAB_ROOT", "/data/farm-l2-r2"))
+SOURCE_TREE = REPO / "deploy/k8s/static-staging"
+TARGET_TREE = LAB_ROOT / "runtime/functional-render-tree/deploy/k8s/static-staging"
+TARGET = TARGET_TREE / "overlays/local-capacity-r2/functional"
+IMAGE_RECEIPT = LAB_ROOT / "receipts/frozen-images-local-registry.json"
+OUT_RECEIPT = LAB_ROOT / "receipts/functional-render-binding.json"
+ZERO = "sha256:" + "0" * 64
+
+images = json.loads(IMAGE_RECEIPT.read_text())
+if images.get("status") != "PUBLISHED_NOT_ACTIVATED":
+    raise SystemExit("frozen image publication receipt is not admissible")
+backend = images["backend_registry_ref"].split("@", 1)[1]
+h5 = images["h5_registry_ref"].split("@", 1)[1]
+if not all(value.startswith("sha256:") and len(value) == 71 for value in (backend, h5)):
+    raise SystemExit("invalid Registry manifest digest")
+
+render_tree_root = LAB_ROOT / "runtime/functional-render-tree"
+if render_tree_root.exists():
+    shutil.rmtree(render_tree_root)
+TARGET_TREE.parent.mkdir(parents=True, exist_ok=True)
+shutil.copytree(SOURCE_TREE, TARGET_TREE)
+kustomization = TARGET / "kustomization.yaml"
+text = kustomization.read_text()
+if text.count(ZERO) != 2:
+    raise SystemExit("expected exactly two zero digest placeholders")
+text = text.replace(ZERO, backend, 1).replace(ZERO, h5, 1)
+kustomization.write_text(text)
+
+render = subprocess.run(["kubectl", "kustomize", str(TARGET)], check=True, stdout=subprocess.PIPE).stdout
+if ZERO.encode() in render:
+    raise SystemExit("bound render retained zero digest")
+render_path = LAB_ROOT / "runtime/functional-bound-render.yaml"
+render_path.write_bytes(render)
+os.chmod(render_path, 0o600)
+
+route_receipt = json.loads((TARGET / "route-snapshot.render-only.receipt.json").read_text())
+value = {
+    "schema_version": "farm-local-functional-render-binding.v1",
+    "status": "IMAGES_BOUND_ROUTE_NOT_AUTHORITY_INITIALIZED",
+    "backend_registry_ref": images["backend_registry_ref"],
+    "h5_registry_ref": images["h5_registry_ref"],
+    "render_sha256": hashlib.sha256(render).hexdigest(),
+    "route_intent_sha256": route_receipt["route_intent_sha256"],
+    "route_status": route_receipt["status"],
+    "activatable": False,
+    "cluster_applied": False,
+    "company_redis_contacted": False,
+    "formal_l2_authorized": False,
+}
+OUT_RECEIPT.parent.mkdir(parents=True, exist_ok=True)
+fd, temporary = tempfile.mkstemp(prefix=".functional-binding-", dir=OUT_RECEIPT.parent, text=True)
+with os.fdopen(fd, "w") as out:
+    json.dump(value, out, sort_keys=True, indent=2)
+    out.write("\n")
+os.replace(temporary, OUT_RECEIPT)
+os.chmod(OUT_RECEIPT, 0o640)
+print(json.dumps(value, sort_keys=True, indent=2))

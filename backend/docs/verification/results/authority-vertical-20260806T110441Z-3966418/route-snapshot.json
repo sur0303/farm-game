@@ -1,0 +1,48 @@
+{
+  "realm": "smoke-authority",
+  "global_revision": 1,
+  "hash_version": 2,
+  "hash_seed": 202608060001,
+  "player": {
+    "shard_count": 1,
+    "routes": [
+      {
+        "holder_index": 0,
+        "state": "ACTIVE",
+        "shard_revision": 1,
+        "expected_writer_epoch": 1,
+        "expected_lease_epoch": 1,
+        "lease_expire_at_ms": 1786014342833
+      }
+    ]
+  },
+  "farm": {
+    "shard_count": 1,
+    "routes": [
+      {
+        "holder_index": 1,
+        "state": "ACTIVE",
+        "shard_revision": 1,
+        "expected_writer_epoch": 1,
+        "expected_lease_epoch": 1,
+        "lease_expire_at_ms": 1786014342833
+      }
+    ]
+  },
+  "holders": [
+    {
+      "instance_id": "smoke-player",
+      "boot_id": "smoke-player-20260806T110441Z-3966418",
+      "endpoint": "127.0.0.1:53923",
+      "state": "ACTIVE",
+      "weight": 1
+    },
+    {
+      "instance_id": "smoke-farm",
+      "boot_id": "smoke-farm-20260806T110441Z-3966418",
+      "endpoint": "127.0.0.1:35169",
+      "state": "ACTIVE",
+      "weight": 1
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+KUBECONFIG="${KUBECONFIG:-$LAB_ROOT/runtime/kubeconfig}"
+RUN_ID="${ROUTE_RUN_ID:-}"
+MODE="${1:---dry-run}"
+case "$MODE" in --dry-run|--apply) ;; *) echo "usage: ROUTE_RUN_ID=<id> $0 [--dry-run|--apply]" >&2; exit 2;; esac
+[[ "$RUN_ID" =~ ^[a-z0-9][a-z0-9-]{0,62}$ ]] || { echo "apply-route-bootstrap: ROUTE_RUN_ID is required" >&2; exit 1; }
+ROOT="$LAB_ROOT/runtime/route-bootstrap-$RUN_ID"
+OVERLAY="$ROOT/deploy/k8s/static-staging/overlays/local-capacity-r2/bootstrap"
+RENDER="$ROOT/bootstrap-render.yaml"
+RENDER_RECEIPT="$LAB_ROOT/receipts/route-bootstrap-render-$RUN_ID.json"
+STATIC_RECEIPT="$LAB_ROOT/receipts/static-init/$RUN_ID/static-init-receipt.json"
+OUT="$LAB_ROOT/receipts/route-bootstrap-apply-$RUN_ID.json"
+FAILURE_EVIDENCE="$LAB_ROOT/evidence/route-bootstrap-$RUN_ID/apply-failure"
+
+for path in "$KUBECONFIG" "$OVERLAY/kustomization.yaml" "$RENDER" "$RENDER_RECEIPT" "$STATIC_RECEIPT"; do
+  [[ -s "$path" ]] || { echo "apply-route-bootstrap: missing $path" >&2; exit 1; }
+done
+[[ "$(KUBECONFIG="$KUBECONFIG" kubectl config current-context)" == "farm-l2-r2" ]] || { echo "apply-route-bootstrap: refusing non-lab context" >&2; exit 1; }
+
+python3 - "$RENDER" "$RENDER_RECEIPT" "$STATIC_RECEIPT" <<'PY'
+import hashlib,json,sys,time
+render,rr,sr=sys.argv[1:]
+r=json.load(open(rr)); s=json.load(open(sr)); now=int(time.time()*1000)
+if r.get("status") != "BOOTSTRAP_RENDER_FRESH_NOT_3TTL_PROVEN" or r.get("cluster_applied") is not False:
+ raise SystemExit("apply-route-bootstrap: render receipt rejected")
+if hashlib.sha256(open(render,"rb").read()).hexdigest() != r.get("render_sha256"):
+ raise SystemExit("apply-route-bootstrap: render hash mismatch")
+if not s.get("durable_snapshot_committed") or s.get("minimum_lease_until_ms",0)-now < s.get("minimum_remaining_lease_ms",0):
+ raise SystemExit("apply-route-bootstrap: static startup lease budget expired")
+PY
+
+actual=$(mktemp)
+probe=""
+apply_started=false
+apply_complete=false
+on_exit() {
+  rc=$?
+  trap - EXIT
+  rm -f "$actual" "${actual}.preflight"
+  if [[ -n "$probe" ]]; then
+    KUBECONFIG="$KUBECONFIG" kubectl delete pod -n farm-l2-r2 "$probe" --ignore-not-found=true --wait=false >/dev/null 2>&1 || true
+  fi
+  if [[ "$apply_started" == true && "$apply_complete" != true ]]; then
+    evidence_captured=false
+    install -d -m 0750 "$FAILURE_EVIDENCE"
+    KUBECONFIG="$KUBECONFIG" kubectl get deployment,statefulset,pod -n farm-l2-r2 -o yaml >"$FAILURE_EVIDENCE/workloads.yaml" 2>"$FAILURE_EVIDENCE/workloads.stderr" || true
+    KUBECONFIG="$KUBECONFIG" kubectl get events -n farm-l2-r2 -o json >"$FAILURE_EVIDENCE/events.json" 2>"$FAILURE_EVIDENCE/events.stderr" || true
+    if [[ -s "$FAILURE_EVIDENCE/workloads.yaml" && -s "$FAILURE_EVIDENCE/events.json" ]]; then evidence_captured=true; fi
+    while IFS= read -r pod; do
+      [[ -n "$pod" ]] || continue
+      safe=${pod#pod/}
+      while IFS= read -r container; do
+        [[ -n "$container" ]] || continue
+        KUBECONFIG="$KUBECONFIG" kubectl logs -n farm-l2-r2 "$pod" -c "$container" >"$FAILURE_EVIDENCE/$safe.$container.current.log" 2>&1 || true
+        KUBECONFIG="$KUBECONFIG" kubectl logs -n farm-l2-r2 "$pod" -c "$container" --previous >"$FAILURE_EVIDENCE/$safe.$container.previous.log" 2>&1 || true
+      done < <(KUBECONFIG="$KUBECONFIG" kubectl get -n farm-l2-r2 "$pod" -o jsonpath='{range .spec.initContainers[*]}{.name}{"\n"}{end}{range .spec.containers[*]}{.name}{"\n"}{end}' 2>/dev/null || true)
+    done < <(KUBECONFIG="$KUBECONFIG" kubectl get pod -n farm-l2-r2 -l 'app.kubernetes.io/name in (route-controller,player-svr,farm-svr)' -o name 2>/dev/null || true)
+    chmod -R u=rwX,g=rX,o= "$FAILURE_EVIDENCE"
+    rollback_ok=true
+    KUBECONFIG="$KUBECONFIG" kubectl delete deployment -n farm-l2-r2 route-controller --ignore-not-found=true --wait=true --timeout=45s >/dev/null 2>&1 || rollback_ok=false
+    KUBECONFIG="$KUBECONFIG" kubectl delete statefulset -n farm-l2-r2 player-svr farm-svr --ignore-not-found=true --wait=true --timeout=45s >/dev/null 2>&1 || rollback_ok=false
+    KUBECONFIG="$KUBECONFIG" kubectl delete pod -n farm-l2-r2 -l 'app.kubernetes.io/name in (route-controller,player-svr,farm-svr)' --ignore-not-found=true --wait=true --timeout=45s >/dev/null 2>&1 || rollback_ok=false
+    for resource in deployment/route-controller statefulset/player-svr statefulset/farm-svr; do
+      if KUBECONFIG="$KUBECONFIG" kubectl get -n farm-l2-r2 "$resource" >/dev/null 2>&1; then rollback_ok=false; fi
+    done
+    python3 - "$OUT" "$RUN_ID" "$RENDER" "$rc" "$rollback_ok" "$evidence_captured" "$FAILURE_EVIDENCE" <<'PY'
+import hashlib,json,os,sys,tempfile,time
+path,run_id,render,exit_code,rollback,evidence,evidence_dir=sys.argv[1:]
+rolled_back=rollback == "true"
+evidence_captured=evidence == "true"
+value={
+ "schema_version":"farm-local-route-bootstrap-apply-receipt.v1",
+ "status":"APPLY_FAILED_WORKLOADS_ROLLED_BACK" if rolled_back else "APPLY_FAILED_ROLLBACK_UNKNOWN","run_id":run_id,
+ "render_sha256":hashlib.sha256(open(render,"rb").read()).hexdigest(),"failed_at_ms":int(time.time()*1000),
+ "failure_exit_code":int(exit_code),"rollout_ready":False,"cluster_applied":False if rolled_back else None,
+ "workloads_rolled_back":rolled_back,"failure_evidence_captured":evidence_captured,
+ "failure_evidence_directory":evidence_dir,"three_ttl_proven":False,"activatable":False,
+ "active_binding_authorized":False,"company_redis_contacted":False,
+ "capacity_constant_eligible":False,"supports_30m_dau":False,
+}
+os.makedirs(os.path.dirname(path),exist_ok=True)
+fd,temp=tempfile.mkstemp(prefix=".route-bootstrap-apply-failed-",dir=os.path.dirname(path),text=True)
+with os.fdopen(fd,"w") as out:
+ json.dump(value,out,sort_keys=True,indent=2); out.write("\n"); out.flush(); os.fsync(out.fileno())
+os.replace(temp,path); os.chmod(path,0o640)
+PY
+  fi
+  exit "$rc"
+}
+trap on_exit EXIT
+
+kubectl kustomize "$OVERLAY" >"$actual"
+[[ "$(sha256sum "$actual" | awk '{print $1}')" == "$(sha256sum "$RENDER" | awk '{print $1}')" ]] || { echo "apply-route-bootstrap: render drift" >&2; exit 1; }
+
+# This mandatory server-side preflight validates every document before any
+# workload is created and does not add the size-limited last-applied annotation.
+KUBECONFIG="$KUBECONFIG" kubectl apply --server-side --dry-run=server \
+  --field-manager=farm-route-bootstrap-preflight -f "$RENDER" -o name >"${actual}.preflight"
+if [[ "$MODE" == "--dry-run" ]]; then
+  cat "${actual}.preflight"
+  rm -f "${actual}.preflight"
+  exit 0
+fi
+rm -f "${actual}.preflight"
+
+pressure=$(KUBECONFIG="$KUBECONFIG" kubectl get node farm-l2-r2 -o jsonpath='{.status.conditions[?(@.type=="DiskPressure")].status}')
+[[ "$pressure" == "False" ]] || { echo "apply-route-bootstrap: node DiskPressure=$pressure" >&2; exit 1; }
+for secret in farm-staging-secrets farm-route-control-tls; do
+  KUBECONFIG="$KUBECONFIG" kubectl get secret -n farm-l2-r2 "$secret" >/dev/null || { echo "apply-route-bootstrap: secret $secret missing" >&2; exit 1; }
+done
+[[ "$(KUBECONFIG="$KUBECONFIG" kubectl get deployment -n farm-l2-r2-deps farm-local-redis -o jsonpath='{.status.readyReplicas}')" == "1" ]] || { echo "apply-route-bootstrap: local Profile B Redis not ready" >&2; exit 1; }
+for resource in deployment/route-controller statefulset/player-svr statefulset/farm-svr; do
+  ! KUBECONFIG="$KUBECONFIG" kubectl get -n farm-l2-r2 "$resource" >/dev/null 2>&1 || { echo "apply-route-bootstrap: existing workload rejected: $resource" >&2; exit 1; }
+done
+
+# Validate the exact image and the host's full-pcpus-only admission before
+# creating controllers. Two logical CPUs are one complete physical core here.
+image_ref=$(python3 - "$RENDER_RECEIPT" <<'PY'
+import json,sys
+print(json.load(open(sys.argv[1]))["runtime_image_ref"])
+PY
+)
+probe="route-admission-$(printf '%s' "$RUN_ID" | sha256sum | cut -c1-12)"
+cat <<EOF | KUBECONFIG="$KUBECONFIG" kubectl apply --server-side --field-manager=farm-route-admission-probe -f - >/dev/null
+apiVersion: v1
+kind: Pod
+metadata:
+  name: $probe
+  namespace: farm-l2-r2
+  labels:
+    farm.io/local-route-admission-probe: "true"
+spec:
+  automountServiceAccountToken: false
+  terminationGracePeriodSeconds: 1
+  restartPolicy: Never
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: admission
+      image: $image_ref
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/sh", "-c", "sleep 120"]
+      resources:
+        requests: {cpu: "2", memory: 64Mi}
+        limits: {cpu: "2", memory: 64Mi}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities: {drop: ["ALL"]}
+        readOnlyRootFilesystem: true
+EOF
+KUBECONFIG="$KUBECONFIG" kubectl wait -n farm-l2-r2 --for=condition=Ready "pod/$probe" --timeout=30s >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl delete pod -n farm-l2-r2 "$probe" --wait=true --timeout=5s >/dev/null
+probe=""
+
+# The admission probe consumed time, so re-check the startup lease budget.
+python3 - "$STATIC_RECEIPT" <<'PY'
+import json,sys,time
+s=json.load(open(sys.argv[1])); now=int(time.time()*1000)
+if not s.get("durable_snapshot_committed") or s.get("minimum_lease_until_ms",0)-now < s.get("minimum_remaining_lease_ms",0):
+ raise SystemExit("apply-route-bootstrap: static startup lease budget expired after admission probe")
+PY
+
+apply_started=true
+KUBECONFIG="$KUBECONFIG" kubectl apply --server-side --field-manager=farm-route-bootstrap -f "$RENDER" >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl rollout status -n farm-l2-r2 deployment/route-controller --timeout=45s >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl rollout status -n farm-l2-r2 statefulset/player-svr --timeout=60s >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl rollout status -n farm-l2-r2 statefulset/farm-svr --timeout=60s >/dev/null
+
+python3 - "$OUT" "$RUN_ID" "$RENDER" <<'PY'
+import hashlib,json,os,sys,tempfile,time
+path,run_id,render=sys.argv[1:]
+value={
+ "schema_version":"farm-local-route-bootstrap-apply-receipt.v1","status":"BOOTSTRAP_READY_3TTL_NOT_PROVEN","run_id":run_id,
+ "render_sha256":hashlib.sha256(open(render,"rb").read()).hexdigest(),"applied_at_ms":int(time.time()*1000),
+ "rollout_ready":True,"cluster_applied":True,"server_side_apply":True,"smt_admission_probe_passed":True,
+ "three_ttl_proven":False,"activatable":False,"active_binding_authorized":False,"company_redis_contacted":False,
+ "capacity_constant_eligible":False,"supports_30m_dau":False,
+}
+os.makedirs(os.path.dirname(path),exist_ok=True)
+fd,temp=tempfile.mkstemp(prefix=".route-bootstrap-apply-",dir=os.path.dirname(path),text=True)
+with os.fdopen(fd,"w") as out:
+ json.dump(value,out,sort_keys=True,indent=2); out.write("\n"); out.flush(); os.fsync(out.fileno())
+os.replace(temp,path); os.chmod(path,0o640)
+print(json.dumps(value,sort_keys=True,indent=2))
+PY
+apply_complete=true

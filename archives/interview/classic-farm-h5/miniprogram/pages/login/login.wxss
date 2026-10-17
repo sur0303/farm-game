@@ -1,0 +1,70 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #a8d4ea 0%, #87b5d6 40%, #6a9ab8 100%);
+  padding: 48rpx;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 560rpx;
+  background: rgba(255, 248, 230, .92);
+  border-radius: 32rpx;
+  padding: 64rpx 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32rpx;
+  box-shadow: 0 16rpx 48rpx rgba(58, 47, 31, .15);
+}
+
+.title {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #3a2f1f;
+}
+
+.subtitle {
+  font-size: 26rpx;
+  color: #8a7a5a;
+  margin-top: -16rpx;
+}
+
+.logo-area {
+  width: 160rpx;
+  height: 160rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4a76a, #b8925a);
+  box-shadow: 0 8rpx 24rpx rgba(139, 105, 20, .3);
+}
+
+.logo {
+  font-size: 80rpx;
+}
+
+.login-btn {
+  width: 100%;
+  background: #4a7c59;
+  color: white;
+  font-size: 32rpx;
+  font-weight: 600;
+  padding: 28rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(74, 124, 89, .3);
+}
+
+.login-btn.loading {
+  opacity: .7;
+}
+
+.error {
+  color: #c0392b;
+  font-size: 26rpx;
+  text-align: center;
+}

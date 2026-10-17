@@ -1,0 +1,9 @@
+{
+  "aggregate_sha256": "fb836555d5352a8543e3267ca451bbc6cf7c8634360cc9538858c9b67b611f81",
+  "original_verdict": "PASS",
+  "reason": "COLD_THEFT_LAZY_NOSCRIPT_RECOVERY_ADDED_VARIABLE_RECOVERY_AMPLIFICATION; RETAINED WITHOUT REWRITING",
+  "schema_version": "cap-redis-business-trace-supersession-v1",
+  "selection": "NOT_SELECTED",
+  "trace_run": "capredis-business-e2e-20260810T065500Z",
+  "trace_sha256": "5b6123c43487d69b3d47119d126bf186225fe23007b5577c29083a362b8f53cf"
+}

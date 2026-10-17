@@ -1,0 +1,45 @@
+=== top r3000-before 03:51:36 ===
+NAME                                CPU(cores)   MEMORY(bytes)   
+farm-gate-577f645cd8-n8gkf          282m         661Mi           
+farm-grafana-64f7f46898-z58tr       2m           49Mi            
+farm-prometheus-5966b58fdf-6xrnv    4m           75Mi            
+farm-redis-0                        21m          45Mi            
+farm-redis-1                        23m          45Mi            
+farm-redis-2                        106m         55Mi            
+farm-redis-3                        8m           28Mi            
+farm-redis-4                        8m           36Mi            
+farm-redis-5                        7m           35Mi            
+farm-svr-0                          4m           567Mi           
+farm-worker-a-8c9dcbf44-4kncl       46m          15Mi            
+farm-worker-b-5fdcbff857-b8njs      31m          14Mi            
+player-svr-0                        4m           361Mi           
+route-controller-7555ccf646-fz5bg   9m           15Mi            
+=== restarts ===
+farm-gate-577f645cd8-n8gkf r=0 ready=True
+farm-grafana-64f7f46898-z58tr r=0 ready=True
+farm-prometheus-5966b58fdf-6xrnv r=0 ready=True
+farm-redis-0 r=0 ready=True
+farm-redis-1 r=0 ready=True
+farm-redis-2 r=0 ready=True
+farm-redis-3 r=0 ready=True
+farm-redis-4 r=0 ready=True
+farm-redis-5 r=0 ready=True
+farm-svr-0 r=0 ready=True
+farm-worker-a-8c9dcbf44-4kncl r=0 ready=True
+farm-worker-b-5fdcbff857-b8njs r=0 ready=True
+player-svr-0 r=0 ready=True
+route-controller-7555ccf646-fz5bg r=0 ready=True
+ws-stress-join-114432-kvrpt r=0 ready=False
+ws-stress-join-114530-vnjk5 r=0 ready=False
+ws-stress-join-114611-rjksz r=0 ready=False
+ws-stress-join-115113-z27rv r=0 ready=False
+=== farm metrics ===
+farm_downlink_lanes_current 1
+farm_downlink_queue_full_total 16
+go_goroutines 19627
+=== player metrics ===
+go_goroutines 19557
+=== gate metrics ===
+farmgate_downlink_writer_queue_bytes 0
+farmgate_downlink_writer_queue_items 0
+go_goroutines 71

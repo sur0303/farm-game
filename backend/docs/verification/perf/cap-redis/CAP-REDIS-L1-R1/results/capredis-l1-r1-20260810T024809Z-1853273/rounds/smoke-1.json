@@ -1,0 +1,2292 @@
+{
+  "schema_version": "cap-redis-l1-r1.v1",
+  "purpose": "redis_serialization_baseline_r1",
+  "baseline_eligible": false,
+  "supports_30m_dau": false,
+  "frozen_identity": {
+    "task_id": "CAP-REDIS-L1-R1",
+    "backend_business_commit": "4824c9c02fe70873b2f9a8eab3ce274d227063a8",
+    "backend_evidence_head": "54c6d0a15cd2e0555d309b59319f1ce30fab268c",
+    "h5_commit": "525c4d324100b17a891f02797c4880fa9a02f70a",
+    "backend_image_digest": "sha256:f36a4d8f5f8c05ac44ed173895e46f5348af6d5b133835e6d25d13da2b51c39b",
+    "h5_image_digest": "sha256:9bfdedaa70f7cbf8bac86bb25cc2ff62dba1cf7832fb5d8f66c72c1f113486fd"
+  },
+  "runtime_identity": {
+    "run_id": "capredis-l1-r1-20260810T024809Z-1853273-smoke-1",
+    "round_kind": "smoke",
+    "round_number": 1,
+    "started_at_utc": "2026-08-10T02:48:10.312146192Z",
+    "completed_at_utc": "2026-08-10T02:48:11.927902651Z",
+    "redis_endpoint_hash": "5598eac2b1f730a6369bacbd264c58cb155562b55e8e1639a81fa0876019d8b2",
+    "redis_config_hash": "62bbe51e7ff885f80952f3ef742ec245b771510300b4af740cab9bb5a52079b9",
+    "namespace": "capr1:r11786330090061070766",
+    "machine_spec_hash": "b411797bb948b74a8c08e8a3dfa186d98316662a0f450503985f43e4a09a75a1",
+    "machine_spec": {
+      "cpu_model": "AMD EPYC 7K62 48-Core Processor",
+      "docker_server": "29.3.1",
+      "go_version": "go1.26.3-X:nodwarf5 linux/amd64",
+      "kernel": "Linux 6.6.119-49.20.tl4.x86_64 #1 SMP Sat May  2 07:46:47 CST 2026 x86_64 GNU/Linux",
+      "logical_cpus": "32",
+      "memory_bytes": "66879913984"
+    },
+    "cpu_governor": "unavailable",
+    "container_cpu_limit": "4",
+    "container_memory_limit": "4g",
+    "go_gc": "100",
+    "go_mem_limit": "4GiB",
+    "redis_pool_size": 400,
+    "redis_min_idle_conns": 400,
+    "model_layout_version": "R1:authority-v1+workflow-v1+friend-v1;Model-Field-V2-not-yet-claimed",
+    "route_snapshot_hash": "3a4cff47a12d0e2b78ca3988c2b2698a9104e9c344805849d8700caf16f7c5a7",
+    "lease_profile_hash": "acb6428cca9364ba3eb0d2aeaaca9d3a7a488444515b6f2bdd0ba77ed2acb464",
+    "profile_hash": "eb4ee6ee0a69b760423495eb42bf3778d0e69309ac55be6eb161df52efff7729",
+    "random_seed": 2026080901
+  },
+  "cells": [
+    {
+      "operation": "player_actor_load_and_claim",
+      "group": "actor_authority",
+      "key_distribution": "uniform_key",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 3,
+      "pipeline_items_per_op": 2,
+      "request_bytes_per_op": 1085.75,
+      "response_bytes_per_op": 490,
+      "logical_request_bytes": {
+        "p50": 341,
+        "p95": 341,
+        "p99": 341,
+        "min": 341,
+        "max": 341
+      },
+      "logical_response_bytes": {
+        "p50": 373,
+        "p95": 373,
+        "p99": 373,
+        "min": 373,
+        "max": 373
+      },
+      "payload_bytes": {
+        "p50": 256,
+        "p95": 256,
+        "p99": 256,
+        "min": 256,
+        "max": 256
+      },
+      "client_latency_us": {
+        "p50": 834.622,
+        "p95": 3992.5,
+        "p99": 3992.5,
+        "min": 465.847,
+        "max": 3992.5
+      },
+      "lua_execution_us": {
+        "p50": 166,
+        "p95": 249,
+        "p99": 249,
+        "min": 92,
+        "max": 249
+      },
+      "network_rtt_us": {
+        "p50": 107.863,
+        "p95": 203.343,
+        "p99": 203.343,
+        "min": 101.792,
+        "max": 203.343
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.551,
+        "p95": 5.01,
+        "p99": 5.01,
+        "min": 0.461,
+        "max": 5.01
+      },
+      "deserialization_us": {
+        "p50": 0.301,
+        "p95": 0.551,
+        "p99": 0.551,
+        "min": 0.221,
+        "max": 0.551
+      },
+      "allocs_per_op": 120.25,
+      "client_cpu_us_per_op": 329.75,
+      "redis_cpu_us_per_op": 298.7500000000004,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 4
+        },
+        {
+          "name": "HLEN",
+          "count": 4
+        },
+        {
+          "name": "HMGET",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:5469456a657d141673c3bae319c73fec9e3a4bae"
+      ],
+      "outcome_counts": {
+        "CLAIMED": 4
+      }
+    },
+    {
+      "operation": "farm_actor_load_and_claim",
+      "group": "actor_authority",
+      "key_distribution": "uniform_key",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 3,
+      "pipeline_items_per_op": 2,
+      "request_bytes_per_op": 1075.75,
+      "response_bytes_per_op": 491,
+      "logical_request_bytes": {
+        "p50": 342,
+        "p95": 342,
+        "p99": 342,
+        "min": 342,
+        "max": 342
+      },
+      "logical_response_bytes": {
+        "p50": 374,
+        "p95": 374,
+        "p99": 374,
+        "min": 374,
+        "max": 374
+      },
+      "payload_bytes": {
+        "p50": 256,
+        "p95": 256,
+        "p99": 256,
+        "min": 256,
+        "max": 256
+      },
+      "client_latency_us": {
+        "p50": 421.453,
+        "p95": 766.755,
+        "p99": 766.755,
+        "min": 407.237,
+        "max": 766.755
+      },
+      "lua_execution_us": {
+        "p50": 98,
+        "p95": 184,
+        "p99": 184,
+        "min": 96,
+        "max": 184
+      },
+      "network_rtt_us": {
+        "p50": 135.104,
+        "p95": 159.73,
+        "p99": 159.73,
+        "min": 126.909,
+        "max": 159.73
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.421,
+        "p95": 3.837,
+        "p99": 3.837,
+        "min": 0.401,
+        "max": 3.837
+      },
+      "deserialization_us": {
+        "p50": 0.28,
+        "p95": 0.331,
+        "p99": 0.331,
+        "min": 0.28,
+        "max": 0.331
+      },
+      "allocs_per_op": 120.25,
+      "client_cpu_us_per_op": 252,
+      "redis_cpu_us_per_op": 229.7500000000008,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 4
+        },
+        {
+          "name": "HLEN",
+          "count": 4
+        },
+        {
+          "name": "HMGET",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:5469456a657d141673c3bae319c73fec9e3a4bae"
+      ],
+      "outcome_counts": {
+        "CLAIMED": 4
+      }
+    },
+    {
+      "operation": "player_actor_commit_receipt",
+      "group": "actor_authority",
+      "key_distribution": "uniform_key",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 1,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 1650.25,
+      "response_bytes_per_op": 51,
+      "logical_request_bytes": {
+        "p50": 443,
+        "p95": 443,
+        "p99": 443,
+        "min": 443,
+        "max": 443
+      },
+      "logical_response_bytes": {
+        "p50": 396,
+        "p95": 396,
+        "p99": 396,
+        "min": 396,
+        "max": 396
+      },
+      "payload_bytes": {
+        "p50": 256,
+        "p95": 256,
+        "p99": 256,
+        "min": 256,
+        "max": 256
+      },
+      "client_latency_us": {
+        "p50": 760.272,
+        "p95": 1502.701,
+        "p99": 1502.701,
+        "min": 568.522,
+        "max": 1502.701
+      },
+      "lua_execution_us": {
+        "p50": 192,
+        "p95": 300,
+        "p99": 300,
+        "min": 180,
+        "max": 300
+      },
+      "network_rtt_us": {
+        "p50": 167.405,
+        "p95": 189.556,
+        "p99": 189.556,
+        "min": 152.196,
+        "max": 189.556
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.851,
+        "p95": 1.723,
+        "p99": 1.723,
+        "min": 0.471,
+        "max": 1.723
+      },
+      "deserialization_us": {
+        "p50": 0.36,
+        "p95": 0.651,
+        "p99": 0.651,
+        "min": 0.29,
+        "max": 0.651
+      },
+      "allocs_per_op": 135.25,
+      "client_cpu_us_per_op": 280.75,
+      "redis_cpu_us_per_op": 351.9999999999981,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:464321f0544abd38406d590f0ff5ed75af74e08c"
+      ],
+      "outcome_counts": {
+        "COMMITTED": 4
+      }
+    },
+    {
+      "operation": "farm_actor_commit_receipt",
+      "group": "actor_authority",
+      "key_distribution": "uniform_key",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 1,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 1634.25,
+      "response_bytes_per_op": 51,
+      "logical_request_bytes": {
+        "p50": 443,
+        "p95": 443,
+        "p99": 443,
+        "min": 443,
+        "max": 443
+      },
+      "logical_response_bytes": {
+        "p50": 394,
+        "p95": 394,
+        "p99": 394,
+        "min": 394,
+        "max": 394
+      },
+      "payload_bytes": {
+        "p50": 256,
+        "p95": 256,
+        "p99": 256,
+        "min": 256,
+        "max": 256
+      },
+      "client_latency_us": {
+        "p50": 364.016,
+        "p95": 585.953,
+        "p99": 585.953,
+        "min": 323.259,
+        "max": 585.953
+      },
+      "lua_execution_us": {
+        "p50": 113,
+        "p95": 195,
+        "p99": 195,
+        "min": 108,
+        "max": 195
+      },
+      "network_rtt_us": {
+        "p50": 120.216,
+        "p95": 144.993,
+        "p99": 144.993,
+        "min": 110.078,
+        "max": 144.993
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.561,
+        "p95": 1.082,
+        "p99": 1.082,
+        "min": 0.32,
+        "max": 1.082
+      },
+      "deserialization_us": {
+        "p50": 0.29,
+        "p95": 0.591,
+        "p99": 0.591,
+        "min": 0.231,
+        "max": 0.591
+      },
+      "allocs_per_op": 135.25,
+      "client_cpu_us_per_op": 251.5,
+      "redis_cpu_us_per_op": 209.7500000000016,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:464321f0544abd38406d590f0ff5ed75af74e08c"
+      ],
+      "outcome_counts": {
+        "COMMITTED": 4
+      }
+    },
+    {
+      "operation": "farm_actor_commit_order_due",
+      "group": "reliable_execution",
+      "key_distribution": "uniform_key",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 4,
+      "observed_fixture_due": 4,
+      "redis_commands_per_op": 1,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 2305,
+      "response_bytes_per_op": 51,
+      "logical_request_bytes": {
+        "p50": 794,
+        "p95": 794,
+        "p99": 794,
+        "min": 794,
+        "max": 794
+      },
+      "logical_response_bytes": {
+        "p50": 394,
+        "p95": 394,
+        "p99": 394,
+        "min": 394,
+        "max": 394
+      },
+      "payload_bytes": {
+        "p50": 256,
+        "p95": 256,
+        "p99": 256,
+        "min": 256,
+        "max": 256
+      },
+      "client_latency_us": {
+        "p50": 435.23,
+        "p95": 565.656,
+        "p99": 565.656,
+        "min": 431.242,
+        "max": 565.656
+      },
+      "lua_execution_us": {
+        "p50": 179,
+        "p95": 185,
+        "p99": 185,
+        "min": 145,
+        "max": 185
+      },
+      "network_rtt_us": {
+        "p50": 132.059,
+        "p95": 168.767,
+        "p99": 168.767,
+        "min": 105.659,
+        "max": 168.767
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.421,
+        "p95": 1.233,
+        "p99": 1.233,
+        "min": 0.411,
+        "max": 1.233
+      },
+      "deserialization_us": {
+        "p50": 0.221,
+        "p95": 2.936,
+        "p99": 2.936,
+        "min": 0.201,
+        "max": 2.936
+      },
+      "allocs_per_op": 171.25,
+      "client_cpu_us_per_op": 235,
+      "redis_cpu_us_per_op": 258.50000000000176,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:464321f0544abd38406d590f0ff5ed75af74e08c"
+      ],
+      "outcome_counts": {
+        "COMMITTED": 4
+      },
+      "notes": [
+        "Commit includes one durable AuthorityReceipt, SourceOrder, and DueIndex member atomically.",
+        "The nonterminal SourceOrder fixture intentionally owns one Due member per operation; expected and observed fixture Due are reported before teardown."
+      ]
+    },
+    {
+      "operation": "actor_timeout_unknown_fence_resolution",
+      "group": "actor_authority",
+      "key_distribution": "uniform_key",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 4,
+      "pipeline_items_per_op": 2,
+      "request_bytes_per_op": 1686,
+      "response_bytes_per_op": 950,
+      "logical_request_bytes": {
+        "p50": 244,
+        "p95": 244,
+        "p99": 244,
+        "min": 244,
+        "max": 244
+      },
+      "logical_response_bytes": {
+        "p50": 473,
+        "p95": 473,
+        "p99": 473,
+        "min": 473,
+        "max": 473
+      },
+      "payload_bytes": {
+        "p50": 256,
+        "p95": 256,
+        "p99": 256,
+        "min": 256,
+        "max": 256
+      },
+      "client_latency_us": {
+        "p50": 591.395,
+        "p95": 1137.553,
+        "p99": 1137.553,
+        "min": 552.291,
+        "max": 1137.553
+      },
+      "lua_execution_us": {
+        "p50": 116,
+        "p95": 409,
+        "p99": 409,
+        "min": 65,
+        "max": 409
+      },
+      "network_rtt_us": {
+        "p50": 124.745,
+        "p95": 152.728,
+        "p99": 152.728,
+        "min": 112.472,
+        "max": 152.728
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.05,
+        "p95": 0.181,
+        "p99": 0.181,
+        "min": 0.04,
+        "max": 0.181
+      },
+      "deserialization_us": {
+        "p50": 0.18,
+        "p95": 0.26,
+        "p99": 0.26,
+        "min": 0.171,
+        "max": 0.26
+      },
+      "allocs_per_op": 215.25,
+      "client_cpu_us_per_op": 322.25,
+      "redis_cpu_us_per_op": 378.24999999999665,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 4
+        },
+        {
+          "name": "HLEN",
+          "count": 4
+        },
+        {
+          "name": "HMGET",
+          "count": 8
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:bc61b73e8c15c86dbdbd6f36de1a2e7bc9e30f04"
+      ],
+      "outcome_counts": {
+        "COMMITTED": 4
+      },
+      "notes": [
+        "Models TIMEOUT_UNKNOWN resolution: original Commit is durable before the measured FenceAndClaim receipt lookup/cut."
+      ]
+    },
+    {
+      "operation": "workflow_create_if_absent",
+      "group": "reliable_execution",
+      "key_distribution": "uniform_record_keys_shared_due_index",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 4,
+      "observed_fixture_due": 4,
+      "redis_commands_per_op": 1,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 2558.75,
+      "response_bytes_per_op": 8,
+      "logical_request_bytes": {
+        "p50": 1655,
+        "p95": 1661,
+        "p99": 1661,
+        "min": 1655,
+        "max": 1661
+      },
+      "logical_response_bytes": {
+        "p50": 1655,
+        "p95": 1661,
+        "p99": 1661,
+        "min": 1655,
+        "max": 1661
+      },
+      "payload_bytes": {
+        "p50": 256,
+        "p95": 256,
+        "p99": 256,
+        "min": 256,
+        "max": 256
+      },
+      "client_latency_us": {
+        "p50": 434.778,
+        "p95": 1702.328,
+        "p99": 1702.328,
+        "min": 397.629,
+        "max": 1702.328
+      },
+      "lua_execution_us": {
+        "p50": 53,
+        "p95": 188,
+        "p99": 188,
+        "min": 38,
+        "max": 188
+      },
+      "network_rtt_us": {
+        "p50": 170.481,
+        "p95": 191.642,
+        "p99": 191.642,
+        "min": 158.86,
+        "max": 191.642
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 24.707,
+        "p95": 193.193,
+        "p99": 193.193,
+        "min": 21.711,
+        "max": 193.193
+      },
+      "deserialization_us": {
+        "p50": 79.53,
+        "p95": 85.291,
+        "p99": 85.291,
+        "min": 76.354,
+        "max": 85.291
+      },
+      "allocs_per_op": 218.75,
+      "client_cpu_us_per_op": 385.5,
+      "redis_cpu_us_per_op": 208.24999999999315,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVAL",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVAL:\nlocal t = redis.call('TIME')\nlocal now_"
+      ],
+      "outcome_counts": {
+        "CREATED": 4
+      },
+      "notes": [
+        "Uniform uses distinct record keys; hot uses distinct records sharing the single generic Workflow DueIndex slot.",
+        "The nonterminal Create fixture intentionally owns one Due member per operation; expected and observed fixture Due are reported before teardown."
+      ]
+    },
+    {
+      "operation": "workflow_advance",
+      "group": "reliable_execution",
+      "key_distribution": "uniform_record_keys_shared_due_index",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 4,
+      "observed_fixture_due": 4,
+      "redis_commands_per_op": 1,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 3719.75,
+      "response_bytes_per_op": 12,
+      "logical_request_bytes": {
+        "p50": 1655,
+        "p95": 1661,
+        "p99": 1661,
+        "min": 1655,
+        "max": 1661
+      },
+      "logical_response_bytes": {
+        "p50": 1655,
+        "p95": 1661,
+        "p99": 1661,
+        "min": 1655,
+        "max": 1661
+      },
+      "payload_bytes": {
+        "p50": 256,
+        "p95": 256,
+        "p99": 256,
+        "min": 256,
+        "max": 256
+      },
+      "client_latency_us": {
+        "p50": 542.612,
+        "p95": 1173.52,
+        "p99": 1173.52,
+        "min": 492.188,
+        "max": 1173.52
+      },
+      "lua_execution_us": {
+        "p50": 61,
+        "p95": 185,
+        "p99": 185,
+        "min": 52,
+        "max": 185
+      },
+      "network_rtt_us": {
+        "p50": 233.871,
+        "p95": 3041.53,
+        "p99": 3041.53,
+        "min": 169.128,
+        "max": 3041.53
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 22.181,
+        "p95": 195.95,
+        "p99": 195.95,
+        "min": 13.495,
+        "max": 195.95
+      },
+      "deserialization_us": {
+        "p50": 92.325,
+        "p95": 248.208,
+        "p99": 248.208,
+        "min": 66.266,
+        "max": 248.208
+      },
+      "allocs_per_op": 134.25,
+      "client_cpu_us_per_op": 417.25,
+      "redis_cpu_us_per_op": 198.74999999999753,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVAL",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVAL:\nlocal t = redis.call('TIME')\nlocal now_"
+      ],
+      "outcome_counts": {
+        "ADVANCED": 4
+      }
+    },
+    {
+      "operation": "workflow_claim",
+      "group": "reliable_execution",
+      "key_distribution": "uniform_record_keys_shared_due_index",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 1,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 1504,
+      "response_bytes_per_op": 1698.75,
+      "logical_request_bytes": {
+        "p50": 95,
+        "p95": 95,
+        "p99": 95,
+        "min": 95,
+        "max": 95
+      },
+      "logical_response_bytes": {
+        "p50": 1817,
+        "p95": 1823,
+        "p99": 1823,
+        "min": 1817,
+        "max": 1823
+      },
+      "payload_bytes": {
+        "p50": 256,
+        "p95": 256,
+        "p99": 256,
+        "min": 256,
+        "max": 256
+      },
+      "client_latency_us": {
+        "p50": 564.272,
+        "p95": 2293.08,
+        "p99": 2293.08,
+        "min": 478.211,
+        "max": 2293.08
+      },
+      "lua_execution_us": {
+        "p50": 78,
+        "p95": 285,
+        "p99": 285,
+        "min": 64,
+        "max": 285
+      },
+      "network_rtt_us": {
+        "p50": 149.964,
+        "p95": 192.382,
+        "p99": 192.382,
+        "min": 123.562,
+        "max": 192.382
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.16,
+        "p95": 0.42,
+        "p99": 0.42,
+        "min": 0.16,
+        "max": 0.42
+      },
+      "deserialization_us": {
+        "p50": 79.28,
+        "p95": 116.84,
+        "p99": 116.84,
+        "min": 73.227,
+        "max": 116.84
+      },
+      "allocs_per_op": 169.75,
+      "client_cpu_us_per_op": 463.5,
+      "redis_cpu_us_per_op": 226.50000000000446,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVAL",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVAL:\nlocal t = redis.call('TIME')\nlocal now_"
+      ],
+      "outcome_counts": {
+        "CLAIMED": 4
+      }
+    },
+    {
+      "operation": "workflow_renew",
+      "group": "reliable_execution",
+      "key_distribution": "uniform_record_keys_shared_due_index",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 2,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 1701,
+      "response_bytes_per_op": 1860.75,
+      "logical_request_bytes": {
+        "p50": 103,
+        "p95": 103,
+        "p99": 103,
+        "min": 103,
+        "max": 103
+      },
+      "logical_response_bytes": {
+        "p50": 1817,
+        "p95": 1823,
+        "p99": 1823,
+        "min": 1817,
+        "max": 1823
+      },
+      "payload_bytes": {
+        "p50": 256,
+        "p95": 256,
+        "p99": 256,
+        "min": 256,
+        "max": 256
+      },
+      "client_latency_us": {
+        "p50": 731.428,
+        "p95": 1212.334,
+        "p99": 1212.334,
+        "min": 723.302,
+        "max": 1212.334
+      },
+      "lua_execution_us": {
+        "p50": 51,
+        "p95": 237,
+        "p99": 237,
+        "min": 47,
+        "max": 237
+      },
+      "network_rtt_us": {
+        "p50": 153.759,
+        "p95": 186.152,
+        "p99": 186.152,
+        "min": 144.402,
+        "max": 186.152
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.151,
+        "p95": 0.32,
+        "p99": 0.32,
+        "min": 0.14,
+        "max": 0.32
+      },
+      "deserialization_us": {
+        "p50": 77.245,
+        "p95": 100.7,
+        "p99": 100.7,
+        "min": 68.81,
+        "max": 100.7
+      },
+      "allocs_per_op": 208.5,
+      "client_cpu_us_per_op": 564.25,
+      "redis_cpu_us_per_op": 259.750000000003,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVAL",
+          "count": 4
+        },
+        {
+          "name": "HMGET",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVAL:\nlocal t = redis.call('TIME')\nlocal now_"
+      ],
+      "outcome_counts": {
+        "RENEWED": 4
+      }
+    },
+    {
+      "operation": "result_directory_publish",
+      "group": "reliable_execution",
+      "key_distribution": "uniform_player_directory_keys",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 1,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 623,
+      "response_bytes_per_op": 19,
+      "logical_request_bytes": {
+        "p50": 364,
+        "p95": 364,
+        "p99": 364,
+        "min": 364,
+        "max": 364
+      },
+      "logical_response_bytes": {
+        "p50": 16,
+        "p95": 16,
+        "p99": 16,
+        "min": 16,
+        "max": 16
+      },
+      "payload_bytes": {
+        "p50": 256,
+        "p95": 256,
+        "p99": 256,
+        "min": 256,
+        "max": 256
+      },
+      "client_latency_us": {
+        "p50": 623.404,
+        "p95": 6097.326,
+        "p99": 6097.326,
+        "min": 468.622,
+        "max": 6097.326
+      },
+      "lua_execution_us": {
+        "p50": 22,
+        "p95": 66,
+        "p99": 66,
+        "min": 19,
+        "max": 66
+      },
+      "network_rtt_us": {
+        "p50": 2287.348,
+        "p95": 4870.285,
+        "p99": 4870.285,
+        "min": 547.13,
+        "max": 4870.285
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.06,
+        "p95": 0.11,
+        "p99": 0.11,
+        "min": 0.05,
+        "max": 0.11
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 30.75,
+      "client_cpu_us_per_op": 300.5,
+      "redis_cpu_us_per_op": 155.24999999999568,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:1a332a0463eed34671606d1e8cad54c861eeb486"
+      ],
+      "outcome_counts": {
+        "PUBLISHED": 4
+      }
+    },
+    {
+      "operation": "friend_pair_activate",
+      "group": "friend_authority",
+      "key_distribution": "uniform_pair_keys",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 6,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 5427.75,
+      "response_bytes_per_op": 589.75,
+      "logical_request_bytes": {
+        "p50": 152,
+        "p95": 152,
+        "p99": 152,
+        "min": 151,
+        "max": 152
+      },
+      "logical_response_bytes": {
+        "p50": 48,
+        "p95": 48,
+        "p99": 48,
+        "min": 48,
+        "max": 48
+      },
+      "payload_bytes": {
+        "p50": 32,
+        "p95": 32,
+        "p99": 32,
+        "min": 32,
+        "max": 32
+      },
+      "client_latency_us": {
+        "p50": 11132.039,
+        "p95": 22838.901,
+        "p99": 22838.901,
+        "min": 7559.88,
+        "max": 22838.901
+      },
+      "lua_execution_us": {
+        "p50": 441,
+        "p95": 1331,
+        "p99": 1331,
+        "min": 289,
+        "max": 1331
+      },
+      "network_rtt_us": {
+        "p50": 157.226,
+        "p95": 203.022,
+        "p99": 203.022,
+        "min": 143.4,
+        "max": 203.022
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.17,
+        "p95": 0.451,
+        "p99": 0.451,
+        "min": 0.161,
+        "max": 0.451
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 502.25,
+      "client_cpu_us_per_op": 1041.25,
+      "redis_cpu_us_per_op": 2157.999999999993,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 8
+        },
+        {
+          "name": "HGET",
+          "count": 4
+        },
+        {
+          "name": "HMGET",
+          "count": 4
+        },
+        {
+          "name": "TYPE",
+          "count": 8
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:3a8941295f78ba43f70e86c72f12d6569c434695",
+        "EVALSHA:ecd60e214245a8e88bc16f3a540f43474b8d36da"
+      ],
+      "outcome_counts": {
+        "SUCCEEDED": 4
+      }
+    },
+    {
+      "operation": "friend_quota_reserve",
+      "group": "friend_authority",
+      "key_distribution": "uniform_quota_keys",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 7,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 4925.5,
+      "response_bytes_per_op": 506,
+      "logical_request_bytes": {
+        "p50": 213,
+        "p95": 213,
+        "p99": 213,
+        "min": 213,
+        "max": 213
+      },
+      "logical_response_bytes": {
+        "p50": 48,
+        "p95": 48,
+        "p99": 48,
+        "min": 48,
+        "max": 48
+      },
+      "payload_bytes": {
+        "p50": 32,
+        "p95": 32,
+        "p99": 32,
+        "min": 32,
+        "max": 32
+      },
+      "client_latency_us": {
+        "p50": 5230.784,
+        "p95": 9262.908,
+        "p99": 9262.908,
+        "min": 3152.468,
+        "max": 9262.908
+      },
+      "lua_execution_us": {
+        "p50": 365,
+        "p95": 971,
+        "p99": 971,
+        "min": 237,
+        "max": 971
+      },
+      "network_rtt_us": {
+        "p50": 123.713,
+        "p95": 182.023,
+        "p99": 182.023,
+        "min": 109.055,
+        "max": 182.023
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.16,
+        "p95": 0.17,
+        "p99": 0.17,
+        "min": 0.06,
+        "max": 0.17
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 438,
+      "client_cpu_us_per_op": 960.5,
+      "redis_cpu_us_per_op": 1505.0000000000064,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 8
+        },
+        {
+          "name": "HGET",
+          "count": 8
+        },
+        {
+          "name": "HMGET",
+          "count": 4
+        },
+        {
+          "name": "TYPE",
+          "count": 8
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:3a8941295f78ba43f70e86c72f12d6569c434695",
+        "EVALSHA:47bf51125a0574ae3bf86ec52ecacfd97a45b94b"
+      ],
+      "outcome_counts": {
+        "SUCCEEDED": 4
+      }
+    },
+    {
+      "operation": "friend_share_generate",
+      "group": "friend_authority",
+      "key_distribution": "uniform_share_issuer_keys",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 6,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 4710.5,
+      "response_bytes_per_op": 592,
+      "logical_request_bytes": {
+        "p50": 140,
+        "p95": 140,
+        "p99": 140,
+        "min": 140,
+        "max": 140
+      },
+      "logical_response_bytes": {
+        "p50": 100,
+        "p95": 100,
+        "p99": 100,
+        "min": 100,
+        "max": 100
+      },
+      "payload_bytes": {
+        "p50": 32,
+        "p95": 32,
+        "p99": 32,
+        "min": 32,
+        "max": 32
+      },
+      "client_latency_us": {
+        "p50": 1877.677,
+        "p95": 2560.123,
+        "p99": 2560.123,
+        "min": 1844.013,
+        "max": 2560.123
+      },
+      "lua_execution_us": {
+        "p50": 255,
+        "p95": 890,
+        "p99": 890,
+        "min": 193,
+        "max": 890
+      },
+      "network_rtt_us": {
+        "p50": 142.038,
+        "p95": 179.459,
+        "p99": 179.459,
+        "min": 130.716,
+        "max": 179.459
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.12,
+        "p95": 0.361,
+        "p99": 0.361,
+        "min": 0.05,
+        "max": 0.361
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 391.25,
+      "client_cpu_us_per_op": 665,
+      "redis_cpu_us_per_op": 1220.2500000000061,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 8
+        },
+        {
+          "name": "HGET",
+          "count": 4
+        },
+        {
+          "name": "HMGET",
+          "count": 4
+        },
+        {
+          "name": "TYPE",
+          "count": 8
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:3a8941295f78ba43f70e86c72f12d6569c434695",
+        "EVALSHA:750ee4d51ba53c932446c7b358a6755be89c963a"
+      ],
+      "outcome_counts": {
+        "SUCCEEDED": 4
+      }
+    },
+    {
+      "operation": "friend_pair_batch_read_20",
+      "group": "friend_authority",
+      "key_distribution": "uniform_viewer_rosters",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 162,
+      "pipeline_items_per_op": 162,
+      "request_bytes_per_op": 48941,
+      "response_bytes_per_op": 13887,
+      "logical_request_bytes": {
+        "p50": 168,
+        "p95": 168,
+        "p99": 168,
+        "min": 168,
+        "max": 168
+      },
+      "logical_response_bytes": {
+        "p50": 5120,
+        "p95": 5120,
+        "p99": 5120,
+        "min": 5120,
+        "max": 5120
+      },
+      "payload_bytes": {
+        "p50": 20,
+        "p95": 20,
+        "p99": 20,
+        "min": 20,
+        "max": 20
+      },
+      "client_latency_us": {
+        "p50": 2010.457,
+        "p95": 2863.012,
+        "p99": 2863.012,
+        "min": 1999.798,
+        "max": 2863.012
+      },
+      "lua_execution_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "network_rtt_us": {
+        "p50": 133.511,
+        "p95": 157.297,
+        "p99": 157.297,
+        "min": 122.11,
+        "max": 157.297
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.061,
+        "p95": 8.155,
+        "p99": 8.155,
+        "min": 0.04,
+        "max": 8.155
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 5670.25,
+      "client_cpu_us_per_op": 1288.25,
+      "redis_cpu_us_per_op": 943.2499999999927,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "HLEN",
+          "count": 148
+        },
+        {
+          "name": "HMGET",
+          "count": 148
+        },
+        {
+          "name": "TYPE",
+          "count": 148
+        },
+        {
+          "name": "ZCARD",
+          "count": 204
+        }
+      ],
+      "lua_commands": [],
+      "outcome_counts": {
+        "BATCH_READ": 4
+      },
+      "notes": [
+        "One operation is the bounded 20-pair canonical batch read; pipeline items/op is authoritative."
+      ]
+    },
+    {
+      "operation": "friend_index_scan_20",
+      "group": "friend_authority",
+      "key_distribution": "uniform_friend_index_keys",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 6,
+      "pipeline_items_per_op": 4,
+      "request_bytes_per_op": 1669,
+      "response_bytes_per_op": 2616,
+      "logical_request_bytes": {
+        "p50": 12,
+        "p95": 12,
+        "p99": 12,
+        "min": 12,
+        "max": 12
+      },
+      "logical_response_bytes": {
+        "p50": 1280,
+        "p95": 1280,
+        "p99": 1280,
+        "min": 1280,
+        "max": 1280
+      },
+      "payload_bytes": {
+        "p50": 20,
+        "p95": 20,
+        "p99": 20,
+        "min": 20,
+        "max": 20
+      },
+      "client_latency_us": {
+        "p50": 602.104,
+        "p95": 773.097,
+        "p99": 773.097,
+        "min": 503.237,
+        "max": 773.097
+      },
+      "lua_execution_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "network_rtt_us": {
+        "p50": 167.175,
+        "p95": 186.751,
+        "p99": 186.751,
+        "min": 134.433,
+        "max": 186.751
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.05,
+        "p95": 0.09,
+        "p99": 0.09,
+        "min": 0.04,
+        "max": 0.09
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 325.25,
+      "client_cpu_us_per_op": 382,
+      "redis_cpu_us_per_op": 183.74999999999642,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "HGET",
+          "count": 8
+        },
+        {
+          "name": "HMGET",
+          "count": 12
+        },
+        {
+          "name": "ZRANGEBYLEX",
+          "count": 4
+        }
+      ],
+      "lua_commands": [],
+      "outcome_counts": {
+        "INDEX_BATCH_READ": 4
+      }
+    },
+    {
+      "operation": "friend_projection_repair",
+      "group": "friend_authority",
+      "key_distribution": "uniform_viewer_projection_keys",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 1,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 803,
+      "response_bytes_per_op": 4,
+      "logical_request_bytes": {
+        "p50": 80,
+        "p95": 80,
+        "p99": 80,
+        "min": 80,
+        "max": 80
+      },
+      "logical_response_bytes": {
+        "p50": 8,
+        "p95": 8,
+        "p99": 8,
+        "min": 8,
+        "max": 8
+      },
+      "payload_bytes": {
+        "p50": 80,
+        "p95": 80,
+        "p99": 80,
+        "min": 80,
+        "max": 80
+      },
+      "client_latency_us": {
+        "p50": 210.958,
+        "p95": 409.431,
+        "p99": 409.431,
+        "min": 207.522,
+        "max": 409.431
+      },
+      "lua_execution_us": {
+        "p50": 30,
+        "p95": 69,
+        "p99": 69,
+        "min": 29,
+        "max": 69
+      },
+      "network_rtt_us": {
+        "p50": 195.718,
+        "p95": 370.457,
+        "p99": 370.457,
+        "min": 164.89,
+        "max": 370.457
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.061,
+        "p95": 0.23,
+        "p99": 0.23,
+        "min": 0.04,
+        "max": 0.23
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 37.75,
+      "client_cpu_us_per_op": 187,
+      "redis_cpu_us_per_op": 101.50000000000436,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:bb601410f68dd11d490a4e7e04efdacd45fbe782"
+      ],
+      "outcome_counts": {
+        "REPAIRED": 4
+      }
+    },
+    {
+      "operation": "session_route_renew_r1",
+      "group": "runtime_lease",
+      "key_distribution": "uniform_session_route_keys",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 1,
+      "pipeline_items_per_op": 1,
+      "request_bytes_per_op": 1350,
+      "response_bytes_per_op": 41,
+      "logical_request_bytes": {
+        "p50": 96,
+        "p95": 96,
+        "p99": 96,
+        "min": 96,
+        "max": 96
+      },
+      "logical_response_bytes": {
+        "p50": 48,
+        "p95": 48,
+        "p99": 48,
+        "min": 48,
+        "max": 48
+      },
+      "payload_bytes": {
+        "p50": 1,
+        "p95": 1,
+        "p99": 1,
+        "min": 1,
+        "max": 1
+      },
+      "client_latency_us": {
+        "p50": 517.004,
+        "p95": 779.819,
+        "p99": 779.819,
+        "min": 374.065,
+        "max": 779.819
+      },
+      "lua_execution_us": {
+        "p50": 64,
+        "p95": 197,
+        "p99": 197,
+        "min": 49,
+        "max": 197
+      },
+      "network_rtt_us": {
+        "p50": 184.417,
+        "p95": 2213.63,
+        "p99": 2213.63,
+        "min": 161.313,
+        "max": 2213.63
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.06,
+        "p95": 0.1,
+        "p99": 0.1,
+        "min": 0.05,
+        "max": 0.1
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 35.5,
+      "client_cpu_us_per_op": 256.25,
+      "redis_cpu_us_per_op": 196.74999999999554,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVAL",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVAL:\nif (redis.call('HGET', KEYS[1], 'route_"
+      ],
+      "outcome_counts": {
+        "RENEWED_1_STALE_0": 4
+      }
+    },
+    {
+      "operation": "session_route_renew_r4",
+      "group": "runtime_lease",
+      "key_distribution": "uniform_session_route_keys",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 4,
+      "pipeline_items_per_op": 4,
+      "request_bytes_per_op": 5400,
+      "response_bytes_per_op": 164,
+      "logical_request_bytes": {
+        "p50": 384,
+        "p95": 384,
+        "p99": 384,
+        "min": 384,
+        "max": 384
+      },
+      "logical_response_bytes": {
+        "p50": 192,
+        "p95": 192,
+        "p99": 192,
+        "min": 192,
+        "max": 192
+      },
+      "payload_bytes": {
+        "p50": 4,
+        "p95": 4,
+        "p99": 4,
+        "min": 4,
+        "max": 4
+      },
+      "client_latency_us": {
+        "p50": 1286.944,
+        "p95": 4223.956,
+        "p99": 4223.956,
+        "min": 520.871,
+        "max": 4223.956
+      },
+      "lua_execution_us": {
+        "p50": 31,
+        "p95": 105,
+        "p99": 105,
+        "min": 22,
+        "max": 105
+      },
+      "network_rtt_us": {
+        "p50": 208.493,
+        "p95": 238.109,
+        "p99": 238.109,
+        "min": 178.326,
+        "max": 238.109
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.061,
+        "p95": 0.1,
+        "p99": 0.1,
+        "min": 0.06,
+        "max": 0.1
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 99.5,
+      "client_cpu_us_per_op": 269.25,
+      "redis_cpu_us_per_op": 439.99999999999596,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVAL",
+          "count": 16
+        }
+      ],
+      "lua_commands": [
+        "EVAL:\nif (redis.call('HGET', KEYS[1], 'route_"
+      ],
+      "outcome_counts": {
+        "RENEWED_4_STALE_0": 4
+      }
+    },
+    {
+      "operation": "session_route_renew_stale",
+      "group": "runtime_lease",
+      "key_distribution": "uniform_session_route_keys",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 1,
+      "pipeline_items_per_op": 1,
+      "request_bytes_per_op": 1347,
+      "response_bytes_per_op": 16,
+      "logical_request_bytes": {
+        "p50": 96,
+        "p95": 96,
+        "p99": 96,
+        "min": 96,
+        "max": 96
+      },
+      "logical_response_bytes": {
+        "p50": 48,
+        "p95": 48,
+        "p99": 48,
+        "min": 48,
+        "max": 48
+      },
+      "payload_bytes": {
+        "p50": 1,
+        "p95": 1,
+        "p99": 1,
+        "min": 1,
+        "max": 1
+      },
+      "client_latency_us": {
+        "p50": 255.642,
+        "p95": 492.318,
+        "p99": 492.318,
+        "min": 223.22,
+        "max": 492.318
+      },
+      "lua_execution_us": {
+        "p50": 15,
+        "p95": 49,
+        "p99": 49,
+        "min": 14,
+        "max": 49
+      },
+      "network_rtt_us": {
+        "p50": 191.481,
+        "p95": 1257.047,
+        "p99": 1257.047,
+        "min": 167.786,
+        "max": 1257.047
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.05,
+        "p95": 0.09,
+        "p99": 0.09,
+        "min": 0.05,
+        "max": 0.09
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 31.5,
+      "client_cpu_us_per_op": 220.75,
+      "redis_cpu_us_per_op": 103.75000000001356,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVAL",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVAL:\nif (redis.call('HGET', KEYS[1], 'route_"
+      ],
+      "outcome_counts": {
+        "RENEWED_0_STALE_1": 4
+      }
+    },
+    {
+      "operation": "session_route_renew_partial_r4",
+      "group": "runtime_lease",
+      "key_distribution": "uniform_session_route_keys",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 4,
+      "pipeline_items_per_op": 4,
+      "request_bytes_per_op": 5400,
+      "response_bytes_per_op": 114,
+      "logical_request_bytes": {
+        "p50": 384,
+        "p95": 384,
+        "p99": 384,
+        "min": 384,
+        "max": 384
+      },
+      "logical_response_bytes": {
+        "p50": 192,
+        "p95": 192,
+        "p99": 192,
+        "min": 192,
+        "max": 192
+      },
+      "payload_bytes": {
+        "p50": 4,
+        "p95": 4,
+        "p99": 4,
+        "min": 4,
+        "max": 4
+      },
+      "client_latency_us": {
+        "p50": 317.208,
+        "p95": 443.745,
+        "p99": 443.745,
+        "min": 305.465,
+        "max": 443.745
+      },
+      "lua_execution_us": {
+        "p50": 15,
+        "p95": 67,
+        "p99": 67,
+        "min": 5,
+        "max": 67
+      },
+      "network_rtt_us": {
+        "p50": 139.563,
+        "p95": 177.475,
+        "p99": 177.475,
+        "min": 129.925,
+        "max": 177.475
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.04,
+        "p95": 0.08,
+        "p99": 0.08,
+        "min": 0.04,
+        "max": 0.08
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 91.75,
+      "client_cpu_us_per_op": 198.5,
+      "redis_cpu_us_per_op": 181.75000000003604,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVAL",
+          "count": 16
+        }
+      ],
+      "lua_commands": [
+        "EVAL:\nif (redis.call('HGET', KEYS[1], 'route_"
+      ],
+      "outcome_counts": {
+        "RENEWED_2_STALE_2": 4
+      }
+    },
+    {
+      "operation": "subscription_renew_r1_serialization",
+      "group": "runtime_lease",
+      "key_distribution": "no_redis_key_protocol_serialization",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 0,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 0,
+      "response_bytes_per_op": 0,
+      "logical_request_bytes": {
+        "p50": 100,
+        "p95": 100,
+        "p99": 100,
+        "min": 100,
+        "max": 100
+      },
+      "logical_response_bytes": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "payload_bytes": {
+        "p50": 1,
+        "p95": 1,
+        "p99": 1,
+        "min": 1,
+        "max": 1
+      },
+      "client_latency_us": {
+        "p50": 2.444,
+        "p95": 325.674,
+        "p99": 325.674,
+        "min": 2.384,
+        "max": 325.674
+      },
+      "lua_execution_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "network_rtt_us": {
+        "p50": 123.773,
+        "p95": 141.957,
+        "p99": 141.957,
+        "min": 110.809,
+        "max": 141.957
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.932,
+        "p95": 318.731,
+        "p99": 318.731,
+        "min": 0.881,
+        "max": 318.731
+      },
+      "deserialization_us": {
+        "p50": 1.302,
+        "p95": 5.971,
+        "p99": 5.971,
+        "min": 1.302,
+        "max": 5.971
+      },
+      "allocs_per_op": 195.5,
+      "client_cpu_us_per_op": 120,
+      "redis_cpu_us_per_op": 16.249999999967677,
+      "connections_rebuilt": 0,
+      "commands": [],
+      "lua_commands": [],
+      "outcome_counts": {
+        "SERIALIZED": 4
+      },
+      "notes": [
+        "Subscription renewal is FarmActor-resident in R1; this L1 cell measures exact protobuf encoding only and correctly reports zero Redis commands. Actor turn capacity belongs to CAP-SINGLE-POD-L2-R1."
+      ]
+    },
+    {
+      "operation": "subscription_renew_r4_serialization",
+      "group": "runtime_lease",
+      "key_distribution": "no_redis_key_protocol_serialization",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 0,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 0,
+      "response_bytes_per_op": 0,
+      "logical_request_bytes": {
+        "p50": 340,
+        "p95": 340,
+        "p99": 340,
+        "min": 340,
+        "max": 340
+      },
+      "logical_response_bytes": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "payload_bytes": {
+        "p50": 4,
+        "p95": 4,
+        "p99": 4,
+        "min": 4,
+        "max": 4
+      },
+      "client_latency_us": {
+        "p50": 6.914,
+        "p95": 35.426,
+        "p99": 35.426,
+        "min": 6.231,
+        "max": 35.426
+      },
+      "lua_execution_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "network_rtt_us": {
+        "p50": 137.299,
+        "p95": 167.305,
+        "p99": 167.305,
+        "min": 131.758,
+        "max": 167.305
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 2.525,
+        "p95": 21.541,
+        "p99": 21.541,
+        "min": 2.414,
+        "max": 21.541
+      },
+      "deserialization_us": {
+        "p50": 3.908,
+        "p95": 14.678,
+        "p99": 14.678,
+        "min": 3.617,
+        "max": 14.678
+      },
+      "allocs_per_op": 37.25,
+      "client_cpu_us_per_op": 35,
+      "redis_cpu_us_per_op": 12.499999999998623,
+      "connections_rebuilt": 0,
+      "commands": [],
+      "lua_commands": [],
+      "outcome_counts": {
+        "SERIALIZED": 4
+      },
+      "notes": [
+        "Subscription renewal is FarmActor-resident in R1; this L1 cell measures exact protobuf encoding only and correctly reports zero Redis commands. Actor turn capacity belongs to CAP-SINGLE-POD-L2-R1."
+      ]
+    },
+    {
+      "operation": "shard_authority_renew",
+      "group": "runtime_lease",
+      "key_distribution": "uniform_shard_lease_keys",
+      "concurrency": 1,
+      "planned_operations": 4,
+      "completed_operations": 4,
+      "failed_operations": 0,
+      "correctness_violations": 0,
+      "expected_fixture_due": 0,
+      "observed_fixture_due": 0,
+      "redis_commands_per_op": 1,
+      "pipeline_items_per_op": 0,
+      "request_bytes_per_op": 260,
+      "response_bytes_per_op": 168,
+      "logical_request_bytes": {
+        "p50": 128,
+        "p95": 128,
+        "p99": 128,
+        "min": 128,
+        "max": 128
+      },
+      "logical_response_bytes": {
+        "p50": 96,
+        "p95": 96,
+        "p99": 96,
+        "min": 96,
+        "max": 96
+      },
+      "payload_bytes": {
+        "p50": 1,
+        "p95": 1,
+        "p99": 1,
+        "min": 1,
+        "max": 1
+      },
+      "client_latency_us": {
+        "p50": 288.693,
+        "p95": 1001.667,
+        "p99": 1001.667,
+        "min": 255.561,
+        "max": 1001.667
+      },
+      "lua_execution_us": {
+        "p50": 35,
+        "p95": 104,
+        "p99": 104,
+        "min": 29,
+        "max": 104
+      },
+      "network_rtt_us": {
+        "p50": 168.949,
+        "p95": 215.997,
+        "p99": 215.997,
+        "min": 142.489,
+        "max": 215.997
+      },
+      "redis_client_queue_us_per_op": 0,
+      "serialization_us": {
+        "p50": 0.061,
+        "p95": 0.12,
+        "p99": 0.12,
+        "min": 0.06,
+        "max": 0.12
+      },
+      "deserialization_us": {
+        "p50": 0,
+        "p95": 0,
+        "p99": 0,
+        "min": 0,
+        "max": 0
+      },
+      "allocs_per_op": 50.25,
+      "client_cpu_us_per_op": 228.25,
+      "redis_cpu_us_per_op": 126.7500000000088,
+      "connections_rebuilt": 0,
+      "commands": [
+        {
+          "name": "EVALSHA",
+          "count": 4
+        }
+      ],
+      "lua_commands": [
+        "EVALSHA:9238699c9036e7bfb09a5b3b3360442eaf844952"
+      ],
+      "outcome_counts": {
+        "APPLIED": 4
+      }
+    }
+  ],
+  "faults": null,
+  "hard_correctness_gates": {
+    "duplicate_grant_total": 0,
+    "duplicate_debit_total": 0,
+    "stale_holder_commit_success_total": 0,
+    "farm_version_gap_total": 0,
+    "workflow_step_unknown_residual": 0,
+    "invalid_order_total": 0,
+    "due_residual": 0,
+    "h5_pending_journal_residual": 0,
+    "authority_client_mismatch_total": 0,
+    "silent_drop_total": 0,
+    "unexpected_lease_expiry_total": 0,
+    "friend_pair_index_unrepaired": 0,
+    "friend_authority_reconcile_required_total": 0
+  },
+  "correctness_observation_complete": true,
+  "observability_required_gaps": null,
+  "verdict": "PASS",
+  "verdict_reasons": null
+}

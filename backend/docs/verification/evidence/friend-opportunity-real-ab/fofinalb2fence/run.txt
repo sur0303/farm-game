@@ -1,0 +1,8 @@
+run_id=fofinalb2fence
+redis=company-managed
+topology=random-loopback-real-processes
+friends=300
+plots=5
+horizon_ms=30000
+variants=B2
+header_read_mode=narrow

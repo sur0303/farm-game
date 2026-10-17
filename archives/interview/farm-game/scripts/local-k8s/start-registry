@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+NAME="farm-l2-r2-registry"
+IMAGE="registry@sha256:46faa9a1ae6813194b53921a370f2f4f8c5e1aae228a89bceafef5847a6a3278"
+PORT="5001"
+MODE="${1:---dry-run}"
+
+case "$MODE" in
+  --dry-run|--start) ;;
+  *) echo "usage: $0 [--dry-run|--start]" >&2; exit 2 ;;
+esac
+
+fail() { echo "start-registry: $*" >&2; exit 1; }
+for command in docker curl sha256sum python3; do command -v "$command" >/dev/null 2>&1 || fail "required command missing: $command"; done
+[[ "$(findmnt -no TARGET /data 2>/dev/null || true)" == "/data" ]] || fail "/data is not a dedicated mount"
+
+if [[ "$MODE" == "--dry-run" ]]; then
+  python3 - "$NAME" "$IMAGE" "$PORT" "$LAB_ROOT" <<'PY'
+import json, sys
+name, image, port, root = sys.argv[1:]
+print(json.dumps({
+  "schema_version": "farm-local-registry-plan.v1",
+  "status": "DRY_RUN_NOT_STARTED",
+  "name": name,
+  "image": image,
+  "listen": f"127.0.0.1:{port}",
+  "data_dir": root + "/registry",
+  "cpuset": "0-3",
+  "memory": "1GiB",
+  "garbage_collection_during_profile": False,
+}, sort_keys=True, indent=2))
+PY
+  exit 0
+fi
+
+install -d -m 0750 "$LAB_ROOT/registry" "$LAB_ROOT/receipts"
+if docker container inspect "$NAME" >/dev/null 2>&1; then
+  running=$(docker inspect -f '{{.State.Running}}' "$NAME")
+  configured_image=$(docker inspect -f '{{.Config.Image}}' "$NAME")
+  [[ "$configured_image" == "$IMAGE" ]] || fail "existing registry container uses unexpected image: $configured_image"
+  if [[ "$running" != "true" ]]; then docker start "$NAME" >/dev/null; fi
+else
+  docker pull "$IMAGE" >/dev/null
+  docker run -d \
+    --name "$NAME" \
+    --restart unless-stopped \
+    --user "$(id -u):$(id -g)" \
+    --read-only \
+    --cap-drop ALL \
+    --security-opt no-new-privileges \
+    --pids-limit 256 \
+    --memory 1g \
+    --cpus 4 \
+    --cpuset-cpus 0-3 \
+    --ulimit nofile=65536:65536 \
+    --tmpfs /tmp:rw,noexec,nosuid,size=64m \
+    -e REGISTRY_STORAGE_DELETE_ENABLED=false \
+    -p "127.0.0.1:${PORT}:5000" \
+    -v "$LAB_ROOT/registry:/var/lib/registry" \
+    "$IMAGE" >/dev/null
+fi
+
+for _ in $(seq 1 30); do
+  if curl --fail --silent --show-error "http://127.0.0.1:${PORT}/v2/" >/dev/null; then break; fi
+  sleep 1
+done
+curl --fail --silent --show-error "http://127.0.0.1:${PORT}/v2/" >/dev/null || fail "registry health endpoint did not become ready"
+
+container_id=$(docker inspect -f '{{.Id}}' "$NAME")
+container_id_hash=$(printf '%s' "$container_id" | sha256sum | awk '{print $1}')
+image_id=$(docker inspect -f '{{.Image}}' "$NAME")
+receipt="$LAB_ROOT/receipts/local-registry.json"
+python3 - "$receipt" "$IMAGE" "$image_id" "$container_id_hash" "$LAB_ROOT/registry" <<'PY'
+import json, os, sys, tempfile
+path, image, image_id, container_id_hash, data_dir = sys.argv[1:]
+value = {
+  "schema_version": "farm-local-registry-receipt.v1",
+  "status": "RUNNING_NOT_QUALIFIED",
+  "listen_class": "LOOPBACK_ONLY",
+  "listen": "127.0.0.1:5001",
+  "image": image,
+  "runtime_image_id": image_id,
+  "container_id_sha256": container_id_hash,
+  "data_dir": data_dir,
+  "cpuset": "0-3",
+  "memory_limit_bytes": 1073741824,
+  "delete_enabled": False,
+  "gc_during_profile": False,
+}
+fd, tmp = tempfile.mkstemp(prefix=".registry-receipt-", dir=os.path.dirname(path), text=True)
+with os.fdopen(fd, "w") as out:
+    json.dump(value, out, sort_keys=True, indent=2)
+    out.write("\n")
+os.replace(tmp, path)
+PY
+chmod 0640 "$receipt"
+printf 'registry running: http://127.0.0.1:%s receipt=%s\n' "$PORT" "$receipt"

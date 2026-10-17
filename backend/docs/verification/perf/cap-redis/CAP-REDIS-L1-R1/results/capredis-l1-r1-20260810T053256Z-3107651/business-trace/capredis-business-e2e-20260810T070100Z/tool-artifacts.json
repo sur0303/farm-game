@@ -1,0 +1,23 @@
+{
+  "artifacts": {
+    "business-trace-web": {
+      "bytes": 9645295,
+      "sha256": "b08fc7f58a614bb625d00a25cb6dcbcaab56ac047ec7fb7b1cc2f30077ad811c"
+    },
+    "business-trace.spec.ts": {
+      "bytes": 19172,
+      "sha256": "85bad40978362540357f6c60e0f565ddeeeacd2aad41c143b594569bc47bb346"
+    },
+    "resp-trace-proxy": {
+      "bytes": 9248545,
+      "sha256": "940703183d0445446b680a4ce608e717a17a763ecc9eda6b68680a87a3f899b8"
+    },
+    "run-business-trace": {
+      "bytes": 11375,
+      "sha256": "8385b8644c85df1fb7dd2bdc7213e4d270573779c8d5ccfe8aa5935e8a9461da"
+    }
+  },
+  "go_version": "go version go1.26.3-X:nodwarf5 linux/amd64",
+  "schema_version": "cap-redis-business-trace-tool-artifacts-v1",
+  "tool_head": "fc7d32a96206357810fe4ca00f285eafe25bc631"
+}

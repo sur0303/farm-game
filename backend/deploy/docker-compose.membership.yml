@@ -1,0 +1,21 @@
+# RT1B-3C-B / I0-ROUTE-WIRE deployment enablement override (C2).
+#
+# Opt the authority-mode player-svr / farm-svr into the per-shard membership
+# runtime (NewMembershipRuntime; legacy runRenewal never starts):
+#
+#   docker compose -f docker-compose.yml -f docker-compose.membership.yml up
+#
+# AUTHORITY_MEMBERSHIP_MODE must be explicit in a real production manifest; a
+# missing/empty value keeps the legacy path so a dropped variable can never
+# silently change runtime semantics.
+name: farm-game-s2
+
+services:
+  player-svr:
+    environment:
+      AUTHORITY_MEMBERSHIP_MODE: "composed"
+      ACTOR_ASSIGNMENT_MODE: "static"
+  farm-svr:
+    environment:
+      AUTHORITY_MEMBERSHIP_MODE: "composed"
+      ACTOR_ASSIGNMENT_MODE: "static"

@@ -1,0 +1,10 @@
+run_id,tool,scenario,bot_count,ratio_percent,player_start,duration,session_duration,think_time,unlock_plots,verdict
+warm-ramp-20-20260820,live-farm-bot,Warm Journey,20,100,3501200000,6m,5m,5s,true,PASS
+warm-ramp-50-final2-20260820,live-farm-bot,Warm Journey,50,100,3502000000,6m,5m,5s,true,PASS
+warm-ramp-75-full-20260820,live-farm-bot,Warm Journey,75,100,3502600000,6m,5m,5s,true,PASS
+warm-ramp-80-full-20260820,live-farm-bot,Warm Journey,80,100,3502500000,6m,5m,5s,true,STOP-2-STORE-UNAVAILABLE
+warm-ramp-90-canary-20260820,live-farm-bot,Warm Journey canary,90,100,3502300000,2m,60s,5s,true,STOP-1-REJECT
+warm-ramp-100-canary-20260820,live-farm-bot,Warm Journey canary,100,100,3502100000,2m,60s,5s,true,STOP-1-REJECT
+join-50-20260820,ws-stress,Cold Join Accepted,50,100,3502700000,60s,NA,NA,false,PASS
+join-100-20260820,ws-stress,Cold Join Accepted,100,100,3502800000,60s,NA,NA,false,PASS
+hot-theft-not-run,none,Hot Farm / THEFT,0,0,NA,NA,NA,NA,false,BLOCKED-MISSING-REAL-FRIENDSHIP-FIXTURE

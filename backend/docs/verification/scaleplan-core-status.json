@@ -1,0 +1,79 @@
+{
+  "schema_version": "scaleplan-core-status-v2",
+  "task_id": "SP0-SP2-SCALEPLAN-CODE-ONLY",
+  "mode": "CODE_ONLY",
+  "worktree": "farm-game-scaleplan-core-20260811",
+  "branch": "codex/scaleplan-core-20260811",
+  "base_commit": "2f16f7c6db3f6e9d8ecb76513cbdf3bd27724361",
+  "candidate_implementation_head": "0f52937a795882ce7acb14d3dae7105b7a1e6460",
+  "last_independently_reviewed_repository_head": "d8a2336662b972029afe9cdad4ec330cd4320e39",
+  "last_independently_reviewed_implementation_head": "0f52937a795882ce7acb14d3dae7105b7a1e6460",
+  "last_independent_review": {
+    "round": 7,
+    "verdict": "PASS",
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "required_fixes": 0
+  },
+  "candidate_review": "ROUND_7_PASS",
+  "status": "READY_FOR_INDEPENDENT_REVIEW",
+  "ready_for_sp3": false,
+  "implementation_checks": {
+    "model_validation": "PASS",
+    "phase_specific_cas_validation": "PASS",
+    "fake_scale_out_executor": "PASS",
+    "fake_scale_in_executor": "PASS",
+    "fake_restart_recovery": "PASS",
+    "fake_unknown_outcome_reconciliation": "PASS",
+    "write_ahead_crash_recovery": "PASS",
+    "idempotency_and_workload_single_flight": "PASS",
+    "blocked_operator_safety_proof": "PASS",
+    "placement_exclusion_capture_revalidate": "PASS",
+    "exact_routeplan_get": "PASS",
+    "full_manifest_final_capture": "PASS",
+    "deadline_and_recovery_retention": "PASS",
+    "owned_package_tests": "PASS",
+    "owned_package_50x": "PASS",
+    "owned_package_race": "PASS",
+    "owned_package_vet": "PASS",
+    "write_set_guard": "PASS",
+    "forbidden_dependency_guard": "PASS",
+    "git_diff_check": "PASS",
+    "formal_perf_lock_during_checks": "ABSENT"
+  },
+  "production": {
+    "adapter": "NOT_IMPLEMENTED",
+    "sp3_compatibility_review": {
+      "reviewed_repository_head": "932cad0d11ba66aacb4c486caf43b652dcaddb3c",
+      "verdict": "SP3_0_FAIL_BLOCKED",
+      "adapter_implementation_authorized": false,
+      "protocol_blockers": [
+        "SERVING_TO_READY_ZERO_SHARD_LIFECYCLE",
+        "DURABLE_MANAGER_WIDE_PLACEMENT_EXCLUSION",
+        "POD_WORKLOAD_ORDINAL_BOOT_IDENTITY_BINDING",
+        "ROUTEPLAN_EXACT_GET_AND_RETENTION_ALIGNMENT",
+        "BLOCKED_TERMINATION_QUIESCENCE_AND_PROOF_OWNERSHIP"
+      ]
+    },
+    "kubernetes": "NOT_RUN",
+    "redis": "NOT_RUN",
+    "routeplan": "NOT_RUN",
+    "placement_exclusion": "NOT_RUN",
+    "holder_drain": "NOT_RUN",
+    "shard_migration": "NOT_RUN"
+  },
+  "qualification": {
+    "runtime_evidence": "NOT_PRODUCED",
+    "performance_sampling": "NOT_RUN",
+    "capacity_claim": "FORBIDDEN",
+    "local_lab_only": true,
+    "supports_30m_dau": false
+  },
+  "repository_actions": {
+    "push": "NOT_PERFORMED",
+    "merge": "NOT_PERFORMED",
+    "rebase_integration": "NOT_PERFORMED",
+    "tag": "NOT_PERFORMED"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "checkpoint": "CP-VERTICAL-A-RC1",
+  "frozen_at": "2026-08-07T04:20:00Z",
+  "backend": {
+    "commit": "5fe0f2e374f4452fc91d485ffd4cd7f147835d24",
+    "branch": "codex/premerge-a-backend-final-20260806",
+    "dirty": false
+  },
+  "h5": {
+    "commit": "fe151520e88e6cf290125f2791df88584060ea17",
+    "branch": "codex/premerge-a-h5-final-20260806",
+    "dirty": false
+  },
+  "normal_smoke": {
+    "pass_runs": ["run23", "run24", "run25"],
+    "verdict": "PASS (S0 + S1A real H5 + S1B protocol bot + authority audit)"
+  },
+  "policy": "冻结期:除非 S2/S3 暴露真实缺陷,否则不再向这两个分支添加普通功能。",
+  "next": "S2 (Join post-ready Change + PresenceEpoch) / S3 (DeliverBatch Unavailable / response-loss retry / permanent FARM_CHANGE failure)"
+}

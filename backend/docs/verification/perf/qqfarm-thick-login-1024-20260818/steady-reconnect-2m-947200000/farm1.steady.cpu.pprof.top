@@ -1,0 +1,44 @@
+File: farm-svr
+Build ID: ffca9b336f4ed02ff98b4a0969503ed0381e1583
+Type: cpu
+Time: 2026-08-18 12:11:00 CST
+Duration: 60s, Total samples = 18.07s (30.12%)
+Showing nodes accounting for 9.56s, 52.91% of 18.07s total
+Dropped 778 nodes (cum <= 0.09s)
+Showing top 35 nodes out of 302
+      flat  flat%   sum%        cum   cum%
+     4.01s 22.19% 22.19%      4.01s 22.19%  internal/runtime/syscall/linux.Syscall6
+     1.36s  7.53% 29.72%      1.36s  7.53%  runtime.futex
+     0.33s  1.83% 31.54%      0.33s  1.83%  runtime.nextFreeFast (inline)
+     0.27s  1.49% 33.04%      0.68s  3.76%  runtime.selectgo
+     0.24s  1.33% 34.37%      0.27s  1.49%  runtime.step
+     0.20s  1.11% 35.47%      0.20s  1.11%  runtime.memclrNoHeapPointers
+     0.17s  0.94% 36.41%      0.17s  0.94%  runtime.nanotime (inline)
+     0.16s  0.89% 37.30%      0.38s  2.10%  runtime.(*unwinder).resolveInternal
+     0.15s  0.83% 38.13%      0.17s  0.94%  runtime.(*mspan).writeHeapBitsSmall
+     0.15s  0.83% 38.96%      0.15s  0.83%  runtime.memmove
+     0.14s  0.77% 39.73%      0.89s  4.93%  runtime.newobject
+     0.13s  0.72% 40.45%      0.13s  0.72%  internal/runtime/maps.ctrlGroup.matchH2 (inline)
+     0.13s  0.72% 41.17%      0.37s  2.05%  runtime.(*stkframe).getStackMap
+     0.13s  0.72% 41.89%      0.44s  2.43%  runtime.pcvalue
+     0.13s  0.72% 42.61%      0.28s  1.55%  runtime.scanObject
+     0.12s  0.66% 43.28%      0.15s  0.83%  runtime.findfunc
+     0.12s  0.66% 43.94%      0.19s  1.05%  runtime.tryDeferToSpanScan
+     0.11s  0.61% 44.55%      0.12s  0.66%  internal/sync.(*Mutex).Lock (inline)
+     0.11s  0.61% 45.16%      0.59s  3.27%  runtime.adjustframe
+     0.11s  0.61% 45.77%      0.85s  4.70%  runtime.mallocgcSmallScanNoHeader
+     0.10s  0.55% 46.32%      0.70s  3.87%  google.golang.org/protobuf/internal/impl.(*MessageInfo).unmarshalPointerEager
+     0.10s  0.55% 46.87%      1.61s  8.91%  runtime.findRunnable
+     0.10s  0.55% 47.43%      0.17s  0.94%  runtime.mapaccess1_faststr
+     0.10s  0.55% 47.98%      0.13s  0.72%  runtime.unlock2
+     0.09s   0.5% 48.48%      0.19s  1.05%  google.golang.org/protobuf/internal/impl.(*MessageInfo).sizePointerSlow
+     0.09s   0.5% 48.98%      1.29s  7.14%  internal/poll.(*FD).RawRead
+     0.09s   0.5% 49.47%      0.10s  0.55%  runtime.adjustpointers
+     0.09s   0.5% 49.97%      1.41s  7.80%  runtime.mallocgc
+     0.09s   0.5% 50.47%      0.52s  2.88%  runtime.netpoll
+     0.08s  0.44% 50.91%      1.75s  9.68%  google.golang.org/grpc/internal/transport.(*http2Client).reader
+     0.08s  0.44% 51.36%      0.19s  1.05%  runtime.lock2
+     0.08s  0.44% 51.80%      0.13s  0.72%  runtime.mapaccess1_fast64
+     0.07s  0.39% 52.19%      0.11s  0.61%  context.(*cancelCtx).Done
+     0.07s  0.39% 52.57%      0.66s  3.65%  google.golang.org/grpc/internal/transport.(*http2Server).operateHeaders
+     0.06s  0.33% 52.91%      0.17s  0.94%  runtime.mallocgcSmallNoscan

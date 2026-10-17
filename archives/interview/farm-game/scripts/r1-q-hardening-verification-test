@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+TMP_DIR="$(mktemp -d /tmp/r1-q-verification-test.XXXXXX)"
+cleanup() {
+  rm -rf -- "$TMP_DIR"
+}
+trap cleanup EXIT
+
+"$ROOT_DIR/scripts/r1-q-hardening-verification" --help >/dev/null
+
+OUT="$TMP_DIR/out"
+set +e
+"$ROOT_DIR/scripts/r1-q-hardening-verification" \
+  --out "$OUT" \
+  --run-id r1q-test-invalid \
+  --h5-root "$TMP_DIR/missing-h5" >"$TMP_DIR/stdout" 2>"$TMP_DIR/stderr"
+code=$?
+set -e
+
+[[ "$code" -eq 1 ]] || { echo "invalid assembly must exit 1, got $code" >&2; exit 1; }
+
+python3 - "$OUT" <<'PY'
+import json
+import pathlib
+import sys
+
+out = pathlib.Path(sys.argv[1])
+verdict = json.loads((out / "verdict.json").read_text())
+manifest = json.loads((out / "run-manifest.json").read_text())
+assert verdict["verdict"] == "FAIL"
+assert verdict["invalid_assembly"] is True
+assert verdict["handoff"] == "BLOCKED"
+assert verdict["final_pass_claim_allowed"] is False
+statuses = {item["id"]: item["status"] for item in verdict["gates"]}
+assert statuses["unassembled.A1"] == "SKIPPED_NOT_COMPOSED"
+assert statuses["unassembled.A3"] == "SKIPPED_NOT_COMPOSED"
+assert statuses["unassembled.A4"] == "SKIPPED_NOT_COMPOSED"
+assert statuses["composition.scenario_coordinator"] == "SKIPPED_NOT_COMPOSED"
+assert manifest["backend"]["expected_commit"] == "ba6f3aee4f0fcd941d9fa37135af0ce09ffdfa5c"
+assert manifest["h5"]["expected_commit"] == "b83cae607245391df6e2d605cffba85eb194cb09"
+for name in (
+    "run-manifest.json",
+    "metrics-summary.json",
+    "actor-layout-v1-baseline.json",
+    "lease-batching-evidence.json",
+    "cp-mvp-hardening-r1-evidence.md",
+):
+    assert (out / name).is_file(), name
+PY
+
+echo "r1-q-hardening-verification tests: PASS"

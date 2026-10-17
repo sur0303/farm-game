@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LAB_ROOT="${FARM_L2_LAB_ROOT:-/data/farm-l2-r2}"
+KUBECONFIG="${KUBECONFIG:-$LAB_ROOT/runtime/kubeconfig}"
+MANIFEST="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)/deploy/k8s/static-staging/overlays/local-capacity-r2/dependencies/local-redis.yaml"
+RECEIPT="$LAB_ROOT/receipts/local-dedicated-redis.json"
+MODE="${1:---dry-run}"
+NS=farm-l2-r2-deps
+IMAGE='redis@sha256:9702d01c1f10c3ea9f48211b4362e44f154ff02d063e6f7268eba804059f53bf'
+
+case "$MODE" in --dry-run|--apply) ;; *) echo "usage: $0 [--dry-run|--apply]" >&2; exit 2;; esac
+fail() { echo "apply-local-redis: $*" >&2; exit 1; }
+[[ -s "$KUBECONFIG" ]] || fail "kubeconfig missing"
+[[ "$(KUBECONFIG="$KUBECONFIG" kubectl config current-context)" == "farm-l2-r2" ]] || fail "refusing non-lab context"
+grep -q "$IMAGE" "$MANIFEST" || fail "Redis image digest drift"
+grep -q 'cluster-3m3s' "$MANIFEST" || fail "Redis cluster topology missing from manifest"
+
+if [[ "$MODE" == "--dry-run" ]]; then
+  KUBECONFIG="$KUBECONFIG" kubectl apply --dry-run=client -f "$MANIFEST" -o name
+  exit 0
+fi
+
+KUBECONFIG="$KUBECONFIG" kubectl create namespace "$NS" --dry-run=client -o yaml | KUBECONFIG="$KUBECONFIG" kubectl apply -f - >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl label namespace "$NS" app.kubernetes.io/part-of=farm-game farm.io/lab-id=farm-l2-r2 farm.io/dependency-profile=local-dedicated --overwrite >/dev/null
+# StatefulSet cannot share the name of the previous single-replica Deployment.
+KUBECONFIG="$KUBECONFIG" kubectl -n "$NS" delete deployment farm-local-redis --ignore-not-found --wait=true --timeout=120s >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl apply -f "$MANIFEST" >/dev/null
+KUBECONFIG="$KUBECONFIG" kubectl rollout status -n "$NS" statefulset/farm-local-redis --timeout=180s >/dev/null
+
+running_json=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NS" get pods -l app.kubernetes.io/name=farm-local-redis --field-selector=status.phase=Running -o json)
+python3 -c 'import json,sys; items=json.loads(sys.argv[1])["items"]; names=sorted(p["metadata"]["name"] for p in items); raise SystemExit(0 if names==[f"farm-local-redis-{i}" for i in range(6)] else "apply-local-redis: want 6 Running cluster members")' "$running_json"
+
+ips=()
+for i in 0 1 2 3 4 5; do
+  ip=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NS" get pod "farm-local-redis-$i" -o jsonpath='{.status.podIP}')
+  [[ -n "$ip" ]] || fail "pod farm-local-redis-$i has no IP"
+  ping=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NS" exec "farm-local-redis-$i" -- redis-cli --raw ping)
+  [[ "$ping" == "PONG" ]] || fail "farm-local-redis-$i PING failed"
+  ips+=("$ip")
+done
+
+cluster_state=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NS" exec farm-local-redis-0 -- redis-cli --raw CLUSTER INFO 2>/dev/null | awk -F: '/^cluster_state:/{gsub("\r","",$2); print $2}' || true)
+if [[ "$cluster_state" != "ok" ]]; then
+  create_args=()
+  for ip in "${ips[@]}"; do
+    create_args+=("${ip}:6379")
+  done
+  KUBECONFIG="$KUBECONFIG" kubectl -n "$NS" exec farm-local-redis-0 -- redis-cli --cluster create "${create_args[@]}" --cluster-replicas 1 --cluster-yes >/dev/null
+fi
+
+for _ in $(seq 1 60); do
+  cluster_state=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NS" exec farm-local-redis-0 -- redis-cli --raw CLUSTER INFO | awk -F: '/^cluster_state:/{gsub("\r","",$2); print $2}')
+  slots_ok=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NS" exec farm-local-redis-0 -- redis-cli --raw CLUSTER INFO | awk -F: '/^cluster_slots_ok:/{gsub("\r","",$2); print $2}')
+  known=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NS" exec farm-local-redis-0 -- redis-cli --raw CLUSTER INFO | awk -F: '/^cluster_known_nodes:/{gsub("\r","",$2); print $2}')
+  if [[ "$cluster_state" == "ok" && "$slots_ok" == "16384" && "$known" == "6" ]]; then
+    break
+  fi
+  sleep 2
+done
+[[ "$cluster_state" == "ok" && "$slots_ok" == "16384" && "$known" == "6" ]] || fail "cluster not healthy state=$cluster_state slots=$slots_ok nodes=$known"
+
+nodes=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NS" exec farm-local-redis-0 -- redis-cli --raw CLUSTER NODES)
+master_count=$(printf '%s\n' "$nodes" | awk '$3 ~ /(^|,)master(,|$)/ {c++} END{print c+0}')
+replica_count=$(printf '%s\n' "$nodes" | awk '$3 ~ /(^|,)slave(,|$)/ {c++} END{print c+0}')
+[[ "$master_count" == "3" && "$replica_count" == "3" ]] || fail "want 3 masters and 3 replicas, got masters=$master_count replicas=$replica_count"
+
+cpuset=$(KUBECONFIG="$KUBECONFIG" kubectl -n "$NS" exec farm-local-redis-0 -- awk '/Cpus_allowed_list/ {print $2}' /proc/self/status)
+manifest_sha=$(sha256sum "$MANIFEST" | awk '{print $1}')
+python3 - "$RECEIPT" "$manifest_sha" "$cpuset" "$master_count" "$replica_count" <<'PY'
+import json, os, sys, tempfile
+path, manifest_sha, cpuset, masters, replicas = sys.argv[1:]
+value = {
+  "schema_version": "farm-local-dedicated-redis-receipt.v2",
+  "status": "RUNNING_FUNCTIONAL_ONLY_NOT_CAPACITY_QUALIFIED",
+  "environment_class": "LOCAL_LINUX_K8S_WITH_LOCAL_REDIS",
+  "topology": "cluster-3m3s",
+  "masters": int(masters),
+  "replicas": int(replicas),
+  "manifest_sha256": manifest_sha,
+  "image": "redis@sha256:9702d01c1f10c3ea9f48211b4362e44f154ff02d063e6f7268eba804059f53bf",
+  "service": "farm-local-redis.farm-l2-r2-deps.svc.cluster.local:6379",
+  "effective_cpuset": cpuset,
+  "persistence": "EPHEMERAL_EMPTYDIR",
+  "company_redis_contacted": False,
+  "formal_l2_authorized": False,
+  "capacity_constant_eligible": False,
+  "flush_performed": False,
+}
+os.makedirs(os.path.dirname(path), exist_ok=True)
+fd, temp = tempfile.mkstemp(prefix=".local-redis-", dir=os.path.dirname(path), text=True)
+with os.fdopen(fd, "w") as out:
+    json.dump(value, out, sort_keys=True, indent=2)
+    out.write("\n")
+os.replace(temp, path)
+PY
+chmod 0640 "$RECEIPT"
+cat "$RECEIPT"

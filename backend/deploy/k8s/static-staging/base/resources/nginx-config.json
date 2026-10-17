@@ -1,0 +1,15 @@
+{
+  "apiVersion": "v1",
+  "kind": "ConfigMap",
+  "metadata": {
+    "name": "farm-h5-nginx",
+    "labels": {
+      "app.kubernetes.io/name": "farm-h5",
+      "app.kubernetes.io/component": "h5-edge",
+      "app.kubernetes.io/part-of": "farm-game"
+    }
+  },
+  "data": {
+    "default.conf": "server {\n  listen 8080;\n  server_name _;\n  root /usr/share/nginx/html;\n  location = /healthz { access_log off; return 200 'ok\\n'; add_header Content-Type text/plain; }\n  location = /readyz { access_log off; return 200 'ready\\n'; add_header Content-Type text/plain; }\n  location /ws { proxy_pass http://farm-gate.farm-staging-system.svc.cluster.local:8080; proxy_http_version 1.1; proxy_set_header Upgrade $http_upgrade; proxy_set_header Connection \"upgrade\"; proxy_set_header Host $host; proxy_set_header X-Forwarded-Proto $scheme; proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; proxy_read_timeout 3600s; }\n  location /api/ { proxy_pass http://farm-gate.farm-staging-system.svc.cluster.local:8080; proxy_set_header Host $host; proxy_set_header X-Forwarded-Proto $scheme; proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; }\n  location / { try_files $uri $uri/ /index.html; }\n}\n"
+  }
+}

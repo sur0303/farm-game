@@ -1,0 +1,7 @@
+viewer_start=950000000
+viewer_end=950004999
+viewer_count=5000
+fake_start=8000000000
+fake_end=8000001019
+friend_count_per_group=60
+reuse=thick-login returning players; do not FLUSHALL; do not HSET viewer farms

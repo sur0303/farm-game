@@ -1,0 +1,8 @@
+player_pod_uid=4595ae1c-72a2-48ed-bcc9-76e2fed383c7
+farm_pod_uid=68f8f925-2076-49ee-a0c0-38e9b7ef912e
+worker_a_pod=farm-worker-a-8c9dcbf44-4kncl
+worker_a_pod_uid=20e3f360-eba3-4b24-b668-c563edf3a161
+worker_b_pod=farm-worker-b-5fdcbff857-b8njs
+worker_b_pod_uid=eb1a0330-c3a7-4f9f-aa9f-51eab8f5dc74
+worker_a_boot=farm-worker-a-60b45f25aecdd662fb511b74512c6dd7
+worker_b_boot=farm-worker-b-6f895d79c68356098c66682f6b47e236
